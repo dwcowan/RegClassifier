@@ -31,12 +31,14 @@ end
 
 % The "tokens" function for tokenizedDocument objects is not available in
 % all MATLAB releases. To maintain compatibility, perform a simple
-% whitespace-based tokenization that works across versions.
+% whitespace-based tokenization that works across versions. Trim leading
+% and trailing spaces before splitting to avoid empty tokens at the ends of
+% the array.
 textStr = string(textStr);
 d = size(emb.WordVectors,2);
 E = zeros(numel(textStr), d, 'single');
 for i = 1:numel(textStr)
-    t = split(regexprep(lower(textStr(i)), '\s+', ' '));
+    t = split(strtrim(regexprep(lower(textStr(i)), '\s+', ' ')));
     t(t=="") = [];
     V = word2vec(emb, t);
     V = single(V);
