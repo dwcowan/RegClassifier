@@ -1,6 +1,18 @@
 function E = doc_embeddings_fasttext(textStr, fasttextCfg)
 %DOC_EMBEDDINGS_FASTTEXT Mean-pooled fastText vectors (normalized)
-emb = fastTextWordEmbedding(fasttextCfg.language);
+% The fastTextWordEmbedding API changed in recent MATLAB releases to no
+% longer accept a language argument. Attempt to call with the configured
+% language and fall back to the no-argument form if too many inputs are
+% supplied.
+try
+    emb = fastTextWordEmbedding(fasttextCfg.language);
+catch ME
+    if strcmp(ME.identifier, 'MATLAB:TooManyInputs')
+        emb = fastTextWordEmbedding;
+    else
+        rethrow(ME);
+    end
+end
 tok = tokenizedDocument(string(textStr));
 W = doc2sequence(emb, tok);
 d = size(emb.WordVectors,2);
