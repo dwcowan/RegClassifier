@@ -1,0 +1,12 @@
+{
+  "MiniBatchSize": 96,
+  "MaxSeqLength": 256,
+  "FineTune": {
+    "BatchSize": 32,
+    "UnfreezeTopLayers": 4,
+    "EncoderLR": 1e-05,
+    "HeadLR": 0.001,
+    "Epochs": 4,
+    "Loss": "triplet"
+  }
+}
