@@ -1,6 +1,14 @@
 function C = config()
 %CONFIG Project configuration for regulatory topic classifier
 
+% === Load params.json overrides ===
+try
+    params = jsondecode(fileread('params.json'));
+catch ME
+    warning("Params load/apply failed: %s", ME.message);
+    params = struct();
+end
+
 C.input_dir   = "data/pdfs";     % drop regs here (PDFs)
 C.labels = ["IRB","CreditRisk","Securitisation","SRT","MarketRisk_FRTB", ...
             "Liquidity_LCR","Liquidity_NSFR","LeverageRatio","OperationalRisk", ...
@@ -26,6 +34,16 @@ C.db = struct('enable', false, 'vendor','postgres', 'dbname','reg_topics', ...
 
 % Reports
 C.report_title = "Banking Regulation Topic Classifier — Snapshot";
+
+% Apply params overrides
+param_fields = fieldnames(params);
+for i = 1:numel(param_fields)
+    f = param_fields{i};
+    if isfield(C, f)
+        C.(f) = params.(f);
+    end
+end
+C.params = params;
 
 % === Load knobs.json and apply Chunk overrides ===
 try
