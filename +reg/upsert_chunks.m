@@ -15,8 +15,13 @@ if isstruct(conn) && isfield(conn,'sqlite')
     sconn = conn.sqlite;
     % Create label/score columns if needed
     cols = fieldnames(T)';
-    cur = fetch(sconn, "PRAGMA table_info(reg_chunks);");
-    existing = string(cur(:,2));
+    % Only retrieve column names to avoid NULL default values triggering errors
+    cur = fetch(sconn, "SELECT name FROM pragma_table_info(''reg_chunks'');");
+    if istable(cur)
+        existing = string(cur{:,:});
+    else
+        existing = string(cur(:,1));
+    end
     toAdd = setdiff(string(cols), existing);
     for k = 1:numel(toAdd)
         colname = toAdd(k);
