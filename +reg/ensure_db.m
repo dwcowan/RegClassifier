@@ -2,8 +2,11 @@ function conn = ensure_db(DB)
 %ENSURE_DB Returns a connection struct supporting Postgres or SQLite.
 % For SQLite, it creates a file (DB.sqlite_path) and returns struct with .sqlite handle.
 if isfield(DB,'vendor') && strcmpi(DB.vendor,'sqlite')
-    if ~isfolder(fileparts(DB.sqlite_path)), mkdir(fileparts(DB.sqlite_path)); end
-    if isfile(DB.sqlite_path)
+    dbDir = fileparts(DB.sqlite_path);
+    if ~exist(dbDir, 'dir')
+        mkdir(dbDir);
+    end
+    if exist(DB.sqlite_path, 'file')
         sconn = sqlite(DB.sqlite_path);          % open existing file
     else
         sconn = sqlite(DB.sqlite_path, 'create'); %#ok<SQLITE> % create new file
