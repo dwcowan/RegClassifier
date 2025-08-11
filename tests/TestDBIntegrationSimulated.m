@@ -10,6 +10,9 @@ classdef TestDBIntegrationSimulated < RegTestCase
             if isstruct(conn) && isfield(conn,'sqlite')
                 cur = fetch(conn.sqlite, "SELECT COUNT(*) FROM reg_chunks");
                 tc.verifyGreaterThanOrEqual(cur{1}, height(chunksT));
+                cols = fetch(conn.sqlite, "PRAGMA table_info(reg_chunks);");
+                scoreCol = char("score_" + labels(1));
+                tc.verifyTrue(any(strcmp(scoreCol, cols(:,2))));
                 close(conn.sqlite);
             end
             if isfile(C.db.sqlite_path), delete(C.db.sqlite_path); end
