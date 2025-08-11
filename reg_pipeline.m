@@ -11,7 +11,12 @@ chunksT = reg.chunk_text(docsT, C.chunk_size_tokens, C.chunk_overlap); % chunk_i
 % C) Features: TF-IDF bag + LDA topics + embeddings
 [docsTok, vocab, Xtfidf] = reg.ta_features(chunksT.text);
 bag = bagOfWords(docsTok);
-mdlLDA = fitlda(bag, C.lda_topics, 'Verbose',0);
+numDocs = bag.NumDocuments;
+numTopics = min(C.lda_topics, numDocs);
+if numTopics < C.lda_topics
+    warning('Reducing LDA topics from %d to %d due to limited documents', C.lda_topics, numTopics);
+end
+mdlLDA = fitlda(bag, numTopics, 'Verbose',0);
 topicDist = transform(mdlLDA, bag);
 try
     if strcmpi(C.embeddings_backend,'bert')
