@@ -1,4 +1,4 @@
-classdef TestPDFIngest < matlab.unittest.TestCase
+classdef TestPDFIngest < RegTestCase
     methods (Test)
         function ingest_text_pdf(tc)
             C = config();

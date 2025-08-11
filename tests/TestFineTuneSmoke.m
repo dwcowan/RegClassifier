@@ -1,4 +1,4 @@
-classdef TestFineTuneSmoke < matlab.unittest.TestCase
+classdef TestFineTuneSmoke < RegTestCase
     methods (Test)
         function smoke_ft(tc)
             if gpuDeviceCount==0

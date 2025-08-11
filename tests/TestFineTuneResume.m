@@ -1,4 +1,4 @@
-classdef TestFineTuneResume < matlab.unittest.TestCase
+classdef TestFineTuneResume < RegTestCase
     methods (Test)
         function resume_from_checkpoint(tc)
             if gpuDeviceCount==0

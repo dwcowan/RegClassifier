@@ -1,4 +1,4 @@
-classdef TestRulesAndModel < matlab.unittest.TestCase
+classdef TestRulesAndModel < RegTestCase
     methods (Test)
         function setBackend(~)
             C = config(); %#ok<NASGU>

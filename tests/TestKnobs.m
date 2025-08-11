@@ -1,4 +1,4 @@
-classdef TestKnobs < matlab.unittest.TestCase
+classdef TestKnobs < RegTestCase
     methods (Test)
         function chunk_overrides(tc)
             % Write a temporary knobs.json overriding chunk sizes
