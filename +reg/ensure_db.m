@@ -15,21 +15,16 @@ if isfield(DB,'vendor') && strcmpi(DB.vendor,'sqlite')
         sconn = sqlite(DB.sqlite_path);          % open existing file
     else
 
-        <<<<<<< HEAD
-        sconn = sqlite(DB.sqlite_path,'create'); % create new file
-=======
-        sconn = sqlite(DB.sqlite_path, 'create'); %#ok<SQLITE> % create new file
->>>>>>> 6d698742f20fd7ce91820b1d9e3c252c268cdbb5
+        % ensure table
+        createSQL = [
+            'CREATE TABLE IF NOT EXISTS reg_chunks (' ...
+            '  chunk_id TEXT PRIMARY KEY,' ...
+            '  doc_id TEXT,' ...
+            '  text TEXT' ...
+            ');'];
+        exec(sconn, createSQL);
+        conn = struct('sqlite', sconn, 'vendor','sqlite');
     end
-    % ensure table
-    createSQL = [
-        'CREATE TABLE IF NOT EXISTS reg_chunks (' ...
-        '  chunk_id TEXT PRIMARY KEY,' ...
-        '  doc_id TEXT,' ...
-        '  text TEXT' ...
-        ');'];
-    exec(sconn, createSQL);
-    conn = struct('sqlite', sconn, 'vendor','sqlite');
 else
     % Default to Database Toolbox server connection (e.g., Postgres)
     conn = database(DB.dbname, DB.user, DB.pass, 'Vendor', DB.vendor, ...
