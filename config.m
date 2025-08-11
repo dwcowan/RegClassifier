@@ -33,7 +33,7 @@ C.kfold = 5;
 % DB (set enable=true to persist in pipeline). For tests we use sqlite.
 C.db = struct('enable', false, 'vendor','postgres', 'dbname','reg_topics', ...
               'user','user','pass','pass','server','localhost','port',5432, ...
-              'sqlite_path', "tests/tmp/test_reg_topics.sqlite");
+              'sqlite_path', "./my_reg_topics.sqlite");
 
 % Reports
 C.report_title = "Banking Regulation Topic Classifier — Snapshot";
