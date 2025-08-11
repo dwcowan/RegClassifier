@@ -8,7 +8,8 @@
     "Epochs": 5,
     "BatchSize": 768,
     "LR": 0.001,
-    "Margin": 0.2
+    "Margin": 0.2,
+    "UseGPU": true
   },
   "FineTune": {
     "Loss": "triplet",

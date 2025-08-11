@@ -1,6 +1,16 @@
 function C = config()
 %CONFIG Project configuration for regulatory topic classifier
 
+% === Load pipeline.json ===
+pipe = struct();
+try
+    if isfile('pipeline.json')
+        pipe = jsondecode(fileread('pipeline.json'));
+    end
+catch ME
+    warning("Pipeline config load failed: %s", ME.message);
+end
+
 % === Load params.json overrides ===
 try
     params = jsondecode(fileread('params.json'));
@@ -35,6 +45,13 @@ C.db = struct('enable', false, 'vendor','postgres', 'dbname','reg_topics', ...
 % Reports
 C.report_title = "Banking Regulation Topic Classifier — Snapshot";
 
+% Apply pipeline overrides
+pipe_fields = fieldnames(pipe);
+for i = 1:numel(pipe_fields)
+    f = pipe_fields{i};
+    C.(f) = pipe.(f);
+end
+
 % Apply params overrides
 param_fields = fieldnames(params);
 for i = 1:numel(param_fields)
@@ -44,6 +61,7 @@ for i = 1:numel(param_fields)
     end
 end
 C.params = params;
+C.pipeline = pipe;
 
 % === Load knobs.json and apply Chunk overrides ===
 try

@@ -42,6 +42,28 @@ defLoss = 'triplet';
 if isfield(ft,'Loss'), defLoss = ft.Loss; end
 defMaxSeqLen = 256;
 if isfield(params,'MaxSeqLength'), defMaxSeqLen = params.MaxSeqLength; end
+defMargin = 0.2;
+if isfield(ft,'Margin'), defMargin = ft.Margin; end
+defUseFP16 = false;
+if isfield(ft,'UseFP16'), defUseFP16 = ft.UseFP16; end
+defCheckpointDir = 'checkpoints';
+if isfield(ft,'CheckpointDir'), defCheckpointDir = ft.CheckpointDir; end
+defResume = true;
+if isfield(ft,'Resume'), defResume = ft.Resume; end
+defEarlyStopPatience = 2;
+if isfield(ft,'EarlyStopPatience'), defEarlyStopPatience = ft.EarlyStopPatience; end
+defEarlyStopMinDelta = 0.01;
+if isfield(ft,'EarlyStopMinDelta'), defEarlyStopMinDelta = ft.EarlyStopMinDelta; end
+defEvalY = [];
+if isfield(ft,'EvalY'), defEvalY = ft.EvalY; end
+defEvalEvery = 1;
+if isfield(ft,'EvalEvery'), defEvalEvery = ft.EvalEvery; end
+defHardNegatives = true;
+if isfield(ft,'HardNegatives'), defHardNegatives = ft.HardNegatives; end
+defHardNegMaxN = 2000;
+if isfield(ft,'HardNegMaxN'), defHardNegMaxN = ft.HardNegMaxN; end
+defYboot = [];
+if isfield(ft,'Yboot'), defYboot = ft.Yboot; end
 
 % --- Parse inputs ---
 p = inputParser;
@@ -50,19 +72,19 @@ addParameter(p,'BatchSize',defBatchSize);
 addParameter(p,'MaxSeqLength',defMaxSeqLen);
 addParameter(p,'EncoderLR',defEncLR);
 addParameter(p,'HeadLR',defHeadLR);
-addParameter(p,'Margin',0.2);
+addParameter(p,'Margin',defMargin);
 addParameter(p,'UnfreezeTopLayers',defUnfreeze);
-addParameter(p,'UseFP16',false);
+addParameter(p,'UseFP16',defUseFP16);
 addParameter(p,'Loss',defLoss,@(s)any(strcmpi(s,{'triplet','supcon'})));
-addParameter(p,'CheckpointDir','checkpoints',@ischar);
-addParameter(p,'Resume',true,@islogical);
-addParameter(p,'EarlyStopPatience',2);
-addParameter(p,'EarlyStopMinDelta',0.01);  % 1 percentage point
-addParameter(p,'EvalY',[]);                % logical labels for eval
-addParameter(p,'EvalEvery',1);             % epochs
-addParameter(p,'HardNegatives',true);
-addParameter(p,'HardNegMaxN',2000);        % mine on subset if corpus is huge
-addParameter(p,'Yboot',[]);                % optional weak labels for hard-negative mining
+addParameter(p,'CheckpointDir',defCheckpointDir,@ischar);
+addParameter(p,'Resume',defResume,@islogical);
+addParameter(p,'EarlyStopPatience',defEarlyStopPatience);
+addParameter(p,'EarlyStopMinDelta',defEarlyStopMinDelta);  % 1 percentage point
+addParameter(p,'EvalY',defEvalY);                % logical labels for eval
+addParameter(p,'EvalEvery',defEvalEvery);             % epochs
+addParameter(p,'HardNegatives',defHardNegatives);
+addParameter(p,'HardNegMaxN',defHardNegMaxN);        % mine on subset if corpus is huge
+addParameter(p,'Yboot',defYboot);                % optional weak labels for hard-negative mining
 parse(p,varargin{:});
 R = p.Results;
 

@@ -19,3 +19,16 @@ To wire params.json into code:
    end
 
 This allows you to change training/batch parameters by editing params.json without touching code.
+
+Fine-tune extras supported in `params.json > FineTune`:
+ - `Margin` (0.2)
+ - `UseFP16` (false)
+ - `CheckpointDir` ("checkpoints")
+ - `Resume` (true)
+ - `EarlyStopPatience` (2)
+ - `EarlyStopMinDelta` (0.01)
+ - `EvalY` ([])
+ - `EvalEvery` (1)
+ - `HardNegatives` (true)
+ - `HardNegMaxN` (2000)
+ - `Yboot` ([])
