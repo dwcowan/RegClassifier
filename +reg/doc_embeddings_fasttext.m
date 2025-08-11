@@ -1,6 +1,15 @@
 function E = doc_embeddings_fasttext(textStr, fasttextCfg)
 %DOC_EMBEDDINGS_FASTTEXT Mean-pooled fastText vectors (normalized)
-emb = fastTextWordEmbedding(fasttextCfg.language);
+%   E = DOC_EMBEDDINGS_FASTTEXT(TEXTSTR) returns mean-pooled and normalized
+%   fastText embeddings using the default language model.
+%   E = DOC_EMBEDDINGS_FASTTEXT(TEXTSTR, FASTTEXTCFG) allows specifying a
+%   language via FASTTEXTCFG.language.
+
+if nargin < 2 || ~isfield(fasttextCfg, 'language') || isempty(fasttextCfg.language)
+    emb = fastTextWordEmbedding();
+else
+    emb = fastTextWordEmbedding('Language', fasttextCfg.language);
+end
 tok = tokenizedDocument(string(textStr));
 W = doc2sequence(emb, tok);
 d = size(emb.WordVectors,2);
