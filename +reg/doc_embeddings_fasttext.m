@@ -1,6 +1,16 @@
 function E = doc_embeddings_fasttext(textStr, fasttextCfg)
 %DOC_EMBEDDINGS_FASTTEXT Mean-pooled fastText vectors (normalized)
-emb = fastTextWordEmbedding(fasttextCfg.language);
+% Handle different fastTextWordEmbedding signatures across MATLAB
+% versions. Some releases expect a language argument while others do not.
+if isstruct(fasttextCfg) && isfield(fasttextCfg, "language")
+    try
+        emb = fastTextWordEmbedding(fasttextCfg.language);
+    catch
+        emb = fastTextWordEmbedding();
+    end
+else
+    emb = fastTextWordEmbedding();
+end
 tok = tokenizedDocument(string(textStr));
 W = doc2sequence(emb, tok);
 d = size(emb.WordVectors,2);
