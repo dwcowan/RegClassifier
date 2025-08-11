@@ -2,7 +2,15 @@ function T = fetch_crr_eba()
 %FETCH_CRR_EBA Download CRR articles from EBA Interactive Single Rulebook (HTML + plaintext).
 base = "https://eba.europa.eu";
 root = base + "/regulation-and-policy/single-rulebook/interactive-single-rulebook/12674";
-html = webread(root);
+opts = weboptions('Timeout',15);
+try
+    html = webread(root, opts);
+catch ME
+    warning("Failed fetching %s: %s", root, ME.message);
+    T = table(string.empty(0,1), string.empty(0,1), string.empty(0,1), string.empty(0,1), ...
+        'VariableNames', {'article_id','title','url','html_file'});
+    return
+end
 tree = htmlTree(html);
 a = findElement(tree, "a");
 hrefs = getAttribute(a, "href");
@@ -19,7 +27,7 @@ n = numel(hrefs); ids = strings(n,1); files = strings(n,1); titlesS = strings(n,
 for i = 1:n
     url = base + string(hrefs{i});
     try
-        page = webread(url);
+        page = webread(url, opts);
         ids(i) = "CRR_" + string(i);
         htmlPath = fullfile(outDir, ids(i) + ".html");
         txtPath  = fullfile(outDir, ids(i) + ".txt");
@@ -34,7 +42,8 @@ for i = 1:n
         warning("Failed fetching %s: %s", url, ME.message);
     end
 end
-T = table(ids, titlesS, urls, files, 'VariableNames', {'article_id','title','url','html_file'});
+valid = ids ~= "";
+T = table(ids(valid), titlesS(valid), urls(valid), files(valid), 'VariableNames', {'article_id','title','url','html_file'});
 writetable(T, fullfile(outDir,"index.csv"));
 fprintf("Saved %d CRR article pages to %s\n", height(T), outDir);
 end
