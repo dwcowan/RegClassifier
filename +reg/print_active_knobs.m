@@ -1,7 +1,12 @@
 function print_active_knobs(C)
 %PRINT_ACTIVE_KNOBS Pretty-print active knobs at the start of a run
 fprintf("\n=== Active Knobs ===\n");
-    if isfield(C,'knobs') && ~isempty(C.knobs), try, reg.validate_knobs(C.knobs); end, end
+if isfield(C,'knobs') && ~isempty(C.knobs)
+    try
+        reg.validate_knobs(C.knobs);
+    catch
+    end
+end
 if isfield(C,'knobs') && ~isempty(C.knobs)
     K = C.knobs;
     if isfield(K,'BERT')
