@@ -9,7 +9,8 @@ chunksT = reg.chunk_text(docsT, C.chunk_size_tokens, C.chunk_overlap); % chunk_i
 % C) Features: TF-IDF bag + LDA topics + embeddings
 [docsTok, vocab, Xtfidf] = reg.ta_features(chunksT.text);
 bag = bagOfWords(docsTok);
-mdlLDA = fitlda(bag, C.lda_topics, 'Verbose',0);
+numTopics = min(C.lda_topics, bag.NumDocuments);
+mdlLDA = fitlda(bag, numTopics, 'Verbose',0);
 topicDist = transform(mdlLDA, bag);
 E = reg.doc_embeddings_fasttext(chunksT.text, C.fasttext);
 
