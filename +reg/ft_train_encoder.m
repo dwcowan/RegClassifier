@@ -61,9 +61,7 @@ try
     layerNums = zeros(numel(ids),1);
     for i = 1:numel(ids)
         if ~isempty(ids{i})
-            % MATLAB uses parenthesis indexing. The previous implementation
-            % used square brackets (`layerNums[i]`), which is invalid and
-            % causes a runtime error.
+            % Use parentheses for indexing; square brackets cause errors.
             layerNums(i) = str2double(ids{i}{end});
         end
     end
