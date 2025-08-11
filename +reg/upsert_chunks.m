@@ -14,7 +14,7 @@ end
 if isstruct(conn) && isfield(conn,'sqlite')
     sconn = conn.sqlite;
     % Create label/score columns if needed
-    cols = fieldnames(T)';
+    cols = T.Properties.VariableNames;
     % Only retrieve column names to avoid NULL default values triggering errors
     cur = fetch(sconn, "SELECT name FROM pragma_table_info(''reg_chunks'');");
     if istable(cur)
@@ -36,7 +36,7 @@ if isstruct(conn) && isfield(conn,'sqlite')
     for i = 1:height(T)
         row = T(i,:);
         % Build REPLACE INTO with all columns
-        colnames = string(T.Properties.VariableNames);
+        colnames = string(cols);
         placeholders = join(repmat("?",1,numel(colnames)) , ",");
         sql = "INSERT OR REPLACE INTO reg_chunks (" + join(colnames,",") + ") VALUES (" + placeholders + ")";
         exec(sconn, sql, table2cell(row));
