@@ -14,7 +14,7 @@ bagQ = bagOfWords(qTok, S.vocab);
 qv = bagQ.Counts; idf = log( size(S.Xtfidf,1) ./ max(1,sum(S.Xtfidf>0,1)) );
 qtfidf = qv .* idf;
 
-qe = reg.doc_embeddings_fasttext(q, struct('language','en'));
+qe = reg.doc_embeddings_fasttext(q);
 qe = qe(1,:);
 
 bm = (S.Xtfidf * qtfidf') ./ max(1e-9, norm(qtfidf));

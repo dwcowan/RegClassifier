@@ -1,6 +1,12 @@
 function E = doc_embeddings_fasttext(textStr, fasttextCfg)
 %DOC_EMBEDDINGS_FASTTEXT Mean-pooled fastText vectors (normalized)
-emb = fastTextWordEmbedding(fasttextCfg.language);
+%   E = doc_embeddings_fasttext(textStr) returns mean-pooled fastText
+%   embeddings using the default model. An optional fasttextCfg argument is
+%   accepted for backward compatibility but is ignored.
+if nargin < 2
+    fasttextCfg = struct(); %#ok<NASGU>
+end
+emb = fastTextWordEmbedding();
 tok = tokenizedDocument(string(textStr));
 W = doc2sequence(emb, tok);
 d = size(emb.WordVectors,2);
