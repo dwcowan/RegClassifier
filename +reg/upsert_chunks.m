@@ -9,8 +9,8 @@ if isstruct(conn) && isfield(conn,'sqlite')
     sconn = conn.sqlite;
     % Create label columns if needed
     cols = fieldnames(T)';
-    cur = fetch(sconn, "PRAGMA table_info(reg_chunks);");
-    existing = string(cur(:,2));
+    cur = fetch(sconn, "SELECT name FROM pragma_table_info('reg_chunks');");
+    existing = string(cur(:,1));
     toAdd = setdiff(string(cols), existing);
     for k = 1:numel(toAdd)
         exec(sconn, "ALTER TABLE reg_chunks ADD COLUMN " + toAdd(k) + " TEXT");
