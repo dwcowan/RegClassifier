@@ -11,6 +11,7 @@ function E = doc_embeddings_bert_gpu(textStr, varargin)
 
 p = inputParser;
 addParameter(p,'MiniBatchSize', 96, @(x)isnumeric(x)&&x>=1);
+addParameter(p,'MaxSeqLength',256,@(x)isnumeric(x)&&x>=1);
 parse(p, varargin{:});
 mb = p.Results.MiniBatchSize;
 
