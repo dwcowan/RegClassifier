@@ -13,6 +13,7 @@ classdef TestRulesAndModel < TestBase
             mdlLDA = fitlda(bag, numTopics, 'Verbose',0);
             topicDist = transform(mdlLDA, bag);
             E = reg.doc_embeddings_fasttext(text, struct('language','en'));
+            tc.verifyEqual(vecnorm(E,2,2), ones(size(E,1),1), 'AbsTol',1e-6);
             X = [Xtfidf, sparse(topicDist), E];
 
             Yweak = reg.weak_rules(text, labels);

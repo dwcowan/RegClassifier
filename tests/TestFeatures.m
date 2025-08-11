@@ -7,6 +7,8 @@ classdef TestFeatures < TestBase
             E = reg.doc_embeddings_fasttext(str, struct('language','en'));
             tc.verifySize(E, [numel(str), size(E,2)]);
             tc.verifyGreaterThan(norm(E(1,:)), 0);
+            n = vecnorm(E,2,2);
+            tc.verifyEqual(n, ones(size(n)), 'AbsTol',1e-6);
         end
     end
 end
