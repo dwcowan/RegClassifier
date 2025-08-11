@@ -1,23 +1,12 @@
 function C = config()
 %CONFIG Project configuration for regulatory topic classifier
 
-% Load knobs from knobs.json if present
-C.knobs = reg.load_knobs();
-if isfield(C.knobs,'Chunk')
-    if isfield(C.knobs.Chunk,'SizeTokens'), C.chunk_size_tokens = C.knobs.Chunk.SizeTokens; end
-    if isfield(C.knobs.Chunk,'Overlap'),    C.chunk_overlap = C.knobs.Chunk.Overlap; end
-end
-
-% Display active knobs summary
-disp('=== Active knobs configuration ===');
-disp(jsonencode(C.knobs));
-
 C.input_dir   = "data/pdfs";     % drop regs here (PDFs)
 C.labels = ["IRB","CreditRisk","Securitisation","SRT","MarketRisk_FRTB", ...
             "Liquidity_LCR","Liquidity_NSFR","LeverageRatio","OperationalRisk", ...
             "AML_KYC","Governance","Reporting_COREP_FINREP","StressTesting","Outsourcing_ICT_DORA"];
 
-% Chunking
+% Chunking defaults
 C.chunk_size_tokens = 350;
 C.chunk_overlap     = 60;
 
@@ -38,16 +27,20 @@ C.db = struct('enable', false, 'vendor','postgres', 'dbname','reg_topics', ...
 % Reports
 C.report_title = "Banking Regulation Topic Classifier — Snapshot";
 
-    % === Load knobs.json and apply Chunk overrides ===
-    try
-        K = reg.load_knobs();
-        C.knobs = K;
-        if isfield(K,'Chunk')
-            if isfield(K.Chunk,'SizeTokens'), C.chunk_size_tokens = K.Chunk.SizeTokens; end
-            if isfield(K.Chunk,'Overlap'),    C.chunk_overlap     = K.Chunk.Overlap;    end
-        end
-    catch ME
-        warning("Knobs load/apply failed: %s", ME.message);
+% === Load knobs.json and apply Chunk overrides ===
+try
+    C.knobs = reg.load_knobs();
+    if isfield(C.knobs,'Chunk')
+        if isfield(C.knobs.Chunk,'SizeTokens'), C.chunk_size_tokens = C.knobs.Chunk.SizeTokens; end
+        if isfield(C.knobs.Chunk,'Overlap'),    C.chunk_overlap     = C.knobs.Chunk.Overlap;    end
     end
-    
+catch ME
+    warning("Knobs load/apply failed: %s", ME.message);
+    C.knobs = struct();
+end
+
+% Display active knobs summary
+disp('=== Active knobs configuration ===');
+disp(jsonencode(C.knobs));
+
 end
