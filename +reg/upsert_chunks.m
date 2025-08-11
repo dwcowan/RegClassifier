@@ -28,7 +28,7 @@ if isstruct(conn) && isfield(conn,'sqlite')
         if startsWith(colname, "score_")
             coltype = "REAL";
         else
-            coltype = "TEXT";
+            coltype = "INTEGER";
         end
         exec(sconn, "ALTER TABLE reg_chunks ADD COLUMN " + colname + " " + coltype);
     end
