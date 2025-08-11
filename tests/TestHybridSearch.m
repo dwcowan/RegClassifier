@@ -1,4 +1,4 @@
-classdef TestHybridSearch < matlab.unittest.TestCase
+classdef TestHybridSearch < RegTestCase
     methods (Test)
         function setBackend(~)
             C = config(); %#ok<NASGU>

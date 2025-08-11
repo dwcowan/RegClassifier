@@ -1,4 +1,4 @@
-classdef TestIntegrationSimulated < matlab.unittest.TestCase
+classdef TestIntegrationSimulated < RegTestCase
     methods (Test)
         function e2e_simulated(tc)
             [chunksT, labels, Ytrue] = testutil.generate_simulated_crr();

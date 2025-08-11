@@ -1,4 +1,4 @@
-classdef TestGoldMetrics < matlab.unittest.TestCase
+classdef TestGoldMetrics < RegTestCase
     methods (Test)
         function gold_meets_thresholds(tc)
             G = reg.load_gold("gold");
@@ -16,7 +16,7 @@ classdef TestGoldMetrics < matlab.unittest.TestCase
             tol = G.expect.overall.tolerance;
             tc.verifyGreaterThan(recall10 + tol, G.expect.overall.RecallAt10_min);
             tc.verifyGreaterThan(mAP + tol, G.expect.overall.mAP_min);
-            tc.verifyGreaterThan(ndcg10 + tol, G.expect.overall["nDCG@10_min"]);
+            tc.verifyGreaterThan(ndcg10 + tol, G.expect.overall.("nDCG@10_min"));
             % per-label
             per = reg.eval_per_label(E, G.Y, 10);
             labs = G.labels;

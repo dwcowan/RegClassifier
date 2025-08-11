@@ -1,4 +1,4 @@
-classdef TestFetchers < matlab.unittest.TestCase
+classdef TestFetchers < RegTestCase
     methods (Test)
         function eurlex_url_build(tc)
             try

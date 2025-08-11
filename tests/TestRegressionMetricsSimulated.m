@@ -1,4 +1,4 @@
-classdef TestRegressionMetricsSimulated < matlab.unittest.TestCase
+classdef TestRegressionMetricsSimulated < RegTestCase
     methods (Test)
         function regression_metrics(tc)
             [chunksT, labels, Ytrue] = testutil.generate_simulated_crr();

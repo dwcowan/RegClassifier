@@ -1,4 +1,4 @@
-classdef TestMetricsExpectedJSON < matlab.unittest.TestCase
+classdef TestMetricsExpectedJSON < RegTestCase
     methods (Test)
         function metrics_meet_expected(tc)
             addpath("tests/fixtures");
@@ -16,7 +16,7 @@ classdef TestMetricsExpectedJSON < matlab.unittest.TestCase
             ndcg10 = reg.metrics_ndcg(E*E.', posSets, 10);
             tc.verifyGreaterThan(recall10 + K.tolerance, K.RecallAt10_min);
             tc.verifyGreaterThan(mAP + K.tolerance, K.mAP_min);
-            tc.verifyGreaterThan(ndcg10 + K.tolerance, K["nDCG@10_min"]);
+            tc.verifyGreaterThan(ndcg10 + K.tolerance, K.("nDCG@10_min"));
         end
     end
 end
