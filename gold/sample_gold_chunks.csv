@@ -1,8 +1,0 @@
-chunk_id,doc_id,text
-CH_SIM_1,DOC_IRB_1,"Article 180 — Internal Ratings Based (IRB) approach: PD, LGD and EAD calibration shall reflect downturn conditions. Banks shall estimate loss given default (LGD) using long-run averages. The estimation of exposure at default (EAD) includes credit conversion factors for undrawn commitments."
-CH_SIM_2,DOC_IRB_2,"Annex — IRB slotting criteria; supervisory mapping functions for specialised lending; references to downturn LGD and conservatism in parameter estimation."
-CH_SIM_3,DOC_LCR_1,"Part Six — Liquidity Coverage Ratio (LCR): Credit institutions shall hold high quality liquid assets (HQLA) to withstand 30 calendar days of stress outflows. Level 1, Level 2A and Level 2B asset caps apply; operational deposits outflow rates are prescribed."
-CH_SIM_4,DOC_LCR_2,"Template C 73.00: HQLA composition and outflow assumptions; contingent funding obligations and secured funding transactions as per Delegated Act."
-CH_SIM_5,DOC_AML_1,"Chapter — AML and KYC: Institutions shall undertake customer due diligence (CDD), ongoing monitoring, and sanctions screening. Politically exposed persons require enhanced due diligence under AMLD."
-CH_SIM_6,DOC_SEC_1,"Title — Securitisation: significant risk transfer (SRT) tests; STS criteria; tranche maturity and risk weights; internal assessment approach where applicable."
-CH_SIM_7,DOC_LR_1,"Part Seven — Leverage Ratio: exposure measure includes derivatives replacement cost and potential future exposure; off-balance-sheet items subject to credit conversion factors; public disclosure requirements."

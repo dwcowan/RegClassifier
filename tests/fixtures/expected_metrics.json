@@ -1,6 +1,0 @@
-{
-  "RecallAt10_min": 0.8,
-  "mAP_min": 0.6,
-  "nDCG@10_min": 0.6,
-  "tolerance": 0.02
-}
