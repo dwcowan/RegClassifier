@@ -38,9 +38,10 @@ C.min_rule_conf = 0.7;  % threshold to accept weakly-labeled positives for boots
 C.kfold = 5;
 
 % DB (set enable=true to persist in pipeline). For tests we use sqlite.
+root_dir = fileparts(mfilename('fullpath'));
 C.db = struct('enable', false, 'vendor','postgres', 'dbname','reg_topics', ...
               'user','user','pass','pass','server','localhost','port',5432, ...
-              'sqlite_path', "tests/tmp/test_reg_topics.sqlite");
+              'sqlite_path', fullfile(root_dir, 'tests', 'tmp', 'test_reg_topics.sqlite'));
 
 % Reports
 C.report_title = "Banking Regulation Topic Classifier — Snapshot";
