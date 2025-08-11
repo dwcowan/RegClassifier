@@ -16,7 +16,7 @@ if isstruct(conn) && isfield(conn,'sqlite')
     % Create label/score columns if needed
     cols = T.Properties.VariableNames;
     % Only retrieve column names to avoid NULL default values triggering errors
-    cur = fetch(sconn, "SELECT name FROM pragma_table_info(''reg_chunks'');");
+    cur = fetch(sconn, "SELECT name FROM pragma_table_info('reg_chunks');");
     if istable(cur)
         existing = string(cur{:,:});
     else
