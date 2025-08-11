@@ -10,6 +10,10 @@ classdef TestFetchers < RegTestCase
         end
         function eba_fetch_signature(tc)
             % Function should always return a table, even if network unavailable
+            testDir = fileparts(mfilename('fullpath'));
+            timeoutDir = fullfile(testDir, 'fixtures', 'webread_timeout');
+            addpath(timeoutDir);
+            tc.addTeardown(@() rmpath(timeoutDir));
             T = reg.fetch_crr_eba();
             tc.verifyTrue(istable(T));
         end
