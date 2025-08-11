@@ -10,21 +10,20 @@ if isfield(DB,'vendor') && strcmpi(DB.vendor,'sqlite')
     if ~exist(dbdir, 'dir')
         mkdir(dbdir);
     end
-    if exist(DB.sqlite_path, 'file')
+    % Open or create the SQLite database file
+    sconn = sqlite(DB.sqlite_path);
 
-        sconn = sqlite(DB.sqlite_path);          % open existing file
-    else
+    % Ensure the reg_chunks table exists
+    createSQL = [
+        'CREATE TABLE IF NOT EXISTS reg_chunks (' ...
+        '  chunk_id TEXT PRIMARY KEY,' ...
+        '  doc_id TEXT,' ...
+        '  text TEXT' ...
+        ');'];
+    exec(sconn, createSQL);
 
-        % ensure table
-        createSQL = [
-            'CREATE TABLE IF NOT EXISTS reg_chunks (' ...
-            '  chunk_id TEXT PRIMARY KEY,' ...
-            '  doc_id TEXT,' ...
-            '  text TEXT' ...
-            ');'];
-        exec(sconn, createSQL);
-        conn = struct('sqlite', sconn, 'vendor','sqlite');
-    end
+    % Return a connection struct consistent with Postgres branch
+    conn = struct('sqlite', sconn, 'vendor','sqlite');
 else
     % Default to Database Toolbox server connection (e.g., Postgres)
     conn = database(DB.dbname, DB.user, DB.pass, 'Vendor', DB.vendor, ...
