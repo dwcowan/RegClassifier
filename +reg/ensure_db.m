@@ -7,18 +7,15 @@ if isfield(DB,'vendor') && strcmpi(DB.vendor,'sqlite')
     % statements.  Use a multi-line block for compatibility instead of
     % "if cond, stmt; end".
     dbdir = fileparts(DB.sqlite_path);
-    if ~exist(dbdir, 'dir')
+    if ~isempty(dbdir) && ~exist(dbdir, 'dir')
         mkdir(dbdir);
     end
 
-    % Obtain a SQLite connection before checking for file existence
-    sconn = sqlite(DB.sqlite_path);
-
-    % Branch on whether the database file exists
+    % Open existing SQLite file or create a new one as needed
     if exist(DB.sqlite_path, 'file')
-        % File already present - nothing extra needed
+        sconn = sqlite(DB.sqlite_path);
     else
-        % File was just created - no special handling
+        sconn = sqlite(DB.sqlite_path, 'create');
     end
 
     % Ensure the reg_chunks table exists after the connection is defined
