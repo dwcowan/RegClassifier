@@ -6,7 +6,8 @@ if isfield(DB,'vendor') && strcmpi(DB.vendor,'sqlite')
     if isfile(DB.sqlite_path)
         sconn = sqlite(DB.sqlite_path);          % open existing file
     else
-<<<<<<< HEAD
+
+        <<<<<<< HEAD
         sconn = sqlite(DB.sqlite_path,'create'); % create new file
 =======
         sconn = sqlite(DB.sqlite_path, 'create'); %#ok<SQLITE> % create new file
