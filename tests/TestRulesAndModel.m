@@ -9,7 +9,8 @@ classdef TestRulesAndModel < TestBase
             labels = ["IRB","Liquidity_LCR","AML_KYC"];
             [docsTok, vocab, Xtfidf] = reg.ta_features(text); %#ok<ASGLU>
             bag = bagOfWords(docsTok);
-            mdlLDA = fitlda(bag, 6, 'Verbose',0);
+            numTopics = min(6, bag.NumDocuments);
+            mdlLDA = fitlda(bag, numTopics, 'Verbose',0);
             topicDist = transform(mdlLDA, bag);
             E = reg.doc_embeddings_fasttext(text, struct('language','en'));
             X = [Xtfidf, sparse(topicDist), E];
