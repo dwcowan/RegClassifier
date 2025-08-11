@@ -19,13 +19,14 @@ Yboot = Yweak >= C.min_rule_conf;  % N x L logical
 P = reg.build_pairs(Yboot, 'MaxTriplets', 150000);
 
 % Train projection head
-p = {'ProjDim', 384, 'Epochs', 5, 'BatchSize', 512, 'LR', 1e-3, 'Margin', 0.2};
+p = {'ProjDim', 384, 'Epochs', 5, 'BatchSize', 512, 'LR', 1e-3, 'Margin', 0.2, 'UseGPU', true};
 if isfield(C.knobs,'Projection')
   if isfield(C.knobs.Projection,'ProjDim'), p{2} = C.knobs.Projection.ProjDim; end
   if isfield(C.knobs.Projection,'Epochs'),  p{4} = C.knobs.Projection.Epochs; end
   if isfield(C.knobs.Projection,'BatchSize'),p{6} = C.knobs.Projection.BatchSize; end
   if isfield(C.knobs.Projection,'LR'),      p{8} = C.knobs.Projection.LR; end
   if isfield(C.knobs.Projection,'Margin'),  p{10}= C.knobs.Projection.Margin; end
+  if isfield(C.knobs.Projection,'UseGPU'),  p{12}= C.knobs.Projection.UseGPU; end
 end
 head = reg.train_projection_head(Ebase, P, p{:});
 

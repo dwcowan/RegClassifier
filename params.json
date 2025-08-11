@@ -7,6 +7,17 @@
     "EncoderLR": 1e-05,
     "HeadLR": 0.001,
     "Epochs": 4,
-    "Loss": "triplet"
+    "Loss": "triplet",
+    "Margin": 0.2,
+    "UseFP16": false,
+    "CheckpointDir": "checkpoints",
+    "Resume": true,
+    "EarlyStopPatience": 2,
+    "EarlyStopMinDelta": 0.01,
+    "EvalY": [],
+    "EvalEvery": 1,
+    "HardNegatives": true,
+    "HardNegMaxN": 2000,
+    "Yboot": []
   }
 }

@@ -74,6 +74,7 @@ run reg_eval_and_report
   - `BERT.MiniBatchSize` (default 96), `BERT.MaxSeqLength` (default 256)
 - **Projection Head**
   - `Projection.BatchSize` (default 768), `Projection.Epochs` (default 5), `Projection.ProjDim` (384)
+  - `Projection.UseGPU` (true)
 - **Fine-Tune Encoder**
   - `FineTune.Loss` (`"triplet"` or `"supcon"`), `FineTune.BatchSize` (32), `FineTune.MaxSeqLength` (256)
   - `FineTune.UnfreezeTopLayers` (4 → 6–8), `FineTune.Epochs` (4–8)
