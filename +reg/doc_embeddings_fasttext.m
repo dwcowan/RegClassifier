@@ -28,14 +28,18 @@ catch ME
         rethrow(ME);
     end
 end
-tok = tokenizedDocument(string(textStr));
-W = doc2sequence(emb, tok);
+tok = tokenizedDocument(lower(string(textStr)));
+T = tokens(tok);
 d = size(emb.WordVectors,2);
-E = zeros(numel(W), d, 'single');
-for i = 1:numel(W)
-    if isempty(W{i}), continue; end
-    V = single(W{i});
-    E(i,:) = mean(V, 2, 'omitnan');
+E = zeros(numel(T), d, 'single');
+for i = 1:numel(T)
+    V = word2vec(emb, T{i});
+    V = single(V);
+    V(all(isnan(V),2),:) = [];
+    if isempty(V), continue; end
+    E(i,:) = mean(V, 1, 'omitnan');
 end
-n = vecnorm(E,2,2); n(n==0)=1; E = E ./ n;
+n = vecnorm(E,2,2);
+n(n==0) = 1;
+E = E ./ n;
 end
