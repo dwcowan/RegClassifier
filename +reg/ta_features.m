@@ -9,7 +9,12 @@ docsTok = normalizeWords(docsTok,'Style','lemma');
 docsTok = removeShortWords(docsTok,3);
 
 bag = bagOfWords(docsTok);
-bag = removeInfrequentWords(bag, 2);
+% Only drop infrequent words when at least one term appears twice.
+% This prevents removing all vocabulary for small corpora.
+counts = full(sum(bag.Counts,1));
+if any(counts >= 2)
+    bag = removeInfrequentWords(bag, 2);
+end
 bag = removeEmptyDocuments(bag);
 X = bag.Counts;                  % docs×terms
 idf = log( size(X,1) ./ max(1,sum(X>0,1)) );

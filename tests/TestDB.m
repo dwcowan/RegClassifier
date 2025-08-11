@@ -34,8 +34,13 @@ classdef TestDB < RegTestCase
             if isstruct(conn) && isfield(conn,'sqlite')
                 cur = fetch(conn.sqlite, "SELECT count(*) FROM reg_chunks");
                 tc.verifyGreaterThanOrEqual(cur{1}, 2);
-                cols = fetch(conn.sqlite, "PRAGMA table_info(reg_chunks);");
-                tc.verifyTrue(any(strcmp('score_IRB', cols(:,2))));
+                colNames = fetch(conn.sqlite, "SELECT name FROM pragma_table_info(''reg_chunks'');");
+                if istable(colNames)
+                    names = string(colNames{:,:});
+                else
+                    names = string(colNames(:,1));
+                end
+                tc.verifyTrue(any(names == "score_IRB"));
                 close(conn.sqlite);
             end
         end
