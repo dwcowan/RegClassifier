@@ -1,4 +1,4 @@
-classdef TestDB < matlab.unittest.TestCase
+classdef TestDB < TestBase
     properties
         TempDB
     end

@@ -1,4 +1,4 @@
-classdef TestIngestAndChunk < matlab.unittest.TestCase
+classdef TestIngestAndChunk < TestBase
     methods (Test)
         function test_ingest_and_chunk(tc)
             C = config();
