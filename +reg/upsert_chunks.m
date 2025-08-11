@@ -33,13 +33,23 @@ if isstruct(conn) && isfield(conn,'sqlite')
         exec(sconn, "ALTER TABLE reg_chunks ADD COLUMN " + colname + " " + coltype);
     end
     % Upsert rows (INSERT OR REPLACE)
+    colnames = string(cols);
     for i = 1:height(T)
         row = T(i,:);
-        % Build REPLACE INTO with all columns
-        colnames = string(cols);
-        placeholders = join(repmat("?",1,numel(colnames)) , ",");
-        sql = "INSERT OR REPLACE INTO reg_chunks (" + join(colnames,",") + ") VALUES (" + placeholders + ")";
-        exec(sconn, sql, table2cell(row));
+        vals = table2cell(row);
+        sqlvals = strings(1, numel(vals));
+        for j = 1:numel(vals)
+            v = vals{j};
+            if isstring(v) || ischar(v)
+                sqlvals(j) = "'" + strrep(string(v), "'", "''") + "'";
+            elseif islogical(v)
+                sqlvals(j) = num2str(double(v));
+            else
+                sqlvals(j) = num2str(v);
+            end
+        end
+        sql = "INSERT OR REPLACE INTO reg_chunks (" + join(colnames,",") + ") VALUES (" + join(sqlvals,",") + ")";
+        exec(sconn, sql);
     end
 else
     % Database Toolbox server (e.g., Postgres) — naive approach: try sqlwrite then ignore conflicts
