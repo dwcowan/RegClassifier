@@ -9,53 +9,50 @@ O = p.Results.OutDir; if ~isfolder(O), mkdir(O); end
 
 A = dir(fullfile(dirA, '*.txt'));
 B = dir(fullfile(dirB, '*.txt'));
-mapA = containers.Map(); for i = 1:numel(A)
-    % Use MATLAB parenthesis indexing when iterating over struct arrays
-    % rather than the Python-style A[i] which causes a syntax error.
+mapA = containers.Map();
+for i = 1:numel(A)
     mapA(A(i).name) = fullfile(A(i).folder, A(i).name);
 end
-mapB = containers.Map(); for i = 1:numel(B)
+mapB = containers.Map();
+for i = 1:numel(B)
     mapB(B(i).name) = fullfile(B(i).folder, B(i).name);
 end
 keys = unique([string({A.name})'; string({B.name})'], 'stable');
 
 added=0; removed=0; changed=0; same=0;
-fidCSV = fopen(fullfile(O,'summary.csv'),'w'); fprintf(fidCSV,"file,status
-");
+% Write CSV header
+fidCSV = fopen(fullfile(O,'summary.csv'),'w');
+fprintf(fidCSV, "file,status\n");
 fidPatch = fopen(fullfile(O,'patch.txt'),'w');
 
 for k = 1:numel(keys)
     f = char(keys(k));
     inA = isKey(mapA, f); inB = isKey(mapB, f);
     if inA && ~inB
-        removed = removed + 1; fprintf(fidCSV,"%s,REMOVED
-", f);
+        removed = removed + 1;
+        fprintf(fidCSV,"%s,REMOVED\n", f);
     elseif ~inA && inB
-        added = added + 1; fprintf(fidCSV,"%s,ADDED
-", f);
+        added = added + 1;
+        fprintf(fidCSV,"%s,ADDED\n", f);
     else
         ta = splitlines(string(fileread(mapA(f))));
         tb = splitlines(string(fileread(mapB(f))));
         if isequal(ta, tb)
-            same = same + 1; fprintf(fidCSV,"%s,SAME
-", f);
+            same = same + 1;
+            fprintf(fidCSV,"%s,SAME\n", f);
         else
-            changed = changed + 1; fprintf(fidCSV,"%s,CHANGED
-", f);
+            changed = changed + 1;
+            fprintf(fidCSV,"%s,CHANGED\n", f);
             % naive unified-like diff
-            fprintf(fidPatch, "
-=== %s ===
-", f);
+            fprintf(fidPatch, "=== %s ===\n", f);
             maxL = max(numel(ta), numel(tb));
             for i=1:maxL
                 sa = ""; sb = "";
                 if i<=numel(ta), sa = ta(i); end
                 if i<=numel(tb), sb = tb(i); end
                 if sa ~= sb
-                    fprintf(fidPatch, "- %s
-", sa);
-                    fprintf(fidPatch, "+ %s
-", sb);
+                    fprintf(fidPatch, "- %s\n", sa);
+                    fprintf(fidPatch, "+ %s\n", sb);
                 end
             end
         end
@@ -64,6 +61,6 @@ end
 
 fclose(fidCSV); fclose(fidPatch);
 R = struct('added',added,'removed',removed,'changed',changed,'same',same,'outdir',O);
-fprintf("Diff summary: added=%d removed=%d changed=%d same=%d -> %s
-", added, removed, changed, same, O);
+fprintf("Diff summary: added=%d removed=%d changed=%d same=%d -> %s\n", added, removed, changed, same, O);
 end
+
