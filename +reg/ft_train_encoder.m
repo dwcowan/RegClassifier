@@ -1,6 +1,6 @@
 function netFT = ft_train_encoder(chunksT, P, varargin)
 %FT_TRAIN_ENCODER Contrastive fine-tuning of BERT encoder (MATLAB R2024a)
-% Name-Value params:
+% Name-Value params (defaults read from params.json > FineTune when available):
 %   'Epochs' (4)
 %   'BatchSize' (32)
 %   'MaxSeqLength' (256)
@@ -16,16 +16,44 @@ function netFT = ft_train_encoder(chunksT, P, varargin)
 % P is a struct with fields anchor, positive, negative (uint32 indices). For 'supcon',
 % we internally form two views per anchor (anchor, positive) and treat same-index pairs as positives.
 
+% --- Load params.json for defaults ---
+params = struct();
+if isfile('params.json')
+    try
+        params = jsondecode(fileread('params.json'));
+    catch ME
+        warning('Failed to read params.json: %s', ME.message);
+    end
+end
+ft = struct();
+if isfield(params,'FineTune'), ft = params.FineTune; end
+
+defBatchSize = 32;
+if isfield(ft,'BatchSize'), defBatchSize = ft.BatchSize; end
+defUnfreeze = 4;
+if isfield(ft,'UnfreezeTopLayers'), defUnfreeze = ft.UnfreezeTopLayers; end
+defEncLR = 1e-5;
+if isfield(ft,'EncoderLR'), defEncLR = ft.EncoderLR; end
+defHeadLR = 1e-3;
+if isfield(ft,'HeadLR'), defHeadLR = ft.HeadLR; end
+defEpochs = 4;
+if isfield(ft,'Epochs'), defEpochs = ft.Epochs; end
+defLoss = 'triplet';
+if isfield(ft,'Loss'), defLoss = ft.Loss; end
+defMaxSeqLen = 256;
+if isfield(params,'MaxSeqLength'), defMaxSeqLen = params.MaxSeqLength; end
+
+% --- Parse inputs ---
 p = inputParser;
-addParameter(p,'Epochs',4);
-addParameter(p,'BatchSize',32);
-addParameter(p,'MaxSeqLength',256);
-addParameter(p,'EncoderLR',1e-5);
-addParameter(p,'HeadLR',1e-3);
+addParameter(p,'Epochs',defEpochs);
+addParameter(p,'BatchSize',defBatchSize);
+addParameter(p,'MaxSeqLength',defMaxSeqLen);
+addParameter(p,'EncoderLR',defEncLR);
+addParameter(p,'HeadLR',defHeadLR);
 addParameter(p,'Margin',0.2);
-addParameter(p,'UnfreezeTopLayers',4);
+addParameter(p,'UnfreezeTopLayers',defUnfreeze);
 addParameter(p,'UseFP16',false);
-addParameter(p,'Loss','triplet',@(s)any(strcmpi(s,{'triplet','supcon'})));
+addParameter(p,'Loss',defLoss,@(s)any(strcmpi(s,{'triplet','supcon'})));
 addParameter(p,'CheckpointDir','checkpoints',@ischar);
 addParameter(p,'Resume',true,@islogical);
 addParameter(p,'EarlyStopPatience',2);
