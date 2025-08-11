@@ -14,7 +14,13 @@ bagQ = bagOfWords(qTok, S.vocab);
 qv = bagQ.Counts; idf = log( size(S.Xtfidf,1) ./ max(1,sum(S.Xtfidf>0,1)) );
 qtfidf = qv .* idf;
 
-emb = fastTextWordEmbedding("en");
+% fastTextWordEmbedding API differs across MATLAB versions. Try with the
+% language argument first and fall back to the no-argument form if needed.
+try
+    emb = fastTextWordEmbedding("en");
+catch
+    emb = fastTextWordEmbedding;
+end
 seq = doc2sequence(emb, qTok);
 if ~isempty(seq) && ~isempty(seq{1}), qe = mean(single(seq{1}),2)'; else, qe = zeros(1,size(S.E,2),'single'); end
 qe = qe ./ max(1e-9, norm(qe));
