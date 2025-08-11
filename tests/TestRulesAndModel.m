@@ -1,4 +1,4 @@
-classdef TestRulesAndModel < matlab.unittest.TestCase
+classdef TestRulesAndModel < TestBase
     methods (Test)
         function test_rules_and_train_predict(tc)
             text = [

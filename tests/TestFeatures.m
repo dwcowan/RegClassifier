@@ -1,4 +1,4 @@
-classdef TestFeatures < matlab.unittest.TestCase
+classdef TestFeatures < TestBase
     methods (Test)
         function test_tfidf_and_embeddings(tc)
             str = ["IRB PD LGD EAD framework."; "LCR requires HQLA"; "AML and KYC obligations"];

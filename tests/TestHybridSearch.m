@@ -1,4 +1,4 @@
-classdef TestHybridSearch < matlab.unittest.TestCase
+classdef TestHybridSearch < TestBase
     methods (Test)
         function test_query(tc)
             docs = ["IRB approach for PD LGD.", "LCR requires HQLA", "KYC procedures for AML"];
