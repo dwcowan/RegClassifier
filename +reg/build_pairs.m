@@ -23,18 +23,15 @@ for i = 1:N
     posSets{i}(posSets{i}==i) = []; % remove self
 end
 
-% Negatives: disjoint labels
-negMask = ~labelsLogical;
+% Negatives: choose rows that share no label with the anchor
 trip = zeros(3,0,'uint32');
 for i = 1:N
     Pset = posSets{i};
     if numel(Pset) < R.MinPosPerAnchor, continue; end
     % pick one positive at random
     pidx = Pset(randi(numel(Pset)));
-    % negatives: rows that share no label with the anchor
-    negCandidates = find(all(negMask(i,:) | ~negMask, 2)); % rows with all ~labels(i,:)
-    % more robust: true negatives are rows where (labelsLogical(i,:) & labelsLogical(j,:))==0
-    overlap = labelsLogical * labelsLogical(i,:)';
+    % negatives: compute label overlap and keep rows with zero intersection
+    overlap = labelsLogical * labelsLogical(i,:)'; % count shared labels
     negCandidates = find(overlap==0);
     negCandidates(negCandidates==i) = [];
     if isempty(negCandidates), continue; end

@@ -28,12 +28,17 @@ catch ME
         rethrow(ME);
     end
 end
-tok = tokenizedDocument(lower(string(textStr)));
-T = tokens(tok);
+
+% The "tokens" function for tokenizedDocument objects is not available in
+% all MATLAB releases. To maintain compatibility, perform a simple
+% whitespace-based tokenization that works across versions.
+textStr = string(textStr);
 d = size(emb.WordVectors,2);
-E = zeros(numel(T), d, 'single');
-for i = 1:numel(T)
-    V = word2vec(emb, T{i});
+E = zeros(numel(textStr), d, 'single');
+for i = 1:numel(textStr)
+    t = split(regexprep(lower(textStr(i)), '\s+', ' '));
+    t(t=="") = [];
+    V = word2vec(emb, t);
     V = single(V);
     V(all(isnan(V),2),:) = [];
     if isempty(V), continue; end
