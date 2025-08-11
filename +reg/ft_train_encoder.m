@@ -34,6 +34,7 @@ addParameter(p,'EvalY',[]);                % logical labels for eval
 addParameter(p,'EvalEvery',1);             % epochs
 addParameter(p,'HardNegatives',true);
 addParameter(p,'HardNegMaxN',2000);        % mine on subset if corpus is huge
+addParameter(p,'Yboot',[]);                % optional weak labels for hard-negative mining
 parse(p,varargin{:});
 R = p.Results;
 
@@ -59,7 +60,12 @@ try
     ids = regexp(encLayerNames, "\d+", "match");
     layerNums = zeros(numel(ids),1);
     for i = 1:numel(ids)
-        if ~isempty(ids{i}), layerNums[i] = str2double(ids{i}{end}); end
+        if ~isempty(ids{i})
+            % MATLAB uses parenthesis indexing. The previous implementation
+            % used square brackets (`layerNums[i]`), which is invalid and
+            % causes a runtime error.
+            layerNums(i) = str2double(ids{i}{end});
+        end
     end
     maxNum = max(layerNums);
     cutoff = maxNum - R.UnfreezeTopLayers + 1;
@@ -100,10 +106,14 @@ bestScore = -inf; noImprove = 0;
 for epoch = startEpoch:R.Epochs
     % Hard-negative mining (optional)
     if R.HardNegatives
-        try
-            [A, Pp, Nn] = localMineNegatives(base, head, chunksT, Yboot, A, Pp, Nn, R.MaxSeqLength, R.HardNegMaxN);
-        catch ME
-            warning('Hard-negative mining skipped: %s', ME.message);
+        if ~isempty(R.Yboot)
+            try
+                [A, Pp, Nn] = localMineNegatives(base, head, chunksT, R.Yboot, A, Pp, Nn, R.MaxSeqLength, R.HardNegMaxN);
+            catch ME
+                warning('Hard-negative mining skipped: %s', ME.message);
+            end
+        else
+            warning('Hard-negative mining skipped: Yboot labels not provided.');
         end
     end
     ord = randperm(numTrip);

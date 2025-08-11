@@ -25,9 +25,13 @@ for i = 1:N
         idcg = idcg + (idealRel(j) / log2(j+1));
     end
     if idcg > 0
-        ndcg_i[i] = dcg / idcg;
+        % MATLAB uses 1-based indexing with parentheses. The previous
+        % implementation accidentally used square brackets (`ndcg_i[i]`)
+        % which is Python-style indexing and results in a syntax error.
+        % Use the correct parenthesis-based indexing.
+        ndcg_i(i) = dcg / idcg;
     else
-        ndcg_i[i] = 0;
+        ndcg_i(i) = 0;
     end
 end
 ndcg = mean(ndcg_i);
