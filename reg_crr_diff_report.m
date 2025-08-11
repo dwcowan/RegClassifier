@@ -43,6 +43,5 @@ if N > 0
 end
 
 close(r);
-fprintf('Wrote diff report: %s
-', fullfile(O,'crr_diff_report.pdf'));
+fprintf('Wrote diff report: %s', fullfile(O,'crr_diff_report.pdf'));
 end
