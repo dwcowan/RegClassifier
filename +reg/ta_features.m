@@ -9,7 +9,7 @@ docsTok = normalizeWords(docsTok,'Style','lemma');
 docsTok = removeShortWords(docsTok,3);
 
 bag = bagOfWords(docsTok);
-bag = removeInfrequentWords(bag, 2);
+bag = removeInfrequentWords(bag, 1);
 bag = removeEmptyDocuments(bag);
 X = bag.Counts;                  % docs×terms
 idf = log( size(X,1) ./ max(1,sum(X>0,1)) );
