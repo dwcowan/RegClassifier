@@ -2,7 +2,8 @@ function T = eval_per_label(E, Ylogical, K)
 %EVAL_PER_LABEL Per-label Recall@K using cosine similarity
 if nargin<3, K=10; end
 N = size(E,1); L = size(Ylogical,2);
-S = E * E.';
+E = E ./ vecnorm(E, 2, 2); % normalize each row for cosine similarity
+S = E * E.'; % cosine similarity matrix
 rec = zeros(L,1); denom = zeros(L,1);
 for i = 1:N
     labs = find(Ylogical(i,:));
