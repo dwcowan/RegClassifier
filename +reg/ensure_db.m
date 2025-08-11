@@ -3,7 +3,7 @@ function conn = ensure_db(DB)
 % For SQLite, it creates a file (DB.sqlite_path) and returns struct with .sqlite handle.
 if isfield(DB,'vendor') && strcmpi(DB.vendor,'sqlite')
     if ~isfolder(fileparts(DB.sqlite_path)), mkdir(fileparts(DB.sqlite_path)); end
-    sconn = sqlite(DB.sqlite_path, 'create'); %#ok<SQLITE>
+    sconn = sqlite(DB.sqlite_path, 'create'); 
     % ensure table
     createSQL = [
         'CREATE TABLE IF NOT EXISTS reg_chunks (' ...
