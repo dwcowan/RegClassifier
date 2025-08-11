@@ -5,6 +5,7 @@ function T = fetch_crr_eba(args)
 %
 % Name-Value arguments:
 %   'Timeout'     Timeout in seconds for each web request. Default is 15.
+%                 Passed directly to WEBOPTIONS.
 %   'MaxArticles' Maximum number of articles to download. Default is Inf.
 %
 % The function attempts to download up to MaxArticles. If a request times out,
@@ -39,8 +40,7 @@ hrefs = hrefs(ia); titles = titles(ia);
 
 outDir = fullfile("data","eba_isrb","crr"); if ~isfolder(outDir), mkdir(outDir); end
 nTotal = numel(hrefs);
-n = min(nTotal, args.MaxArticles);
-n = floor(n);
+n = min(nTotal, floor(args.MaxArticles));
 hrefs = hrefs(1:n); titles = titles(1:n);
 ids = strings(n,1); files = strings(n,1); titlesS = strings(n,1); urls = strings(n,1);
 for i = 1:n
