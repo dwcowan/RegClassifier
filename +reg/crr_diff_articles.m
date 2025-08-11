@@ -37,8 +37,7 @@ allKeys = unique([keysA; keysB]);
 
 added=0; removed=0; changed=0; same=0;
 fidCSV = fopen(fullfile(O,'summary_by_article.csv'),'w');
-fprintf(fidCSV,"article_num,status,titleA,titleB,urlA,urlB
-");
+fprintf(fidCSV,"article_num,status,titleA,titleB,urlA,urlB\n");
 fidPatch = fopen(fullfile(O,'patch_by_article.txt'),'w');
 
 for k=1:numel(allKeys)
@@ -49,24 +48,20 @@ for k=1:numel(allKeys)
     if inB, tB = string(fileread(mapB(key).txt)); urlB = mapB(key).url; titleB = mapB(key).title; end
 
     if inA && ~inB
-        removed = removed + 1; fprintf(fidCSV,"%s,REMOVED,"%s","",%s,
-", key, titleA, urlA);
+        removed = removed + 1;
+        fprintf(fidCSV,"%s,REMOVED,\"%s\",\"\",%s,%s\n", key, titleA, urlA, "");
     elseif ~inA && inB
-        added = added + 1; fprintf(fidCSV,"%s,ADDED,"","%s",,%s
-", key, titleB, urlB);
+        added = added + 1;
+        fprintf(fidCSV,"%s,ADDED,\",\"%s\",%s,%s\n", key, titleB, "", urlB);
     else
         la = splitlines(tA); lb = splitlines(tB);
         if isequal(la, lb)
-            same = same + 1; fprintf(fidCSV,"%s,SAME,"%s","%s",%s,%s
-", key, titleA, titleB, urlA, urlB);
+            same = same + 1;
+            fprintf(fidCSV,"%s,SAME,\"%s\",\"%s\",%s,%s\n", key, titleA, titleB, urlA, urlB);
         else
-            changed = changed + 1; fprintf(fidCSV,"%s,CHANGED,"%s","%s",%s,%s
-", key, titleA, titleB, urlA, urlB);
-            fprintf(fidPatch, "
-=== Article %s ===
-%s
--> %s
-", key, urlA, urlB);
+            changed = changed + 1;
+            fprintf(fidCSV,"%s,CHANGED,\"%s\",\"%s\",%s,%s\n", key, titleA, titleB, urlA, urlB);
+            fprintf(fidPatch, "=== Article %s ===\n%s\n-> %s\n", key, urlA, urlB);
             maxL = max(numel(la), numel(lb));
             cnt = 0;
             for i=1:maxL
@@ -74,13 +69,10 @@ for k=1:numel(allKeys)
                 if i<=numel(la), sa = la(i); end
                 if i<=numel(lb), sb = lb(i); end
                 if sa ~= sb
-                    fprintf(fidPatch,"- %s
-+ %s
-", sa, sb);
+                    fprintf(fidPatch,"- %s\n+ %s\n", sa, sb);
                     cnt = cnt + 1;
                     if cnt >= p.Results.MaxLines
-                        fprintf(fidPatch,"... (truncated) ...
-");
+                        fprintf(fidPatch,"... (truncated) ...\n");
                         break;
                     end
                 end
@@ -91,6 +83,5 @@ end
 
 fclose(fidCSV); fclose(fidPatch);
 R = struct('added',added,'removed',removed,'changed',changed,'same',same,'outdir',O);
-fprintf("Article-aware diff: added=%d removed=%d changed=%d same=%d -> %s
-", added, removed, changed, same, O);
+fprintf("Article-aware diff: added=%d removed=%d changed=%d same=%d -> %s", added, removed, changed, same, O);
 end
