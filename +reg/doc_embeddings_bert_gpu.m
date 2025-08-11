@@ -9,11 +9,16 @@ function E = doc_embeddings_bert_gpu(textStr, varargin)
 %
 % If BERT is unavailable, this function throws. Callers should catch and fallback.
 
+params = jsondecode(fileread('params.json'));
+miniBatchSize = params.MiniBatchSize;
+maxSeqLen = params.MaxSeqLength;
+
 p = inputParser;
-addParameter(p,'MiniBatchSize', 96, @(x)isnumeric(x)&&x>=1);
-addParameter(p,'MaxSeqLength',256,@(x)isnumeric(x)&&x>=1);
+addParameter(p,'MiniBatchSize', miniBatchSize, @(x)isnumeric(x)&&x>=1);
+addParameter(p,'MaxSeqLength',maxSeqLen,@(x)isnumeric(x)&&x>=1);
 parse(p, varargin{:});
-mb = p.Results.MiniBatchSize;
+miniBatchSize = p.Results.MiniBatchSize;
+maxSeqLen = p.Results.MaxSeqLength;
 
 % Ensure GPU is available
 assert(gpuDeviceCount > 0, 'No GPU device found. Install CUDA-enabled GPU drivers.');
@@ -51,18 +56,18 @@ enc = encode(tok, textStr, 'Padding','longest','Truncation','longest'); % struct
 ids = enc.InputIDs; mask = enc.AttentionMask;
 maxLen = size(ids,2);
 
-if p.Results.MaxSeqLength < maxLen
-    ids  = ids(:, 1:p.Results.MaxSeqLength);
-    mask = mask(:,1:p.Results.MaxSeqLength);
-    maxLen = p.Results.MaxSeqLength;
+if maxSeqLen < maxLen
+    ids  = ids(:, 1:maxSeqLen);
+    mask = mask(:,1:maxSeqLen);
+    maxLen = maxSeqLen;
 end
 
 
 % Mini-batch inference on GPU
 E = zeros(N, 768, 'single');  % bert-base hidden size
 dlX = [];
-for s = 1:mb:N
-    e = min(N, s+mb-1);
+for s = 1:miniBatchSize:N
+    e = min(N, s+miniBatchSize-1);
     idsMB  = gpuArray(int32(ids(s:e, :)));
     maskMB = gpuArray(int32(mask(s:e, :)));
 
