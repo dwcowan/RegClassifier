@@ -22,7 +22,7 @@ C.kfold = 5;
 % DB (set enable=true to persist in pipeline). For tests we use sqlite.
 C.db = struct('enable', false, 'vendor','postgres', 'dbname','reg_topics', ...
               'user','user','pass','pass','server','localhost','port',5432, ...
-              'sqlite_path', "./data/db/my_reg_topics.sqlite");
+              'sqlite_path', './data/db/my_reg_topics.sqlite');
 
 % Reports
 C.report_title = "Banking Regulation Topic Classifier — Snapshot";
@@ -35,7 +35,7 @@ try
         if isfield(C.knobs.Chunk,'Overlap'),    C.chunk_overlap     = C.knobs.Chunk.Overlap;    end
     end
 catch ME
-    warning("Knobs load/apply failed: %s", ME.message);
+    warning("Knobs load/apply failed:", '%s', ME.message);
     C.knobs = struct();
 end
 
