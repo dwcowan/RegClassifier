@@ -2,8 +2,15 @@ function conn = ensure_db(DB)
 %ENSURE_DB Returns a connection struct supporting Postgres or SQLite.
 % For SQLite, it creates a file (DB.sqlite_path) and returns struct with .sqlite handle.
 if isfield(DB,'vendor') && strcmpi(DB.vendor,'sqlite')
-    if ~isfolder(fileparts(DB.sqlite_path)), mkdir(fileparts(DB.sqlite_path)); end
+
+    % Octave is stricter than MATLAB about using commas to separate
+    % statements.  Use a multi-line block for compatibility instead of
+    % "if cond, stmt; end".
+    if ~isfolder(fileparts(DB.sqlite_path))
+        mkdir(fileparts(DB.sqlite_path));
+    end
     if isfile(DB.sqlite_path)
+
         sconn = sqlite(DB.sqlite_path);          % open existing file
     else
 
