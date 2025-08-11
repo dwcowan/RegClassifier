@@ -213,7 +213,7 @@ Main report now includes a **Gold Mini-Pack** section (if `gold/*` exists), show
 **Data acquisition + diffs added:**
 - Fetchers:
   - `+reg/fetch_crr_eurlex.m` — downloads consolidated CRR PDF by consolidation date.
-  - `+reg/fetch_crr_eba.m` — scrapes EBA ISRB per-article pages (HTML + plaintext) with index CSV.
+  - `+reg/fetch_crr_eba.m` — scrapes EBA ISRB per-article pages (HTML + plaintext) with index CSV; supports `maxArticles` and parallel full fetches.
 - Diffs:
   - `+reg/crr_diff_versions.m` — compare two CRR corpora (e.g., older vs newer EBA text dumps), write CSV + patch.
   - `+reg/diff_methods.m` — compare Top-10 retrievals across baseline/projection/fine-tuned for a query set.

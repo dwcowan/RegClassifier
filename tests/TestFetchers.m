@@ -9,12 +9,15 @@ classdef TestFetchers < RegTestCase
             end
         end
         function eba_fetch_signature(tc)
-            % Only check that the function returns a table or errors gracefully (no net in CI)
-            try
-                T = reg.fetch_crr_eba();
-                tc.verifyTrue(istable(T));
-            catch ME
-                tc.assertTrue(~isempty(ME.message));
+            % Verify limited and full fetch modes handle lack of network gracefully
+            limits = [1, inf];
+            for k = 1:numel(limits)
+                try
+                    T = reg.fetch_crr_eba('maxArticles', limits(k)); %#ok<NASGU>
+                    tc.verifyTrue(istable(T));
+                catch ME
+                    tc.assertTrue(~isempty(ME.message));
+                end
             end
         end
     end
