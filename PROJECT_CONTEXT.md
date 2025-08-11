@@ -225,8 +225,13 @@ Main report now includes a **Gold Mini-Pack** section (if `gold/*` exists), show
 - `reg_crr_sync.m` — one command to fetch **EUR-Lex PDF** and **EBA ISRB** into a date-stamped folder.
 - `+reg/fetch_crr_eba_parsed.m` — improved EBA fetcher that parses **Article numbers**.
 - `reg_crr_diff_report.m` — generates a **PDF report** summarizing version diffs, with a sample of textual changes.
-\n---
+---
 ## Update 2025-08-10 23:00:40
 **Article-aware diffs + HTML report**
 - `+reg/crr_diff_articles.m` — aligns by `article_num` and writes `summary_by_article.csv` and `patch_by_article.txt`.
-- `reg_crr_diff_report_html.m` — generates an HTML report with clickable links back to EBA for changed articles.\n
+- `reg_crr_diff_report_html.m` — generates an HTML report with clickable links back to EBA for changed articles.
+
+---
+## Update 2025-08-11 18:54:53
+**EBA fetcher caches downloads**
+- `+reg/fetch_crr_eba.m` — now caches per-article HTML files and accepts `'ForceDownload'` and `'OutDir'` name-value arguments.
