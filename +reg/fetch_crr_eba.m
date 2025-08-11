@@ -39,6 +39,13 @@ for i = 1:n
         urls(i) = url;
         pause(0.2); % politeness
     catch ME
+        isInterrupt = isa(ME, 'matlab.exception.InterruptException') || ...
+            strcmp(ME.identifier, 'MATLAB:OperationTerminatedByUser') || ...
+            any(cellfun(@(e) isa(e, 'matlab.exception.InterruptException') || ...
+            strcmp(e.identifier, 'MATLAB:OperationTerminatedByUser'), ME.cause));
+        if isInterrupt
+            rethrow(ME);
+        end
         warning("Failed fetching %s: %s", url, ME.message);
     end
 end
