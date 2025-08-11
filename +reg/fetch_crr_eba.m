@@ -1,10 +1,25 @@
-function T = fetch_crr_eba()
+function T = fetch_crr_eba(args)
 %FETCH_CRR_EBA Download CRR articles from EBA Interactive Single Rulebook (HTML + plaintext).
+% T = FETCH_CRR_EBA(Name,Value) downloads CRR articles and returns a table with
+% metadata about the downloaded files.
+%
+% Name-Value arguments:
+%   'Timeout'     Timeout in seconds for each web request. Default is 15.
+%   'MaxArticles' Maximum number of articles to download. Default is Inf.
+%
+% The function attempts to download up to MaxArticles. If a request times out,
+% any articles successfully fetched before the timeout are returned.
+
+arguments
+    args.Timeout (1,1) double {mustBePositive} = 15
+    args.MaxArticles (1,1) double {mustBePositive} = Inf
+end
+
 base = "https://eba.europa.eu";
 root = base + "/regulation-and-policy/single-rulebook/interactive-single-rulebook/12674";
-opts = weboptions('Timeout',15);
+webOpts = weboptions('Timeout',args.Timeout);
 try
-    html = webread(root, opts);
+    html = webread(root, webOpts);
 catch ME
     warning("Failed fetching %s: %s", root, ME.message);
     T = table(string.empty(0,1), string.empty(0,1), string.empty(0,1), string.empty(0,1), ...
@@ -23,11 +38,15 @@ titles= txt(mask);
 hrefs = hrefs(ia); titles = titles(ia);
 
 outDir = fullfile("data","eba_isrb","crr"); if ~isfolder(outDir), mkdir(outDir); end
-n = numel(hrefs); ids = strings(n,1); files = strings(n,1); titlesS = strings(n,1); urls = strings(n,1);
+nTotal = numel(hrefs);
+n = min(nTotal, args.MaxArticles);
+n = floor(n);
+hrefs = hrefs(1:n); titles = titles(1:n);
+ids = strings(n,1); files = strings(n,1); titlesS = strings(n,1); urls = strings(n,1);
 for i = 1:n
     url = base + string(hrefs{i});
     try
-        page = webread(url, opts);
+        page = webread(url, webOpts);
         ids(i) = "CRR_" + string(i);
         htmlPath = fullfile(outDir, ids(i) + ".html");
         txtPath  = fullfile(outDir, ids(i) + ".txt");
@@ -47,6 +66,9 @@ for i = 1:n
             rethrow(ME);
         end
         warning("Failed fetching %s: %s", url, ME.message);
+        if contains(ME.identifier, 'Timeout')
+            break
+        end
     end
 end
 valid = ids ~= "";
