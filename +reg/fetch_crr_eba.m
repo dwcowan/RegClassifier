@@ -1,8 +1,22 @@
-function T = fetch_crr_eba()
+function T = fetch_crr_eba(varargin)
 %FETCH_CRR_EBA Download CRR articles from EBA Interactive Single Rulebook (HTML + plaintext).
+%   T = FETCH_CRR_EBA(Name,Value) downloads articles from the EBA
+%   Interactive Single Rulebook. Name/value options:
+%     'Timeout'     - timeout in seconds for web requests (default 15)
+%     'MaxArticles' - maximum number of articles to download (default Inf)
+%   The function returns a table of all successfully downloaded articles
+%   and will return partial results if individual requests time out.
+
+p = inputParser;
+addParameter(p,'Timeout',15);
+addParameter(p,'MaxArticles',Inf);
+parse(p,varargin{:});
+timeout = p.Results.Timeout;
+maxArticles = p.Results.MaxArticles;
+
 base = "https://eba.europa.eu";
 root = base + "/regulation-and-policy/single-rulebook/interactive-single-rulebook/12674";
-opts = weboptions('Timeout',15);
+opts = weboptions('Timeout',timeout);
 try
     html = webread(root, opts);
 catch ME
@@ -23,8 +37,10 @@ titles= txt(mask);
 hrefs = hrefs(ia); titles = titles(ia);
 
 outDir = fullfile("data","eba_isrb","crr"); if ~isfolder(outDir), mkdir(outDir); end
-n = numel(hrefs); ids = strings(n,1); files = strings(n,1); titlesS = strings(n,1); urls = strings(n,1);
-for i = 1:n
+n = numel(hrefs);
+m = floor(min(n, maxArticles));
+ids = strings(m,1); files = strings(m,1); titlesS = strings(m,1); urls = strings(m,1);
+for i = 1:m
     url = base + string(hrefs{i});
     try
         page = webread(url, opts);
