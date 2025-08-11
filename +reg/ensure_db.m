@@ -6,10 +6,11 @@ if isfield(DB,'vendor') && strcmpi(DB.vendor,'sqlite')
     % Octave is stricter than MATLAB about using commas to separate
     % statements.  Use a multi-line block for compatibility instead of
     % "if cond, stmt; end".
-    if ~isfolder(fileparts(DB.sqlite_path))
-        mkdir(fileparts(DB.sqlite_path));
+    dbdir = fileparts(DB.sqlite_path);
+    if ~exist(dbdir, 'dir')
+        mkdir(dbdir);
     end
-    if isfile(DB.sqlite_path)
+    if exist(DB.sqlite_path, 'file')
 
         sconn = sqlite(DB.sqlite_path);          % open existing file
     else
