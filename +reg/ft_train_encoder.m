@@ -179,8 +179,6 @@ end
 % === Helpers ===
 function [loss, gE, gH] = gradTripletBatch(base, head, tok, aIdx, pIdx, nIdx, maxLen, useFP16, margin)
 B = numel(aIdx);
-texts = [aIdx(:); pIdx(:); nIdx(:)];
-ids = encode(tok, string(assignin('caller','chunksT',[])), 'Padding','longest'); %#ok<NASGU>
 % Re-encode directly from caller chunksT:
 persistent cachedChunks;
 if isempty(cachedChunks), cachedChunks = evalin('caller','chunksT'); end
