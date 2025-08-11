@@ -5,9 +5,10 @@ classdef TestDB < RegTestCase
     methods (TestMethodSetup)
         function setupDB(tc)
             C = config();
-            % Force sqlite for tests
+            % Force sqlite for tests and isolate test database from runtime config
             C.db.vendor = 'sqlite';
-            if isfield(C.db,'sqlite_path'); deleteIfExists(C.db.sqlite_path); end
+            C.db.sqlite_path = fullfile(tempdir(), 'reg_test.sqlite');
+            deleteIfExists(C.db.sqlite_path);
             tc.TempDB = C.db;
             assignin('base','Cdb',tc.TempDB); %#ok<NASGU>
         end
