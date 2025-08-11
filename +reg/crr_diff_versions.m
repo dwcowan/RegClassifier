@@ -9,8 +9,14 @@ O = p.Results.OutDir; if ~isfolder(O), mkdir(O); end
 
 A = dir(fullfile(dirA, '*.txt'));
 B = dir(fullfile(dirB, '*.txt'));
-mapA = containers.Map(); for i=1:numel(A), mapA(A[i].name) = fullfile(A[i].folder,A[i].name); end
-mapB = containers.Map(); for i=1:numel(B), mapB(B[i].name) = fullfile(B[i].folder,B[i].name); end
+mapA = containers.Map(); for i = 1:numel(A)
+    % Use MATLAB parenthesis indexing when iterating over struct arrays
+    % rather than the Python-style A[i] which causes a syntax error.
+    mapA(A(i).name) = fullfile(A(i).folder, A(i).name);
+end
+mapB = containers.Map(); for i = 1:numel(B)
+    mapB(B(i).name) = fullfile(B(i).folder, B(i).name);
+end
 keys = unique([string({A.name})'; string({B.name})'], 'stable');
 
 added=0; removed=0; changed=0; same=0;

@@ -1,19 +1,36 @@
 function upsert_chunks(conn, chunksT, labels, pred, scores)
-%UPSERT_CHUNKS Insert/Upsert chunk rows and label columns
-% Build a table with label columns (0/1) and simple score cols (optional)
+%UPSERT_CHUNKS Insert/Upsert chunk rows, label columns and score columns
+% Build a table with label columns (0/1) and numeric score columns
 L = cellstr("lbl_" + labels);
 P = array2table(pred, 'VariableNames', L);
-T = [chunksT(:, {'chunk_id','doc_id','text'}) P];
+if exist('scores','var') && ~isempty(scores)
+    SL = cellstr("score_" + labels);
+    S = array2table(scores, 'VariableNames', SL);
+    T = [chunksT(:, {'chunk_id','doc_id','text'}) P S];
+else
+    T = [chunksT(:, {'chunk_id','doc_id','text'}) P];
+end
 
 if isstruct(conn) && isfield(conn,'sqlite')
     sconn = conn.sqlite;
-    % Create label columns if needed
+    % Create label/score columns if needed
     cols = fieldnames(T)';
-    cur = fetch(sconn, "PRAGMA table_info(reg_chunks);");
-    existing = string(cur(:,2));
+    % Only retrieve column names to avoid NULL default values triggering errors
+    cur = fetch(sconn, "SELECT name FROM pragma_table_info(''reg_chunks'');");
+    if istable(cur)
+        existing = string(cur{:,:});
+    else
+        existing = string(cur(:,1));
+    end
     toAdd = setdiff(string(cols), existing);
     for k = 1:numel(toAdd)
-        exec(sconn, "ALTER TABLE reg_chunks ADD COLUMN " + toAdd(k) + " TEXT");
+        colname = toAdd(k);
+        if startsWith(colname, "score_")
+            coltype = "REAL";
+        else
+            coltype = "TEXT";
+        end
+        exec(sconn, "ALTER TABLE reg_chunks ADD COLUMN " + colname + " " + coltype);
     end
     % Upsert rows (INSERT OR REPLACE)
     for i = 1:height(T)
