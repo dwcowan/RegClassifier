@@ -9,7 +9,7 @@ classdef TestFetchers < RegTestCase
             end
         end
         function eba_fetch_signature(tc)
-            % Function should always return a table, even if network unavailable
+            % Mock webread so the fetcher returns a table even without network access
             testDir = fileparts(mfilename('fullpath'));
             timeoutDir = fullfile(testDir, 'fixtures', 'webread_timeout');
             addpath(timeoutDir);
