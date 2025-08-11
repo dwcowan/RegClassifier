@@ -49,7 +49,8 @@ for epoch = 1:R.Epochs
             Xa = single(Xa); Xp = single(Xp); Xn = single(Xn);
         end
         [L, gradients] = dlfeval(@modelGradients, head, Xa, Xp, Xn, R.Margin);
-        [head, trailingAvg, trailingAvgSq] = adamupdate(head, gradients, trailingAvg, trailingAvgSq, it + (epoch-1)*itersPerEpoch, R.LR, 0.9, 0.999);
+        [head, trailingAvg, trailingAvgSq] = adamupdate(head, gradients, ...
+            trailingAvg, trailingAvgSq, it + (epoch-1)*itersPerEpoch, R.LR, 0.9, 0.999);
         lossEpoch = lossEpoch + double(gather(extractdata(L)));
     end
     fprintf('Epoch %d/%d - loss: %.4f\n', epoch, R.Epochs, lossEpoch / itersPerEpoch);
