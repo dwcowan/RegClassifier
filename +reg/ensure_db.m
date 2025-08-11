@@ -6,16 +6,17 @@ if isfield(DB,'vendor') && strcmpi(DB.vendor,'sqlite')
     % Octave is stricter than MATLAB about using commas to separate
     % statements.  Use a multi-line block for compatibility instead of
     % "if cond, stmt; end".
-    dbdir = fileparts(DB.sqlite_path);
+    spath = char(DB.sqlite_path);
+    dbdir = fileparts(spath);
     if ~isempty(dbdir) && ~exist(dbdir, 'dir')
         mkdir(dbdir);
     end
 
     % Open existing SQLite file or create a new one as needed
-    if exist(DB.sqlite_path, 'file')
-        sconn = sqlite(DB.sqlite_path);
+    if exist(spath, 'file')
+        sconn = sqlite(spath);
     else
-        sconn = sqlite(DB.sqlite_path, 'create');
+        sconn = sqlite(spath, 'create');
     end
 
     % Ensure the reg_chunks table exists after the connection is defined
