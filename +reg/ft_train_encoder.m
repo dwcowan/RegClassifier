@@ -59,12 +59,12 @@ try
     encLayerNames = string(encParams.Layer);
     ids = regexp(encLayerNames, "\d+", "match");
     layerNums = zeros(numel(ids),1);
-    for i = 1:numel(ids)
-        if ~isempty(ids{i})
-            % MATLAB uses parenthesis indexing. The previous implementation
-            % used square brackets (`layerNums[i]`), which is invalid and
-            % causes a runtime error.
-            layerNums(i) = str2double(ids{i}{end});
+    for idx = 1:numel(ids)
+        if ~isempty(ids{idx})
+            % Use standard parenthesis indexing for numeric arrays.
+            % Prior versions mistakenly used square brackets, leading to a
+            % syntax error in MATLAB.
+            layerNums(idx) = str2double(ids{idx}{end});
         end
     end
     maxNum = max(layerNums);
