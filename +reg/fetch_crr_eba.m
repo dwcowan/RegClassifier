@@ -1,5 +1,10 @@
-function T = fetch_crr_eba()
+function T = fetch_crr_eba(forceDownload)
 %FETCH_CRR_EBA Download CRR articles from EBA Interactive Single Rulebook (HTML + plaintext).
+%   T = fetch_crr_eba(forceDownload) downloads CRR articles unless a cached
+%   HTML file already exists in data/eba_isrb/crr. Set forceDownload=true to
+%   re-download files even if a cached copy is present.
+if nargin < 1, forceDownload = false; end
+
 base = "https://eba.europa.eu";
 root = base + "/regulation-and-policy/single-rulebook/interactive-single-rulebook/12674";
 html = webread(root);
@@ -18,11 +23,18 @@ outDir = fullfile("data","eba_isrb","crr"); if ~isfolder(outDir), mkdir(outDir);
 n = numel(hrefs); ids = strings(n,1); files = strings(n,1); titlesS = strings(n,1); urls = strings(n,1);
 for i = 1:n
     url = base + string(hrefs{i});
+    ids(i) = "CRR_" + string(i);
+    htmlPath = fullfile(outDir, ids(i) + ".html");
+    txtPath  = fullfile(outDir, ids(i) + ".txt");
+    if ~forceDownload && isfile(htmlPath)
+        % Use cached file
+        files(i) = htmlPath;
+        titlesS(i) = string(titles{i});
+        urls(i) = url;
+        continue;
+    end
     try
         page = webread(url);
-        ids(i) = "CRR_" + string(i);
-        htmlPath = fullfile(outDir, ids(i) + ".html");
-        txtPath  = fullfile(outDir, ids(i) + ".txt");
         fid=fopen(htmlPath,'w'); fwrite(fid, page); fclose(fid);
         t = htmlTree(page); bodyTxt = extractHTMLText(t);
         writelines(string(bodyTxt), txtPath);

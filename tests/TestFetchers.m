@@ -17,5 +17,28 @@ classdef TestFetchers < RegTestCase
                 tc.assertTrue(~isempty(ME.message));
             end
         end
+
+        function eba_fetch_cache(tc)
+            % Verify caching skips re-downloading existing files
+            mockDir = fullfile(fileparts(mfilename('fullpath')), 'fixtures', 'eba_mock');
+            tc.applyFixture(matlab.unittest.fixtures.PathFixture(mockDir));
+            outDir = fullfile('data','eba_isrb','crr');
+            if isfolder(outDir), rmdir(outDir,'s'); end
+            c = onCleanup(@() (isfolder(outDir) && rmdir(outDir,'s'))); %#ok<NASGU>
+
+            global WEBREAD_CALLS
+            WEBREAD_CALLS = strings(0,1);
+            T1 = reg.fetch_crr_eba();
+            calls1 = WEBREAD_CALLS; %#ok<NASGU>
+
+            WEBREAD_CALLS = strings(0,1);
+            T2 = reg.fetch_crr_eba();
+            calls2 = WEBREAD_CALLS; %#ok<NASGU>
+
+            tc.verifyEqual(height(T1), 2);
+            tc.verifyEqual(T1, T2);
+            tc.verifyEqual(numel(calls1), 3); % root + two articles
+            tc.verifyEqual(numel(calls2), 1); % only root fetched
+        end
     end
 end
