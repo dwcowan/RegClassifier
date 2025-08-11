@@ -1,5 +1,6 @@
 function Yweak = weak_rules(textStr, labels)
 %WEAK_RULES Simple keyword-based weak supervision
+%   Labels without a defined rule set produce zero scores.
 rules = containers.Map;
 rules('IRB') = ["internal ratings based","irb","pd","lgd","ead","slotting"];
 rules('CreditRisk') = ["credit risk","credit conversion factor","counterparty credit"];
@@ -20,6 +21,10 @@ textStr = lower(string(textStr));
 Yweak = zeros(numel(textStr), numel(labels));
 for j = 1:numel(labels)
     lab = labels(j);
+    if ~isKey(rules, lab)
+        % Undefined label: leave zeros in Yweak column
+        continue;
+    end
     pats = rules(lab);
     hit = false(numel(textStr),1);
     for p = 1:numel(pats)
