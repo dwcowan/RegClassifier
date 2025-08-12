@@ -11,9 +11,9 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
    ```matlab
    load('data/docs.mat','docs')
    ```
-2. Chunk each document with the helper function (default `chunk_size_tokens=300`, `chunk_overlap=80`):
+2. Chunk each document with the helper function (default `chunkSizeTokens=300`, `chunkOverlap=80`):
    ```matlab
-   chunks = reg.chunk_text(docs, 'chunk_size_tokens', 300, 'chunk_overlap', 80);
+   chunks = reg.chunkText(docs, 'chunkSizeTokens', 300, 'chunkOverlap', 80);
    ```
 3. Save the chunks for later modules:
    ```matlab
@@ -21,11 +21,11 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
    ```
 
 ## Function Interface
-- `reg.chunk_text(docs, 'chunk_size_tokens', n, 'chunk_overlap', m)`  
-  - `docs` (table): from Step 3 with `docId` and `text` fields.  
-  - `n` (double): tokens per chunk.  
-  - `m` (double): overlap between chunks.  
-  - returns `chunks` (`table`): columns `chunkId` (string), `docId` (string), `text` (string).  
+- `reg.chunkText(docs, 'chunkSizeTokens', n, 'chunkOverlap', m)`
+  - `docs` (table): Step 3 output following the **Document** schema.
+  - `n` (double): tokens per chunk.
+  - `m` (double): overlap between chunks.
+  - returns `chunks` (`table`): follows the **Chunk** schema (`chunkId`, `docId`, `text`).
   - See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schema.
 
 ## Verification

@@ -14,20 +14,20 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
    ```
 2. Train the baseline classifier:
    ```matlab
-   model = reg.train_multilabel(X, Yboot);
+   model = reg.trainMultilabel(X, Yboot);
    save('models/baseline_model.mat','model')
    ```
 3. Enable hybrid retrieval combining cosine similarity and BM25:
    ```matlab
-   results = reg.hybrid_search(model, X, 'query', 'sample text');
+   results = reg.hybridSearch(model, X, 'query', 'sample text');
    ```
 
 ## Function Interface
-- `reg.train_multilabel(X, Yboot)`  
-  - `X` (double matrix): embeddings from Step 6.  
-  - `Yboot` (sparse logical matrix): weak labels from Step 5.  
+- `reg.trainMultilabel(X, Yboot)`
+  - `X` (double matrix): embeddings from Step 6 following the **Embedding** schema.
+  - `Yboot` (sparse logical matrix): weak labels from Step 5 following the **Label** schema.
   - returns `model` (struct): fields `weights`, `bias`.  
-- `reg.hybrid_search(model, X, 'query', text)`  
+- `reg.hybridSearch(model, X, 'query', text)`
   - `model` (struct) and `X` (double matrix).  
   - `'query'` (string): search text.  
   - returns `results` (table) with `docId` and score fields.  

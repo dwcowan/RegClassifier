@@ -9,24 +9,24 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 
 1. Build the contrastive training dataset:
    ```matlab
-   ds = reg.ft_build_contrastive_dataset(chunks, Yboot);
+   ds = reg.ftBuildContrastiveDataset(chunks, Yboot);
    ```
 2. Fine-tune the encoder starting from the pretrained weights:
    ```matlab
-   ftEncoder = reg.ft_train_encoder(ds, 'unfreeze_top', 4);
+   ftEncoder = reg.ftTrainEncoder(ds, 'unfreeze_top', 4);
    save('models/fine_tuned_bert.mat','ftEncoder')
    ```
 3. Update pipeline settings to point to the fine-tuned encoder if needed.
 
 ## Function Interface
-- `reg.ft_build_contrastive_dataset(chunks, Yboot)`  
-  - `chunks` (table): see Step 4.  
-  - `Yboot` (sparse logical matrix): weak labels.  
-  - returns `ds` (dataset) for contrastive pairs.  
-- `reg.ft_train_encoder(ds, 'unfreeze_top', n)`  
-  - `ds` (dataset): training data.  
-  - `'unfreeze_top'` (double): number of BERT layers to unfreeze.  
-  - returns `ftEncoder` (struct) with updated weights.  
+- `reg.ftBuildContrastiveDataset(chunks, Yboot)`
+  - `chunks` (table): follows the **Chunk** schema.
+  - `Yboot` (sparse logical matrix): follows the **Label** schema.
+  - returns `ds` (dataset) for contrastive pairs.
+- `reg.ftTrainEncoder(ds, 'unfreeze_top', n)`
+  - `ds` (dataset): training data.
+  - `'unfreeze_top'` (double): number of BERT layers to unfreeze.
+  - returns `ftEncoder` (struct) with updated weights.
 - See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for encoder artifact schema.
 
 ## Verification

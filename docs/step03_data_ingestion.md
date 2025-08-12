@@ -8,10 +8,10 @@
 Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeletons before beginning this step.
 
 1. Place source PDFs in a folder referenced by `pipeline.json` (e.g., `data/pdfs`). Fetcher utilities save downloaded PDFs to `data/raw`.
-2. Before running `reg.ingest_pdfs`, either copy PDFs into `data/pdfs` or update `pipeline.json` to read from `data/raw`.
+2. Before running `reg.ingestPdfs`, either copy PDFs into `data/pdfs` or update `pipeline.json` to read from `data/raw`.
 3. In MATLAB, call the ingestion routine:
    ```matlab
-   docs = reg.ingest_pdfs('data/pdfs');
+   docs = reg.ingestPdfs('data/pdfs');
    ```
 4. The function extracts text from each PDF. Image-only pages fall back to OCR if the Report Generator toolbox is installed.
 5. Save the resulting table for later steps:
@@ -20,9 +20,9 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
    ```
 
 ## Function Interface
-- `reg.ingest_pdfs(inputDir)`  
-  - `inputDir` (string): folder containing source PDFs.  
-  - returns `docs` (`table`): columns `docId` (string), `text` (string).  
+- `reg.ingestPdfs(inputDir)`
+  - `inputDir` (string): folder containing source PDFs.
+  - returns `docs` (`table`): follows the **Document** schema (`docId`, `text`).
   - See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schema.
 
 ## Verification
