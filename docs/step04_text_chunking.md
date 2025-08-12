@@ -9,36 +9,36 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 
 1. Load the ingested documents table:
    ```matlab
-   load('data/docs.mat','docs')
+   load('data/docs.mat','docsTbl')
    ```
 2. Chunk each document with the helper function (default `chunkSizeTokens=300`, `chunkOverlap=80`):
    ```matlab
-   chunks = reg.chunkText(docs, 'chunkSizeTokens', 300, 'chunkOverlap', 80);
+   chunksTbl = reg.chunkText(docsTbl, 'chunkSizeTokens', 300, 'chunkOverlap', 80);
    ```
 3. Save the chunks for later modules:
    ```matlab
-   save('data/chunks.mat','chunks')
+   save('data/chunks.mat','chunksTbl')
    ```
 
 ## Function Interface
 
 ### reg.chunkText
 - **Parameters:**
-  - `docs` (table): from Step 3 with `docId` and `text` fields.
+  - `docsTbl` (table): from Step 3 with `docId` and `text` fields.
   - `'chunkSizeTokens'` (double): tokens per chunk.
   - `'chunkOverlap'` (double): overlap between chunks.
-- **Returns:** table `chunks` with columns `chunkId` (string), `docId` (string), and `text` (string).
+- **Returns:** table `chunksTbl` with columns `chunkId` (string), `docId` (string), and `text` (string).
 - **Side Effects:** none; pure transformation of input table.
 - **Usage Example:**
   ```matlab
-  chunks = reg.chunkText(docs, 'chunkSizeTokens', 100, 'chunkOverlap', 20);
+  chunksTbl = reg.chunkText(docsTbl, 'chunkSizeTokens', 100, 'chunkOverlap', 20);
   ```
 
 See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schema.
 
 
 ## Verification
-- `chunks` contains `chunkId`, `docId`, and `text` for each segment.
+- `chunksTbl` contains `chunkId`, `docId`, and `text` for each segment.
 - Run the chunking test:
   ```matlab
   runtests('tests/testIngestAndChunk.m')
