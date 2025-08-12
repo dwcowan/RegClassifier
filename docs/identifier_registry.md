@@ -87,11 +87,11 @@ Keep the illustrative examples below in sync with the current naming conventions
 | reg.ingestPdfs | inputDir string | docs table `{docId,text}` | reads PDFs, OCR fallback |
 | reg.chunkText | docs table, chunkSizeTokens double, chunkOverlap double | chunks table `{chunkId,docId,text}` | none |
 | reg.weakRules | text array, labels array | sparse matrix `Yweak` | none |
-| reg.docEmbeddingsBertGpu | chunks table | matrix `X` | loads model, uses GPU |
-| reg.precomputeEmbeddings | `X` matrix, outPath string | none | writes embeddings to disk |
-| reg.trainMultilabel | `X` matrix, `Yboot` matrix | model struct | none |
-| reg.hybridSearch | model struct, `X` matrix, query string | results table | none |
-| reg.trainProjectionHead | `X` matrix, `Yboot` matrix | head struct | none |
+| reg.docEmbeddingsBertGpu | chunks table | matrix `embeddingMat` | loads model, uses GPU |
+| reg.precomputeEmbeddings | `embeddingMat` matrix, outPath string | none | writes embeddings to disk |
+| reg.trainMultilabel | `embeddingMat` matrix, `Yboot` matrix | model struct | none |
+| reg.hybridSearch | model struct, `embeddingMat` matrix, query string | results table | none |
+| reg.trainProjectionHead | `embeddingMat` matrix, `Yboot` matrix | head struct | none |
 | reg.ftBuildContrastiveDataset | chunks table, `Yboot` matrix | dataset struct | none |
 | reg.ftTrainEncoder | dataset `ds`, unfreezeTop double | encoder struct | updates model weights |
 | reg.evalRetrieval | resultsTbl table, goldTbl table | metrics tables | writes report files |
@@ -225,7 +225,7 @@ Common test scopes or prefixes include:
 #### Embedding
 | Name | Type | Description |
 |------|------|-------------|
-| X | double `[numChunks x embeddingDim]` | Chunk embeddings |
+| embeddingMat | double `[numChunks x embeddingDim]` | Chunk embeddings |
 
 #### Metric
 | Field | Type | Description |
