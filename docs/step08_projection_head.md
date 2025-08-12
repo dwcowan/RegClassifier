@@ -21,18 +21,22 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 - **Parameters:**
   - `X` (double matrix): embeddings from Step 6.
   - `Yboot` (sparse logical matrix): weak labels from Step 5.
-- **Returns:** struct `head` with fields `weights` and `bias` used for retrieval enhancement.
+- **Returns:** struct `head` with fields `weights` and `bias` used for retrieval enhancement (see [ProjectionHead](identifier_registry.md#projectionhead)).
 - **Side Effects:** none.
 - **Usage Example:**
   ```matlab
   head = reg.trainProjectionHead(X, Yboot);
   ```
 
-See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schema references.
+See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schema references including `ProjectionHead`.
 
 
 ## Verification
 - `projection_head.mat` exists in the `models` folder.
+- Validate head schema:
+  ```matlab
+  assert(all(isfield(head, {'weights','bias'})));
+  ```
 - Run projection head tests:
   ```matlab
   runtests({'tests/testProjectionHeadSimulated.m', ...

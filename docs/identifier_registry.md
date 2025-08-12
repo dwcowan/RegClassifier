@@ -46,14 +46,11 @@ Keep the illustrative examples below in sync with the current naming conventions
 
 | Name | Purpose | Scope | Owner | Related Files | Notes |
 |------|---------|-------|-------|---------------|-------|
-| RegPipeline | Orchestrates end-to-end workflow | global | @todo | reg_pipeline.m | planned |
 
 ## Functions
 
 | Name | Purpose | Scope | Input Contract | Output Contract | Owner | Notes |
 |------|---------|-------|----------------|-----------------|-------|------|
-| parseDocument | Convert raw text into tokens | module | `text` string | token array | @janedoe | example |
-| config | Load project configuration files | module | – | struct `C` | @todo | stub |
 | ingestPdfs | Convert PDFs into text documents | module | `pdfPathsCell` cell array | `docTbl` table | @todo | stub |
 | chunkText | Split documents into token chunks | module | `docTbl`, `chunkSizeTokens`, `chunkOverlap` | `chunkTbl` table | @todo | stub |
 | weakRules | Generate weak labels for chunks | module | `chunkTbl` table | sparse matrix `yBootMat` | @todo | stub |
@@ -69,8 +66,6 @@ Keep the illustrative examples below in sync with the current naming conventions
 | loadGold | Load gold annotation data | module | `pathStr` string | `goldTbl` table | @todo | stub |
 | crrDiffVersions | Compare CRR versions | module | `oldPathStr` string, `newPathStr` string | diff struct | @todo | stub |
 | crrDiffArticles | Compare CRR articles | module | `articleId` string, `versionA` string, `versionB` string | diff struct | @todo | stub |
-| crrSync | Fetch latest regulatory corpus | module | – | downloaded files | @todo | stub |
-| crrDiffReport | Render diff report between versions | module | `diffStruct` struct | report files | @todo | stub |
 
 
 ## Function Interface Reference
@@ -199,6 +194,31 @@ Common test scopes or prefixes include:
 | metric | string | Metric name |
 | value | double | Metric value |
 
+#### BaselineModel
+| Field | Type | Description |
+|-------|------|-------------|
+| weights | double `[embeddingDim x numClasses]` | Classifier weights |
+| bias | double `[1 x numClasses]` | Classifier bias |
+
+#### ProjectionHead
+| Field | Type | Description |
+|-------|------|-------------|
+| weights | double `[embeddingDim x embeddingDim]` | Projection weights |
+| bias | double `[1 x embeddingDim]` | Projection bias |
+
+#### RetrievalResult
+| Field | Type | Description |
+|-------|------|-------------|
+| docId | string | Retrieved document identifier |
+| score | double | Retrieval relevance score |
+
+#### ContrastiveDataset
+| Field | Type | Description |
+|-------|------|-------------|
+| anchorIdx | double array | Index of anchor chunk |
+| posIdx | double array | Index of positive chunk |
+| negIdx | double array | Index of negative chunk |
+
 ### Flows
 
 | Producer → Consumer | Payload Schema | Format | Validation | Notes |
@@ -207,8 +227,10 @@ Common test scopes or prefixes include:
 | chunking → weak labeling / embeddings | Chunk | MAT-file (`chunks.mat`) | unique `chunkId` | see [Step 4](step04_text_chunking.md) |
 | weak labeling → classifier | Label | MAT-file (`Yboot.mat`) | matches size of `chunks` | see [Step 5](step05_weak_labeling.md) |
 | embedding generation → classifier | Embedding | MAT-file (`embeddings.mat`) | matches size of `chunks` | see [Step 6](step06_embedding_generation.md) |
-| classifier → retrieval / eval | model struct `{ weights: double[embeddingDim x numClasses], bias: double[1 x numClasses] }` | MAT-file (`baseline_model.mat`) | fields exist | see [Step 7](step07_baseline_classifier.md) |
-| projection head training → retrieval | head struct `{ weights: double[?], bias: double[?] }` | MAT-file (`projection_head.mat`) | fields exist | see [Step 8](step08_projection_head.md) |
+| classifier → retrieval / eval | BaselineModel | MAT-file (`baseline_model.mat`) | fields exist | see [Step 7](step07_baseline_classifier.md) |
+| projection head training → retrieval | ProjectionHead | MAT-file (`projection_head.mat`) | fields exist | see [Step 8](step08_projection_head.md) |
+| retrieval → evaluation | RetrievalResult | MAT-file (`results.mat`) | fields exist | see [Step 7](step07_baseline_classifier.md) |
+| dataset build → fine-tune | ContrastiveDataset | MAT-file (`contrastive_ds.mat`) | fields exist | see [Step 9](step09_encoder_finetuning.md) |
 | fine-tune → evaluation | ftEncoder struct with BERT weights | MAT-file (`fine_tuned_bert.mat`) | fields exist | see [Step 9](step09_encoder_finetuning.md) |
 | evaluation → reports | Metric | CSV/PDF | schema check | see [Step 10](step10_evaluation_reporting.md) |
 

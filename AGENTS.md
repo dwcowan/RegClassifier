@@ -1,7 +1,7 @@
 # Agent Instructions
 
 ## Canonical Documents
-- [docs/README_NAMING.md](docs/README_NAMING.md) for the naming process.
+- [docs/README_NAMING.md](docs/README_NAMING.md) for importand coding workflow
 - [docs/identifier_registry.md](docs/identifier_registry.md) for all defined identifiers.
 - [docs/Matlab_Style_Guide.md](docs/Matlab_Style_Guide.md) for naming and coding conventions.
 

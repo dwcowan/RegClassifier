@@ -24,7 +24,7 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 - **Parameters:**
   - `chunks` (table): see Step 4.
   - `Yboot` (sparse logical matrix): weak labels.
-- **Returns:** dataset `ds` containing contrastive pairs.
+- **Returns:** dataset `ds` containing contrastive pairs (see [ContrastiveDataset](identifier_registry.md#contrastivedataset)).
 - **Side Effects:** none.
 - **Usage Example:**
   ```matlab
@@ -42,11 +42,15 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
   ftEncoder = reg.ftTrainEncoder(ds, 'unfreezeTop', 4);
   ```
 
-See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for encoder artifact schema.
+See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for encoder artifact and `ContrastiveDataset` schemas.
 
 
 ## Verification
 - `fine_tuned_bert.mat` is saved and contains updated weights.
+- Contrastive dataset has expected fields:
+  ```matlab
+  assert(all(isfield(ds, {'anchorIdx','posIdx','negIdx'})));
+  ```
 - Run fine-tuning tests:
   ```matlab
   runtests({'tests/testFineTuneSmoke.m', ...

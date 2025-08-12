@@ -3,8 +3,9 @@
 
 This script scans all ``.m`` files for the primary function or class name
 and ensures each identifier appears in ``docs/identifier_registry.md``.
-If any identifier is missing from the registry, the script exits with a
-non-zero status and lists the missing names.
+It also checks the registry for identifiers that no longer exist in the
+code base. If any mismatch is detected, the script exits with a non-zero
+status and lists the offending names.
 """
 from __future__ import annotations
 
@@ -78,19 +79,27 @@ def main() -> int:
 
     documented = parse_registry(REGISTRY_PATH)
 
-    found = {}
+    found: dict[str, Path] = {}
     for path in ROOT.rglob("*.m"):
         ident = extract_primary_identifier(path)
         if ident:
             found[ident] = path
 
-    missing = sorted(set(found) - documented)
+    found_names = set(found)
+    missing = sorted(found_names - documented)
+    stale = sorted(documented - found_names)
+
     if missing:
         print("The following identifiers are missing from docs/identifier_registry.md:")
         for name in missing:
             print(f"  - {name} (defined in {found[name]})")
-        return 1
-    return 0
+
+    if stale:
+        print("The following identifiers are documented but not found in the MATLAB files:")
+        for name in stale:
+            print(f"  - {name}")
+
+    return 1 if missing or stale else 0
 
 
 if __name__ == "__main__":
