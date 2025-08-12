@@ -8,8 +8,9 @@ function tests = testHybridSearch
 tests = functiontests(localfunctions);
 end
 
-%TESTHYBRIDSEARCHRETURNSRESULTS Ensure hybrid search returns results.
+%% NAME-REGISTRY:TEST testHybridSearchReturnsResults
 function testHybridSearchReturnsResults(testCase)
+%TESTHYBRIDSEARCHRETURNSRESULTS Ensure hybrid search returns results.
     [queryStr, xMat, docTbl] = minimalHybridInputs();
     resultsTbl = reg.hybridSearch(queryStr, xMat, docTbl);
     testCase.verifyClass(resultsTbl, 'table');

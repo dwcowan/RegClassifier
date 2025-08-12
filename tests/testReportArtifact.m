@@ -8,8 +8,9 @@ function tests = testReportArtifact
 tests = functiontests(localfunctions);
 end
 
-%TESTREPORTARTIFACTGENERATESREPORT Generate evaluation report artifact.
+%% NAME-REGISTRY:TEST testReportArtifactGeneratesReport
 function testReportArtifactGeneratesReport(testCase)
+%TESTREPORTARTIFACTGENERATESREPORT Generate evaluation report artifact.
     resultsTbl = minimalResultsTbl();
     goldTbl = minimalGoldTbl();
     metricsStruct = reg.evalRetrieval(resultsTbl, goldTbl);

@@ -8,8 +8,9 @@ function tests = testRulesAndModel
 tests = functiontests(localfunctions);
 end
 
-%TESTRULESANDMODELTRAINSMODEL Train weak rules and baseline model.
+%% NAME-REGISTRY:TEST testRulesAndModelTrainsModel
 function testRulesAndModelTrainsModel(testCase)
+%TESTRULESANDMODELTRAINSMODEL Train weak rules and baseline model.
     chunkTbl = minimalChunkTbl();
     yBootMat = reg.weakRules(chunkTbl);
     testCase.verifyTrue(issparse(yBootMat));

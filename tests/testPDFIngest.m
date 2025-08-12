@@ -8,8 +8,9 @@ function tests = testPDFIngest
 tests = functiontests(localfunctions);
 end
 
-%TESTPDFINGESTREADSPDFS Verify PDF ingestion reads provided files.
+%% NAME-REGISTRY:TEST testPDFIngestReadsPdfs
 function testPDFIngestReadsPdfs(testCase)
+%TESTPDFINGESTREADSPDFS Verify PDF ingestion reads provided files.
 
   tmpFolderFixture = testCase.applyFixture(matlab.unittest.fixtures.TemporaryFolderFixture);
   pdfPath = fullfile(tmpFolderFixture.Folder, "dummy.pdf");

@@ -8,8 +8,9 @@ function tests = testProjectionAutoloadPipeline
 tests = functiontests(localfunctions);
 end
 
-%TESTPROJECTIONAUTOLOADPIPELINELOADSHEAD Ensure projection head autoloads correctly.
+%% NAME-REGISTRY:TEST testProjectionAutoloadPipelineLoadsHead
 function testProjectionAutoloadPipelineLoadsHead(testCase)
+%TESTPROJECTIONAUTOLOADPIPELINELOADSHEAD Ensure projection head autoloads correctly.
     [xMat, yMat] = minimalTrainingMats();
     headStruct = reg.trainProjectionHead(xMat, yMat);
     testCase.verifyClass(headStruct, 'struct');

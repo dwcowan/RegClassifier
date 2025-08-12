@@ -8,8 +8,9 @@ function tests = testRegressionMetricsSimulated
 tests = functiontests(localfunctions);
 end
 
-%TESTREGRESSIONMETRICSSIMULATEDCOMPUTESMETRICS Compute regression metrics on simulated data.
+%% NAME-REGISTRY:TEST testRegressionMetricsSimulatedComputesMetrics
 function testRegressionMetricsSimulatedComputesMetrics(testCase)
+%TESTREGRESSIONMETRICSSIMULATEDCOMPUTESMETRICS Compute regression metrics on simulated data.
     [xMat, yMat] = minimalTrainingData();
     modelStruct = reg.trainMultilabel(xMat, yMat);
     testCase.verifyClass(modelStruct, 'struct');
