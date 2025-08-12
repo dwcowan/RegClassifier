@@ -1,80 +1,88 @@
 function run_mlint
-%RUN_MLINT Run MATLAB Code Analyzer on .m files in repo and emit reports.
+% RUN_MLINT  Lint MATLAB .m files and emit artifacts for CI.
 %
-% Outputs:
+% Outputs (created in repo root):
 %   lint/mlint.txt         - text report
-%   lint/mlint-summary.md  - GitHub Actions job summary
-%   lint/mlint.sarif       - SARIF 2.1.0 for Code scanning
+%   lint/mlint-summary.md  - summary for GitHub Actions UI
+%   lint/mlint.sarif       - SARIF 2.1.0 (only if you still want it)
 %
-% Env knobs:
-%   MLINT_FAIL_ON = 'none' | 'any' | 'error'
+% Env:
+%   MLINT_FAIL_ON = 'none' | 'any' | 'error'  (default 'any')
 %   MLINT_EXCLUDE = ".git/**,node_modules/**" (comma-separated globs)
-%   MLINT_INCLUDE = "src,tests" (comma-separated roots; empty = whole repo)
-%
-% NAME-REGISTRY:FUNCTION run_mlint
+%   MLINT_INCLUDE = "src,tests,a/file.m"      (comma-separated; empty = whole repo)
 
     repoRoot = pwd;
     outDir = fullfile(repoRoot, 'lint');
     if ~exist(outDir, 'dir'), mkdir(outDir); end
-    txtPath = fullfile(outDir, 'mlint.txt');
-    sumPath = fullfile(outDir, 'mlint-summary.md');
+    txtPath   = fullfile(outDir, 'mlint.txt');
+    sumPath   = fullfile(outDir, 'mlint-summary.md');
     sarifPath = fullfile(outDir, 'mlint.sarif');
 
     includes = getenvList('MLINT_INCLUDE');
     excludes = getenvList('MLINT_EXCLUDE');
 
+    % ---- discover files (scalar-safe includes) ----
     if isempty(includes)
         files = findMFiles(repoRoot, excludes);
     else
         files = string.empty(1,0);
         for p = includes
-            p = strtrim(p);
+            p = strtrim(string(p));
             if p == "", continue; end
-            fullp = fullfile(repoRoot, p);
-            if isfolder(fullp)
-                files = [files; findMFiles(fullp, excludes)]; %#ok<AGROW>
-            elseif isfile(fullp) && endsWith(fullp, ".m")
-                files(end+1,1) = string(fullp); %#ok<AGROW>
+
+            % Build a single full path (force scalar)
+            fullp = string(fullfile(repoRoot, char(p)));
+            if numel(fullp) > 1, fullp = fullp(1); end
+            fullpChar = char(fullp);
+
+            if isfolder(fullpChar)
+                files = [files; findMFiles(fullpChar, excludes)]; %#ok<AGROW>
+            else
+                isAFile = isfile(fullpChar);
+                isMFile = endsWith(string(fullpChar), ".m");
+                if isAFile && isMFile
+                    files(end+1,1) = string(fullpChar); %#ok<AGROW>
+                end
             end
         end
         files = unique(files);
     end
 
-    assert(iscellstr_or_string(files), 'Directory search failed or no files found.');
+    if isempty(files)
+        % Create empty artifacts so CI steps can proceed gracefully
+        writeEmptyArtifacts(txtPath, sumPath);
+        fprintf('[mlint] no MATLAB files to scan (after include/exclude filtering)\n');
+        return
+    end
+
     fprintf('Scanning %d MATLAB files...\n', numel(files));
 
-    % Run Code Analyzer
+    % ---- run Code Analyzer ----
     allMsgs = table([], [], [], [], [], [], 'VariableNames', ...
         {'file','line','column','id','message','level'});
-    hasIssues = false;
 
     for f = files.'
         filePath = char(f);
         fprintf('Linting %s\n', filePath);
         try
-            issues = checkcode(filePath, '-id', '-fullpath');
+            issues = checkcode(filePath, '-id', '-fullpath'); %#ok<*CHCKOK>
         catch ME
             warning('checkcode error on %s: %s', filePath, ME.message);
             issues = [];
         end
 
         if ~isempty(issues)
-            hasIssues = true;
             T = struct2table(normalizeMsgs(f, issues), 'AsArray', true);
             allMsgs = [allMsgs; T]; %#ok<AGROW>
         end
     end
 
-    % Text report
+    % ---- write artifacts ----
     writeTextReport(txtPath, allMsgs, files);
-
-    % Summary for Actions UI
     writeSummary(sumPath, allMsgs, files, repoRoot);
+    writeSarif(sarifPath, allMsgs, repoRoot);  % safe even if empty
 
-    % SARIF for code-scanning
-    writeSarif(sarifPath, allMsgs, repoRoot);
-
-    % Decide failure policy
+    % ---- decide failure policy ----
     failOn = lower(string(getenvDefault('MLINT_FAIL_ON','any')));
     exitCode = 0;
     if ~isempty(allMsgs)
@@ -84,7 +92,7 @@ function run_mlint
             case "error"
                 if any(allMsgs.level == "error"), exitCode = 1; end
             case "none"
-                % keep success
+                % always succeed
             otherwise
                 % unknown value → be safe and fail on any
                 exitCode = 1;
@@ -95,15 +103,11 @@ function run_mlint
         numel(files), height(allMsgs), failOn);
 
     if exitCode ~= 0
-        error('Lint issues found (MLINT_FAIL_ON=%s). See artifacts and code scanning.', failOn);
+        error('Lint issues found (MLINT_FAIL_ON=%s). See artifacts (lint/*).', failOn);
     end
 end
 
-% ---------- helpers ----------
-
-function tf = iscellstr_or_string(x)
-    tf = isstring(x) || (iscell(x) && all(cellfun(@ischar,x)));
-end
+% ========= helpers =========
 
 function L = getenvDefault(name, defaultVal)
     val = getenv(name);
@@ -113,7 +117,7 @@ end
 function xs = getenvList(name)
     val = strtrim(string(getenv(name)));
     if val == "" || strcmpi(val, "''") || strcmpi(val, '""')
-        xs = string.empty(1,0); return;
+        xs = string.empty(1,0); return
     end
     parts = split(val, {',',';','|',newline});
     xs = strtrim(string(parts));
@@ -157,7 +161,7 @@ function r = relPath(root, p)
     else
         r = string(p);
     end
-    r = strrep(r, filesep, '/'); % normalize
+    r = strrep(r, filesep, '/');
 end
 
 function S = normalizeMsgs(file, msgs)
@@ -176,21 +180,22 @@ function S = normalizeMsgs(file, msgs)
 end
 
 function v = getfield_default(s, name, def)
-    if isfield(s, name); v = s.(name); else; v = def; end
+    if isfield(s, name), v = s.(name); else, v = def; end
 end
 function v = getfield_fallback(s, names, def)
     v = def;
     for n = names
-        if isfield(s, n); v = s.(n); return; end
+        if isfield(s, n), v = s.(n); return; end
     end
 end
 
 function lvl = classifySeverity(id, msg)
-    idLower = lower(id); msgLower = lower(msg);
+    idLower = lower(strtrim(id));
+    msgLower = lower(strtrim(msg));
     if contains(idLower, "syntax") || contains(msgLower, "parse error")
         lvl = "error"; return
     end
-    % Most Code Analyzer messages are advisory
+    % Everything else treated as 'warning' by default
     lvl = "warning";
 end
 
@@ -236,6 +241,7 @@ function writeSummary(path, T, files, repoRoot)
 end
 
 function writeSarif(path, T, repoRoot)
+    % Minimal SARIF v2.1.0 (safe to generate even if you don't upload it)
     sarif.version = "2.1.0";
     sarif.runs = {struct()};
     run.tool.driver.name = "MATLAB Code Analyzer (checkcode)";
@@ -243,7 +249,7 @@ function writeSarif(path, T, repoRoot)
     run.results = table2results(T, repoRoot);
     sarif.runs{1} = run;
     txt = jsonencode(sarif);
-    txt = strrep(txt, filesep, '/'); % forward slashes
+    txt = strrep(txt, filesep, '/');
     fid = fopen(path, 'w'); c = onCleanup(@() fclose(fid));
     fwrite(fid, txt, 'char');
 end
@@ -277,4 +283,11 @@ function results = table2results(T, repoRoot)
                     'startColumn', double(T.column(i)))))};
         results{i} = res;
     end
+end
+
+function writeEmptyArtifacts(txtPath, sumPath)
+    fid = fopen(txtPath, 'w'); c = onCleanup(@() fclose(fid)); %#ok<NASGU>
+    fprintf(fid, "No MATLAB files to lint.\n");
+    fid2 = fopen(sumPath, 'w'); c2 = onCleanup(@() fclose(fid2)); %#ok<NASGU>
+    fprintf(fid2, "## MATLAB Lint Summary\n\n_No MATLAB files to lint._\n");
 end
