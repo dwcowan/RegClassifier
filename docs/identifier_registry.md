@@ -23,36 +23,52 @@ Update it via PR and keep it in sync with code.
 Scopes:
 - **global** (shared across modules), **module** (file/local package), **local** (function scope), **test** (only in tests)
 
+### How to add an entry
+
+To document a new identifier:
+
+1. Locate the appropriate table (Classes, Functions, Variables, etc.).
+2. Add a row filling in every column for that section.
+3. Reference related files or tests when relevant.
+4. Ensure the name follows the conventions above.
+
+Keep the illustrative examples below in sync with the current naming conventions.
+
 ---
 
 ## Classes
 
 | Name | Purpose | Scope | Owner | Related Files | Notes |
 |------|---------|-------|-------|---------------|-------|
+| InvoiceProcessor | Extracts data from invoices | module | @janedoe | pdf_ingest.m | example |
 |  |  |  |  |  |  |
 
 ## Functions
 
 | Name | Purpose | Scope | Input Contract | Output Contract | Owner | Notes |
 |------|---------|-------|----------------|-----------------|-------|------|
+| parseDocument | Convert raw text into tokens | module | `text` string | token array | @janedoe | example |
 |  |  |  |  |  |  |
 
 ## Variables
 
 | Name | Purpose | Scope | Type | Default | Constraints | Notes |
 |------|---------|-------|------|---------|-------------|-------|
+| doc_index | Tracks current document position | local | double | 0 | non-negative | example |
 |  |  |  |  |  |  |
 
 ## Constants / Enums
 
 | Name | Purpose | Scope | Value/Type | Notes |
 |------|---------|-------|-----------|-------|
+| MAX_RETRY_COUNT | Limits retry attempts | global | 3 | example |
 |  |  |  |  |  |
 
 ## Files / Modules
 
 | File | Purpose | Public API | Owner | Notes |
 |------|---------|-----------|-------|------|
+| pdf_ingest.m | Read PDFs into text | ingestPdf | @janedoe | example |
 |  |  |  |  |  |
 
 
