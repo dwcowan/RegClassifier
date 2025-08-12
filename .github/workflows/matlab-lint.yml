@@ -14,4 +14,6 @@ jobs:
         with:
           release: R2024b
       - name: Run mlint
-        run: matlab -batch "run_mlint"
+        uses: matlab-actions/run-command@v2
+         with:
+          command: run_mlint
