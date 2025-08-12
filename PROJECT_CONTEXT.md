@@ -211,13 +211,15 @@ Main report now includes a **Gold Mini-Pack** section (if `gold/*` exists), show
 ---
 ## Update 2025-08-10 22:57:32
 **Data acquisition + diffs added:**
-- Fetchers:
-  - `+reg/fetch_crr_eurlex.m` — downloads consolidated CRR PDF by consolidation date.
-  - `+reg/fetch_crr_eba.m` — scrapes EBA ISRB per-article pages (HTML + plaintext) with index CSV.
-- Diffs:
-  - `+reg/crr_diff_versions.m` — compare two CRR corpora (e.g., older vs newer EBA text dumps), write CSV + patch.
-  - `+reg/diff_methods.m` — compare Top-10 retrievals across baseline/projection/fine-tuned for a query set.
-- Tests: `tests/TestFetchers.m` (network-tolerant signatures).
+  - Fetchers:
+    - `+reg/fetch_crr_eurlex.m` — downloads consolidated CRR PDF by consolidation date.
+    - `+reg/fetch_crr_eba.m` — scrapes EBA ISRB per-article pages (HTML + plaintext) with index CSV.
+    - All fetchers save downloads to `data/raw`.
+  - Diffs:
+    - `+reg/crr_diff_versions.m` — compare two CRR corpora (e.g., older vs newer EBA text dumps), write CSV + patch.
+    - `+reg/diff_methods.m` — compare Top-10 retrievals across baseline/projection/fine-tuned for a query set.
+  - Tests: `tests/TestFetchers.m` (network-tolerant signatures).
+  - When switching from raw downloads to pipeline ingestion, move the files into `data/pdfs` or update `pipeline.json`'s `input_dir` to point at `data/raw`.
 
 ---
 ## Update 2025-08-10 22:59:21
