@@ -9,8 +9,8 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 
 1. In MATLAB, run the full test suite regularly:
    ```matlab
-   results = runtests('tests','IncludeSubfolders',true,'UseParallel',false);
-   table(results)
+   resultsTbl = runtests('tests','IncludeSubfolders',true,'UseParallel',false);
+   table(resultsTbl)
    ```
 2. Investigate any failures before committing changes.
 3. Optional: configure continuous integration (e.g., GitHub Actions) to run the same command on each push.
@@ -21,11 +21,11 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
   - `testFolder` (string): path to test suite, e.g., `'tests'`.
   - `'IncludeSubfolders'` (logical): include nested tests.
   - `'UseParallel'` (logical): run tests in parallel.
-- **Returns:** table `results` with fields `Name`, `Passed`, `Failed`, `Incomplete`, and `Duration`.
+  - **Returns:** table `resultsTbl` with fields `Name`, `Passed`, `Failed`, `Incomplete`, and `Duration`.
 - **Side Effects:** executes all MATLAB tests in the project.
 - **Usage Example:**
   ```matlab
-  results = runtests('tests','IncludeSubfolders',true,'UseParallel',false);
+  resultsTbl = runtests('tests','IncludeSubfolders',true,'UseParallel',false);
   ```
 
 See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for any test-related artifacts.
