@@ -10,9 +10,15 @@ This is the **single source of truth** for object, method, variable, and file na
 
 - **Classes/Objects:** `PascalCase` (e.g., `InvoiceProcessor`)
 - **Methods/Functions:** `camelCase` (e.g., `parseDocument`)
+
 - **Variables:** `snake_case` (e.g., `doc_index`)
 - **Constants/Enums:** `UPPER_SNAKE_CASE` (e.g., `MAX_RETRY_COUNT`)
 - **Files/Modules:** `lower_snake_case.ext` (e.g., `pdf_ingest.m`, `text_chunker.m`)
+- **Class properties:** `lowerCamelCase` (e.g., `learningRate`)
+- **Variables:** `snake_case` (e.g., `doc_index`)
+- **Constants/Enums:** `UPPER_SNAKE_CASE` (e.g., `MAX_RETRY_COUNT`)
+- **Files/Modules:** `lower_snake_case.ext` (e.g., `pdf_ingest.m`, `text_chunker.m`)
+- **Temporary Variables** Short names such as `tmp` or `idx` are permitted only for a few lines and must not escape the local scope.
 
 ### Data-Type Suffixes
 
@@ -23,6 +29,7 @@ This is the **single source of truth** for object, method, variable, and file na
 | Cell array | `Cell` | `filePathsCell` |
 | Structure | `Struct` | `configStruct` |
 | Table | `Tbl` | `resultsTbl` |
+
 
 
 Scopes:
@@ -60,6 +67,22 @@ Scopes:
 |------|---------|-----------|-------|------|
 |  |  |  |  |  |
 
+
+
+
+
+## Tests
+
+Test files reside in the `tests/` directory and follow the `testFunctionName.m` naming convention.
+
+Common test scopes or prefixes include:
+
+- `Test` for general unit tests
+- `TestIntegration` for integration scenarios
+- `TestSmoke` for smoke tests
+
+
+
 ---
 
 ## Data Contracts (Between Modules)
@@ -73,3 +96,7 @@ Scopes:
 ## Changelog
 
 - YYYY-MM-DD: Initial registry created.
+
+
+
+
