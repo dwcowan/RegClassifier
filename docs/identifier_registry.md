@@ -46,6 +46,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 
 | Name | Purpose | Scope | Owner | Related Files | Notes |
 |------|---------|-------|-------|---------------|-------|
+| EnvironmentFixture | Manage MATLAB format, RNG, and GPU state for tests | test | @todo | tests/+fixtures/EnvironmentFixture.m | |
 
 ## Functions
 
