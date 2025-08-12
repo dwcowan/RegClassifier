@@ -2,27 +2,21 @@
 
 This repository enforces consistent naming through:
 1. A **single source of truth**: `naming_registry.md`
-2. Automated checks: `tools/naming_lint.py` + GitHub Action + optional pre-commit hook
-3. Editor aids and grep-able breadcrumbs
-
+2. Editor aids and grep-able breadcrumbs
+3. naming converntion is detailed in the matlab style guide
 ## TL;DR
 
-- Classes: `PascalCase`
-- Methods/Functions: `camelCase`
-- Variables: `snake_case`
-- Constants: `UPPER_SNAKE_CASE`
-- Files: `lower_snake_case.ext`
+| Category | Rule |
+|----------|------|
+| Variable names | lowerCamelCase, descriptive |
+| Constants | UPPER_CASE_WITH_UNDERSCORES |
+| Functions | lowerCamelCase; filename matches function |
+| Classes | UpperCamelCase |
+| Indentation | Two spaces, no tabs |
+| Line width | ≤ 80 characters |
+| Comments | `%` for line, `%%` for section |
+| Tests | Located in `tests/`; run with `runtests` |
 
-## Local Setup
-
-```bash
-# Install Python deps
-pip install pyyaml
-
-# Optional: enable pre-commit hook
-git config core.hooksPath .githooks
-chmod +x .githooks/pre-commit
-```
 
 ## CI
 
