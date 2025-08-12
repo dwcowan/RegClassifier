@@ -1,6 +1,6 @@
 %% NAME-REGISTRY:TEST testHybridSearch
 function tests = testHybridSearch
-%TESTHYBRIDSEARCH Placeholder tests for hybrid search module.
+%TESTHYBRIDSEARCH Tests for hybrid search module.
 %
 % Outputs
 %   tests - handle to local tests
@@ -8,6 +8,12 @@ function tests = testHybridSearch
 tests = functiontests(localfunctions);
 end
 
-function testPlaceholder(testCase)
-    testCase.assumeFail('Not implemented yet');
+function testReturnsResults(testCase)
+    import tests.fixtures.EnvironmentFixture
+    testCase.applyFixture(EnvironmentFixture);
+    queryStr = "query";
+    xMat = rand(1, 3);
+    docTbl = table("doc", 'VariableNames', "text");
+    resultsTbl = reg.hybridSearch(queryStr, xMat, docTbl);
+    verifyGreaterThan(testCase, height(resultsTbl), 0);
 end

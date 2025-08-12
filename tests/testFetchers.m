@@ -1,6 +1,6 @@
 %% NAME-REGISTRY:TEST testFetchers
 function tests = testFetchers
-%TESTFETCHERS Placeholder tests for data fetch utilities.
+%TESTFETCHERS Tests for data fetch utilities.
 %
 % Outputs
 %   tests - handle to local tests
@@ -8,6 +8,14 @@ function tests = testFetchers
 tests = functiontests(localfunctions);
 end
 
-function testPlaceholder(testCase)
-    testCase.assumeFail('Not implemented yet');
+function testDiffFunctionsReturnStructs(testCase)
+    import tests.fixtures.EnvironmentFixture
+    testCase.applyFixture(EnvironmentFixture);
+    diffStruct = reg.crrDiffVersions("old", "new");
+    verifyClass(testCase, diffStruct, 'struct');
+    verifyNotEmpty(testCase, fieldnames(diffStruct));
+
+    articleStruct = reg.crrDiffArticles("1", "a", "b");
+    verifyClass(testCase, articleStruct, 'struct');
+    verifyNotEmpty(testCase, fieldnames(articleStruct));
 end
