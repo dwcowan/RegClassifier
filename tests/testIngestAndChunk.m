@@ -1,5 +1,5 @@
-%% NAME-REGISTRY:TEST TestIngestAndChunk
-function tests = TestIngestAndChunk
+%% NAME-REGISTRY:TEST testIngestAndChunk
+function tests = testIngestAndChunk
 %TESTINGESTANDCHUNK Placeholder tests for ingest and chunk modules.
 %
 % Outputs

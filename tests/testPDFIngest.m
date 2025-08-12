@@ -1,5 +1,5 @@
-%% NAME-REGISTRY:TEST TestPDFIngest
-function tests = TestPDFIngest
+%% NAME-REGISTRY:TEST testPDFIngest
+function tests = testPDFIngest
 %TESTPDFINGEST Placeholder tests for PDF ingestion module.
 %
 % Outputs

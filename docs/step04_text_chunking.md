@@ -32,7 +32,7 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 - `chunks` contains `chunkId`, `docId`, and `text` for each segment.
 - Run the chunking test:
   ```matlab
-  runtests('tests/TestIngestAndChunk.m')
+  runtests('tests/testIngestAndChunk.m')
   ```
   The test confirms expected chunk counts and boundaries.
 

@@ -1,5 +1,5 @@
-%% NAME-REGISTRY:TEST TestFetchers
-function tests = TestFetchers
+%% NAME-REGISTRY:TEST testFetchers
+function tests = testFetchers
 %TESTFETCHERS Placeholder tests for data fetch utilities.
 %
 % Outputs

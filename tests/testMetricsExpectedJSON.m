@@ -1,6 +1,6 @@
-%% NAME-REGISTRY:TEST TestReportArtifact
-function tests = TestReportArtifact
-%TESTREPORTARTIFACT Placeholder tests for report generation.
+%% NAME-REGISTRY:TEST testMetricsExpectedJSON
+function tests = testMetricsExpectedJSON
+%TESTMETRICSEXPECTEDJSON Placeholder tests for metrics JSON comparison.
 %
 % Outputs
 %   tests - handle to local tests

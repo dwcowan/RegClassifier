@@ -30,7 +30,7 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 - Date-stamped corpora appear in the `data` directory.
 - Run fetcher tests:
   ```matlab
-  runtests('tests/TestFetchers.m')
+  runtests('tests/testFetchers.m')
   ```
   Tests handle network availability gracefully.
 

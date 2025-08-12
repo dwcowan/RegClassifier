@@ -30,7 +30,7 @@ Short-lived helpers such as `tmp` or `idx` should remain within a few lines of u
 
 ## Tests
 
-Place tests in the `tests/` folder and name each file `testFunctionName.m`. Refer to [Testing](Matlab_Style_Guide.md#27-testing) for the complete testing conventions.
+Place tests in the `tests/` folder and name each file `testName.m`. Refer to [Testing](Matlab_Style_Guide.md#27-testing) for the complete testing conventions.
 
 ## Workflow
 

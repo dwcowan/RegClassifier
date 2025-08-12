@@ -23,7 +23,7 @@ Refer to [Matlab Style Guide](Matlab_Style_Guide.md) for naming rules and [READM
 - **Variables:** `lowerCamelCase` (e.g., `docIndex`)
 - **Constants/Enums:** `UPPER_CASE_WITH_UNDERSCORES` (e.g., `MAX_RETRY_COUNT`)
 - **Files/Modules:** `lowerCamelCase.m` (e.g., `pdfIngest.m`, `textChunker.m`)
-- **Tests:** `testFunctionName.m` (e.g., `testParseDocument.m`)
+- **Tests:** `testName.m` (e.g., `testParseDocument.m`)
 - **Temporary Variables:** Short names such as `tmp` or `idx` are permitted only for a few lines and must not escape the local scope.
 
 Scopes:
@@ -114,30 +114,30 @@ Keep the illustrative examples below in sync with the current naming conventions
 
 ## Tests
 
-Test files reside in the `tests/` directory and follow the `testFunctionName.m` naming convention.
+Test files reside in the `tests/` directory and follow the `testName.m` naming convention.
 
 Common test scopes or prefixes include:
 
-- `Test` for general unit tests
-- `TestIntegration` for integration scenarios
-- `TestSmoke` for smoke tests
+- `test` for general unit tests
+- `testIntegration` for integration scenarios
+- `testSmoke` for smoke tests
 
 | Name | Purpose | Scope | Owner | Related Functions | Notes |
 |------|---------|-------|-------|-------------------|-------|
-| TestPDFIngest | Test PDF ingestion | unit | @todo | ingestPdfs | stub |
-| TestIngestAndChunk | Test ingestion and chunking together | integration | @todo | ingestPdfs, chunkText | stub |
-| TestRulesAndModel | Test weak rules and model training | unit | @todo | weakRules, trainMultilabel | stub |
-| TestFeatures | Test embedding generation | unit | @todo | docEmbeddingsBertGpu, precomputeEmbeddings | stub |
-| TestRegressionMetricsSimulated | Test regression metrics | unit | @todo | trainMultilabel, evalPerLabel | stub |
-| TestHybridSearch | Test hybrid search | unit | @todo | hybridSearch | stub |
-| TestProjectionHeadSimulated | Test projection head training | unit | @todo | trainProjectionHead | stub |
-| TestProjectionAutoloadPipeline | Test projection head autoload pipeline | integration | @todo | trainProjectionHead | stub |
-| TestFineTuneSmoke | Smoke test for encoder fine-tuning | smoke | @todo | ftBuildContrastiveDataset, ftTrainEncoder | stub |
-| TestFineTuneResume | Test fine-tune resume | unit | @todo | ftTrainEncoder | stub |
-| TestMetricsExpectedJSON | Test metrics JSON output | unit | @todo | evalRetrieval | stub |
-| TestGoldMetrics | Test gold metrics evaluation | unit | @todo | loadGold, evalPerLabel | stub |
-| TestReportArtifact | Test report generation | unit | @todo | evalRetrieval | stub |
-| TestFetchers | Test fetch utilities | unit | @todo | crrDiffVersions, crrDiffArticles | stub |
+| testPDFIngest | Test PDF ingestion | unit | @todo | ingestPdfs | stub |
+| testIngestAndChunk | Test ingestion and chunking together | integration | @todo | ingestPdfs, chunkText | stub |
+| testRulesAndModel | Test weak rules and model training | unit | @todo | weakRules, trainMultilabel | stub |
+| testFeatures | Test embedding generation | unit | @todo | docEmbeddingsBertGpu, precomputeEmbeddings | stub |
+| testRegressionMetricsSimulated | Test regression metrics | unit | @todo | trainMultilabel, evalPerLabel | stub |
+| testHybridSearch | Test hybrid search | unit | @todo | hybridSearch | stub |
+| testProjectionHeadSimulated | Test projection head training | unit | @todo | trainProjectionHead | stub |
+| testProjectionAutoloadPipeline | Test projection head autoload pipeline | integration | @todo | trainProjectionHead | stub |
+| testFineTuneSmoke | Smoke test for encoder fine-tuning | smoke | @todo | ftBuildContrastiveDataset, ftTrainEncoder | stub |
+| testFineTuneResume | Test fine-tune resume | unit | @todo | ftTrainEncoder | stub |
+| testMetricsExpectedJSON | Test metrics JSON output | unit | @todo | evalRetrieval | stub |
+| testGoldMetrics | Test gold metrics evaluation | unit | @todo | loadGold, evalPerLabel | stub |
+| testReportArtifact | Test report generation | unit | @todo | evalRetrieval | stub |
+| testFetchers | Test fetch utilities | unit | @todo | crrDiffVersions, crrDiffArticles | stub |
 
 ---
 

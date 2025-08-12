@@ -1,5 +1,5 @@
-%% NAME-REGISTRY:TEST TestFeatures
-function tests = TestFeatures
+%% NAME-REGISTRY:TEST testFeatures
+function tests = testFeatures
 %TESTFEATURES Placeholder tests for embedding generation.
 %
 % Outputs

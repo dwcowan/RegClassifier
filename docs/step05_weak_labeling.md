@@ -37,7 +37,7 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 - `Yboot` is a sparse matrix with rows matching `chunks` and columns representing topics.
 - Run the labeling test:
   ```matlab
-  runtests('tests/TestRulesAndModel.m')
+  runtests('tests/testRulesAndModel.m')
   ```
   The test verifies label coverage and format.
 

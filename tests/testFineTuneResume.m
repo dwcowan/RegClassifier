@@ -1,5 +1,5 @@
-%% NAME-REGISTRY:TEST TestFineTuneResume
-function tests = TestFineTuneResume
+%% NAME-REGISTRY:TEST testFineTuneResume
+function tests = testFineTuneResume
 %TESTFINETUNERESUME Placeholder tests for encoder fine-tuning resume.
 %
 % Outputs

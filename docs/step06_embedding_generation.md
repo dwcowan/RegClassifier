@@ -32,7 +32,7 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 - `X` has one row per chunk and 768 columns (BERT base dimension).
 - Run the features test:
   ```matlab
-  runtests('tests/TestFeatures.m')
+  runtests('tests/testFeatures.m')
   ```
   The test confirms embedding shapes and backend selection.
 

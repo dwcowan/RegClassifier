@@ -129,6 +129,7 @@ convention defined in **this** document [Matlab Style Guide](Matlab_Style_Guide.
 
 ### 3. Testing
 - Store tests in a `tests/` folder mirroring source structure.
+- Name each test file `testName.m` and ensure the function name matches the file.
 - Use MATLAB's `matlab.unittest.TestCase` for unit tests.
 - Include:
   - Valid input tests

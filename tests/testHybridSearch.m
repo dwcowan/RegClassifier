@@ -1,5 +1,5 @@
-%% NAME-REGISTRY:TEST TestHybridSearch
-function tests = TestHybridSearch
+%% NAME-REGISTRY:TEST testHybridSearch
+function tests = testHybridSearch
 %TESTHYBRIDSEARCH Placeholder tests for hybrid search module.
 %
 % Outputs

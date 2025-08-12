@@ -37,8 +37,8 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 - Classifier training completes and saves `baseline_model.mat`.
 - Run baseline tests:
   ```matlab
-  runtests({'tests/TestRegressionMetricsSimulated.m', ...
-            'tests/TestHybridSearch.m'})
+  runtests({'tests/testRegressionMetricsSimulated.m', ...
+            'tests/testHybridSearch.m'})
   ```
   Tests confirm baseline metrics and retrieval behavior.
 

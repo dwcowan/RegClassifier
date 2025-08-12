@@ -29,28 +29,28 @@ This guide outlines a clean-room rebuild of the MATLAB-based regulatory topic cl
 - **Goal:** Convert PDFs into raw text documents.
 - **Depends on:** Repository Setup.
 - **Implementation:** `reg.ingest_pdfs` with fixtures for text and image-only PDFs.
-- **Testing:** `tests/TestPDFIngest.m` ensures OCR fallback and basic parsing.
+- **Testing:** `tests/testPDFIngest.m` ensures OCR fallback and basic parsing.
 - **Output:** Table of documents (`doc_id`, `text`).
 
 ## 4. Text Chunking Module
 - **Goal:** Split long documents into overlapping token chunks.
 - **Depends on:** Data Ingestion Module.
 - **Implementation:** `reg.chunk_text` respecting `chunk_size_tokens` & `chunk_overlap`.
-- **Testing:** `tests/TestIngestAndChunk.m` verifies chunk counts and boundaries.
+- **Testing:** `tests/testIngestAndChunk.m` verifies chunk counts and boundaries.
 - **Output:** Table of chunks (`chunk_id`, `doc_id`, `text`).
 
 ## 5. Weak Labeling Module
 - **Goal:** Bootstrap labels using rule-based heuristics.
 - **Depends on:** Text Chunking Module.
 - **Implementation:** `reg.weak_rules` returning label matrix.
-- **Testing:** `tests/TestRulesAndModel.m` confirms label coverage and format.
+- **Testing:** `tests/testRulesAndModel.m` confirms label coverage and format.
 - **Output:** Sparse label matrix `Yboot`.
 
 ## 6. Embedding Generation Module
 - **Goal:** Embed chunks using BERT (GPU) or FastText fallback.
 - **Depends on:** Text Chunking Module.
 - **Implementation:** `reg.doc_embeddings_bert_gpu` & `reg.precompute_embeddings`.
-- **Testing:** `tests/TestFeatures.m` checks embedding shapes & backend selection.
+- **Testing:** `tests/testFeatures.m` checks embedding shapes & backend selection.
 - **Output:** Matrix `X` of embeddings per chunk.
 
 ## 7. Baseline Classifier & Retrieval
@@ -59,21 +59,21 @@ This guide outlines a clean-room rebuild of the MATLAB-based regulatory topic cl
 - **Implementation:**
   - `reg.train_multilabel` for classifier.
   - `reg.hybrid_search` for cosine + BM25 retrieval.
-- **Testing:** `tests/TestRegressionMetricsSimulated.m` & `tests/TestHybridSearch.m` validate baseline metrics.
+- **Testing:** `tests/testRegressionMetricsSimulated.m` & `tests/testHybridSearch.m` validate baseline metrics.
 - **Output:** Baseline model artifacts and retrieval functionality.
 
 ## 8. Projection Head Workflow
 - **Goal:** Improve retrieval with an MLP on frozen embeddings.
 - **Depends on:** Baseline Classifier & Retrieval.
 - **Implementation:** `reg.train_projection_head` with `reg_projection_workflow.m` driver.
-- **Testing:** `tests/TestProjectionHeadSimulated.m` ensures Recall@n increases over baseline. `tests/TestProjectionAutoloadPipeline.m` verifies auto-use in `reg_pipeline`.
+- **Testing:** `tests/testProjectionHeadSimulated.m` ensures Recall@n increases over baseline. `tests/testProjectionAutoloadPipeline.m` verifies auto-use in `reg_pipeline`.
 - **Output:** `projection_head.mat` used automatically by the pipeline.
 
 ## 9. Encoder Fine-Tuning Workflow
 - **Goal:** Unfreeze BERT layers and apply contrastive learning.
 - **Depends on:** Projection Head Workflow (optional but recommended) and Embedding Generation Module.
 - **Implementation:** `reg.ft_build_contrastive_dataset`, `reg.ft_train_encoder`, and `reg_finetune_encoder_workflow.m`.
-- **Testing:** `tests/TestFineTuneSmoke.m` for basic convergence, `tests/TestFineTuneResume.m` for checkpoint resume.
+- **Testing:** `tests/testFineTuneSmoke.m` for basic convergence, `tests/testFineTuneResume.m` for checkpoint resume.
 - **Output:** `fine_tuned_bert.mat` encoder weights.
 
 ## 10. Evaluation & Reporting
@@ -83,14 +83,14 @@ This guide outlines a clean-room rebuild of the MATLAB-based regulatory topic cl
   - `reg.eval_retrieval` and `reg.eval_per_label` for metrics.
   - `reg_eval_and_report.m` generates `reg_eval_report.pdf` and trends.
   - Gold mini-pack support via `reg.load_gold` and `reg_eval_gold.m`.
-- **Testing:** `tests/TestMetricsExpectedJSON.m`, `tests/TestGoldMetrics.m`, `tests/TestReportArtifact.m`.
+- **Testing:** `tests/testMetricsExpectedJSON.m`, `tests/testGoldMetrics.m`, `tests/testReportArtifact.m`.
 - **Output:** Metrics CSVs, PDF/HTML reports, gold evaluation results.
 
 ## 11. Data Acquisition & Diff Utilities (Optional)
 - **Goal:** Automate CRR/EBA fetches and track version differences.
 - **Depends on:** Environment & Tooling.
 - **Implementation:** `reg_crr_sync.m`, `reg.crr_diff_versions`, `reg.crr_diff_articles`, and related HTML/PDF report generators.
-- **Testing:** `tests/TestFetchers.m` (network-tolerant).
+- **Testing:** `tests/testFetchers.m` (network-tolerant).
 - **Output:** Date-stamped corpora and diff reports.
 
 ## 12. Continuous Testing Framework

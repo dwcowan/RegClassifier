@@ -108,14 +108,14 @@ From a **zero-knowledge start**, the assistant can:
 ---
 ## Update 2025-08-10 22:36:04
 Added comprehensive test suite items:
-- **PDF ingest tests** (`tests/TestPDFIngest.m`) with fixtures:
+- **PDF ingest tests** (`tests/testPDFIngest.m`) with fixtures:
   - `tests/fixtures/sim_text.pdf` (text PDF)
   - `tests/fixtures/sim_image_only.pdf` (image-only PDF for OCR fallback)
-- **Metrics regression test** (`tests/TestMetricsExpectedJSON.m`) that loads thresholds from
+- **Metrics regression test** (`tests/testMetricsExpectedJSON.m`) that loads thresholds from
   `tests/fixtures/expected_metrics.json` and asserts deltas within tolerance.
-- **Projection head save/load (pipeline autoload)** (`tests/TestProjectionAutoloadPipeline.m`) ensures
+- **Projection head save/load (pipeline autoload)** (`tests/testProjectionAutoloadPipeline.m`) ensures
   `reg_pipeline` respects `projection_head.mat` and auto-applies it.
-- **Fine-tune checkpoint resume** (`tests/TestFineTuneResume.m`) to verify resuming from
+- **Fine-tune checkpoint resume** (`tests/testFineTuneResume.m`) to verify resuming from
   `checkpoints/ft_epochXX.mat`.
 
 How to run:
@@ -131,23 +131,23 @@ table(results)
 We have significantly expanded the MATLAB test suite to improve coverage and regression safety.
 
 #### **New Tests**
-1. **PDF Ingest Tests** (`tests/TestPDFIngest.m`)
+1. **PDF Ingest Tests** (`tests/testPDFIngest.m`)
    - Uses `tests/fixtures/sim_text.pdf` for text-based PDF ingestion.
    - Uses `tests/fixtures/sim_image_only.pdf` to trigger OCR fallback (skips if OCR not available).
 
-2. **Metrics Regression Test** (`tests/TestMetricsExpectedJSON.m`)
+2. **Metrics Regression Test** (`tests/testMetricsExpectedJSON.m`)
    - Loads `tests/fixtures/expected_metrics.json` containing minimum acceptable values for:
      - Recall@10
      - mAP
      - nDCG@10
    - Applies tolerance to allow minor fluctuations.
 
-3. **Projection Head Autoload Test** (`tests/TestProjectionAutoloadPipeline.m`)
+3. **Projection Head Autoload Test** (`tests/testProjectionAutoloadPipeline.m`)
    - Trains a small projection head on simulated data.
    - Saves it as `projection_head.mat`.
    - Runs `reg_pipeline` and verifies it auto-applies the projection head.
 
-4. **Fine-Tune Checkpoint Resume Test** (`tests/TestFineTuneResume.m`)
+4. **Fine-Tune Checkpoint Resume Test** (`tests/testFineTuneResume.m`)
    - Runs a short fine-tuning to produce `checkpoints/ft_epochXX.mat`.
    - Resumes training from this checkpoint and verifies correct resume behavior.
    - Skips if no GPU available.
@@ -181,7 +181,7 @@ table(results)
 - Fine-tune early stopping on nDCG@10 with patience + min-delta; saves `checkpoints/ft_best.mat`.
 - Simple **hard-negative mining** between epochs using current encoder.
 - **Per-label metrics** helper (`+reg/eval_per_label.m`).
-- **Golden artifact test** (`tests/TestReportArtifact.m`) ensuring `reg_eval_report.pdf` exists and is non-trivial.
+- **Golden artifact test** (`tests/testReportArtifact.m`) ensuring `reg_eval_report.pdf` exists and is non-trivial.
 
 ---
 ## Update 2025-08-10 22:47:16
@@ -190,7 +190,7 @@ table(results)
   - `sample_gold_chunks.csv`, `sample_gold_labels.json`, `sample_gold_Ytrue.csv`, `expected_metrics.json`
 - Loader: `+reg/load_gold.m`
 - Runner: `reg_eval_gold.m` → produces `gold_eval_report.pdf`
-- Test: `tests/TestGoldMetrics.m` enforces overall + per-label thresholds
+- Test: `tests/testGoldMetrics.m` enforces overall + per-label thresholds
 - Helper: `+testutil/make_gold_from_simulated.m` generates gold directly from the simulated set.
 
 **Should we use simulated data to seed the gold pack?**  
@@ -218,7 +218,7 @@ Main report now includes a **Gold Mini-Pack** section (if `gold/*` exists), show
   - Diffs:
     - `+reg/crr_diff_versions.m` — compare two CRR corpora (e.g., older vs newer EBA text dumps), write CSV + patch.
     - `+reg/diff_methods.m` — compare Top-10 retrievals across baseline/projection/fine-tuned for a query set.
-  - Tests: `tests/TestFetchers.m` (network-tolerant signatures).
+  - Tests: `tests/testFetchers.m` (network-tolerant signatures).
   - When switching from raw downloads to pipeline ingestion, move the files into `data/pdfs` or update `pipeline.json`'s `input_dir` to point at `data/raw`.
 
 ---

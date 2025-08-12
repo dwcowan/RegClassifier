@@ -29,7 +29,7 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 - `docs` is a table with columns such as `docId` and `text`.
 - Run the unit test for ingestion:
   ```matlab
-  runtests('tests/TestPDFIngest.m')
+  runtests('tests/testPDFIngest.m')
   ```
   The test should pass, confirming OCR fallback and basic parsing.
 
