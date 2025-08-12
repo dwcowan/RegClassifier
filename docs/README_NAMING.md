@@ -40,13 +40,13 @@ Place tests in the `tests/` folder and name each file `testFunctionName.m`. Refe
 2. Before coding, check the `identifier_registry.md` for existing classes,
    functions, variables, constants, files/modules, tests, and other
    identifiers that may be affected by your task.
-4. Note identifiers currently in use, use these consistently in your code, if required.
-5. Update the codebase accordingly.
-6. when introducing new identifiers in your code, **always** crosscheck this
+3. Note identifiers currently in use, use these consistently in your code, if required.
+4. Update the codebase accordingly.
+5. When introducing new identifiers in your code, **always** crosscheck this
    name isnt in use and **always** update the `identifier_registry.md` with
    new classes, functions, variables, constants, files/modules, tests, and
    other identifiers through a PR with your new code.
-4. Run CI to ensure naming checks pass.
+6. Run CI to ensure naming checks pass.
 
 
 ## CI
