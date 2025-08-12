@@ -1,7 +1,9 @@
 # Naming Conventions & Registry (Quick Start)
 
-This repository enforces consistent naming through:
-1. A **single source of truth**: `naming_registry.md`
+This repository enforces consistent naming across classes, functions,
+variables, constants, files/modules, tests, and other identifiers
+through:
+1. A **single source of truth** for all names: `naming_registry.md`
 2. Editor aids and grep-able breadcrumbs
 3. Naming convention is detailed in the MATLAB style guide
 ## TL;DR

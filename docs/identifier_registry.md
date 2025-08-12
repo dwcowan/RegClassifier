@@ -50,6 +50,19 @@ Scopes:
 |------|---------|-----------|-------|------|
 |  |  |  |  |  |
 
+
+
+## Tests
+
+Test files reside in the `tests/` directory and follow the `testFunctionName.m` naming convention.
+
+Common test scopes or prefixes include:
+
+- `Test` for general unit tests
+- `TestIntegration` for integration scenarios
+- `TestSmoke` for smoke tests
+
+
 ---
 
 ## Data Contracts (Between Modules)
