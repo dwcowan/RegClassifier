@@ -16,13 +16,26 @@ if isstruct(conn) && isfield(conn,'sqlite')
         exec(sconn, "ALTER TABLE reg_chunks ADD COLUMN " + toAdd(k) + " TEXT");
     end
     % Upsert rows (INSERT OR REPLACE)
+    colnames = string(T.Properties.VariableNames);
+    colList = join(colnames, ",");
     for i = 1:height(T)
         row = T(i,:);
-        % Build REPLACE INTO with all columns
-        colnames = string(T.Properties.VariableNames);
-        placeholders = join(repmat("?",1,numel(colnames)) , ",");
-        sql = "INSERT OR REPLACE INTO reg_chunks (" + join(colnames,",") + ") VALUES (" + placeholders + ")";
-        exec(sconn, sql, table2cell(row));
+        vals = table2cell(row);
+        vstr = strings(1, numel(vals));
+        for j = 1:numel(vals)
+            v = vals{j};
+            if isstring(v) || ischar(v)
+                sv = string(v);
+                sv = replace(sv, "'", "''");
+                vstr(j) = "'" + sv + "'";
+            elseif isnumeric(v) || islogical(v)
+                vstr(j) = string(v);
+            else
+                error('Unsupported value type for SQLite upsert.');
+            end
+        end
+        sql = "INSERT OR REPLACE INTO reg_chunks (" + colList + ") VALUES (" + join(vstr, ",") + ")";
+        exec(sconn, sql);
     end
 else
     % Database Toolbox server (e.g., Postgres) — naive approach: try sqlwrite then ignore conflicts
