@@ -53,6 +53,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 | Name | Purpose | Scope | Input Contract | Output Contract | Owner | Notes |
 |------|---------|-------|----------------|-----------------|-------|------|
 | startup | RegClassifier project initialization | module | `project` object | none | @todo | |
+| shutdown | RegClassifier project cleanup | module | `project` object | none | @todo | |
 | ingestPdfs | Convert PDFs into text documents | module | `pdfPathsCell` cell array | `docTbl` table | @todo | stub |
 | chunkText | Split documents into token chunks | module | `docTbl`, `chunkSizeTokens`, `chunkOverlap` | `chunkTbl` table | @todo | stub |
 | weakRules | Generate weak labels for chunks | module | `chunkTbl` table | sparse matrix `yBootMat` | @todo | stub |
@@ -76,6 +77,8 @@ Keep the illustrative examples below in sync with the current naming conventions
 | Function | Parameters | Returns | Side Effects |
 |----------|------------|---------|--------------|
 | config | none | struct of settings from JSON files | reads configuration files |
+| startup | project object | none | adds repo paths, sets defaults |
+| shutdown | project object | none | removes repo paths, restores defaults |
 | reg.ingestPdfs | inputDir string | docs table `{docId,text}` | reads PDFs, OCR fallback |
 | reg.chunkText | docs table, chunkSizeTokens double, chunkOverlap double | chunks table `{chunkId,docId,text}` | none |
 | reg.weakRules | text array, labels array | sparse matrix `Yweak` | none |
@@ -133,6 +136,8 @@ Keep the illustrative examples below in sync with the current naming conventions
 | crrDiffVersions.m | Compare CRR versions | crrDiffVersions | @todo | stub |
 | crrDiffArticles.m | Compare CRR articles | crrDiffArticles | @todo | stub |
 | run_mlint.m | Lint MATLAB files | run_mlint | @todo | errors on lint |
+| startup.m | Initialize project paths and defaults | startup | @todo | |
+| shutdown.m | Remove project paths and restore defaults | shutdown | @todo | |
 
 
 
