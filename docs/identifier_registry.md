@@ -71,6 +71,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 | crrDiffVersions | Compare CRR versions | module | `oldPathStr` string, `newPathStr` string | diff struct | @todo | stub |
 | crrDiffArticles | Compare CRR articles | module | `articleId` string, `versionA` string, `versionB` string | diff struct | @todo | stub |
 | validateKnobs | Validate knobs struct | module | `knobsStruct` struct | none | @todo | stub |
+| printActiveKnobs | Display knob key-value pairs | module | `knobsStruct` struct | none | @todo | prints to stdout |
 | run_mlint | Run MATLAB code analyzer on repository | module | none | none | @todo | errors on lint |
 | setSeeds | Set RNG and GPU seeds | module | `seed` integer scalar | none | @todo | |
 
@@ -98,6 +99,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 | reg.crrSync | sourceUrl string, destFolder string | none | downloads corpus to destFolder |
 | reg.crrDiffVersions | `vA` string, `vB` string | diff struct | none |
 | reg.crrDiffReport | none | none | writes HTML/PDF summaries |
+| reg.printActiveKnobs | knobsStruct struct | none | prints knob values to stdout |
 | reg.setSeeds | seed double | none | sets RNG and GPU seeds |
 | runtests | testFolder string, IncludeSubfolders logical, UseParallel logical | results table | executes test suite |
 
@@ -140,6 +142,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 | crrDiffVersions.m | Compare CRR versions | crrDiffVersions | @todo | stub |
 | crrDiffArticles.m | Compare CRR articles | crrDiffArticles | @todo | stub |
 | validateKnobs.m | Validate knobs struct | validateKnobs | @todo | stub |
+| printActiveKnobs.m | Display knob name-value pairs | printActiveKnobs | @todo | |
 | run_mlint.m | Lint MATLAB files | run_mlint | @todo | errors on lint |
 | startup.m | Initialize project paths and defaults | startup | @todo | |
 | shutdown.m | Remove project paths and restore defaults | shutdown | @todo | |
