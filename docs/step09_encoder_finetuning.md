@@ -9,7 +9,10 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 
 1. Build the contrastive training dataset:
    ```matlab
+
+
    contrastiveDatasetTbl = reg.ftBuildContrastiveDataset(chunks, bootLabelMat);
+
    ```
 2. Fine-tune the encoder starting from the pretrained weights:
    ```matlab

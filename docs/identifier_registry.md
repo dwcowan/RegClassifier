@@ -273,7 +273,6 @@ Common test scopes or prefixes include:
 | retrieval → evaluation | RetrievalResult | MAT-file (`resultsTbl.mat`) | fields exist | see [Step 7](step07_baseline_classifier.md) |
 | dataset build → fine-tune | ContrastiveDataset | MAT-file (`contrastive_ds.mat`) | fields exist | see [Step 9](step09_encoder_finetuning.md) |
 | fine-tune → evaluation | ftEncoder struct with BERT weights | MAT-file (`fine_tuned_bert.mat`) | fields exist | see [Step 9](step09_encoder_finetuning.md) |
-
 | evaluation → reports | Metric | CSV/PDF | schema check | see [Step 10](step10_evaluation_reporting.md) |
 
 ---

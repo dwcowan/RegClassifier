@@ -10,6 +10,7 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 1. Load embeddings and weak labels:
    ```matlab
 
+
    load('data/embeddingMat.mat','embeddingMat');
    load('data/bootLabelMat.mat','bootLabelMat');
    ```
@@ -28,7 +29,9 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 
 ### reg.trainMultilabel
 - **Parameters:**
+
   - `embeddingMat` (double matrix): embeddings from Step 6.
+
 
   - `bootLabelMat` (sparse logical matrix): weak labels from Step 5.
 - **Returns:** struct `baselineModelStruct` with fields `weights` and `bias` (see [BaselineModelStruct](identifier_registry.md#baselinemodelstruct)).
@@ -36,6 +39,7 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 - **Usage Example:**
   ```matlab
   baselineModelStruct = reg.trainMultilabel(embeddingMat, bootLabelMat);
+
 
   ```
 
@@ -54,6 +58,7 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
   ```
 
 See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schemas of `embeddingMat`, `bootLabelMat`, `BaselineModelStruct`, and `RetrievalResult` outputs.
+
 
 
 
