@@ -21,6 +21,7 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 
 ### reg.trainProjectionHead
 - **Parameters:**
+
   - `embeddingMat` (double matrix): embeddings from Step 6.
 
   - `bootLabelMat` (sparse logical matrix): weak labels from Step 5.
@@ -29,6 +30,7 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 - **Usage Example:**
   ```matlab
   projectionHeadStruct = reg.trainProjectionHead(embeddingMat, bootLabelMat);
+
 
   ```
 

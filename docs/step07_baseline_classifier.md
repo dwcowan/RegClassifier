@@ -9,12 +9,14 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 
 1. Load embeddings and weak labels:
    ```matlab
+
    load('data/embeddings.mat','embeddingMat');
    load('data/Yboot.mat','Yboot');
    ```
 2. Train the baseline classifier:
    ```matlab
    model = reg.trainMultilabel(embeddingMat, Yboot);
+
    save('models/baseline_model.mat','model')
    ```
 3. Enable hybrid retrieval combining cosine similarity and BM25:
@@ -26,13 +28,17 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 
 ### reg.trainMultilabel
 - **Parameters:**
+
   - `embeddingMat` (double matrix): embeddings from Step 6.
   - `Yboot` (sparse logical matrix): weak labels from Step 5.
+
 - **Returns:** struct `model` with fields `weights` and `bias` (see [BaselineModel](identifier_registry.md#baselinemodel)).
 - **Side Effects:** none.
 - **Usage Example:**
   ```matlab
+
   model = reg.trainMultilabel(embeddingMat, Yboot);
+
   ```
 
 ### reg.hybridSearch
@@ -48,6 +54,7 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
   ```
 
 See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schemas of `embeddingMat`, `Yboot`, `BaselineModel`, and `RetrievalResult` outputs.
+
 
 
 ## Verification

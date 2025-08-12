@@ -271,7 +271,7 @@ Common test scopes or prefixes include:
 |--------------------|----------------|--------|-----------|-------|
 | ingest → chunking | Document | MAT-file (`docsTbl.mat`) | non-empty `text` | see [Step 3](step03_data_ingestion.md) |
 | chunking → weak labeling / embeddings | Chunk | MAT-file (`chunks.mat`) | unique `chunkId` | see [Step 4](step04_text_chunking.md) |
-| weak labeling → classifier | Label | MAT-file (`boot_labels.mat`) | matches size of `chunks` | see [Step 5](step05_weak_labeling.md) |
+| weak labeling → classifier | Label | MAT-file (`bootLabelMat.mat`) | matches size of `chunks` | see [Step 5](step05_weak_labeling.md) |
 | embedding generation → classifier | Embedding | MAT-file (`embeddings.mat`) | matches size of `chunks` | see [Step 6](step06_embedding_generation.md) |
 | classifier → retrieval / eval | BaselineModel | MAT-file (`baseline_model.mat`) | fields exist | see [Step 7](step07_baseline_classifier.md) |
 | projection head training → retrieval | ProjectionHead | MAT-file (`projection_head.mat`) | fields exist | see [Step 8](step08_projection_head.md) |
