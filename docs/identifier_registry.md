@@ -67,6 +67,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 | evalRetrieval | Evaluate retrieval metrics | module | `resultsTbl` table, `goldTbl` table | metrics struct | @todo | stub |
 | evalPerLabel | Compute per-label metrics | module | `predYMat` matrix, `trueYMat` matrix | metrics table | @todo | stub |
 | loadGold | Load gold annotation data | module | `pathStr` string | `goldTbl` table | @todo | stub |
+| crrSync | Synchronize the CRR corpus | module | `sourceUrl` string, `destFolder` string | none | @todo | no-op |
 | crrDiffVersions | Compare CRR versions | module | `oldPathStr` string, `newPathStr` string | diff struct | @todo | stub |
 | crrDiffArticles | Compare CRR articles | module | `articleId` string, `versionA` string, `versionB` string | diff struct | @todo | stub |
 | validateKnobs | Validate knobs struct | module | `knobsStruct` struct | none | @todo | stub |
@@ -94,7 +95,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 | reg.evalRetrieval | resultsTbl table, goldTbl table | metrics tables | writes report files |
 | reg.loadGold | pathStr string | goldTbl table | reads gold annotations |
 | reg.evalPerLabel | predYMat matrix, trueYMat matrix | metrics table | none |
-| reg.crrSync | none | none | downloads corpus to `data/raw` |
+| reg.crrSync | sourceUrl string, destFolder string | none | downloads corpus to destFolder |
 | reg.crrDiffVersions | `vA` string, `vB` string | diff struct | none |
 | reg.crrDiffReport | none | none | writes HTML/PDF summaries |
 | reg.setSeeds | seed double | none | sets RNG and GPU seeds |
