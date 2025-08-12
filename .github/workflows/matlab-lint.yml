@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       # Default policy; can be overridden per step if you like
-      MLINT_FAIL_ON: "any"
+      MLINT_FAIL_ON: "error"
       MLINT_EXCLUDE: ".git/**,.github/**,node_modules/**,external/**,thirdparty/**,build/**,dist/**,generated/**"
     steps:
       - name: Checkout
