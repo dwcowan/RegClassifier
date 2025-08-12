@@ -16,11 +16,20 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 3. The pipeline automatically uses `projection_head.mat` when present.
 
 ## Function Interface
-- `reg.trainProjectionHead(X, Yboot)`
-  - `X` (double matrix): embeddings from Step 6 following the **Embedding** schema.
-  - `Yboot` (sparse logical matrix): weak labels from Step 5 following the **Label** schema.
-  - returns `head` (struct): fields `weights`, `bias` used for retrieval enhancement.
-- See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schema references.
+
+### reg.train_projection_head
+- **Parameters:**
+  - `X` (double matrix): embeddings from Step 6.
+  - `Yboot` (sparse logical matrix): weak labels from Step 5.
+- **Returns:** struct `head` with fields `weights` and `bias` used for retrieval enhancement.
+- **Side Effects:** none.
+- **Usage Example:**
+  ```matlab
+  head = reg.train_projection_head(X, Yboot);
+  ```
+
+See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schema references.
+
 
 ## Verification
 - `projection_head.mat` exists in the `models` folder.

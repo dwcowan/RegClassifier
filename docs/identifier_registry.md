@@ -71,7 +71,31 @@ Keep the illustrative examples below in sync with the current naming conventions
 | crrDiffArticles | Compare CRR articles | module | `articleId` string, `versionA` string, `versionB` string | diff struct | @todo | stub |
 | crrSync | Fetch latest regulatory corpus | module | – | downloaded files | @todo | stub |
 | crrDiffReport | Render diff report between versions | module | `diffStruct` struct | report files | @todo | stub |
-
+
+
+## Function Interface Reference
+
+| Function | Parameters | Returns | Side Effects |
+|----------|------------|---------|--------------|
+| config | none | struct of settings from JSON files | reads configuration files |
+| reg.ingest_pdfs | inputDir string | docs table `{docId,text}` | reads PDFs, OCR fallback |
+| reg.chunk_text | docs table, chunk_size_tokens double, chunk_overlap double | chunks table `{chunkId,docId,text}` | none |
+| reg.weak_rules | text array, labels array | sparse matrix `Yweak` | none |
+| reg.doc_embeddings_bert_gpu | chunks table | matrix `X` | loads model, uses GPU |
+| reg.precompute_embeddings | `X` matrix, outPath string | none | writes embeddings to disk |
+| reg.train_multilabel | `X` matrix, `Yboot` matrix | model struct | none |
+| reg.hybrid_search | model struct, `X` matrix, query string | results table | none |
+| reg.train_projection_head | `X` matrix, `Yboot` matrix | head struct | none |
+| reg.ft_build_contrastive_dataset | chunks table, `Yboot` matrix | dataset struct | none |
+| reg.ft_train_encoder | dataset `ds`, unfreeze_top double | encoder struct | updates model weights |
+| reg_eval_and_report | none | metrics tables | writes report files |
+| reg_eval_gold | none | metrics tables | reads gold annotations |
+| reg_crr_sync | none | none | downloads corpus to `data/raw` |
+| reg.crr_diff_versions | `vA` string, `vB` string | diff struct | none |
+| reg_crr_diff_report | none | none | writes HTML/PDF summaries |
+| runtests | testFolder string, IncludeSubfolders logical, UseParallel logical | results table | executes test suite |
+
+
 ## Variables
 
 | Name | Purpose | Scope | Type | Default | Constraints | Notes |

@@ -21,12 +21,21 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
    ```
 
 ## Function Interface
-- `reg.chunkText(docs, 'chunkSizeTokens', n, 'chunkOverlap', m)`
-  - `docs` (table): Step 3 output following the **Document** schema.
-  - `n` (double): tokens per chunk.
-  - `m` (double): overlap between chunks.
-  - returns `chunks` (`table`): follows the **Chunk** schema (`chunkId`, `docId`, `text`).
-  - See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schema.
+
+### reg.chunk_text
+- **Parameters:**
+  - `docs` (table): from Step 3 with `docId` and `text` fields.
+  - `'chunk_size_tokens'` (double): tokens per chunk.
+  - `'chunk_overlap'` (double): overlap between chunks.
+- **Returns:** table `chunks` with columns `chunkId` (string), `docId` (string), and `text` (string).
+- **Side Effects:** none; pure transformation of input table.
+- **Usage Example:**
+  ```matlab
+  chunks = reg.chunk_text(docs, 'chunk_size_tokens', 100, 'chunk_overlap', 20);
+  ```
+
+See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schema.
+
 
 ## Verification
 - `chunks` contains `chunkId`, `docId`, and `text` for each segment.

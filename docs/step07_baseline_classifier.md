@@ -23,15 +23,32 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
    ```
 
 ## Function Interface
-- `reg.trainMultilabel(X, Yboot)`
-  - `X` (double matrix): embeddings from Step 6 following the **Embedding** schema.
-  - `Yboot` (sparse logical matrix): weak labels from Step 5 following the **Label** schema.
-  - returns `model` (struct): fields `weights`, `bias`.  
-- `reg.hybridSearch(model, X, 'query', text)`
-  - `model` (struct) and `X` (double matrix).  
-  - `'query'` (string): search text.  
-  - returns `results` (table) with `docId` and score fields.  
-- See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schemas of `X`, `Yboot`, and model outputs.
+
+### reg.train_multilabel
+- **Parameters:**
+  - `X` (double matrix): embeddings from Step 6.
+  - `Yboot` (sparse logical matrix): weak labels from Step 5.
+- **Returns:** struct `model` with fields `weights` and `bias`.
+- **Side Effects:** none.
+- **Usage Example:**
+  ```matlab
+  model = reg.train_multilabel(X, Yboot);
+  ```
+
+### reg.hybrid_search
+- **Parameters:**
+  - `model` (struct)
+  - `X` (double matrix)
+  - `'query'` (string): search text.
+- **Returns:** table `results` containing `docId` and score fields.
+- **Side Effects:** none.
+- **Usage Example:**
+  ```matlab
+  results = reg.hybrid_search(model, X, 'query', 'example');
+  ```
+
+See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schemas of `X`, `Yboot`, and model outputs.
+
 
 ## Verification
 - Classifier training completes and saves `baseline_model.mat`.

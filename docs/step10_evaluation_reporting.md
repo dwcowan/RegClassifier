@@ -21,14 +21,27 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 3. Inspect generated artifacts in the `reports` or `output` folder.
 
 ## Function Interface
-- `reg.evalRetrieval(resultsTbl, goldTbl)`
-  - consumes retrieval results and optional gold labels.
-  - outputs metrics table and `reg_eval_report.pdf` following the **Metric** schema.
-- `reg.loadGold(pathStr)`
-  - reads curated gold annotations into `goldTbl`.
-- `reg.evalPerLabel(predYMat, trueYMat)`
-  - optionally evaluates per-label metrics.
-- See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for metric schema references.
+
+### reg_eval_and_report
+- **Parameters:** none.
+- **Returns:** metrics tables and generates `reg_eval_report.pdf`.
+- **Side Effects:** reads model artifacts and writes report files to disk.
+- **Usage Example:**
+  ```matlab
+  reg_eval_and_report
+  ```
+
+### reg_eval_gold
+- **Parameters:** none.
+- **Returns:** metrics tables comparing predictions to gold annotations.
+- **Side Effects:** reads curated annotation packs if available.
+- **Usage Example:**
+  ```matlab
+  reg_eval_gold
+  ```
+
+See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for metric schema references.
+
 
 ## Verification
 - Report files such as `reg_eval_report.pdf` and metric CSVs are created.
