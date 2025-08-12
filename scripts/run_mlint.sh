@@ -3,6 +3,7 @@
 # Exits with non-zero status if any issues are found.
 set -uo pipefail
 
+
 status=0
 while IFS= read -r file; do
   echo "Linting ${file}"
@@ -11,4 +12,5 @@ while IFS= read -r file; do
   fi
 done < <(find . -name '*.m')
 
-exit $status
+
+exit $?
