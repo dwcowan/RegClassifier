@@ -1,107 +1,94 @@
 function run_mlint
 % RUN_MLINT  Lint MATLAB .m files and emit artifacts for CI.
 %
-% Outputs (created in repo root):
-%   lint/mlint.txt         - text report
-%   lint/mlint-summary.md  - summary for GitHub Actions UI
-%   lint/mlint.sarif       - SARIF 2.1.0 (safe to generate even if unused)
+% Outputs:
+%   lint/mlint.txt
+%   lint/mlint-summary.md
+%   lint/mlint.sarif
 %
 % Env:
 %   MLINT_FAIL_ON = 'none' | 'any' | 'error'  (default 'any')
 %   MLINT_EXCLUDE = ".git/**,node_modules/**" (comma-separated globs)
 %   MLINT_INCLUDE = "src,tests,a/file.m"      (comma-separated; empty = whole repo)
 
-    repoRoot = pwd;
-    outDir = fullfile(repoRoot, 'lint');
-    if ~exist(outDir, 'dir'), mkdir(outDir); end
-    txtPath   = fullfile(outDir, 'mlint.txt');
-    sumPath   = fullfile(outDir, 'mlint-summary.md');
-    sarifPath = fullfile(outDir, 'mlint.sarif');
+    repoRoot = string(pwd);
+    outDir = fullfile(repoRoot, "lint");
+    if ~isfolder(outDir), mkdir(outDir); end
+    txtPath   = fullfile(outDir, "mlint.txt");
+    sumPath   = fullfile(outDir, "mlint-summary.md");
+    sarifPath = fullfile(outDir, "mlint.sarif");
 
-    includes = getenvList('MLINT_INCLUDE');
-    excludes = getenvList('MLINT_EXCLUDE');
+    includes = getenvList("MLINT_INCLUDE");
+    excludes = getenvList("MLINT_EXCLUDE");
 
-    % ---- discover files (scalar-safe includes) ----
+    % -------- Discover files (string-safe, newline-safe) --------
     if isempty(includes)
         files = findMFiles(repoRoot, excludes);
     else
-        files = string.empty(1,0);
-        for p = includes
-            p = strtrim(string(p));
+        files = string.empty(0,1);
+        for p = includes(:).'
             if p == "", continue; end
-
-            fullp = string(fullfile(repoRoot, char(p)));
-            if numel(fullp) > 1, fullp = fullp(1); end
-            fullpChar = char(fullp);
-
-            if isfolder(fullpChar)
-                files = [files; findMFiles(fullpChar, excludes)]; %#ok<AGROW>
-            else
-                isAFile = isfile(fullpChar);
-                isMFile = endsWith(string(fullpChar), ".m");
-                if isAFile && isMFile
-                    files(end+1,1) = string(fullpChar); %#ok<AGROW>
+            % Split any accidental multi-line entries into separate paths
+            parts = splitlines(p);
+            parts(parts=="") = [];
+            for q = parts(:).'
+                q = strtrim(q); %#ok<FXSET>
+                if q == "", continue; end
+                fullp = fullfile(repoRoot, q);     % all string
+                if isfolder(fullp)
+                    files = [files; findMFiles(fullp, excludes)]; %#ok<AGROW>
+                else
+                    if isfile(fullp) && endsWith(lower(fullp), ".m")
+                        files(end+1,1) = fullp; %#ok<AGROW>
+                    end
                 end
             end
         end
         files = unique(files);
     end
 
-    % ---- SANITIZE file list (fix for <missing>/empties/ghosts) ----
-    files = string(files(:));                 % column string array
+    % -------- Sanitize file list --------
+    files = string(files(:));
     if ~isempty(files)
-        mask = ~ismissing(files) & files ~= "";
-        files = files(mask);
-        % Keep only real files that end with .m (use char() inside arrayfun safely)
-        if ~isempty(files)
-            existsMask = arrayfun(@(s) isfile(char(s)), files);
-            files = files(existsMask);
-        end
-        if ~isempty(files)
-            mextMask = endsWith(files, ".m");
-            files = files(mextMask);
-        end
+        files = files(~ismissing(files) & files ~= "");
+        if ~isempty(files), files = files(arrayfun(@isfile, files)); end
+        if ~isempty(files), files = files(endsWith(lower(files), ".m")); end
     end
 
     if isempty(files)
         writeEmptyArtifacts(txtPath, sumPath);
-        fprintf('[mlint] no MATLAB files to scan (after include/exclude filtering)\n');
+        fprintf("[mlint] no MATLAB files to scan (after include/exclude filtering)\n");
         return
     end
 
-    fprintf('Scanning %d MATLAB files...\n', numel(files));
+    fprintf("Scanning %d MATLAB files...\n", numel(files));
 
-    % ---- run Code Analyzer ----
+    % -------- Run Code Analyzer --------
     allMsgs = table([], [], [], [], [], [], 'VariableNames', ...
         {'file','line','column','id','message','level'});
 
-    for idx = 1:numel(files)
-        f = files(idx);
-        % Guard again against any residual non-scalar/missing
-        if ismissing(f) || strlength(f) == 0, continue; end
-
-        filePath = char(f);
-        fprintf('Linting %s\n', filePath);
+    for f = files.'
+        filePath = f;                      % string
+        fprintf("Linting %s\n", filePath);
         try
-            issues = checkcode(filePath, '-id', '-fullpath'); %#ok<*CHCKOK>
+            issues = checkcode(filePath, "-id", "-fullpath");
         catch ME
-            warning('checkcode error on %s: %s', filePath, ME.message);
+            warning("checkcode error on %s: %s", filePath, ME.message);
             issues = [];
         end
-
         if ~isempty(issues)
-            T = struct2table(normalizeMsgs(f, issues), 'AsArray', true);
+            T = struct2table(normalizeMsgs(filePath, issues), 'AsArray', true);
             allMsgs = [allMsgs; T]; %#ok<AGROW>
         end
     end
 
-    % ---- write artifacts ----
+    % -------- Write artifacts --------
     writeTextReport(txtPath, allMsgs, files);
     writeSummary(sumPath, allMsgs, files, repoRoot);
     writeSarif(sarifPath, allMsgs, repoRoot);  % safe even if empty
 
-    % ---- decide failure policy ----
-    failOn = lower(string(getenvDefault('MLINT_FAIL_ON','any')));
+    % -------- Failure policy --------
+    failOn = lower(string(getenvDefault("MLINT_FAIL_ON","any")));
     exitCode = 0;
     if ~isempty(allMsgs)
         switch failOn
@@ -112,19 +99,19 @@ function run_mlint
             case "none"
                 % always succeed
             otherwise
-                exitCode = 1; % unknown value → be safe and fail on any
+                exitCode = 1;
         end
     end
 
-    fprintf('[mlint] scanned %d files, found %d issues (failOn=%s)\n', ...
+    fprintf("[mlint] scanned %d files, found %d issues (failOn=%s)\n", ...
         numel(files), height(allMsgs), failOn);
 
     if exitCode ~= 0
-        error('Lint issues found (MLINT_FAIL_ON=%s). See artifacts (lint/*).', failOn);
+        error("Lint issues found (MLINT_FAIL_ON=%s). See artifacts (lint/*).", failOn);
     end
 end
 
-% ========= helpers =========
+% ================= helpers =================
 
 function L = getenvDefault(name, defaultVal)
     val = getenv(name);
@@ -132,18 +119,19 @@ function L = getenvDefault(name, defaultVal)
 end
 
 function xs = getenvList(name)
+    % Robust split of comma/semicolon/pipe/newline into a string column
     val = strtrim(string(getenv(name)));
-    if val == "" || strcmpi(val, "''") || strcmpi(val, '""')
-        xs = string.empty(1,0); return
+    if val == "" || strcmpi(val,"''") || strcmpi(val,'""')
+        xs = string.empty(0,1); return
     end
-    parts = split(val, {',',';','|',newline});
-    xs = strtrim(string(parts));
+    xs = split(val, {',',';','|',newline});
+    xs = strtrim(xs);
     xs(xs=="") = [];
 end
 
 function files = findMFiles(root, excludes)
-    all = dir(fullfile(root, "**", "*.m"));
-    files = unique(string(fullfile({all.folder}, {all.name}))');
+    d = dir(fullfile(root, "**", "*.m"));
+    files = unique(string(fullfile({d.folder}, {d.name}))');
     if isempty(excludes), return; end
     keep = true(size(files));
     for i = 1:numel(files)
@@ -155,30 +143,31 @@ end
 
 function yes = matchesAnyGlob(rel, globs)
     yes = false;
-    for g = globs.'
+    for g = globs(:).'
         if globMatch(rel, g), yes = true; return; end
     end
 end
 
 function tf = globMatch(rel, pat)
-    rel = char(rel); pat = char(pat);
-    pat = strrep(pat, '.', '\.');
-    pat = strrep(pat, '**', '<<<GLOBSTAR>>>');
-    pat = strrep(pat, '*', '[^/]*');
-    pat = strrep(pat, '<<<GLOBSTAR>>>', '.*');
-    pat = strrep(pat, '?', '.');
-    expr = ['^', pat, '$'];
+    rel = string(rel); pat = string(pat);
+    % Convert simple glob to regex (forward slashes)
+    pat = replace(pat, ".", "\.");
+    pat = replace(pat, "**", "<<<GLOBSTAR>>>");
+    pat = replace(pat, "*",  "[^/]*");
+    pat = replace(pat, "<<<GLOBSTAR>>>", ".*");
+    pat = replace(pat, "?",  ".");
+    expr = "^" + pat + "$";
     tf = ~isempty(regexp(rel, expr, 'once'));
 end
 
 function r = relPath(root, p)
-    root = char(root); p = char(p);
-    if startsWith(p, [root filesep])
-        r = string(p(numel(root)+2:end));
+    root = string(root); p = string(p);
+    if startsWith(p, root + filesep)
+        r = extractAfter(p, strlength(root) + 1);
     else
-        r = string(p);
+        r = p;
     end
-    r = strrep(r, filesep, '/');
+    r = replace(r, filesep, "/");
 end
 
 function S = normalizeMsgs(file, msgs)
@@ -186,7 +175,7 @@ function S = normalizeMsgs(file, msgs)
     S = S([]);  % empty
     for k = 1:numel(msgs)
         m = msgs(k);
-        line = int32(getfield_default(m,'line',1)); 
+        line = int32(getfield_default(m,'line',1));
         col  = int32(getfield_default(m,'column',1));
         id   = string(getfield_fallback(m,["identifier","id"],"MLINT"));
         msg  = string(getfield_default(m,'message',"Code Analyzer issue"));
@@ -264,7 +253,7 @@ function writeSarif(path, T, repoRoot)
     run.results = table2results(T, repoRoot);
     sarif.runs{1} = run;
     txt = jsonencode(sarif);
-    txt = strrep(txt, filesep, '/');
+    txt = replace(txt, filesep, '/');
     fid = fopen(path, 'w'); c = onCleanup(@() fclose(fid));
     fwrite(fid, txt, 'char');
 end
@@ -286,13 +275,13 @@ function results = table2results(T, repoRoot)
     if isempty(T), results = {}; return; end
     results = cell(height(T),1);
     for i = 1:height(T)
-        rel = char(relPath(repoRoot, T.file(i)));
+        rel = relPath(repoRoot, T.file(i));
         res.ruleId = char(T.id(i));
         res.level  = char(T.level(i));
         res.message.text = char(T.message(i));
         res.locations = {struct( ...
             'physicalLocation', struct( ...
-                'artifactLocation', struct('uri', rel), ...
+                'artifactLocation', struct('uri', char(rel)), ...
                 'region', struct( ...
                     'startLine', double(T.line(i)), ...
                     'startColumn', double(T.column(i)))))};
