@@ -5,6 +5,8 @@
 **Depends on:** [Step 6: Embedding Generation](step06_embedding_generation.md) and [Step 5: Weak Labeling](step05_weak_labeling.md).
 
 ## Instructions
+Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeletons before beginning this step.
+
 1. Load embeddings and weak labels:
    ```matlab
    load('data/embeddings.mat','X');

@@ -5,6 +5,8 @@
 **Depends on:** [Step 2: Repository Setup](step02_repository_setup.md).
 
 ## Instructions
+Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeletons before beginning this step.
+
 1. Place source PDFs in a folder referenced by `pipeline.json` (e.g., `data/pdfs`). Fetcher utilities save downloaded PDFs to `data/raw`.
 2. Before running `reg.ingest_pdfs`, either copy PDFs into `data/pdfs` or update `pipeline.json` to read from `data/raw`.
 3. In MATLAB, call the ingestion routine:

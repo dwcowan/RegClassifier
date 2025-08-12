@@ -5,6 +5,8 @@
 **Depends on:** None.
 
 ## Instructions
+Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeletons before beginning this step.
+
 1. Install **MATLAB R2024a** on your workstation.
 2. During installation, add these toolboxes:
    - Text Analytics

@@ -5,6 +5,8 @@
 **Depends on:** [Step 5: Weak Labeling](step05_weak_labeling.md).
 
 ## Instructions
+Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeletons before beginning this step.
+
 1. Load chunk data:
    ```matlab
    load('data/chunks.mat','chunks')
