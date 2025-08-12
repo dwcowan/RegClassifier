@@ -17,7 +17,7 @@ function testComputesMetrics(testCase)
 
     perLabelTbl = reg.evalPerLabel(xMat, yMat);
     testCase.verifyClass(perLabelTbl, 'table');
-    testCase.assumeFail('Not implemented yet');
+    testCase.fatalAssertFail('Not implemented yet');
 end
 
 function [xMat, yMat] = minimalTrainingData()

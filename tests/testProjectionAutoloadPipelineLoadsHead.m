@@ -14,7 +14,7 @@ function testLoadsHead(testCase)
     [xMat, yMat] = minimalTrainingMats();
     headStruct = reg.trainProjectionHead(xMat, yMat);
     testCase.verifyClass(headStruct, 'struct');
-    testCase.assumeFail('Not implemented yet');
+    testCase.fatalAssertFail('Not implemented yet');
 end
 
 function [xMat, yMat] = minimalTrainingMats()

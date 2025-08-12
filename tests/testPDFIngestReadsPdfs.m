@@ -16,5 +16,5 @@ function testReadsPdfs(testCase)
   fid = fopen(pdfPath, "w"); fclose(fid);
   pdfPathsCell = {pdfPath};
   reg.ingestPdfs(pdfPathsCell);
-  testCase.assumeFail('Not implemented yet');
+  testCase.fatalAssertFail('Not implemented yet');
 end

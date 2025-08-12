@@ -11,5 +11,5 @@ tests(1).Tags = {'Integration'}; % testPlaceholder
 end
 
 function testPlaceholder(testCase)
-    testCase.assumeFail('Not implemented yet');
+    testCase.fatalAssertFail('Not implemented yet');
 end

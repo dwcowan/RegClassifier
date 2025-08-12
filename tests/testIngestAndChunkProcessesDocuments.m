@@ -17,5 +17,5 @@ function testProcessesDocuments(testCase)
   pdfPathsCell = {pdfPath};
   reg.ingestPdfs(pdfPathsCell);
   reg.chunkText(table(), 0, 0);
-  testCase.assumeFail('Not implemented yet');
+  testCase.fatalAssertFail('Not implemented yet');
 end

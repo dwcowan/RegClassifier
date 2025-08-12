@@ -17,7 +17,7 @@ function testEvaluatesGold(testCase)
     [predYMat, trueYMat] = minimalLabelMats();
     perLabelTbl = reg.evalPerLabel(predYMat, trueYMat);
     testCase.verifyClass(perLabelTbl, 'table');
-    testCase.assumeFail('Not implemented yet');
+    testCase.fatalAssertFail('Not implemented yet');
 end
 
 function goldPathStr = minimalGoldPath()

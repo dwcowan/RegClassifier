@@ -15,7 +15,7 @@ function testMatchesSchema(testCase)
     goldTbl = minimalGoldTbl();
     metricsStruct = reg.evalRetrieval(resultsTbl, goldTbl);
     testCase.verifyClass(metricsStruct, 'struct');
-    testCase.assumeFail('Not implemented yet');
+    testCase.fatalAssertFail('Not implemented yet');
 end
 
 function resultsTbl = minimalResultsTbl()
