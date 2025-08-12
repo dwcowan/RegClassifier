@@ -69,6 +69,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 | loadGold | Load gold annotation data | module | `pathStr` string | `goldTbl` table | @todo | stub |
 | crrDiffVersions | Compare CRR versions | module | `oldPathStr` string, `newPathStr` string | diff struct | @todo | stub |
 | crrDiffArticles | Compare CRR articles | module | `articleId` string, `versionA` string, `versionB` string | diff struct | @todo | stub |
+| validateKnobs | Validate knobs struct | module | `knobsStruct` struct | none | @todo | stub |
 | run_mlint | Run MATLAB code analyzer on repository | module | none | none | @todo | errors on lint |
 
 
@@ -135,6 +136,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 | loadGold.m | Load gold annotation data | loadGold | @todo | stub |
 | crrDiffVersions.m | Compare CRR versions | crrDiffVersions | @todo | stub |
 | crrDiffArticles.m | Compare CRR articles | crrDiffArticles | @todo | stub |
+| validateKnobs.m | Validate knobs struct | validateKnobs | @todo | stub |
 | run_mlint.m | Lint MATLAB files | run_mlint | @todo | errors on lint |
 | startup.m | Initialize project paths and defaults | startup | @todo | |
 | shutdown.m | Remove project paths and restore defaults | shutdown | @todo | |
