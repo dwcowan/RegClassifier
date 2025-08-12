@@ -56,7 +56,7 @@ See [Identifier Registry – Data Contracts](identifier_registry.md#data-contrac
 - Date-stamped corpora appear in the `data` directory.
 - Run fetcher tests:
   ```matlab
-  runtests('tests/TestFetchers.m')
+  runtests('tests/testFetchers.m')
   ```
   Tests handle network availability gracefully.
 

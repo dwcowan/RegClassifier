@@ -49,8 +49,8 @@ See [Identifier Registry – Data Contracts](identifier_registry.md#data-contrac
 - `fine_tuned_bert.mat` is saved and contains updated weights.
 - Run fine-tuning tests:
   ```matlab
-  runtests({'tests/TestFineTuneSmoke.m', ...
-            'tests/TestFineTuneResume.m'})
+  runtests({'tests/testFineTuneSmoke.m', ...
+            'tests/testFineTuneResume.m'})
   ```
   Tests check basic convergence and checkpoint resume.
 

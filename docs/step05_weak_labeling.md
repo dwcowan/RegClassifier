@@ -56,7 +56,7 @@ See [Identifier Registry – Data Contracts](identifier_registry.md#data-contrac
 - `Yboot` is a sparse matrix with rows matching `chunks` and columns representing topics.
 - Run the labeling test:
   ```matlab
-  runtests('tests/TestRulesAndModel.m')
+  runtests('tests/testRulesAndModel.m')
   ```
   The test verifies label coverage and format.
 

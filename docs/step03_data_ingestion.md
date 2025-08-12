@@ -38,7 +38,7 @@ See [Identifier Registry – Data Contracts](identifier_registry.md#data-contrac
 - `docs` is a table with columns such as `docId` and `text`.
 - Run the unit test for ingestion:
   ```matlab
-  runtests('tests/TestPDFIngest.m')
+  runtests('tests/testPDFIngest.m')
   ```
   The test should pass, confirming OCR fallback and basic parsing.
 

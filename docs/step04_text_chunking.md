@@ -41,7 +41,7 @@ See [Identifier Registry – Data Contracts](identifier_registry.md#data-contrac
 - `chunks` contains `chunkId`, `docId`, and `text` for each segment.
 - Run the chunking test:
   ```matlab
-  runtests('tests/TestIngestAndChunk.m')
+  runtests('tests/testIngestAndChunk.m')
   ```
   The test confirms expected chunk counts and boundaries.
 

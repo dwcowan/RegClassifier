@@ -1,5 +1,5 @@
-%% NAME-REGISTRY:TEST TestRulesAndModel
-function tests = TestRulesAndModel
+%% NAME-REGISTRY:TEST testRulesAndModel
+function tests = testRulesAndModel
 %TESTRULESANDMODEL Placeholder tests for weak rules and model training.
 %
 % Outputs

@@ -1,5 +1,5 @@
-%% NAME-REGISTRY:TEST TestGoldMetrics
-function tests = TestGoldMetrics
+%% NAME-REGISTRY:TEST testGoldMetrics
+function tests = testGoldMetrics
 %TESTGOLDMETRICS Placeholder tests for gold data metrics.
 %
 % Outputs

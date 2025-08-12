@@ -1,5 +1,5 @@
-%% NAME-REGISTRY:TEST TestRegressionMetricsSimulated
-function tests = TestRegressionMetricsSimulated
+%% NAME-REGISTRY:TEST testRegressionMetricsSimulated
+function tests = testRegressionMetricsSimulated
 %TESTREGRESSIONMETRICSSIMULATED Placeholder tests for regression metrics.
 %
 % Outputs

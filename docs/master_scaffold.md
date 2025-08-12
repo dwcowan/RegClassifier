@@ -8,21 +8,21 @@ Each module is implemented as a stub `.m` file under `+reg/`. Every stub include
 
 | Step | Module | Stub `.m` file | Test skeleton(s) |
 |------|--------|----------------|------------------|
-| 3 | Data ingestion | `+reg/ingestPdfs.m` | `tests/TestPDFIngest.m`, `tests/TestIngestAndChunk.m` |
-| 4 | Text chunking | `+reg/chunkText.m` | `tests/TestIngestAndChunk.m` |
-| 5 | Weak labeling | `+reg/weakRules.m` | `tests/TestRulesAndModel.m` |
-| 6 | Embedding generation | `+reg/docEmbeddingsBertGpu.m`, `+reg/precomputeEmbeddings.m` | `tests/TestFeatures.m` |
-| 7 | Baseline classifier & retrieval | `+reg/trainMultilabel.m`, `+reg/hybridSearch.m` | `tests/TestRegressionMetricsSimulated.m`, `tests/TestHybridSearch.m` |
-| 8 | Projection head | `+reg/trainProjectionHead.m` | `tests/TestProjectionHeadSimulated.m`, `tests/TestProjectionAutoloadPipeline.m` |
-| 9 | Encoder fine-tuning | `+reg/ftBuildContrastiveDataset.m`, `+reg/ftTrainEncoder.m` | `tests/TestFineTuneSmoke.m`, `tests/TestFineTuneResume.m` |
-| 10 | Evaluation & reporting | `+reg/evalRetrieval.m`, `+reg/evalPerLabel.m`, `+reg/loadGold.m` | `tests/TestMetricsExpectedJSON.m`, `tests/TestGoldMetrics.m`, `tests/TestReportArtifact.m` |
-| 11 | Data acquisition & diff utilities | `+reg/crrDiffVersions.m`, `+reg/crrDiffArticles.m` | `tests/TestFetchers.m` |
+| 3 | Data ingestion | `+reg/ingestPdfs.m` | `tests/testPDFIngest.m`, `tests/testIngestAndChunk.m` |
+| 4 | Text chunking | `+reg/chunkText.m` | `tests/testIngestAndChunk.m` |
+| 5 | Weak labeling | `+reg/weakRules.m` | `tests/testRulesAndModel.m` |
+| 6 | Embedding generation | `+reg/docEmbeddingsBertGpu.m`, `+reg/precomputeEmbeddings.m` | `tests/testFeatures.m` |
+| 7 | Baseline classifier & retrieval | `+reg/trainMultilabel.m`, `+reg/hybridSearch.m` | `tests/testRegressionMetricsSimulated.m`, `tests/testHybridSearch.m` |
+| 8 | Projection head | `+reg/trainProjectionHead.m` | `tests/testProjectionHeadSimulated.m`, `tests/testProjectionAutoloadPipeline.m` |
+| 9 | Encoder fine-tuning | `+reg/ftBuildContrastiveDataset.m`, `+reg/ftTrainEncoder.m` | `tests/testFineTuneSmoke.m`, `tests/testFineTuneResume.m` |
+| 10 | Evaluation & reporting | `+reg/evalRetrieval.m`, `+reg/evalPerLabel.m`, `+reg/loadGold.m` | `tests/testMetricsExpectedJSON.m`, `tests/testGoldMetrics.m`, `tests/testReportArtifact.m` |
+| 11 | Data acquisition & diff utilities | `+reg/crrDiffVersions.m`, `+reg/crrDiffArticles.m` | `tests/testFetchers.m` |
 
 ## TDD Workflow
 
 1. **Write a failing test**
-   - Create a skeleton in `tests/` named `TestMyFeature.m`.
-   - Include `%% NAME-REGISTRY:TEST TestMyFeature` and call the target stub.
+   - Create a skeleton in `tests/` named `testMyFeature.m`.
+   - Include `%% NAME-REGISTRY:TEST testMyFeature` and call the target stub.
    - Force the failure with `assert(false, 'Not implemented yet');`.
 
 2. **Add a stub module**

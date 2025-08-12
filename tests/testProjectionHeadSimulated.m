@@ -1,6 +1,6 @@
-%% NAME-REGISTRY:TEST TestProjectionAutoloadPipeline
-function tests = TestProjectionAutoloadPipeline
-%TESTPROJECTIONAUTOLOADPIPELINE Placeholder tests for projection head autoloading.
+%% NAME-REGISTRY:TEST testProjectionHeadSimulated
+function tests = testProjectionHeadSimulated
+%TESTPROJECTIONHEADSIMULATED Placeholder tests for projection head training.
 %
 % Outputs
 %   tests - handle to local tests

@@ -35,8 +35,8 @@ See [Identifier Registry – Data Contracts](identifier_registry.md#data-contrac
 - `projection_head.mat` exists in the `models` folder.
 - Run projection head tests:
   ```matlab
-  runtests({'tests/TestProjectionHeadSimulated.m', ...
-            'tests/TestProjectionAutoloadPipeline.m'})
+  runtests({'tests/testProjectionHeadSimulated.m', ...
+            'tests/testProjectionAutoloadPipeline.m'})
   ```
   Tests verify improved Recall@n and automatic loading by `reg_pipeline`.
 

@@ -1,5 +1,5 @@
-%% NAME-REGISTRY:TEST TestFineTuneSmoke
-function tests = TestFineTuneSmoke
+%% NAME-REGISTRY:TEST testFineTuneSmoke
+function tests = testFineTuneSmoke
 %TESTFINETUNESMOKE Placeholder tests for encoder fine-tuning smoke test.
 %
 % Outputs
