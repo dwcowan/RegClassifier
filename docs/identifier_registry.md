@@ -70,6 +70,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 | crrSync | Synchronize the CRR corpus | module | `sourceUrl` string, `destFolder` string | none | @todo | no-op |
 | crrDiffVersions | Compare CRR versions | module | `oldPathStr` string, `newPathStr` string | diff struct | @todo | stub |
 | crrDiffArticles | Compare CRR articles | module | `articleId` string, `versionA` string, `versionB` string | diff struct | @todo | stub |
+| crrDiffReport | Summarize CRR diffs | module | `diffStruct` struct (optional) | `outPathStr` string | @todo | no-op |
 | validateKnobs | Validate knobs struct | module | `knobsStruct` struct | none | @todo | stub |
 | run_mlint | Run MATLAB code analyzer on repository | module | none | none | @todo | errors on lint |
 | setSeeds | Set RNG and GPU seeds | module | `seed` integer scalar | none | @todo | |
@@ -139,6 +140,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 | loadGold.m | Load gold annotation data | loadGold | @todo | stub |
 | crrDiffVersions.m | Compare CRR versions | crrDiffVersions | @todo | stub |
 | crrDiffArticles.m | Compare CRR articles | crrDiffArticles | @todo | stub |
+| crrDiffReport.m | Summarize CRR diffs | crrDiffReport | @todo | no-op |
 | validateKnobs.m | Validate knobs struct | validateKnobs | @todo | stub |
 | run_mlint.m | Lint MATLAB files | run_mlint | @todo | errors on lint |
 | startup.m | Initialize project paths and defaults | startup | @todo | |
