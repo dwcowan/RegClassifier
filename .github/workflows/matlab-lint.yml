@@ -1,5 +1,4 @@
-# .github/workflows/matlab-lint.yml
-name: matlab-lint (changed files only, no security scans)
+name: matlab-lint (changed files only)
 
 on:
   workflow_dispatch:
@@ -12,9 +11,8 @@ jobs:
   mlint:
     runs-on: ubuntu-latest
     env:
-      # Default policy (override per step if needed): "any" | "error" | "none"
-      MLINT_FAIL_ON: "error"   # accept warnings; fail only on true errors
-      # Common excludes
+      # Default policy; adjust to 'any' or 'none' as needed
+      MLINT_FAIL_ON: "error"
       MLINT_EXCLUDE: ".git/**,.github/**,node_modules/**,external/**,thirdparty/**,build/**,dist/**,generated/**"
     steps:
       - name: Checkout
@@ -27,29 +25,39 @@ jobs:
         with:
           release: R2024b
 
-      # Figure out changed .m files for this run (PR or push)
       - name: Compute changed MATLAB files
         id: changed
         shell: bash
         run: |
           set -euo pipefail
 
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+          EVENT="${{ github.event_name }}"
+          HEAD="${{ github.sha }}"
+          DEFAULT_BRANCH="${{ github.event.repository.default_branch }}"
+
+          if [[ "$EVENT" == "pull_request" ]]; then
             BASE="${{ github.event.pull_request.base.sha }}"
-            HEAD="${{ github.sha }}"
+          elif [[ "$EVENT" == "push" ]]; then
+            BASE="${{ github.event.before }}"
+            if [[ -z "$BASE" || "$BASE" == "0000000000000000000000000000000000000000" ]]; then
+              echo "Push with empty 'before'; using merge-base with default branch."
+              git fetch --no-tags --prune --depth=1 origin "$DEFAULT_BRANCH":"refs/remotes/origin/$DEFAULT_BRANCH"
+              BASE="$(git merge-base "origin/$DEFAULT_BRANCH" "$HEAD" || true)"
+            fi
           else
-            # On push, diff against merge-base with the default branch
-            DEFAULT_BRANCH="${{ github.event.repository.default_branch }}"
-            git fetch origin "$DEFAULT_BRANCH":"refs/remotes/origin/$DEFAULT_BRANCH" --depth=1
-            BASE=$(git merge-base "origin/${DEFAULT_BRANCH}" "${{ github.sha }}")
-            HEAD="${{ github.sha }}"
+            git fetch --no-tags --prune --depth=1 origin "$DEFAULT_BRANCH":"refs/remotes/origin/$DEFAULT_BRANCH"
+            BASE="$(git merge-base "origin/$DEFAULT_BRANCH" "$HEAD" || true)"
           fi
 
-          echo "Base: $BASE"
+          if [[ -z "${BASE:-}" ]]; then
+            BASE="$(git rev-list --max-parents=0 "$HEAD" | tail -n1 || true)"
+          fi
+
+          echo "Base: ${BASE:-<none>}"
           echo "Head: $HEAD"
 
-          # Collect changed .m files (comma-separated for MLINT_INCLUDE)
-          CHANGED=$(git diff --name-only "$BASE" "$HEAD" -- '*.m' | sed '/^$/d' || true)
+          CHANGED="$(git diff --name-only "${BASE:-}" "$HEAD" -- '*.m' | sed '/^$/d' || true)"
+
           if [[ -z "$CHANGED" ]]; then
             echo "No changed MATLAB files."
             echo "has_files=false" >> "$GITHUB_OUTPUT"
@@ -57,13 +65,11 @@ jobs:
           else
             echo "Changed MATLAB files:"
             echo "$CHANGED"
-            INCLUDE=$(echo "$CHANGED" | tr '
-' ',' | sed 's/,$//')
+            INCLUDE="$(echo "$CHANGED" | tr '\n' ',' | sed 's/,$//')"
             echo "has_files=true" >> "$GITHUB_OUTPUT"
             echo "include=$INCLUDE" >> "$GITHUB_OUTPUT"
           fi
 
-      # If no MATLAB files changed, publish a tiny summary and finish early
       - name: Publish summary (no MATLAB changes)
         if: steps.changed.outputs.has_files == 'false'
         run: |
@@ -73,18 +79,16 @@ jobs:
             echo "_No MATLAB (.m) files changed in this ${GITHUB_EVENT_NAME} — skipping lint._"
           } >> "$GITHUB_STEP_SUMMARY"
 
-      # Run lint only when there are changed .m files
       - name: Run mlint (from ./scripts) on changed files
         if: steps.changed.outputs.has_files == 'true'
         uses: matlab-actions/run-command@v2
         env:
-          MLINT_INCLUDE: ${{ steps.changed.outputs.include }}  # only changed files
-          MLINT_FAIL_ON: ${{ env.MLINT_FAIL_ON }}              # "any" | "error" | "none"
+          MLINT_INCLUDE: ${{ steps.changed.outputs.include }}
+          MLINT_FAIL_ON: ${{ env.MLINT_FAIL_ON }}
           MLINT_EXCLUDE: ${{ env.MLINT_EXCLUDE }}
         with:
           command: addpath('scripts'); run_mlint
 
-      # Only upload artifacts if something exists in lint/**
       - name: Upload lint artifacts
         if: always() && hashFiles('lint/**') != ''
         uses: actions/upload-artifact@v4
@@ -93,10 +97,9 @@ jobs:
           path: lint/**
           if-no-files-found: warn
 
-      # Show summary in the run UI if it exists
       - name: Publish run summary (results)
-        if: always() && hashFiles('lint/mlint-summary.md') != ''
+        if: always()
         run: |
-          cat lint/mlint-summary.md >> "$GITHUB_STEP_SUMMARY"
-
-      # NOTE: No SARIF upload step (code scanning) on purpose — security scans disabled.
+          if [ -f lint/mlint-summary.md ]; then
+            cat lint/mlint-summary.md >> "$GITHUB_STEP_SUMMARY"
+          fi

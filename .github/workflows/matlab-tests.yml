@@ -1,4 +1,4 @@
-name: MATLAB Tests
+name: MATLAB Test Runner
 
 on:
   workflow_dispatch:
