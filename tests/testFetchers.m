@@ -10,7 +10,22 @@ end
 
 %TESTFETCHERSHANDLESDIFFS Ensure diff fetch utilities run without errors.
 function testFetchersHandlesDiffs(testCase)
-    reg.crrDiffVersions('', '');
-    reg.crrDiffArticles('', '', '');
-    testCase.assumeFail('Not implemented yet');
+    [oldPathStr, newPathStr] = minimalVersionPaths();
+    diffStruct = reg.crrDiffVersions(oldPathStr, newPathStr);
+    testCase.verifyClass(diffStruct, 'struct');
+
+    [articleIdStr, versionAStr, versionBStr] = minimalArticleInputs();
+    articleStruct = reg.crrDiffArticles(articleIdStr, versionAStr, versionBStr);
+    testCase.verifyClass(articleStruct, 'struct');
+end
+
+function [oldPathStr, newPathStr] = minimalVersionPaths()
+    oldPathStr = "";
+    newPathStr = "";
+end
+
+function [articleIdStr, versionAStr, versionBStr] = minimalArticleInputs()
+    articleIdStr = "";
+    versionAStr = "";
+    versionBStr = "";
 end

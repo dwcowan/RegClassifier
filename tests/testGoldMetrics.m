@@ -10,7 +10,19 @@ end
 
 %TESTGOLDMETRICSEVALUATESGOLD Evaluate gold data metrics.
 function testGoldMetricsEvaluatesGold(testCase)
-    reg.loadGold('');
-    reg.evalPerLabel([], []);
-    testCase.assumeFail('Not implemented yet');
+    goldTbl = reg.loadGold(minimalGoldPath());
+    testCase.verifyClass(goldTbl, 'table');
+
+    [predYMat, trueYMat] = minimalLabelMats();
+    perLabelTbl = reg.evalPerLabel(predYMat, trueYMat);
+    testCase.verifyClass(perLabelTbl, 'table');
+end
+
+function goldPathStr = minimalGoldPath()
+    goldPathStr = "";
+end
+
+function [predYMat, trueYMat] = minimalLabelMats()
+    predYMat = zeros(0, 0);
+    trueYMat = zeros(0, 0);
 end

@@ -10,7 +10,14 @@ end
 
 %TESTINGESTANDCHUNKPROCESSESDOCUMENTS Validate document ingestion and chunking pipeline.
 function testIngestAndChunkProcessesDocuments(testCase)
-    reg.ingestPdfs({});
-    reg.chunkText(table(), 0, 0);
-    testCase.assumeFail('Not implemented yet');
+    pdfPathsCell = minimalPdfPathsCell();
+    docTbl = reg.ingestPdfs(pdfPathsCell);
+    testCase.verifyClass(docTbl, 'table');
+
+    chunkTbl = reg.chunkText(docTbl, 0, 0);
+    testCase.verifyClass(chunkTbl, 'table');
+end
+
+function pdfPathsCell = minimalPdfPathsCell()
+    pdfPathsCell = {};
 end
