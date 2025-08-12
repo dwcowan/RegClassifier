@@ -50,7 +50,7 @@ A beginner-friendly reference for writing clear, consistent MATLAB code.
 | Rule | Example |
 |------|---------|
 | Indent with **two spaces** (no tabs) | `if condition` → `  statement` |
-| Limit lines to 80 characters where practical | Use `...` for continuation |
+| Limit lines to 80 characters | Use `...` for continuation |
 | Always include `end` for `if`, `for`, `while`, `function`, `classdef` | — |
 | Spaces around operators, commas, and after `;` | `a = b + c;` |
 | Insert blank lines between logical sections | Improves readability |
@@ -93,7 +93,7 @@ A beginner-friendly reference for writing clear, consistent MATLAB code.
 | Functions | lowerCamelCase; filename matches function |
 | Classes | UpperCamelCase |
 | Indentation | Two spaces, no tabs |
-| Line width | ≤ 80 characters |
+| Line width | Limit lines to 80 characters |
 | Comments | `%` for line, `%%` for section |
 | Tests | Located in `tests/`; run with `runtests` |
 
