@@ -1,8 +1,8 @@
-function xMat = precomputeEmbeddings(~)
+function xMat = precomputeEmbeddings(chunkTbl) %#ok<INUSD>
 %PRECOMPUTEEMBEDDINGS Precompute embeddings for text chunks.
 %
 % Inputs
-%   chunkTbl - table of chunks (unused)
+%   chunkTbl - table of chunks (currently unused)
 %
 % Outputs
 %   xMat - matrix of embeddings
