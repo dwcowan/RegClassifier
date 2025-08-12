@@ -2,6 +2,11 @@
 
 A beginner-friendly reference for writing clear, consistent MATLAB code.
 
+See the [naming process guide](README_NAMING.md) for how to propose
+and register identifiers. The canonical source of truth is the
+[identifier registry](identifier_registry.md). Naming rules defined
+here must be registered in the registry via that process.
+
 ---
 
 ## 1. Variable Naming Conventions
