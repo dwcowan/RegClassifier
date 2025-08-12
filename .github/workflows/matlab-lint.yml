@@ -1,5 +1,5 @@
 # .github/workflows/matlab-lint.yml
-name: matlab-lint (changed files only)
+name: matlab-lint (changed files only, no security scans)
 
 on:
   workflow_dispatch:
@@ -12,8 +12,9 @@ jobs:
   mlint:
     runs-on: ubuntu-latest
     env:
-      # Default policy; can be overridden per step if you like
-      MLINT_FAIL_ON: "error"
+      # Default policy (override per step if needed): "any" | "error" | "none"
+      MLINT_FAIL_ON: "error"   # accept warnings; fail only on true errors
+      # Common excludes
       MLINT_EXCLUDE: ".git/**,.github/**,node_modules/**,external/**,thirdparty/**,build/**,dist/**,generated/**"
     steps:
       - name: Checkout
@@ -26,7 +27,7 @@ jobs:
         with:
           release: R2024b
 
-      # Figure out which .m files changed for this run (PR or push)
+      # Figure out changed .m files for this run (PR or push)
       - name: Compute changed MATLAB files
         id: changed
         shell: bash
@@ -47,7 +48,7 @@ jobs:
           echo "Base: $BASE"
           echo "Head: $HEAD"
 
-          # Collect changed .m files, comma-separated for MLINT_INCLUDE
+          # Collect changed .m files (comma-separated for MLINT_INCLUDE)
           CHANGED=$(git diff --name-only "$BASE" "$HEAD" -- '*.m' | sed '/^$/d' || true)
           if [[ -z "$CHANGED" ]]; then
             echo "No changed MATLAB files."
@@ -56,7 +57,8 @@ jobs:
           else
             echo "Changed MATLAB files:"
             echo "$CHANGED"
-            INCLUDE=$(echo "$CHANGED" | tr '\n' ',' | sed 's/,$//')
+            INCLUDE=$(echo "$CHANGED" | tr '
+' ',' | sed 's/,$//')
             echo "has_files=true" >> "$GITHUB_OUTPUT"
             echo "include=$INCLUDE" >> "$GITHUB_OUTPUT"
           fi
@@ -82,23 +84,19 @@ jobs:
         with:
           command: addpath('scripts'); run_mlint
 
+      # Only upload artifacts if something exists in lint/**
       - name: Upload lint artifacts
-        if: always()
+        if: always() && hashFiles('lint/**') != ''
         uses: actions/upload-artifact@v4
         with:
           name: matlab-lint
           path: lint/**
           if-no-files-found: warn
 
+      # Show summary in the run UI if it exists
       - name: Publish run summary (results)
-        if: always()
+        if: always() && hashFiles('lint/mlint-summary.md') != ''
         run: |
-          if [ -f lint/mlint-summary.md ]; then
-            cat lint/mlint-summary.md >> "$GITHUB_STEP_SUMMARY"
-          fi
+          cat lint/mlint-summary.md >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Upload SARIF to Code scanning
-        if: always()
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: lint/mlint.sarif
+      # NOTE: No SARIF upload step (code scanning) on purpose — security scans disabled.
