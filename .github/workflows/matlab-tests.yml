@@ -1,6 +1,7 @@
 name: MATLAB Tests
 
 on:
+  workflow_dispatch:
   push:  
     branches: [ReBase]
   pull_request:

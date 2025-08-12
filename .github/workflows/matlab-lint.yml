@@ -1,6 +1,7 @@
 name: matlab-lint
 
 on:
+  workflow_dispatch:
   push:
     branches: [ReBase]
   pull_request:
