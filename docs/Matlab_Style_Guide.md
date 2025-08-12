@@ -135,10 +135,36 @@ convention defined in **this** document [Matlab Style Guide](Matlab_Style_Guide.
   - Valid input tests
   - Invalid input tests
   - Edge case tests
-- Use `TestParameter`, `SharedTestFixture`, `TestTags` where relevant.
+- Use `TestParameter` and `SharedTestFixture` where relevant.
+- Every test method must declare `TestTags`.
 - Maintain reproducibility with `rng(seed)` and `addTeardown`.
 - All test files must leverage `testCase.applyFixture` for shared setup/teardown.
 - Any temporary or placeholder test must call `fatalAssertFail` (or similar) so it fails as incomplete.
+
+#### 3.1 Test Tags
+
+Every test method must include one or more tags from the approved set to
+communicate scope and intent.
+
+Allowed tags:
+
+- `Unit` – verifies a single function or class in isolation.
+- `Smoke` – quick checks to confirm the environment or pipeline is working.
+- `Integration` – exercises interactions across modules or external services.
+- `Regression` – prevents reintroduction of previously fixed defects.
+
+Example usage:
+
+```matlab
+classdef testMyFeature < matlab.unittest.TestCase
+    methods (Test, TestTags={"Unit","Smoke"})
+        function testExample(testCase)
+            % test logic
+            testCase.verifyTrue(true)
+        end
+    end
+end
+```
 
 ---
 
