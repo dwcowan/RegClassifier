@@ -110,7 +110,8 @@ Keep the illustrative examples below in sync with the current naming conventions
 | Name | Purpose | Scope | Type | Default | Constraints | Notes |
 |------|---------|-------|------|---------|-------------|-------|
 | docIndex | Tracks current document position | local | double | 0 | non-negative | example |
-|  |  |  |  |  |  |
+| gpuInfoStruct | GPU device information | local | struct | n/a | CUDA-enabled | obtained via `gpuDevice` |
+| productsTbl | Installed MATLAB products | local | table | n/a | includes required toolboxes | obtained via `ver` |
 
 ## Constants / Enums
 
@@ -262,7 +263,7 @@ Common test scopes or prefixes include:
 
 | Producer → Consumer | Payload Schema | Format | Validation | Notes |
 |--------------------|----------------|--------|-----------|-------|
-| ingest → chunking | Document | MAT-file (`docs.mat`) | non-empty `text` | see [Step 3](step03_data_ingestion.md) |
+| ingest → chunking | Document | MAT-file (`docsTbl.mat`) | non-empty `text` | see [Step 3](step03_data_ingestion.md) |
 | chunking → weak labeling / embeddings | Chunk | MAT-file (`chunks.mat`) | unique `chunkId` | see [Step 4](step04_text_chunking.md) |
 | weak labeling → classifier | Label | MAT-file (`bootLabelMat.mat`) | matches size of `chunks` | see [Step 5](step05_weak_labeling.md) |
 | embedding generation → classifier | Embedding | MAT-file (`embeddings.mat`) | matches size of `chunks` | see [Step 6](step06_embedding_generation.md) |
