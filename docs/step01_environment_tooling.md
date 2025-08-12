@@ -18,12 +18,12 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 3. From the MATLAB Add-On Explorer, install *Deep Learning Toolbox Model for BERT-Base, English*.
 4. Launch MATLAB and verify GPU access:
    ```matlab
-   gpuDevice
+   gpuInfoStruct = gpuDevice;
    ```
    The command should list your CUDA-enabled GPU (e.g., RTX 4060 Ti).
 5. Save a snapshot of installed products for future reference:
    ```matlab
-   ver
+   productsTbl = ver;
    ```
 
 ## Function Interface
@@ -33,7 +33,7 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 - **Side Effects:** selects the GPU device for subsequent operations.
 - **Usage Example:**
   ```matlab
-  info = gpuDevice;
+  gpuInfoStruct = gpuDevice;
   ```
 
 ### ver
@@ -42,14 +42,14 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 - **Side Effects:** prints version information to the console.
 - **Usage Example:**
   ```matlab
-  products = ver;
+  productsTbl = ver;
   ```
 
 Subsequent modules rely on this environment. See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for data artifacts produced later in the pipeline.
 
 ## Verification
-- `gpuDevice` reports a supported GPU and its memory.
-- `ver` lists all required toolboxes and the BERT add-on.
+- `gpuInfoStruct` reports a supported GPU and its memory.
+- `productsTbl` lists all required toolboxes and the BERT add-on.
 
 ## Next Steps
 Continue to [Step 2: Repository Setup](step02_repository_setup.md).
