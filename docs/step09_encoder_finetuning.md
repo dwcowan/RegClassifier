@@ -9,12 +9,12 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 
 1. Build the contrastive training dataset:
    ```matlab
-   ds = reg.ftBuildContrastiveDataset(chunks, Yboot);
+   contrastiveDatasetTbl = reg.ftBuildContrastiveDataset(chunks, bootLabelMat);
    ```
 2. Fine-tune the encoder starting from the pretrained weights:
    ```matlab
-   ftEncoder = reg.ftTrainEncoder(ds, 'unfreezeTop', 4);
-   save('models/fine_tuned_bert.mat','ftEncoder')
+   fineTunedEncoderStruct = reg.ftTrainEncoder(contrastiveDatasetTbl, 'unfreezeTop', 4);
+   save('models/fine_tuned_bert.mat','fineTunedEncoderStruct')
    ```
 3. Update pipeline settings to point to the fine-tuned encoder if needed.
 
@@ -23,23 +23,23 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 ### reg.ftBuildContrastiveDataset
 - **Parameters:**
   - `chunks` (table): see Step 4.
-  - `Yboot` (sparse logical matrix): weak labels.
-- **Returns:** dataset `ds` containing contrastive pairs (see [ContrastiveDataset](identifier_registry.md#contrastivedataset)).
+  - `bootLabelMat` (sparse logical matrix): bootstrapped labels.
+- **Returns:** table `contrastiveDatasetTbl` containing contrastive pairs (see [ContrastiveDataset](identifier_registry.md#contrastivedataset)).
 - **Side Effects:** none.
 - **Usage Example:**
   ```matlab
-  ds = reg.ftBuildContrastiveDataset(chunks, Yboot);
+  contrastiveDatasetTbl = reg.ftBuildContrastiveDataset(chunks, bootLabelMat);
   ```
 
 ### reg.ftTrainEncoder
 - **Parameters:**
-  - `ds` (dataset): training data.
+  - `contrastiveDatasetTbl` (table): training data.
   - `'unfreezeTop'` (double): number of BERT layers to unfreeze.
-- **Returns:** struct `ftEncoder` with updated weights.
+- **Returns:** struct `fineTunedEncoderStruct` with updated weights.
 - **Side Effects:** updates encoder weights during training.
 - **Usage Example:**
   ```matlab
-  ftEncoder = reg.ftTrainEncoder(ds, 'unfreezeTop', 4);
+  fineTunedEncoderStruct = reg.ftTrainEncoder(contrastiveDatasetTbl, 'unfreezeTop', 4);
   ```
 
 See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for encoder artifact and `ContrastiveDataset` schemas.
@@ -49,7 +49,7 @@ See [Identifier Registry – Data Contracts](identifier_registry.md#data-contrac
 - `fine_tuned_bert.mat` is saved and contains updated weights.
 - Contrastive dataset has expected fields:
   ```matlab
-  assert(all(isfield(ds, {'anchorIdx','posIdx','negIdx'})));
+  assert(all(isfield(contrastiveDatasetTbl, {'anchorIdx','posIdx','negIdx'})));
   ```
 - Run fine-tuning tests:
   ```matlab
