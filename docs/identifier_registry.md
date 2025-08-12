@@ -1,6 +1,8 @@
 # Identifier Registry
 
-This is the **single source of truth** for object, method, variable, and file names. Update it via PR and keep it in sync with code.
+This is the **single source of truth** for class, function, variable,
+constant, file/module, test, and other identifier names. Update it via PR
+and keep it in sync with code.
 
 > Tip: In code, add grep-able breadcrumbs like `%% NAME-REGISTRY:CLASS InvoiceProcessor` (MATLAB) or `# NAME-REGISTRY:METHOD parseDocument` so you can jump from code → registry.
 
