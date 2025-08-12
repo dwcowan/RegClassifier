@@ -137,6 +137,8 @@ convention defined in **this** document [Matlab Style Guide](Matlab_Style_Guide.
   - Edge case tests
 - Use `TestParameter`, `SharedTestFixture`, `TestTags` where relevant.
 - Maintain reproducibility with `rng(seed)` and `addTeardown`.
+- All test files must leverage `testCase.applyFixture` for shared setup/teardown.
+- Any temporary or placeholder test must call `fatalAssertFail` (or similar) so it fails as incomplete.
 
 ---
 
