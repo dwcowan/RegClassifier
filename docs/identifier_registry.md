@@ -56,13 +56,14 @@ Keep the illustrative examples below in sync with the current naming conventions
 | shutdown | RegClassifier project cleanup | module | project object | none | @todo | |
 | ingestPdfs | Convert PDFs into text documents | module | `pdfPathsCell` cell array | `docsTbl` table | @todo | stub |
 | chunkText | Split documents into token chunks | module | `docsTbl`, `chunkSizeTokens`, `chunkOverlap` | `chunksTbl` table | @todo | stub |
-| weakRules | Generate weak labels for chunks | module | `chunksTbl` table | sparse matrix `yBootMat` | @todo | stub |
-| docEmbeddingsBertGpu | Embed chunks using BERT on GPU | module | `chunksTbl` table | embedding matrix `xMat` | @todo | stub |
-| precomputeEmbeddings | Precompute embeddings for chunks | module | `chunksTbl` table | embedding matrix `xMat` | @todo | stub |
-| trainMultilabel | Train multi-label classifier | module | `xMat` matrix, `yMat` matrix | model struct | @todo | stub |
-| hybridSearch | Retrieve documents with hybrid search | module | `queryStr` string, `xMat` matrix, `docsTbl` table | results table | @todo | stub |
-| trainProjectionHead | Train projection head on embeddings | module | `xMat` matrix, `yMat` matrix | head struct | @todo | stub |
 | ftBuildContrastiveDataset | Build dataset for encoder fine-tuning | module | `chunksTbl` table, `yMat` matrix | dataset struct | @todo | stub |
+| weakRules | Generate weak labels for chunks | module | `chunkTbl` table | sparse matrix `bootLabelMat` | @todo | stub |
+| docEmbeddingsBertGpu | Embed chunks using BERT on GPU | module | `chunkTbl` table | embedding matrix `embeddingMat` | @todo | stub |
+| precomputeEmbeddings | Precompute embeddings for chunks | module | `chunkTbl` table | embedding matrix `embeddingMat` | @todo | stub |
+| trainMultilabel | Train multi-label classifier | module | `embeddingMat` matrix, `bootLabelMat` matrix | model struct | @todo | stub |
+| hybridSearch | Retrieve documents with hybrid search | module | `queryStr` string, `embeddingMat` matrix, `docTbl` table | results table | @todo | stub |
+| trainProjectionHead | Train projection head on embeddings | module | `embeddingMat` matrix, `bootLabelMat` matrix | projectionHeadStruct struct | @todo | stub |
+| ftBuildContrastiveDataset | Build dataset for encoder fine-tuning | module | `chunkTbl` table, `bootLabelMat` matrix | dataset struct | @todo | stub |
 | ftTrainEncoder | Fine-tune encoder on contrastive dataset | module | `dsStruct` struct | encoder struct | @todo | stub |
 | evalRetrieval | Evaluate retrieval metrics | module | `resultsTbl` table, `goldTbl` table | metrics struct | @todo | stub |
 | evalPerLabel | Compute per-label metrics | module | `predYMat` matrix, `trueYMat` matrix | metrics table | @todo | stub |
@@ -87,12 +88,12 @@ Keep the illustrative examples below in sync with the current naming conventions
 | reg.ingestPdfs | inputDir string | docsTbl table `{docId,text}` | reads PDFs, OCR fallback |
 | reg.chunkText | docsTbl table, chunkSizeTokens double, chunkOverlap double | chunksTbl table `{chunkId,docId,text}` | none |
 | reg.weakRules | text array, labels array | sparse matrix `Yweak` | none |
-| reg.docEmbeddingsBertGpu | chunksTbl table | matrix `X` | loads model, uses GPU |
-| reg.precomputeEmbeddings | `X` matrix, outPath string | none | writes embeddings to disk |
-| reg.trainMultilabel | `X` matrix, `Yboot` matrix | model struct | none |
-| reg.hybridSearch | model struct, `X` matrix, query string | results table | none |
-| reg.trainProjectionHead | `X` matrix, `Yboot` matrix | head struct | none |
-| reg.ftBuildContrastiveDataset | chunksTbl table, `Yboot` matrix | dataset struct | none |
+| reg.docEmbeddingsBertGpu | chunks table | matrix `embeddingMat` | loads model, uses GPU |
+| reg.precomputeEmbeddings | `embeddingMat` matrix, outPath string | none | writes embeddings to disk |
+| reg.trainMultilabel | `embeddingMat` matrix, `bootLabelMat` matrix | model struct | none |
+| reg.hybridSearch | model struct, `embeddingMat` matrix, query string | results table | none |
+| reg.trainProjectionHead | `embeddingMat` matrix, `bootLabelMat` matrix | projectionHeadStruct struct | none |
+| reg.ftBuildContrastiveDataset | chunks table, `bootLabelMat` matrix | dataset struct | none |
 | reg.ftTrainEncoder | dataset `ds`, unfreezeTop double | encoder struct | updates model weights |
 | reg.evalRetrieval | resultsTbl table, goldTbl table | metrics tables | writes report files |
 | reg.loadGold | pathStr string | goldTbl table | reads gold annotations |
@@ -102,7 +103,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 | reg.crrDiffReport | none | none | writes HTML/PDF summaries |
 | reg.printActiveKnobs | knobsStruct struct | none | prints knob values to stdout |
 | reg.setSeeds | seed double | none | sets RNG and GPU seeds |
-| runtests | testFolder string, IncludeSubfolders logical, UseParallel logical | results table | executes test suite |
+| runtests | testFolder string, IncludeSubfolders logical, UseParallel logical | `resultsTbl` table | executes test suite |
 
 
 ## Variables
@@ -110,6 +111,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 | Name | Purpose | Scope | Type | Default | Constraints | Notes |
 |------|---------|-------|------|---------|-------------|-------|
 | docIndex | Tracks current document position | local | double | 0 | non-negative | example |
+| configStruct | Configuration settings loaded from JSON files | module | struct | n/a | fields must exist | returned by config |
 | gpuInfoStruct | GPU device information | local | struct | n/a | CUDA-enabled | obtained via `gpuDevice` |
 | productsTbl | Installed MATLAB products | local | table | n/a | includes required toolboxes | obtained via `ver` |
 
@@ -171,6 +173,7 @@ Common test scopes or prefixes include:
 
 | Name | Purpose | Scope | Owner | Related Functions | Notes |
 |------|---------|-------|-------|-------------------|-------|
+| testConfig | Test configuration override precedence | unit | @todo | config | verifies override precedence |
 | testPDFIngest | Test PDF ingestion | unit | @todo | ingestPdfs | stub |
 | testIngestAndChunk | Test ingestion and chunking together | integration | @todo | ingestPdfs, chunkText | stub |
 | testRulesAndModel | Test weak rules and model training | unit | @todo | weakRules, trainMultilabel | stub |
@@ -221,12 +224,12 @@ Common test scopes or prefixes include:
 #### Label
 | Name | Type | Description |
 |------|------|-------------|
-| Yboot | sparse logical `[numChunks x numClasses]` | Weak labels matrix |
+| bootLabelMat | sparse logical `[numChunks x numClasses]` | Weak labels matrix |
 
 #### Embedding
 | Name | Type | Description |
 |------|------|-------------|
-| X | double `[numChunks x embeddingDim]` | Chunk embeddings |
+| embeddingMat | double `[numChunks x embeddingDim]` | Chunk embeddings |
 
 #### Metric
 | Field | Type | Description |
@@ -265,8 +268,8 @@ Common test scopes or prefixes include:
 |--------------------|----------------|--------|-----------|-------|
 | ingest → chunking | Document | MAT-file (`docsTbl.mat`) | non-empty `text` | see [Step 3](step03_data_ingestion.md) |
 | chunking → weak labeling / embeddings | Chunk | MAT-file (`chunks.mat`) | unique `chunkId` | see [Step 4](step04_text_chunking.md) |
-| weak labeling → classifier | Label | MAT-file (`Yboot.mat`) | matches size of `chunksTbl` | see [Step 5](step05_weak_labeling.md) |
-| embedding generation → classifier | Embedding | MAT-file (`embeddings.mat`) | matches size of `chunksTbl` | see [Step 6](step06_embedding_generation.md) |
+| weak labeling → classifier | Label | MAT-file (`boot_labels.mat`) | matches size of `chunks` | see [Step 5](step05_weak_labeling.md) |
+| embedding generation → classifier | Embedding | MAT-file (`embeddings.mat`) | matches size of `chunks` | see [Step 6](step06_embedding_generation.md) |
 | classifier → retrieval / eval | BaselineModel | MAT-file (`baseline_model.mat`) | fields exist | see [Step 7](step07_baseline_classifier.md) |
 | projection head training → retrieval | ProjectionHead | MAT-file (`projection_head.mat`) | fields exist | see [Step 8](step08_projection_head.md) |
 | retrieval → evaluation | RetrievalResult | MAT-file (`results.mat`) | fields exist | see [Step 7](step07_baseline_classifier.md) |

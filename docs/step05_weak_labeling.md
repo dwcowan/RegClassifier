@@ -13,8 +13,8 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
    ```
 2. Generate weak labels with rule-based functions:
    ```matlab
-   Yweak = reg.weakRules(chunks.text, C.labels);
-   Yboot = Yweak >= C.minRuleConf; % optional threshold
+   Yweak = reg.weakRules(chunks.text, configStruct.labels);
+   Yboot = Yweak >= configStruct.minRuleConf; % optional threshold
    ```
 3. Store the sparse label matrix for future training:
    ```matlab
@@ -48,8 +48,8 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schema of `Yboot`.
 
 
-> **Note:** `reg.weakRules` requires `chunks.text` and the label list `C.labels`
-> from [`config.m`](../config.m). The confidence cutoff `C.minRuleConf` is
+> **Note:** `reg.weakRules` requires `chunks.text` and the label list `configStruct.labels`
+> from [`config.m`](../config.m). The confidence cutoff `configStruct.minRuleConf` is
 > optional and can be tuned in `config.m` or overridden via `knobs.json`.
 
 ## Verification
