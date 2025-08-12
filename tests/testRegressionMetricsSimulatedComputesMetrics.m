@@ -1,6 +1,16 @@
 %% NAME-REGISTRY:TEST testRegressionMetricsSimulatedComputesMetrics
-function testRegressionMetricsSimulatedComputesMetrics(testCase)
+function tests = testRegressionMetricsSimulatedComputesMetrics
 %TESTREGRESSIONMETRICSSIMULATEDCOMPUTESMETRICS Compute regression metrics on simulated data.
+%   Each local test must assign Tags per the test style guide.
+%
+% Outputs
+%   tests - handle to local tests
+%
+tests = functiontests(localfunctions);
+tests(1).Tags = {'Regression'}; % testComputesMetrics
+end
+
+function testComputesMetrics(testCase)
     [xMat, yMat] = minimalTrainingData();
     modelStruct = reg.trainMultilabel(xMat, yMat);
     testCase.verifyClass(modelStruct, 'struct');

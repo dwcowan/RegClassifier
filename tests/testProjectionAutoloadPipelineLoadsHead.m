@@ -1,6 +1,16 @@
 %% NAME-REGISTRY:TEST testProjectionAutoloadPipelineLoadsHead
-function testProjectionAutoloadPipelineLoadsHead(testCase)
+function tests = testProjectionAutoloadPipelineLoadsHead
 %TESTPROJECTIONAUTOLOADPIPELINELOADSHEAD Ensure projection head autoloads correctly.
+%   Each local test must assign Tags per the test style guide.
+%
+% Outputs
+%   tests - handle to local tests
+%
+tests = functiontests(localfunctions);
+tests(1).Tags = {'Integration'}; % testLoadsHead
+end
+
+function testLoadsHead(testCase)
     [xMat, yMat] = minimalTrainingMats();
     headStruct = reg.trainProjectionHead(xMat, yMat);
     testCase.verifyClass(headStruct, 'struct');

@@ -1,6 +1,16 @@
 %% NAME-REGISTRY:TEST testReportArtifactGeneratesReport
-function testReportArtifactGeneratesReport(testCase)
+function tests = testReportArtifactGeneratesReport
 %TESTREPORTARTIFACTGENERATESREPORT Generate evaluation report artifact.
+%   Each local test must assign Tags per the test style guide.
+%
+% Outputs
+%   tests - handle to local tests
+%
+tests = functiontests(localfunctions);
+tests(1).Tags = {'Integration'}; % testGeneratesReport
+end
+
+function testGeneratesReport(testCase)
     import tests.fixtures.EnvironmentFixture
     testCase.applyFixture(EnvironmentFixture);
     resultsTbl = minimalResultsTbl();

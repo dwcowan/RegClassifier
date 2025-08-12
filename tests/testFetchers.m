@@ -1,11 +1,13 @@
 %% NAME-REGISTRY:TEST testFetchers
 function tests = testFetchers
 %TESTFETCHERS Tests for data fetch utilities.
+%   Each local test must assign Tags per the test style guide.
 %
 % Outputs
 %   tests - handle to local tests
-
+%
 tests = functiontests(localfunctions);
+tests(1).Tags = {'Unit'}; % testDiffFunctionsReturnStructs
 end
 
 function testDiffFunctionsReturnStructs(testCase)

@@ -1,6 +1,16 @@
 %% NAME-REGISTRY:TEST testHybridSearchReturnsResults
-function testHybridSearchReturnsResults(testCase)
+function tests = testHybridSearchReturnsResults
 %TESTHYBRIDSEARCHRETURNSRESULTS Ensure hybrid search returns results.
+%   Each local test must assign Tags per the test style guide.
+%
+% Outputs
+%   tests - handle to local tests
+%
+tests = functiontests(localfunctions);
+tests(1).Tags = {'Unit'}; % testReturnsResults
+end
+
+function testReturnsResults(testCase)
     import tests.fixtures.EnvironmentFixture
     testCase.applyFixture(EnvironmentFixture);
     [queryStr, xMat, docTbl] = minimalHybridInputs();

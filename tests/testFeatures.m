@@ -1,11 +1,13 @@
 %% NAME-REGISTRY:TEST testFeatures
 function tests = testFeatures
 %TESTFEATURES Tests for embedding generation.
+%   Each local test must assign Tags per the test style guide.
 %
 % Outputs
 %   tests - handle to local tests
-
+%
 tests = functiontests(localfunctions);
+tests(1).Tags = {'Unit'}; % testEmbeddingOutputs
 end
 
 function testEmbeddingOutputs(testCase)
