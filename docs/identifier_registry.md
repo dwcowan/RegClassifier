@@ -172,6 +172,7 @@ Common test scopes or prefixes include:
 
 | Name | Purpose | Scope | Owner | Related Functions | Notes |
 |------|---------|-------|-------|-------------------|-------|
+| testConfig | Test configuration override precedence | unit | @todo | config | verifies override precedence |
 | testPDFIngest | Test PDF ingestion | unit | @todo | ingestPdfs | stub |
 | testIngestAndChunk | Test ingestion and chunking together | integration | @todo | ingestPdfs, chunkText | stub |
 | testRulesAndModel | Test weak rules and model training | unit | @todo | weakRules, trainMultilabel | stub |
