@@ -4,7 +4,7 @@ function run_mlint
 % Outputs (created in repo root):
 %   lint/mlint.txt         - text report
 %   lint/mlint-summary.md  - summary for GitHub Actions UI
-%   lint/mlint.sarif       - SARIF 2.1.0 (only if you still want it)
+%   lint/mlint.sarif       - SARIF 2.1.0 (safe to generate even if unused)
 %
 % Env:
 %   MLINT_FAIL_ON = 'none' | 'any' | 'error'  (default 'any')
@@ -30,7 +30,6 @@ function run_mlint
             p = strtrim(string(p));
             if p == "", continue; end
 
-            % Build a single full path (force scalar)
             fullp = string(fullfile(repoRoot, char(p)));
             if numel(fullp) > 1, fullp = fullp(1); end
             fullpChar = char(fullp);
@@ -48,8 +47,23 @@ function run_mlint
         files = unique(files);
     end
 
+    % ---- SANITIZE file list (fix for <missing>/empties/ghosts) ----
+    files = string(files(:));                 % column string array
+    if ~isempty(files)
+        mask = ~ismissing(files) & files ~= "";
+        files = files(mask);
+        % Keep only real files that end with .m (use char() inside arrayfun safely)
+        if ~isempty(files)
+            existsMask = arrayfun(@(s) isfile(char(s)), files);
+            files = files(existsMask);
+        end
+        if ~isempty(files)
+            mextMask = endsWith(files, ".m");
+            files = files(mextMask);
+        end
+    end
+
     if isempty(files)
-        % Create empty artifacts so CI steps can proceed gracefully
         writeEmptyArtifacts(txtPath, sumPath);
         fprintf('[mlint] no MATLAB files to scan (after include/exclude filtering)\n');
         return
@@ -61,7 +75,11 @@ function run_mlint
     allMsgs = table([], [], [], [], [], [], 'VariableNames', ...
         {'file','line','column','id','message','level'});
 
-    for f = files.'
+    for idx = 1:numel(files)
+        f = files(idx);
+        % Guard again against any residual non-scalar/missing
+        if ismissing(f) || strlength(f) == 0, continue; end
+
         filePath = char(f);
         fprintf('Linting %s\n', filePath);
         try
@@ -94,8 +112,7 @@ function run_mlint
             case "none"
                 % always succeed
             otherwise
-                % unknown value → be safe and fail on any
-                exitCode = 1;
+                exitCode = 1; % unknown value → be safe and fail on any
         end
     end
 
@@ -169,7 +186,7 @@ function S = normalizeMsgs(file, msgs)
     S = S([]);  % empty
     for k = 1:numel(msgs)
         m = msgs(k);
-        line = int32(getfield_default(m,'line',1)); %#ok<GFLD>
+        line = int32(getfield_default(m,'line',1)); 
         col  = int32(getfield_default(m,'column',1));
         id   = string(getfield_fallback(m,["identifier","id"],"MLINT"));
         msg  = string(getfield_default(m,'message',"Code Analyzer issue"));
@@ -195,7 +212,6 @@ function lvl = classifySeverity(id, msg)
     if contains(idLower, "syntax") || contains(msgLower, "parse error")
         lvl = "error"; return
     end
-    % Everything else treated as 'warning' by default
     lvl = "warning";
 end
 
@@ -241,7 +257,6 @@ function writeSummary(path, T, files, repoRoot)
 end
 
 function writeSarif(path, T, repoRoot)
-    % Minimal SARIF v2.1.0 (safe to generate even if you don't upload it)
     sarif.version = "2.1.0";
     sarif.runs = {struct()};
     run.tool.driver.name = "MATLAB Code Analyzer (checkcode)";
@@ -273,7 +288,7 @@ function results = table2results(T, repoRoot)
     for i = 1:height(T)
         rel = char(relPath(repoRoot, T.file(i)));
         res.ruleId = char(T.id(i));
-        res.level  = char(T.level(i)); % "warning" | "error"
+        res.level  = char(T.level(i));
         res.message.text = char(T.message(i));
         res.locations = {struct( ...
             'physicalLocation', struct( ...
@@ -286,8 +301,8 @@ function results = table2results(T, repoRoot)
 end
 
 function writeEmptyArtifacts(txtPath, sumPath)
-    fid = fopen(txtPath, 'w'); c = onCleanup(@() fclose(fid)); %#ok<NASGU>
+    fid = fopen(txtPath, 'w'); c = onCleanup(@() fclose(fid)); 
     fprintf(fid, "No MATLAB files to lint.\n");
-    fid2 = fopen(sumPath, 'w'); c2 = onCleanup(@() fclose(fid2)); %#ok<NASGU>
+    fid2 = fopen(sumPath, 'w'); c2 = onCleanup(@() fclose(fid2)); 
     fprintf(fid2, "## MATLAB Lint Summary\n\n_No MATLAB files to lint._\n");
 end
