@@ -1,0 +1,8 @@
+repos:
+  - repo: local
+    hooks:
+      - id: identifier-registry
+        name: check identifier registry
+        entry: python scripts/check_identifier_registry.py
+        language: python
+        pass_filenames: false
