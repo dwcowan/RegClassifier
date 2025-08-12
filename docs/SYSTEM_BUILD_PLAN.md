@@ -51,7 +51,7 @@ This guide outlines a clean-room rebuild of the MATLAB-based regulatory topic cl
 - **Depends on:** Text Chunking Module.
 - **Implementation:** `reg.doc_embeddings_bert_gpu` & `reg.precompute_embeddings`.
 - **Testing:** `tests/testFeatures.m` checks embedding shapes & backend selection.
-- **Output:** Matrix `X` of embeddings per chunk.
+- **Output:** Matrix `embeddingMat` of embeddings per chunk.
 
 ## 7. Baseline Classifier & Retrieval
 - **Goal:** Train a multi-label classifier and enable hybrid search.

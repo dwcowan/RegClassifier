@@ -13,8 +13,10 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
    ```
 2. Generate weak labels with rule-based functions:
    ```matlab
+
    weakLabelMat = reg.weakRules(chunks.text, configStruct.labels);
    bootLabelMat = weakLabelMat >= configStruct.minRuleConf; % optional threshold
+
    ```
 3. Store the sparse label matrix for future training:
    ```matlab

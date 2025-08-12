@@ -56,12 +56,12 @@ Keep the illustrative examples below in sync with the current naming conventions
 | shutdown | RegClassifier project cleanup | module | project object | none | @todo | |
 | ingestPdfs | Convert PDFs into text documents | module | `pdfPathsCell` cell array | `docTbl` table | @todo | stub |
 | chunkText | Split documents into token chunks | module | `docTbl`, `chunkSizeTokens`, `chunkOverlap` | `chunkTbl` table | @todo | stub |
-| weakRules | Generate weak labels for chunks | module | `chunkTbl` table | sparse matrix `weakLabelMat` | @todo | stub |
-| docEmbeddingsBertGpu | Embed chunks using BERT on GPU | module | `chunkTbl` table | embedding matrix `xMat` | @todo | stub |
-| precomputeEmbeddings | Precompute embeddings for chunks | module | `chunkTbl` table | embedding matrix `xMat` | @todo | stub |
-| trainMultilabel | Train multi-label classifier | module | `xMat` matrix, `bootLabelMat` matrix | model struct | @todo | stub |
-| hybridSearch | Retrieve documents with hybrid search | module | `queryStr` string, `xMat` matrix, `docTbl` table | results table | @todo | stub |
-| trainProjectionHead | Train projection head on embeddings | module | `xMat` matrix, `bootLabelMat` matrix | head struct | @todo | stub |
+| weakRules | Generate weak labels for chunks | module | `chunkTbl` table | sparse matrix `bootLabelMat` | @todo | stub |
+| docEmbeddingsBertGpu | Embed chunks using BERT on GPU | module | `chunkTbl` table | embedding matrix `embeddingMat` | @todo | stub |
+| precomputeEmbeddings | Precompute embeddings for chunks | module | `chunkTbl` table | embedding matrix `embeddingMat` | @todo | stub |
+| trainMultilabel | Train multi-label classifier | module | `embeddingMat` matrix, `bootLabelMat` matrix | model struct | @todo | stub |
+| hybridSearch | Retrieve documents with hybrid search | module | `queryStr` string, `embeddingMat` matrix, `docTbl` table | results table | @todo | stub |
+| trainProjectionHead | Train projection head on embeddings | module | `embeddingMat` matrix, `bootLabelMat` matrix | projectionHeadStruct struct | @todo | stub |
 | ftBuildContrastiveDataset | Build dataset for encoder fine-tuning | module | `chunkTbl` table, `bootLabelMat` matrix | dataset struct | @todo | stub |
 | ftTrainEncoder | Fine-tune encoder on contrastive dataset | module | `dsStruct` struct | encoder struct | @todo | stub |
 | evalRetrieval | Evaluate retrieval metrics | module | `resultsTbl` table, `goldTbl` table | metrics struct | @todo | stub |
@@ -84,14 +84,14 @@ Keep the illustrative examples below in sync with the current naming conventions
 | config | none | struct of settings from JSON files | reads configuration files |
 | startup | project object | none | adds repo paths, sets defaults |
 | shutdown | project object | none | removes repo paths, restores defaults |
-| reg.ingestPdfs | inputDir string | docs table `{docId,text}` | reads PDFs, OCR fallback |
-| reg.chunkText | docs table, chunkSizeTokens double, chunkOverlap double | chunks table `{chunkId,docId,text}` | none |
-| reg.weakRules | text array, labels array | sparse matrix `weakLabelMat` | none |
-| reg.docEmbeddingsBertGpu | chunks table | matrix `X` | loads model, uses GPU |
-| reg.precomputeEmbeddings | `X` matrix, outPath string | none | writes embeddings to disk |
-| reg.trainMultilabel | `X` matrix, `bootLabelMat` matrix | model struct | none |
-| reg.hybridSearch | model struct, `X` matrix, query string | results table | none |
-| reg.trainProjectionHead | `X` matrix, `bootLabelMat` matrix | head struct | none |
+| reg.ingestPdfs | inputDir string | docsTbl table `{docId,text}` | reads PDFs, OCR fallback |
+| reg.chunkText | docsTbl table, chunkSizeTokens double, chunkOverlap double | chunks table `{chunkId,docId,text}` | none |
+| reg.weakRules | text array, labels array | sparse matrix `Yweak` | none |
+| reg.docEmbeddingsBertGpu | chunks table | matrix `embeddingMat` | loads model, uses GPU |
+| reg.precomputeEmbeddings | `embeddingMat` matrix, outPath string | none | writes embeddings to disk |
+| reg.trainMultilabel | `embeddingMat` matrix, `bootLabelMat` matrix | model struct | none |
+| reg.hybridSearch | model struct, `embeddingMat` matrix, query string | results table | none |
+| reg.trainProjectionHead | `embeddingMat` matrix, `bootLabelMat` matrix | projectionHeadStruct struct | none |
 | reg.ftBuildContrastiveDataset | chunks table, `bootLabelMat` matrix | dataset struct | none |
 | reg.ftTrainEncoder | dataset `ds`, unfreezeTop double | encoder struct | updates model weights |
 | reg.evalRetrieval | resultsTbl table, goldTbl table | metrics tables | writes report files |
@@ -102,7 +102,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 | reg.crrDiffReport | none | none | writes HTML/PDF summaries |
 | reg.printActiveKnobs | knobsStruct struct | none | prints knob values to stdout |
 | reg.setSeeds | seed double | none | sets RNG and GPU seeds |
-| runtests | testFolder string, IncludeSubfolders logical, UseParallel logical | results table | executes test suite |
+| runtests | testFolder string, IncludeSubfolders logical, UseParallel logical | `resultsTbl` table | executes test suite |
 
 
 ## Variables
@@ -110,6 +110,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 | Name | Purpose | Scope | Type | Default | Constraints | Notes |
 |------|---------|-------|------|---------|-------------|-------|
 | docIndex | Tracks current document position | local | double | 0 | non-negative | example |
+| configStruct | Configuration settings loaded from JSON files | module | struct | n/a | fields must exist | returned by config |
 | gpuInfoStruct | GPU device information | local | struct | n/a | CUDA-enabled | obtained via `gpuDevice` |
 | productsTbl | Installed MATLAB products | local | table | n/a | includes required toolboxes | obtained via `ver` |
 
@@ -171,6 +172,7 @@ Common test scopes or prefixes include:
 
 | Name | Purpose | Scope | Owner | Related Functions | Notes |
 |------|---------|-------|-------|-------------------|-------|
+| testConfig | Test configuration override precedence | unit | @todo | config | verifies override precedence |
 | testPDFIngest | Test PDF ingestion | unit | @todo | ingestPdfs | stub |
 | testIngestAndChunk | Test ingestion and chunking together | integration | @todo | ingestPdfs, chunkText | stub |
 | testRulesAndModel | Test weak rules and model training | unit | @todo | weakRules, trainMultilabel | stub |
@@ -226,7 +228,7 @@ Common test scopes or prefixes include:
 #### Embedding
 | Name | Type | Description |
 |------|------|-------------|
-| X | double `[numChunks x embeddingDim]` | Chunk embeddings |
+| embeddingMat | double `[numChunks x embeddingDim]` | Chunk embeddings |
 
 #### Metric
 | Field | Type | Description |

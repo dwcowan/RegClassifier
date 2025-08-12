@@ -7,11 +7,13 @@
 ## Instructions
 Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeletons before beginning this step.
 
-1. Load embeddings and weak labels as in Step 7.
+1. Load `embeddingMat` and `bootLabelMat` as in Step 7.
 2. Train the projection head:
    ```matlab
-   head = reg.trainProjectionHead(X, bootLabelMat);
-   save('models/projection_head.mat','head')
+
+   projectionHeadStruct = reg.trainProjectionHead(embeddingMat, bootLabelMat);
+   save('models/projection_head.mat','projectionHeadStruct')
+
    ```
 3. The pipeline automatically uses `projection_head.mat` when present.
 
@@ -19,13 +21,17 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 
 ### reg.trainProjectionHead
 - **Parameters:**
-  - `X` (double matrix): embeddings from Step 6.
+
+  - `embeddingMat` (double matrix): embeddings from Step 6.
+
   - `bootLabelMat` (sparse logical matrix): weak labels from Step 5.
-- **Returns:** struct `head` with fields `weights` and `bias` used for retrieval enhancement (see [ProjectionHead](identifier_registry.md#projectionhead)).
+- **Returns:** struct `projectionHeadStruct` with fields `weights` and `bias` used for retrieval enhancement (see [ProjectionHead](identifier_registry.md#projectionhead)).
 - **Side Effects:** none.
 - **Usage Example:**
   ```matlab
-  head = reg.trainProjectionHead(X, bootLabelMat);
+  projectionHeadStruct = reg.trainProjectionHead(embeddingMat, bootLabelMat);
+
+
   ```
 
 See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schema references including `ProjectionHead`.
@@ -33,9 +39,9 @@ See [Identifier Registry – Data Contracts](identifier_registry.md#data-contrac
 
 ## Verification
 - `projection_head.mat` exists in the `models` folder.
-- Validate head schema:
+- Validate projection head schema:
   ```matlab
-  assert(all(isfield(head, {'weights','bias'})));
+  assert(all(isfield(projectionHeadStruct, {'weights','bias'})));
   ```
 - Run projection head tests:
   ```matlab

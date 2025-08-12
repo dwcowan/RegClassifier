@@ -13,12 +13,12 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
    ```
 2. Generate embeddings with the GPU-enabled BERT encoder:
    ```matlab
-   X = reg.docEmbeddingsBertGpu(chunks);
+   embeddingMat = reg.docEmbeddingsBertGpu(chunks);
    ```
    If a GPU is unavailable, the function automatically falls back to a CPU-friendly model.
 3. Cache embeddings for reuse:
    ```matlab
-   reg.precomputeEmbeddings(X,'data/embeddings.mat');
+   reg.precomputeEmbeddings(embeddingMat,'data/embeddings.mat');
    ```
 
 ## Function Interface
@@ -26,29 +26,29 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 ### reg.docEmbeddingsBertGpu
 - **Parameters:**
   - `chunks` (table): as defined in Step 4.
-- **Returns:** double matrix `X` of size `[numChunks x 768]` by default.
+- **Returns:** double matrix `embeddingMat` of size `[numChunks x 768]` by default.
 - **Side Effects:** loads BERT weights and uses GPU when available.
 - **Usage Example:**
   ```matlab
-  X = reg.docEmbeddingsBertGpu(chunks);
+  embeddingMat = reg.docEmbeddingsBertGpu(chunks);
   ```
 
 ### reg.precomputeEmbeddings
 - **Parameters:**
-  - `X` (double matrix)
+  - `embeddingMat` (double matrix)
   - `outPath` (string): destination MAT-file path.
 - **Returns:** none.
 - **Side Effects:** writes embeddings to disk for reuse.
 - **Usage Example:**
   ```matlab
-  reg.precomputeEmbeddings(X, 'embeddings_mock.mat');
+  reg.precomputeEmbeddings(embeddingMat, 'embeddings_mock.mat');
   ```
 
-See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schema of `X`.
+See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schema of `embeddingMat`.
 
 
 ## Verification
-- `X` has one row per chunk and 768 columns (BERT base dimension).
+- `embeddingMat` has one row per chunk and 768 columns (BERT base dimension).
 - Run the features test:
   ```matlab
   runtests('tests/testFeatures.m')
