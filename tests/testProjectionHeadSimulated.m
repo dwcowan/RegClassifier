@@ -8,8 +8,9 @@ function tests = testProjectionHeadSimulated
 tests = functiontests(localfunctions);
 end
 
-%TESTPROJECTIONHEADSIMULATEDTRAINSHEAD Check projection head training pathway.
+%% NAME-REGISTRY:TEST testProjectionHeadSimulatedTrainsHead
 function testProjectionHeadSimulatedTrainsHead(testCase)
+%TESTPROJECTIONHEADSIMULATEDTRAINSHEAD Check projection head training pathway.
     [xMat, yMat] = minimalTrainingMats();
     headStruct = reg.trainProjectionHead(xMat, yMat);
     testCase.verifyClass(headStruct, 'struct');

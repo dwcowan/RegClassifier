@@ -8,8 +8,9 @@ function tests = testGoldMetrics
 tests = functiontests(localfunctions);
 end
 
-%TESTGOLDMETRICSEVALUATESGOLD Evaluate gold data metrics.
+%% NAME-REGISTRY:TEST testGoldMetricsEvaluatesGold
 function testGoldMetricsEvaluatesGold(testCase)
+%TESTGOLDMETRICSEVALUATESGOLD Evaluate gold data metrics.
     goldTbl = reg.loadGold(minimalGoldPath());
     testCase.verifyClass(goldTbl, 'table');
 

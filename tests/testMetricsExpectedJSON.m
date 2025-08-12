@@ -8,8 +8,9 @@ function tests = testMetricsExpectedJSON
 tests = functiontests(localfunctions);
 end
 
-%TESTMETRICSEXPECTEDJSONMATCHESSCHEMA Confirm metrics JSON matches expected schema.
+%% NAME-REGISTRY:TEST testMetricsExpectedJSONMatchesSchema
 function testMetricsExpectedJSONMatchesSchema(testCase)
+%TESTMETRICSEXPECTEDJSONMATCHESSCHEMA Confirm metrics JSON matches expected schema.
     resultsTbl = minimalResultsTbl();
     goldTbl = minimalGoldTbl();
     metricsStruct = reg.evalRetrieval(resultsTbl, goldTbl);

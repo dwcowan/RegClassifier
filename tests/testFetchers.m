@@ -8,8 +8,9 @@ function tests = testFetchers
 tests = functiontests(localfunctions);
 end
 
-%TESTFETCHERSHANDLESDIFFS Ensure diff fetch utilities run without errors.
+%% NAME-REGISTRY:TEST testFetchersHandlesDiffs
 function testFetchersHandlesDiffs(testCase)
+%TESTFETCHERSHANDLESDIFFS Ensure diff fetch utilities run without errors.
     [oldPathStr, newPathStr] = minimalVersionPaths();
     diffStruct = reg.crrDiffVersions(oldPathStr, newPathStr);
     testCase.verifyClass(diffStruct, 'struct');
