@@ -18,7 +18,7 @@ function testTrainsModel(testCase)
     [xMat, yMat] = minimalTrainingData();
     modelStruct = reg.trainMultilabel(xMat, yMat);
     testCase.verifyClass(modelStruct, 'struct');
-    testCase.assumeFail('Not implemented yet');
+    testCase.fatalAssertFail('Not implemented yet');
 end
 
 function chunkTbl = minimalChunkTbl()
