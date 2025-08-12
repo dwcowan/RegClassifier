@@ -21,14 +21,14 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 
 ## Function Interface
 
-### reg.ingest_pdfs
+### reg.ingestPdfs
 - **Parameters:**
   - `inputDir` (string): folder containing source PDFs.
 - **Returns:** table `docs` with columns `docId` (string) and `text` (string).
 - **Side Effects:** reads PDFs from disk and uses OCR for image-only pages.
 - **Usage Example:**
   ```matlab
-  docs = reg.ingest_pdfs("data/pdfs_mock");
+  docs = reg.ingestPdfs("data/pdfs_mock");
   ```
 
 See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schema.

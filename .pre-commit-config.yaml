@@ -6,3 +6,8 @@ repos:
         entry: python scripts/check_identifier_registry.py
         language: python
         pass_filenames: false
+      - id: validate-scaffold
+        name: validate scaffold
+        entry: python scripts/validate_scaffold.py
+        language: python
+        pass_filenames: false

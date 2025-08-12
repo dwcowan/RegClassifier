@@ -13,40 +13,44 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
    ```
 2. Fine-tune the encoder starting from the pretrained weights:
    ```matlab
-   ftEncoder = reg.ftTrainEncoder(ds, 'unfreeze_top', 4);
+   ftEncoder = reg.ftTrainEncoder(ds, 'unfreezeTop', 4);
    save('models/fine_tuned_bert.mat','ftEncoder')
    ```
 3. Update pipeline settings to point to the fine-tuned encoder if needed.
 
 ## Function Interface
 
-### reg.ft_build_contrastive_dataset
+### reg.ftBuildContrastiveDataset
 - **Parameters:**
   - `chunks` (table): see Step 4.
   - `Yboot` (sparse logical matrix): weak labels.
-- **Returns:** dataset `ds` containing contrastive pairs.
+- **Returns:** dataset `ds` containing contrastive pairs (see [ContrastiveDataset](identifier_registry.md#contrastivedataset)).
 - **Side Effects:** none.
 - **Usage Example:**
   ```matlab
-  ds = reg.ft_build_contrastive_dataset(chunks, Yboot);
+  ds = reg.ftBuildContrastiveDataset(chunks, Yboot);
   ```
 
-### reg.ft_train_encoder
+### reg.ftTrainEncoder
 - **Parameters:**
   - `ds` (dataset): training data.
-  - `'unfreeze_top'` (double): number of BERT layers to unfreeze.
+  - `'unfreezeTop'` (double): number of BERT layers to unfreeze.
 - **Returns:** struct `ftEncoder` with updated weights.
 - **Side Effects:** updates encoder weights during training.
 - **Usage Example:**
   ```matlab
-  ftEncoder = reg.ft_train_encoder(ds, 'unfreeze_top', 4);
+  ftEncoder = reg.ftTrainEncoder(ds, 'unfreezeTop', 4);
   ```
 
-See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for encoder artifact schema.
+See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for encoder artifact and `ContrastiveDataset` schemas.
 
 
 ## Verification
 - `fine_tuned_bert.mat` is saved and contains updated weights.
+- Contrastive dataset has expected fields:
+  ```matlab
+  assert(all(isfield(ds, {'anchorIdx','posIdx','negIdx'})));
+  ```
 - Run fine-tuning tests:
   ```matlab
   runtests({'tests/testFineTuneSmoke.m', ...

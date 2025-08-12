@@ -20,16 +20,16 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 
 ## Function Interface
 
-### reg_crr_sync
+### reg.crrSync
 - **Parameters:** none.
 - **Returns:** none.
 - **Side Effects:** downloads the latest corpus to `data/raw`.
 - **Usage Example:**
   ```matlab
-  reg_crr_sync
+  reg.crrSync
   ```
 
-### reg.crr_diff_versions
+### reg.crrDiffVersions
 - **Parameters:**
   - `vA` (string): version identifier A.
   - `vB` (string): version identifier B.
@@ -37,16 +37,16 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 - **Side Effects:** none.
 - **Usage Example:**
   ```matlab
-  diff = reg.crr_diff_versions('v1','v2');
+  diff = reg.crrDiffVersions('v1','v2');
   ```
 
-### reg_crr_diff_report
+### reg.crrDiffReport
 - **Parameters:** none.
 - **Returns:** none.
 - **Side Effects:** renders HTML/PDF summaries to disk.
 - **Usage Example:**
   ```matlab
-  reg_crr_diff_report
+  reg.crrDiffReport
   ```
 
 See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for corpus schema references.

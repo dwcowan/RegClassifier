@@ -8,6 +8,10 @@ files/modules, tests, and other identifiers are tracked in the
 `identifier_registry.md`.
 
 
+## Function and Script Names
+
+Use lowerCamelCase for all function and script names (e.g., `ingestPdfs`, `trainMultilabel`).
+
 ## Data-Type Suffixes
 
 Use suffixes to denote common data structures. Refer to the [Data-Type Suffixes](Matlab_Style_Guide.md#11-data-type-suffixes) section of the style guide for full details.
