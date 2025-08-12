@@ -1,1 +1,0 @@
-Place regulation PDFs here. Tests will run without actual PDFs.
