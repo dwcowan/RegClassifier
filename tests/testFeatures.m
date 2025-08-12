@@ -1,6 +1,6 @@
 %% NAME-REGISTRY:TEST testFeatures
 function tests = testFeatures
-%TESTFEATURES Placeholder tests for embedding generation.
+%TESTFEATURES Tests for embedding generation.
 %
 % Outputs
 %   tests - handle to local tests
@@ -8,8 +8,14 @@ function tests = testFeatures
 tests = functiontests(localfunctions);
 end
 
-function testPlaceholder(~)
-    reg.docEmbeddingsBertGpu(table());
-    reg.precomputeEmbeddings(table());
-    assert(false, 'Not implemented yet');
+function testEmbeddingOutputs(testCase)
+    chunkTbl = table();
+
+    xMat = reg.docEmbeddingsBertGpu(chunkTbl);
+    verifyClass(testCase, xMat, 'double');
+    verifySize(testCase, xMat, [height(chunkTbl), 0]);
+
+    xMatPre = reg.precomputeEmbeddings(chunkTbl);
+    verifyClass(testCase, xMatPre, 'double');
+    verifyEqual(testCase, xMatPre, xMat);
 end

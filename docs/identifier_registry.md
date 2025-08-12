@@ -147,7 +147,7 @@ Common test scopes or prefixes include:
 | testPDFIngest | Test PDF ingestion | unit | @todo | ingestPdfs | stub |
 | testIngestAndChunk | Test ingestion and chunking together | integration | @todo | ingestPdfs, chunkText | stub |
 | testRulesAndModel | Test weak rules and model training | unit | @todo | weakRules, trainMultilabel | stub |
-| testFeatures | Test embedding generation | unit | @todo | docEmbeddingsBertGpu, precomputeEmbeddings | stub |
+| testFeatures | Test embedding generation | unit | @todo | docEmbeddingsBertGpu, precomputeEmbeddings | verifies output types |
 | testRegressionMetricsSimulated | Test regression metrics | unit | @todo | trainMultilabel, evalPerLabel | stub |
 | testHybridSearch | Test hybrid search | unit | @todo | hybridSearch | stub |
 | testProjectionHeadSimulated | Test projection head training | unit | @todo | trainProjectionHead | stub |
