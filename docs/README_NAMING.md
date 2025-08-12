@@ -3,7 +3,7 @@
 This repository enforces consistent naming through:
 1. A **single source of truth**: `naming_registry.md`
 2. Editor aids and grep-able breadcrumbs
-3. naming converntion is detailed in the matlab style guide
+3. Naming convention is detailed in the MATLAB style guide
 ## TL;DR
 
 | Category | Rule |
