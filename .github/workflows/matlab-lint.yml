@@ -10,13 +10,48 @@ on:
 jobs:
   mlint:
     runs-on: ubuntu-latest
+    env:
+      # Fail policy: "none" | "any" | "error"
+      MLINT_FAIL_ON: "any"
+      # Comma-separated glob excludes (relative to repo root)
+      MLINT_EXCLUDE: ".git/**,.github/**,node_modules/**,external/**,thirdparty/**,build/**,dist/**"
+      # Comma-separated includes (leave empty to scan whole repo)
+      MLINT_INCLUDE: ""
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Setup MATLAB
         uses: matlab-actions/setup-matlab@v2
         with:
           release: R2024b
-      - name: Run mlint
+
+      - name: Run mlint (from ./scripts)
         uses: matlab-actions/run-command@v2
         with:
-         command: run_mlint
+          command: addpath('scripts'); run_mlint
+
+      - name: Upload lint artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: matlab-lint
+          path: lint/**
+          if-no-files-found: warn
+
+      - name: Publish run summary
+        if: always()
+        run: |
+          if [ -f lint/mlint-summary.md ]; then
+            cat lint/mlint-summary.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "## MATLAB Lint Summary" >> "$GITHUB_STEP_SUMMARY"
+            echo "_No summary produced._" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload SARIF to Code scanning
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: lint/mlint.sarif
