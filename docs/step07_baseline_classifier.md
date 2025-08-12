@@ -9,6 +9,7 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 
 1. Load embeddings and weak labels:
    ```matlab
+
    load('data/embeddingMat.mat','embeddingMat');
    load('data/bootLabelMat.mat','bootLabelMat');
    ```
@@ -20,6 +21,7 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 3. Enable hybrid retrieval combining cosine similarity and BM25:
    ```matlab
    resultsTbl = reg.hybridSearch(baselineModelStruct, embeddingMat, 'query', 'sample text');
+
    ```
 
 ## Function Interface
@@ -27,16 +29,19 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 ### reg.trainMultilabel
 - **Parameters:**
   - `embeddingMat` (double matrix): embeddings from Step 6.
+
   - `bootLabelMat` (sparse logical matrix): weak labels from Step 5.
 - **Returns:** struct `baselineModelStruct` with fields `weights` and `bias` (see [BaselineModelStruct](identifier_registry.md#baselinemodelstruct)).
 - **Side Effects:** none.
 - **Usage Example:**
   ```matlab
   baselineModelStruct = reg.trainMultilabel(embeddingMat, bootLabelMat);
+
   ```
 
 ### reg.hybridSearch
 - **Parameters:**
+
   - `baselineModelStruct` (struct)
   - `embeddingMat` (double matrix)
   - `'query'` (string): search text.
@@ -44,10 +49,12 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 - **Side Effects:** none.
 - **Usage Example:**
   ```matlab
+
   resultsTbl = reg.hybridSearch(baselineModelStruct, embeddingMat, 'query', 'example');
   ```
 
 See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schemas of `embeddingMat`, `bootLabelMat`, `BaselineModelStruct`, and `RetrievalResult` outputs.
+
 
 
 ## Verification

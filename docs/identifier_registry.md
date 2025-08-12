@@ -84,8 +84,8 @@ Keep the illustrative examples below in sync with the current naming conventions
 | config | none | struct of settings from JSON files | reads configuration files |
 | startup | project object | none | adds repo paths, sets defaults |
 | shutdown | project object | none | removes repo paths, restores defaults |
-| reg.ingestPdfs | inputDir string | docs table `{docId,text}` | reads PDFs, OCR fallback |
-| reg.chunkText | docs table, chunkSizeTokens double, chunkOverlap double | chunks table `{chunkId,docId,text}` | none |
+| reg.ingestPdfs | inputDir string | docsTbl table `{docId,text}` | reads PDFs, OCR fallback |
+| reg.chunkText | docsTbl table, chunkSizeTokens double, chunkOverlap double | chunksTbl table `{chunkId,docId,text}` | none |
 | reg.weakRules | text array, labels array | sparse matrix `Yweak` | none |
 | reg.docEmbeddingsBertGpu | chunks table | matrix `embeddingMat` | loads model, uses GPU |
 | reg.precomputeEmbeddings | `embeddingMat` matrix, outPath string | none | writes embeddings to disk |
@@ -93,7 +93,6 @@ Keep the illustrative examples below in sync with the current naming conventions
 | reg.hybridSearch | `baselineModelStruct` struct, `embeddingMat` matrix, query string | `resultsTbl` table | none |
 | reg.trainProjectionHead | `embeddingMat` matrix, `bootLabelMat` matrix | head struct | none |
 | reg.ftBuildContrastiveDataset | chunks table, `bootLabelMat` matrix | dataset struct | none |
-| reg.ftTrainEncoder | dataset `ds`, unfreezeTop double | encoder struct | updates model weights |
 | reg.evalRetrieval | resultsTbl table, goldTbl table | metrics tables | writes report files |
 | reg.loadGold | pathStr string | goldTbl table | reads gold annotations |
 | reg.evalPerLabel | predYMat matrix, trueYMat matrix | metrics table | none |
@@ -102,7 +101,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 | reg.crrDiffReport | none | none | writes HTML/PDF summaries |
 | reg.printActiveKnobs | knobsStruct struct | none | prints knob values to stdout |
 | reg.setSeeds | seed double | none | sets RNG and GPU seeds |
-| runtests | testFolder string, IncludeSubfolders logical, UseParallel logical | results table | executes test suite |
+| runtests | testFolder string, IncludeSubfolders logical, UseParallel logical | `resultsTbl` table | executes test suite |
 
 
 ## Variables
@@ -110,7 +109,9 @@ Keep the illustrative examples below in sync with the current naming conventions
 | Name | Purpose | Scope | Type | Default | Constraints | Notes |
 |------|---------|-------|------|---------|-------------|-------|
 | docIndex | Tracks current document position | local | double | 0 | non-negative | example |
-|  |  |  |  |  |  |
+| configStruct | Configuration settings loaded from JSON files | module | struct | n/a | fields must exist | returned by config |
+| gpuInfoStruct | GPU device information | local | struct | n/a | CUDA-enabled | obtained via `gpuDevice` |
+| productsTbl | Installed MATLAB products | local | table | n/a | includes required toolboxes | obtained via `ver` |
 
 ## Constants / Enums
 
@@ -170,6 +171,7 @@ Common test scopes or prefixes include:
 
 | Name | Purpose | Scope | Owner | Related Functions | Notes |
 |------|---------|-------|-------|-------------------|-------|
+| testConfig | Test configuration override precedence | unit | @todo | config | verifies override precedence |
 | testPDFIngest | Test PDF ingestion | unit | @todo | ingestPdfs | stub |
 | testIngestAndChunk | Test ingestion and chunking together | integration | @todo | ingestPdfs, chunkText | stub |
 | testRulesAndModel | Test weak rules and model training | unit | @todo | weakRules, trainMultilabel | stub |
@@ -262,7 +264,7 @@ Common test scopes or prefixes include:
 
 | Producer → Consumer | Payload Schema | Format | Validation | Notes |
 |--------------------|----------------|--------|-----------|-------|
-| ingest → chunking | Document | MAT-file (`docs.mat`) | non-empty `text` | see [Step 3](step03_data_ingestion.md) |
+| ingest → chunking | Document | MAT-file (`docsTbl.mat`) | non-empty `text` | see [Step 3](step03_data_ingestion.md) |
 | chunking → weak labeling / embeddings | Chunk | MAT-file (`chunks.mat`) | unique `chunkId` | see [Step 4](step04_text_chunking.md) |
 | weak labeling → classifier | Label | MAT-file (`bootLabelMat.mat`) | matches size of `chunks` | see [Step 5](step05_weak_labeling.md) |
 | embedding generation → classifier | Embedding | MAT-file (`embeddingMat.mat`) | matches size of `chunks` | see [Step 6](step06_embedding_generation.md) |
@@ -271,6 +273,7 @@ Common test scopes or prefixes include:
 | retrieval → evaluation | RetrievalResult | MAT-file (`resultsTbl.mat`) | fields exist | see [Step 7](step07_baseline_classifier.md) |
 | dataset build → fine-tune | ContrastiveDataset | MAT-file (`contrastive_ds.mat`) | fields exist | see [Step 9](step09_encoder_finetuning.md) |
 | fine-tune → evaluation | ftEncoder struct with BERT weights | MAT-file (`fine_tuned_bert.mat`) | fields exist | see [Step 9](step09_encoder_finetuning.md) |
+
 | evaluation → reports | Metric | CSV/PDF | schema check | see [Step 10](step10_evaluation_reporting.md) |
 
 ---
