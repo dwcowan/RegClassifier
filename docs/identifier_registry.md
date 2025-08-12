@@ -1,16 +1,80 @@
 # Identifier Registry
 
-The central reference for identifier naming across the project.
+This is the **single source of truth** for object, method, variable, and file names. Update it via PR and keep it in sync with code.
+
+> Tip: In code, add grep-able breadcrumbs like `%% NAME-REGISTRY:CLASS InvoiceProcessor` (MATLAB) or `# NAME-REGISTRY:METHOD parseDocument` so you can jump from code → registry.
 
 ---
 
-## Conventions
+## Conventions 
 
 - **Classes/Objects:** `PascalCase` (e.g., `InvoiceProcessor`)
 - **Methods/Functions:** `camelCase` (e.g., `parseDocument`)
+- **Class properties:** `lowerCamelCase` (e.g., `learningRate`)
 - **Variables:** `snake_case` (e.g., `doc_index`)
 - **Constants/Enums:** `UPPER_SNAKE_CASE` (e.g., `MAX_RETRY_COUNT`)
 - **Files/Modules:** `lower_snake_case.ext` (e.g., `pdf_ingest.m`, `text_chunker.m`)
+- **Temporary Variables** Short names such as `tmp` or `idx` are permitted only for a few lines and must not escape the local scope.
 - **Function Handles:** end with `Fn` or `Handle` (e.g., `costFn`, `updateHandle`)
 
+Scopes:
+- **global** (shared across modules), **module** (file/local package), **local** (function scope), **test** (only in tests)
 
+---
+
+## Objects / Classes
+
+| Name | Purpose | Scope | Owner | Related Files | Notes |
+|------|---------|-------|-------|---------------|-------|
+|  |  |  |  |  |  |
+
+## Methods / Functions
+
+| Name | Purpose | Scope | Input Contract | Output Contract | Owner | Notes |
+|------|---------|-------|----------------|-----------------|-------|------|
+|  |  |  |  |  |  |
+
+## Variables
+
+| Name | Purpose | Scope | Type | Default | Constraints | Notes |
+|------|---------|-------|------|---------|-------------|-------|
+|  |  |  |  |  |  |
+
+## Constants / Enums
+
+| Name | Purpose | Scope | Value/Type | Notes |
+|------|---------|-------|-----------|-------|
+|  |  |  |  |  |
+
+## Files / Modules
+
+| File | Purpose | Public API | Owner | Notes |
+|------|---------|-----------|-------|------|
+|  |  |  |  |  |
+
+
+
+## Tests
+
+Test files reside in the `tests/` directory and follow the `testFunctionName.m` naming convention.
+
+Common test scopes or prefixes include:
+
+- `Test` for general unit tests
+- `TestIntegration` for integration scenarios
+- `TestSmoke` for smoke tests
+
+
+---
+
+## Data Contracts (Between Modules)
+
+| Producer → Consumer | Payload Schema | Format | Validation | Notes |
+|--------------------|----------------|--------|-----------|-------|
+| ingest → preprocess | `{ doc_id: string, pages: string[], meta: {...} }` | JSON | schema v1 | draft |
+
+---
+
+## Changelog
+
+- YYYY-MM-DD: Initial registry created.
