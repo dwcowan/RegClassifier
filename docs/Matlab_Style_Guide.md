@@ -1,11 +1,18 @@
 # MATLAB Style Guide
 
-A beginner-friendly reference for writing clear, consistent MATLAB code.
+This is the **single source of truth** for **Naming** classes, functions, variables, 
+constants, files/modules, tests, and other identifiers.
 
-See the [naming process guide](README_NAMING.md) for how to propose
-and register identifiers. The canonical source of truth is the
-[identifier registry](identifier_registry.md). Naming rules defined
-here must be registered in the registry via that process.
+
+See the [process guide](README_NAMING.md) for how register identifiers.
+The canonical source of truth for classes, functions, variables, 
+constants, files/modules, tests, and other identifiers, that are **defined 
+in the project** is the [identifier registry](identifier_registry.md). 
+The [identifier registry](identifier_registry.md) is the definitve source 
+for the collection of all identifiers, **not** how to name the indentifiers.
+Identifiers defined here must be registered in the [identifier registry](identifier_registry.md)
+via [process guide](README_NAMING.md) and **must** follow the naming 
+convention defined in **this** document [Matlab Style Guide](Matlab_Style_Guide.md).
 
 ---
 

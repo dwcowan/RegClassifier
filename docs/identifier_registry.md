@@ -1,7 +1,11 @@
 # Identifier Registry
 
 
-This is the **single source of truth** for classes, functions, variables, constants, files/modules, tests, and other identifiers, that are defined in the project.
+This is the **single source of truth** for classes, functions, variables, 
+constants, files/modules, tests, and other identifiers, that are defined 
+in the project. The [identifier registry](identifier_registry.md) is the 
+definitve source for the collection of 
+all identifiers, **not** how to name the indentifiers.
 Update it via PR and keep it in sync with code.
 
 Refer to [Matlab Style Guide](Matlab_Style_Guide.md) for naming rules and [README_NAMING](README_NAMING.md) for process guidelines.
