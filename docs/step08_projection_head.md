@@ -17,7 +17,7 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 
 ## Function Interface
 
-### reg.train_projection_head
+### reg.trainProjectionHead
 - **Parameters:**
   - `X` (double matrix): embeddings from Step 6.
   - `Yboot` (sparse logical matrix): weak labels from Step 5.
@@ -25,7 +25,7 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 - **Side Effects:** none.
 - **Usage Example:**
   ```matlab
-  head = reg.train_projection_head(X, Yboot);
+  head = reg.trainProjectionHead(X, Yboot);
   ```
 
 See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schema references.

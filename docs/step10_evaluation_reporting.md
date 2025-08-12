@@ -22,25 +22,37 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 
 ## Function Interface
 
-### reg_eval_and_report
-- **Parameters:** none.
+### reg.evalRetrieval
+- **Parameters:** `resultsTbl` table, `goldTbl` table.
 - **Returns:** metrics tables and generates `reg_eval_report.pdf`.
 - **Side Effects:** reads model artifacts and writes report files to disk.
 - **Usage Example:**
   ```matlab
-  reg_eval_and_report
+  reg.evalRetrieval(resultsTbl, goldTbl);
   ```
 
-### reg_eval_gold
-- **Parameters:** none.
-- **Returns:** metrics tables comparing predictions to gold annotations.
+### reg.loadGold
+- **Parameters:**
+  - `pathStr` (string): location of gold annotations.
+- **Returns:** table `goldTbl` of annotations.
 - **Side Effects:** reads curated annotation packs if available.
 - **Usage Example:**
   ```matlab
-  reg_eval_gold
+  goldTbl = reg.loadGold('path/to/gold');
   ```
 
-See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for metric schema references.
+### reg.evalPerLabel
+- **Parameters:**
+  - `predYMat` (matrix): predicted labels.
+  - `trueYMat` (matrix): gold labels.
+- **Returns:** table of per-label metrics.
+- **Side Effects:** none.
+- **Usage Example:**
+  ```matlab
+  reg.evalPerLabel(predYMat, goldTbl.y);
+  ```
+
+See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for metric schema references. – Data Contracts](identifier_registry.md#data-contracts) for metric schema references.
 
 
 ## Verification
