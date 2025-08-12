@@ -56,13 +56,13 @@ Keep the illustrative examples below in sync with the current naming conventions
 | shutdown | RegClassifier project cleanup | module | project object | none | @todo | |
 | ingestPdfs | Convert PDFs into text documents | module | `pdfPathsCell` cell array | `docTbl` table | @todo | stub |
 | chunkText | Split documents into token chunks | module | `docTbl`, `chunkSizeTokens`, `chunkOverlap` | `chunkTbl` table | @todo | stub |
-| weakRules | Generate weak labels for chunks | module | `chunkTbl` table | sparse matrix `yBootMat` | @todo | stub |
+| weakRules | Generate weak labels for chunks | module | `chunkTbl` table | sparse matrix `weakLabelMat` | @todo | stub |
 | docEmbeddingsBertGpu | Embed chunks using BERT on GPU | module | `chunkTbl` table | embedding matrix `xMat` | @todo | stub |
 | precomputeEmbeddings | Precompute embeddings for chunks | module | `chunkTbl` table | embedding matrix `xMat` | @todo | stub |
-| trainMultilabel | Train multi-label classifier | module | `xMat` matrix, `yMat` matrix | model struct | @todo | stub |
+| trainMultilabel | Train multi-label classifier | module | `xMat` matrix, `bootLabelMat` matrix | model struct | @todo | stub |
 | hybridSearch | Retrieve documents with hybrid search | module | `queryStr` string, `xMat` matrix, `docTbl` table | results table | @todo | stub |
-| trainProjectionHead | Train projection head on embeddings | module | `xMat` matrix, `yMat` matrix | head struct | @todo | stub |
-| ftBuildContrastiveDataset | Build dataset for encoder fine-tuning | module | `chunkTbl` table, `yMat` matrix | dataset struct | @todo | stub |
+| trainProjectionHead | Train projection head on embeddings | module | `xMat` matrix, `bootLabelMat` matrix | head struct | @todo | stub |
+| ftBuildContrastiveDataset | Build dataset for encoder fine-tuning | module | `chunkTbl` table, `bootLabelMat` matrix | dataset struct | @todo | stub |
 | ftTrainEncoder | Fine-tune encoder on contrastive dataset | module | `dsStruct` struct | encoder struct | @todo | stub |
 | evalRetrieval | Evaluate retrieval metrics | module | `resultsTbl` table, `goldTbl` table | metrics struct | @todo | stub |
 | evalPerLabel | Compute per-label metrics | module | `predYMat` matrix, `trueYMat` matrix | metrics table | @todo | stub |
@@ -86,13 +86,13 @@ Keep the illustrative examples below in sync with the current naming conventions
 | shutdown | project object | none | removes repo paths, restores defaults |
 | reg.ingestPdfs | inputDir string | docs table `{docId,text}` | reads PDFs, OCR fallback |
 | reg.chunkText | docs table, chunkSizeTokens double, chunkOverlap double | chunks table `{chunkId,docId,text}` | none |
-| reg.weakRules | text array, labels array | sparse matrix `Yweak` | none |
+| reg.weakRules | text array, labels array | sparse matrix `weakLabelMat` | none |
 | reg.docEmbeddingsBertGpu | chunks table | matrix `X` | loads model, uses GPU |
 | reg.precomputeEmbeddings | `X` matrix, outPath string | none | writes embeddings to disk |
-| reg.trainMultilabel | `X` matrix, `Yboot` matrix | model struct | none |
+| reg.trainMultilabel | `X` matrix, `bootLabelMat` matrix | model struct | none |
 | reg.hybridSearch | model struct, `X` matrix, query string | results table | none |
-| reg.trainProjectionHead | `X` matrix, `Yboot` matrix | head struct | none |
-| reg.ftBuildContrastiveDataset | chunks table, `Yboot` matrix | dataset struct | none |
+| reg.trainProjectionHead | `X` matrix, `bootLabelMat` matrix | head struct | none |
+| reg.ftBuildContrastiveDataset | chunks table, `bootLabelMat` matrix | dataset struct | none |
 | reg.ftTrainEncoder | dataset `ds`, unfreezeTop double | encoder struct | updates model weights |
 | reg.evalRetrieval | resultsTbl table, goldTbl table | metrics tables | writes report files |
 | reg.loadGold | pathStr string | goldTbl table | reads gold annotations |
@@ -220,7 +220,7 @@ Common test scopes or prefixes include:
 #### Label
 | Name | Type | Description |
 |------|------|-------------|
-| Yboot | sparse logical `[numChunks x numClasses]` | Weak labels matrix |
+| bootLabelMat | sparse logical `[numChunks x numClasses]` | Weak labels matrix |
 
 #### Embedding
 | Name | Type | Description |
@@ -264,7 +264,7 @@ Common test scopes or prefixes include:
 |--------------------|----------------|--------|-----------|-------|
 | ingest → chunking | Document | MAT-file (`docs.mat`) | non-empty `text` | see [Step 3](step03_data_ingestion.md) |
 | chunking → weak labeling / embeddings | Chunk | MAT-file (`chunks.mat`) | unique `chunkId` | see [Step 4](step04_text_chunking.md) |
-| weak labeling → classifier | Label | MAT-file (`Yboot.mat`) | matches size of `chunks` | see [Step 5](step05_weak_labeling.md) |
+| weak labeling → classifier | Label | MAT-file (`bootLabelMat.mat`) | matches size of `chunks` | see [Step 5](step05_weak_labeling.md) |
 | embedding generation → classifier | Embedding | MAT-file (`embeddings.mat`) | matches size of `chunks` | see [Step 6](step06_embedding_generation.md) |
 | classifier → retrieval / eval | BaselineModel | MAT-file (`baseline_model.mat`) | fields exist | see [Step 7](step07_baseline_classifier.md) |
 | projection head training → retrieval | ProjectionHead | MAT-file (`projection_head.mat`) | fields exist | see [Step 8](step08_projection_head.md) |

@@ -9,7 +9,7 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 
 1. Build the contrastive training dataset:
    ```matlab
-   ds = reg.ftBuildContrastiveDataset(chunks, Yboot);
+   ds = reg.ftBuildContrastiveDataset(chunks, bootLabelMat);
    ```
 2. Fine-tune the encoder starting from the pretrained weights:
    ```matlab
@@ -23,12 +23,12 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 ### reg.ftBuildContrastiveDataset
 - **Parameters:**
   - `chunks` (table): see Step 4.
-  - `Yboot` (sparse logical matrix): weak labels.
+  - `bootLabelMat` (sparse logical matrix): weak labels.
 - **Returns:** dataset `ds` containing contrastive pairs (see [ContrastiveDataset](identifier_registry.md#contrastivedataset)).
 - **Side Effects:** none.
 - **Usage Example:**
   ```matlab
-  ds = reg.ftBuildContrastiveDataset(chunks, Yboot);
+  ds = reg.ftBuildContrastiveDataset(chunks, bootLabelMat);
   ```
 
 ### reg.ftTrainEncoder

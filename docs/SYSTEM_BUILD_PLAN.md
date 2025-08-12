@@ -44,7 +44,7 @@ This guide outlines a clean-room rebuild of the MATLAB-based regulatory topic cl
 - **Depends on:** Text Chunking Module.
 - **Implementation:** `reg.weak_rules` returning label matrix.
 - **Testing:** `tests/testRulesAndModel.m` confirms label coverage and format.
-- **Output:** Sparse label matrix `Yboot`.
+ - **Output:** Sparse label matrix `bootLabelMat`.
 
 ## 6. Embedding Generation Module
 - **Goal:** Embed chunks using BERT (GPU) or FastText fallback.

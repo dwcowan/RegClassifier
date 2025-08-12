@@ -13,12 +13,12 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
    ```
 2. Generate weak labels with rule-based functions:
    ```matlab
-   Yweak = reg.weakRules(chunks.text, C.labels);
-   Yboot = Yweak >= C.minRuleConf; % optional threshold
+   weakLabelMat = reg.weakRules(chunks.text, configStruct.labels);
+   bootLabelMat = weakLabelMat >= configStruct.minRuleConf; % optional threshold
    ```
 3. Store the sparse label matrix for future training:
    ```matlab
-   save('data/Yboot.mat','Yboot')
+   save('data/bootLabelMat.mat','bootLabelMat')
    ```
 
 ## Function Interface
@@ -27,33 +27,33 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 - **Parameters:**
   - `text` (string array): chunk content.
   - `labels` (string array): list of topic names.
-- **Returns:** sparse double matrix `Yweak` containing confidence scores per label.
+- **Returns:** sparse double matrix `weakLabelMat` containing confidence scores per label.
 - **Side Effects:** none.
 - **Usage Example:**
   ```matlab
-  Yweak = reg.weakRules(["example"], ["topicA","topicB"]);
+  weakLabelMat = reg.weakRules(["example"], ["topicA","topicB"]);
   ```
 
 ### Thresholding
 - **Parameters:**
-  - `Yweak` (double sparse matrix)
+  - `weakLabelMat` (double sparse matrix)
   - `threshold` (double)
-- **Returns:** sparse logical matrix `Yboot`.
+- **Returns:** sparse logical matrix `bootLabelMat`.
 - **Side Effects:** none.
 - **Usage Example:**
   ```matlab
-  Yboot = Yweak >= 0.5;
+  bootLabelMat = weakLabelMat >= 0.5;
   ```
 
-See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schema of `Yboot`.
+See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schema of `bootLabelMat`.
 
 
-> **Note:** `reg.weakRules` requires `chunks.text` and the label list `C.labels`
-> from [`config.m`](../config.m). The confidence cutoff `C.minRuleConf` is
+> **Note:** `reg.weakRules` requires `chunks.text` and the label list `configStruct.labels`
+> from [`config.m`](../config.m). The confidence cutoff `configStruct.minRuleConf` is
 > optional and can be tuned in `config.m` or overridden via `knobs.json`.
 
 ## Verification
-- `Yboot` is a sparse matrix with rows matching `chunks` and columns representing topics.
+- `bootLabelMat` is a sparse matrix with rows matching `chunks` and columns representing topics.
 - Run the labeling test:
   ```matlab
   runtests('tests/testRulesAndModel.m')
