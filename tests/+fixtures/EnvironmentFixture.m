@@ -12,7 +12,8 @@ classdef EnvironmentFixture < matlab.unittest.fixtures.Fixture
     methods
         function setup(fixture)
             % Save current state
-            fixture.formatStr = get(0, 'Format');
+            s = settings;
+            fixture.formatStr = s.matlab.commandwindow.NumericFormat.ActiveValue;
             fixture.rngStruct = rng;
             try
                 fixture.gpuDeviceObj = gpuDevice;
@@ -23,13 +24,14 @@ classdef EnvironmentFixture < matlab.unittest.fixtures.Fixture
             end
 
             % Modify environment state
-            format('short');
+            s.matlab.commandwindow.NumericFormat.TemporaryValue = 'short';
             rng('default');
         end
 
         function teardown(fixture)
             % Restore original state
-            format(fixture.formatStr);
+            s = settings;
+            s.matlab.commandwindow.NumericFormat.TemporaryValue = fixture.formatStr;
             rng(fixture.rngStruct);
             if fixture.hasGpuLogical
                 gpuDevice(fixture.gpuDeviceObj.Index);
