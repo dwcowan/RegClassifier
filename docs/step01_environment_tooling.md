@@ -25,9 +25,25 @@
    ```
 
 ## Function Interface
-- `gpuDevice()` reports the active GPU and its properties.  
-- `ver` returns a table of installed MATLAB products.  
-- Subsequent modules rely on this environment. See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for data artifacts produced later in the pipeline.
+### gpuDevice
+- **Parameters:** none
+- **Returns:** struct describing the active GPU.
+- **Side Effects:** selects the GPU device for subsequent operations.
+- **Usage Example:**
+  ```matlab
+  info = gpuDevice;
+  ```
+
+### ver
+- **Parameters:** none
+- **Returns:** table listing installed MATLAB products.
+- **Side Effects:** prints version information to the console.
+- **Usage Example:**
+  ```matlab
+  products = ver;
+  ```
+
+Subsequent modules rely on this environment. See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for data artifacts produced later in the pipeline.
 
 ## Verification
 - `gpuDevice` reports a supported GPU and its memory.

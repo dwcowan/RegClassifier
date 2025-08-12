@@ -21,9 +21,25 @@
    ```
 
 ## Function Interface
-- `addpath(genpath(pwd)); savepath` adds all subfolders to the MATLAB path.  
-- `config()` reads `pipeline.json`, `knobs.json`, and optional overrides, returning a struct printed to the console.  
-- Data structures referenced in later modules are detailed in [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts).
+### addpath / savepath
+- **Parameters:** root directory (string) typically `pwd`.
+- **Returns:** none.
+- **Side Effects:** modifies the MATLAB search path and persists it for future sessions.
+- **Usage Example:**
+  ```matlab
+  addpath(genpath(pwd)); savepath
+  ```
+
+### config
+- **Parameters:** none.
+- **Returns:** struct `C` with fields derived from `pipeline.json`, `knobs.json`, and `params.json` overrides.
+- **Side Effects:** reads configuration files from disk.
+- **Usage Example:**
+  ```matlab
+  C = config;
+  ```
+
+Data structures referenced in later modules are detailed in [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts).
 
 ## Verification
 - `config` prints the contents of the JSON files without errors.

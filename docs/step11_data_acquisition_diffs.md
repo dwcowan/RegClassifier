@@ -17,12 +17,36 @@
 3. Review HTML or PDF diff outputs for changes.
 
 ## Function Interface
-- `reg_crr_sync()` downloads the latest corpus to `data/raw`.  
-- `reg.crr_diff_versions(vA, vB)`  
-  - `vA`, `vB` (string): version identifiers.  
-  - returns a structure describing added, removed, and changed documents.  
-- `reg_crr_diff_report` renders HTML/PDF summaries.  
-- See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for corpus schema references.
+### reg_crr_sync
+- **Parameters:** none.
+- **Returns:** none.
+- **Side Effects:** downloads the latest corpus to `data/raw`.
+- **Usage Example:**
+  ```matlab
+  reg_crr_sync
+  ```
+
+### reg.crr_diff_versions
+- **Parameters:**
+  - `vA` (string): version identifier A.
+  - `vB` (string): version identifier B.
+- **Returns:** structure describing added, removed, and changed documents.
+- **Side Effects:** none.
+- **Usage Example:**
+  ```matlab
+  diff = reg.crr_diff_versions('v1','v2');
+  ```
+
+### reg_crr_diff_report
+- **Parameters:** none.
+- **Returns:** none.
+- **Side Effects:** renders HTML/PDF summaries to disk.
+- **Usage Example:**
+  ```matlab
+  reg_crr_diff_report
+  ```
+
+See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for corpus schema references.
 
 ## Verification
 - Date-stamped corpora appear in the `data` directory.

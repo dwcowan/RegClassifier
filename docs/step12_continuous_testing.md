@@ -14,10 +14,19 @@
 3. Optional: configure continuous integration (e.g., GitHub Actions) to run the same command on each push.
 
 ## Function Interface
-- `runtests('tests','IncludeSubfolders',true,'UseParallel',false)`  
-  - Executes all MATLAB tests in the project.  
-  - returns `results` (table) with fields `Name`, `Passed`, `Failed`, `Incomplete`, `Duration`.  
-- See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for any test-related artifacts.
+### runtests
+- **Parameters:**
+  - `testFolder` (string): path to test suite, e.g., `'tests'`.
+  - `'IncludeSubfolders'` (logical): include nested tests.
+  - `'UseParallel'` (logical): run tests in parallel.
+- **Returns:** table `results` with fields `Name`, `Passed`, `Failed`, `Incomplete`, and `Duration`.
+- **Side Effects:** executes all MATLAB tests in the project.
+- **Usage Example:**
+  ```matlab
+  results = runtests('tests','IncludeSubfolders',true,'UseParallel',false);
+  ```
+
+See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for any test-related artifacts.
 
 ## Verification
 - All tests pass locally, producing a table with `Passed` outcomes.

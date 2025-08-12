@@ -20,11 +20,28 @@
    ```
 
 ## Function Interface
-- `reg.doc_embeddings_bert_gpu(chunks)`  
-  - `chunks` (table): as defined in Step 4.  
-  - returns `X` (double matrix): size `[numChunks x 768]` by default.  
-- `reg.precompute_embeddings(X, outPath)` caches the matrix to disk.  
-- See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schema of `X`.
+### reg.doc_embeddings_bert_gpu
+- **Parameters:**
+  - `chunks` (table): as defined in Step 4.
+- **Returns:** double matrix `X` of size `[numChunks x 768]` by default.
+- **Side Effects:** loads BERT weights and uses GPU when available.
+- **Usage Example:**
+  ```matlab
+  X = reg.doc_embeddings_bert_gpu(chunks);
+  ```
+
+### reg.precompute_embeddings
+- **Parameters:**
+  - `X` (double matrix)
+  - `outPath` (string): destination MAT-file path.
+- **Returns:** none.
+- **Side Effects:** writes embeddings to disk for reuse.
+- **Usage Example:**
+  ```matlab
+  reg.precompute_embeddings(X, 'embeddings_mock.mat');
+  ```
+
+See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schema of `X`.
 
 ## Verification
 - `X` has one row per chunk and 768 columns (BERT base dimension).
