@@ -86,7 +86,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 | shutdown | project object | none | removes repo paths, restores defaults |
 | reg.ingestPdfs | inputDir string | docsTbl table `{docId,text}` | reads PDFs, OCR fallback |
 | reg.chunkText | docsTbl table, chunkSizeTokens double, chunkOverlap double | chunksTbl table `{chunkId,docId,text}` | none |
-| reg.weakRules | text array, labels array | sparse matrix `Yweak` | none |
+| reg.weakRules | text array, labels array | sparse matrix `weakLabelMat` | none |
 | reg.docEmbeddingsBertGpu | chunks table | matrix `embeddingMat` | loads model, uses GPU |
 | reg.precomputeEmbeddings | `embeddingMat` matrix, outPath string | none | writes embeddings to disk |
 | reg.trainMultilabel | `embeddingMat` matrix, `bootLabelMat` matrix | `baselineModelStruct` struct | none |
@@ -222,6 +222,7 @@ Common test scopes or prefixes include:
 #### Label
 | Name | Type | Description |
 |------|------|-------------|
+| weakLabelMat | sparse double `[numChunks x numClasses]` | Confidence scores per label |
 | bootLabelMat | sparse logical `[numChunks x numClasses]` | Weak labels matrix |
 
 #### Embedding
