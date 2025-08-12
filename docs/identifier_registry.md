@@ -110,6 +110,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 | Name | Purpose | Scope | Type | Default | Constraints | Notes |
 |------|---------|-------|------|---------|-------------|-------|
 | docIndex | Tracks current document position | local | double | 0 | non-negative | example |
+| configStruct | Configuration settings loaded from JSON files | module | struct | n/a | fields must exist | returned by config |
 |  |  |  |  |  |  |
 
 ## Constants / Enums
