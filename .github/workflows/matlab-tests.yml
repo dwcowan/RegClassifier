@@ -1,0 +1,16 @@
+name: MATLAB Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Run MATLAB tests
+        uses: mathworks/run-tests@v1
+        with:
+          command: "runtests('tests','IncludeSubfolders',true,'UseParallel',false)"
