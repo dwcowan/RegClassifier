@@ -84,16 +84,19 @@ Keep the illustrative examples below in sync with the current naming conventions
 | config | none | struct of settings from JSON files | reads configuration files |
 | startup | project object | none | adds repo paths, sets defaults |
 | shutdown | project object | none | removes repo paths, restores defaults |
-| reg.ingestPdfs | inputDir string | docs table `{docId,text}` | reads PDFs, OCR fallback |
-| reg.chunkText | docs table, chunkSizeTokens double, chunkOverlap double | chunks table `{chunkId,docId,text}` | none |
+| reg.ingestPdfs | inputDir string | docsTbl table `{docId,text}` | reads PDFs, OCR fallback |
+| reg.chunkText | docsTbl table, chunkSizeTokens double, chunkOverlap double | chunks table `{chunkId,docId,text}` | none |
 | reg.weakRules | text array, labels array | sparse matrix `Yweak` | none |
-| reg.docEmbeddingsBertGpu | chunks table | matrix `X` | loads model, uses GPU |
-| reg.precomputeEmbeddings | `X` matrix, outPath string | none | writes embeddings to disk |
-| reg.trainMultilabel | `X` matrix, `Yboot` matrix | model struct | none |
-| reg.hybridSearch | model struct, `X` matrix, query string | results table | none |
-| reg.trainProjectionHead | `X` matrix, `Yboot` matrix | head struct | none |
 | reg.ftBuildContrastiveDataset | chunks table, `bootLabelMat` matrix | `contrastiveDatasetTbl` table | none |
 | reg.ftTrainEncoder | `contrastiveDatasetTbl` table, unfreezeTop double | `fineTunedEncoderStruct` struct | updates model weights |
+| reg.docEmbeddingsBertGpu | chunks table | matrix `embeddingMat` | loads model, uses GPU |
+| reg.precomputeEmbeddings | `embeddingMat` matrix, outPath string | none | writes embeddings to disk |
+| reg.trainMultilabel | `embeddingMat` matrix, `Yboot` matrix | model struct | none |
+| reg.hybridSearch | model struct, `embeddingMat` matrix, query string | results table | none |
+| reg.trainProjectionHead | `embeddingMat` matrix, `Yboot` matrix | head struct | none |
+| reg.ftBuildContrastiveDataset | chunks table, `Yboot` matrix | dataset struct | none |
+| reg.ftTrainEncoder | dataset `ds`, unfreezeTop double | encoder struct | updates model weights |
+
 | reg.evalRetrieval | resultsTbl table, goldTbl table | metrics tables | writes report files |
 | reg.loadGold | pathStr string | goldTbl table | reads gold annotations |
 | reg.evalPerLabel | predYMat matrix, trueYMat matrix | metrics table | none |
@@ -110,10 +113,12 @@ Keep the illustrative examples below in sync with the current naming conventions
 | Name | Purpose | Scope | Type | Default | Constraints | Notes |
 |------|---------|-------|------|---------|-------------|-------|
 | docIndex | Tracks current document position | local | double | 0 | non-negative | example |
+
 | bootLabelMat | Weak labels matrix | module | sparse logical `[numChunks x numClasses]` | n/a | matches size of `chunks` | used in Step 9 |
 | contrastiveDatasetTbl | Contrastive training pairs | module | table | n/a | fields `{anchorIdx,posIdx,negIdx}` | from ftBuildContrastiveDataset |
 | fineTunedEncoderStruct | Encoder weights after fine-tuning | module | struct | n/a | contains updated BERT layers | saved to `fine_tuned_bert.mat` |
 |  |  |  |  |  |  |
+
 
 ## Constants / Enums
 
@@ -228,7 +233,7 @@ Common test scopes or prefixes include:
 #### Embedding
 | Name | Type | Description |
 |------|------|-------------|
-| X | double `[numChunks x embeddingDim]` | Chunk embeddings |
+| embeddingMat | double `[numChunks x embeddingDim]` | Chunk embeddings |
 
 #### Metric
 | Field | Type | Description |
@@ -265,7 +270,7 @@ Common test scopes or prefixes include:
 
 | Producer → Consumer | Payload Schema | Format | Validation | Notes |
 |--------------------|----------------|--------|-----------|-------|
-| ingest → chunking | Document | MAT-file (`docs.mat`) | non-empty `text` | see [Step 3](step03_data_ingestion.md) |
+| ingest → chunking | Document | MAT-file (`docsTbl.mat`) | non-empty `text` | see [Step 3](step03_data_ingestion.md) |
 | chunking → weak labeling / embeddings | Chunk | MAT-file (`chunks.mat`) | unique `chunkId` | see [Step 4](step04_text_chunking.md) |
 | weak labeling → classifier | Label | MAT-file (`Yboot.mat`) | matches size of `chunks` | see [Step 5](step05_weak_labeling.md) |
 | embedding generation → classifier | Embedding | MAT-file (`embeddings.mat`) | matches size of `chunks` | see [Step 6](step06_embedding_generation.md) |
