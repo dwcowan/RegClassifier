@@ -11,20 +11,20 @@
    ```
 2. Generate embeddings with the GPU-enabled BERT encoder:
    ```matlab
-   X = reg.doc_embeddings_bert_gpu(chunks);
+   X = reg.docEmbeddingsBertGpu(chunks);
    ```
    If a GPU is unavailable, the function automatically falls back to a CPU-friendly model.
 3. Cache embeddings for reuse:
    ```matlab
-   reg.precompute_embeddings(X,'data/embeddings.mat');
+   reg.precomputeEmbeddings(X,'data/embeddings.mat');
    ```
 
 ## Function Interface
-- `reg.doc_embeddings_bert_gpu(chunks)`  
+- `reg.docEmbeddingsBertGpu(chunks)`
   - `chunks` (table): as defined in Step 4.  
   - returns `X` (double matrix): size `[numChunks x 768]` by default.  
-- `reg.precompute_embeddings(X, outPath)` caches the matrix to disk.  
-- See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schema of `X`.
+- `reg.precomputeEmbeddings(X, outPath)` caches the matrix to disk.
+- See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for the **Embedding** schema of `X`.
 
 ## Verification
 - `X` has one row per chunk and 768 columns (BERT base dimension).

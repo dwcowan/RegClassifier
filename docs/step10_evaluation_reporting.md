@@ -5,22 +5,25 @@
 **Depends on:** Model artifacts from [Step 7](step07_baseline_classifier.md), [Step 8](step08_projection_head.md), or [Step 9](step09_encoder_finetuning.md).
 
 ## Instructions
-1. Run the evaluation script to compute retrieval metrics and generate a PDF report:
+1. Run the evaluation routine to compute retrieval metrics and generate a PDF report:
    ```matlab
-   reg_eval_and_report
+   reg.evalRetrieval(resultsTbl, goldTbl);
    ```
 2. Optional: evaluate against a gold mini-pack if available:
    ```matlab
-   reg_eval_gold
+   goldTbl = reg.loadGold('path/to/gold');
+   reg.evalPerLabel(predYMat, goldTbl.y);
    ```
 3. Inspect generated artifacts in the `reports` or `output` folder.
 
 ## Function Interface
-- `reg_eval_and_report()`  
-  - consumes model artifacts and test queries.  
-  - outputs metrics tables and `reg_eval_report.pdf`.  
-- `reg_eval_gold()`  
-  - optionally evaluates against curated gold annotations.  
+- `reg.evalRetrieval(resultsTbl, goldTbl)`
+  - consumes retrieval results and optional gold labels.
+  - outputs metrics table and `reg_eval_report.pdf` following the **Metric** schema.
+- `reg.loadGold(pathStr)`
+  - reads curated gold annotations into `goldTbl`.
+- `reg.evalPerLabel(predYMat, trueYMat)`
+  - optionally evaluates per-label metrics.
 - See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for metric schema references.
 
 ## Verification
