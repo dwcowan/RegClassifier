@@ -2,9 +2,7 @@ name: matlab-lint
 
 on:
   push:
-  branches: [ReBase]
   pull_request:
-  branches: [ReBase]
 
 jobs:
   mlint:
@@ -17,4 +15,5 @@ jobs:
           release: R2024b
       - name: Run mlint
         uses: matlab-actions/run-command@v2
-        run:  run_mlint
+         with:
+         command: run_mlint
