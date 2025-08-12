@@ -18,8 +18,16 @@
    save('data/chunks.mat','chunks')
    ```
 
+## Function Interface
+- `reg.chunk_text(docs, 'chunk_size_tokens', n, 'chunk_overlap', m)`  
+  - `docs` (table): from Step 3 with `docId` and `text` fields.  
+  - `n` (double): tokens per chunk.  
+  - `m` (double): overlap between chunks.  
+  - returns `chunks` (`table`): columns `chunkId` (string), `docId` (string), `text` (string).  
+  - See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schema.
+
 ## Verification
-- `chunks` contains `chunk_id`, `doc_id`, and `text` for each segment.
+- `chunks` contains `chunkId`, `docId`, and `text` for each segment.
 - Run the chunking test:
   ```matlab
   runtests('tests/TestIngestAndChunk.m')

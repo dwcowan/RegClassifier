@@ -15,6 +15,14 @@
    ```
 3. Inspect generated artifacts in the `reports` or `output` folder.
 
+## Function Interface
+- `reg_eval_and_report()`  
+  - consumes model artifacts and test queries.  
+  - outputs metrics tables and `reg_eval_report.pdf`.  
+- `reg_eval_gold()`  
+  - optionally evaluates against curated gold annotations.  
+- See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for metric schema references.
+
 ## Verification
 - Report files such as `reg_eval_report.pdf` and metric CSVs are created.
 - Run evaluation tests:

@@ -19,6 +19,13 @@
    reg.precompute_embeddings(X,'data/embeddings.mat');
    ```
 
+## Function Interface
+- `reg.doc_embeddings_bert_gpu(chunks)`  
+  - `chunks` (table): as defined in Step 4.  
+  - returns `X` (double matrix): size `[numChunks x 768]` by default.  
+- `reg.precompute_embeddings(X, outPath)` caches the matrix to disk.  
+- See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schema of `X`.
+
 ## Verification
 - `X` has one row per chunk and 768 columns (BERT base dimension).
 - Run the features test:

@@ -16,6 +16,14 @@
    ```
 3. Review HTML or PDF diff outputs for changes.
 
+## Function Interface
+- `reg_crr_sync()` downloads the latest corpus to `data/raw`.  
+- `reg.crr_diff_versions(vA, vB)`  
+  - `vA`, `vB` (string): version identifiers.  
+  - returns a structure describing added, removed, and changed documents.  
+- `reg_crr_diff_report` renders HTML/PDF summaries.  
+- See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for corpus schema references.
+
 ## Verification
 - Date-stamped corpora appear in the `data` directory.
 - Run fetcher tests:

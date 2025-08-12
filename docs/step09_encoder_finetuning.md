@@ -16,6 +16,17 @@
    ```
 3. Update pipeline settings to point to the fine-tuned encoder if needed.
 
+## Function Interface
+- `reg.ft_build_contrastive_dataset(chunks, Yboot)`  
+  - `chunks` (table): see Step 4.  
+  - `Yboot` (sparse logical matrix): weak labels.  
+  - returns `ds` (dataset) for contrastive pairs.  
+- `reg.ft_train_encoder(ds, 'unfreeze_top', n)`  
+  - `ds` (dataset): training data.  
+  - `'unfreeze_top'` (double): number of BERT layers to unfreeze.  
+  - returns `ftEncoder` (struct) with updated weights.  
+- See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for encoder artifact schema.
+
 ## Verification
 - `fine_tuned_bert.mat` is saved and contains updated weights.
 - Run fine-tuning tests:
