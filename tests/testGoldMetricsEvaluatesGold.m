@@ -1,6 +1,16 @@
 %% NAME-REGISTRY:TEST testGoldMetricsEvaluatesGold
-function testGoldMetricsEvaluatesGold(testCase)
+function tests = testGoldMetricsEvaluatesGold
 %TESTGOLDMETRICSEVALUATESGOLD Evaluate gold data metrics.
+%   Each local test must assign Tags per the test style guide.
+%
+% Outputs
+%   tests - handle to local tests
+%
+tests = functiontests(localfunctions);
+tests(1).Tags = {'Integration'}; % testEvaluatesGold
+end
+
+function testEvaluatesGold(testCase)
     goldTbl = reg.loadGold(minimalGoldPath());
     testCase.verifyClass(goldTbl, 'table');
 

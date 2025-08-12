@@ -1,6 +1,16 @@
 %% NAME-REGISTRY:TEST testFetchersHandlesDiffs
-function testFetchersHandlesDiffs(testCase)
+function tests = testFetchersHandlesDiffs
 %TESTFETCHERSHANDLESDIFFS Ensure diff fetch utilities run without errors.
+%   Each local test must assign Tags per the test style guide.
+%
+% Outputs
+%   tests - handle to local tests
+%
+tests = functiontests(localfunctions);
+tests(1).Tags = {'Integration'}; % testHandlesDiffs
+end
+
+function testHandlesDiffs(testCase)
     import tests.fixtures.EnvironmentFixture
     testCase.applyFixture(EnvironmentFixture);
     [oldPathStr, newPathStr] = minimalVersionPaths();
