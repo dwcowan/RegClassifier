@@ -18,4 +18,4 @@ jobs:
       - name: Run mlint
         uses: matlab-actions/run-command@v2
         with:
-         command: addpath("scripts"), run_mlint
+         command: run_mlint
