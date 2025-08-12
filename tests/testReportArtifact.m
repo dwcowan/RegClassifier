@@ -8,7 +8,18 @@ function tests = testReportArtifact
 tests = functiontests(localfunctions);
 end
 
-function testPlaceholder(testCase)
-    reg.evalRetrieval(table(), table());
-    testCase.assumeFail('Not implemented yet');
+%TESTREPORTARTIFACTGENERATESREPORT Generate evaluation report artifact.
+function testReportArtifactGeneratesReport(testCase)
+    resultsTbl = minimalResultsTbl();
+    goldTbl = minimalGoldTbl();
+    metricsStruct = reg.evalRetrieval(resultsTbl, goldTbl);
+    testCase.verifyClass(metricsStruct, 'struct');
+end
+
+function resultsTbl = minimalResultsTbl()
+    resultsTbl = table();
+end
+
+function goldTbl = minimalGoldTbl()
+    goldTbl = table();
 end

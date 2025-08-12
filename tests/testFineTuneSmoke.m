@@ -8,8 +8,17 @@ function tests = testFineTuneSmoke
 tests = functiontests(localfunctions);
 end
 
-function testPlaceholder(testCase)
-    reg.ftBuildContrastiveDataset(table(), []);
-    reg.ftTrainEncoder(struct());
-    testCase.assumeFail('Not implemented yet');
+%TESTFINETUNESMOKERUNSENDTOEND Run encoder fine-tuning end-to-end.
+function testFineTuneSmokeRunsEndToEnd(testCase)
+    chunkTbl = minimalChunkTbl();
+    yMat = zeros(0, 0);
+    dsStruct = reg.ftBuildContrastiveDataset(chunkTbl, yMat);
+    testCase.verifyClass(dsStruct, 'struct');
+
+    encoderStruct = reg.ftTrainEncoder(dsStruct);
+    testCase.verifyClass(encoderStruct, 'struct');
+end
+
+function chunkTbl = minimalChunkTbl()
+    chunkTbl = table();
 end

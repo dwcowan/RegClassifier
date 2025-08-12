@@ -9,6 +9,7 @@ tests = functiontests(localfunctions);
 end
 
 function testEmbeddingOutputs(testCase)
+    testCase.applyFixture(fixtures.EnvironmentFixture);
     chunkTbl = table();
 
     xMat = reg.docEmbeddingsBertGpu(chunkTbl);

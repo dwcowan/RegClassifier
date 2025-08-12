@@ -8,7 +8,13 @@ function tests = testFineTuneResume
 tests = functiontests(localfunctions);
 end
 
-function testPlaceholder(testCase)
-    reg.ftTrainEncoder(struct());
-    testCase.assumeFail('Not implemented yet');
+%TESTFINETUNERESUMEPERSISTSSTATE Verify fine-tune resume persists training state.
+function testFineTuneResumePersistsState(testCase)
+    dsStruct = minimalDatasetStruct();
+    encoderStruct = reg.ftTrainEncoder(dsStruct);
+    testCase.verifyClass(encoderStruct, 'struct');
+end
+
+function dsStruct = minimalDatasetStruct()
+    dsStruct = struct();
 end

@@ -46,6 +46,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 
 | Name | Purpose | Scope | Owner | Related Files | Notes |
 |------|---------|-------|-------|---------------|-------|
+| EnvironmentFixture | Manage MATLAB format, RNG, and GPU state for tests | test | @todo | tests/+fixtures/EnvironmentFixture.m | |
 
 ## Functions
 
@@ -160,6 +161,19 @@ Common test scopes or prefixes include:
 | testGoldMetrics | Test gold metrics evaluation | unit | @todo | loadGold, evalPerLabel | stub |
 | testReportArtifact | Test report generation | unit | @todo | evalRetrieval | stub |
 | testFetchers | Test fetch utilities | unit | @todo | crrDiffVersions, crrDiffArticles | stub |
+| testFetchersHandlesDiffs | Ensure diff fetch utilities run without errors | test | @todo | crrDiffVersions, crrDiffArticles | placeholder |
+| testFineTuneResumePersistsState | Verify fine-tune resume persists training state | test | @todo | ftTrainEncoder | placeholder |
+| testFineTuneSmokeRunsEndToEnd | Run encoder fine-tuning end-to-end | test | @todo | ftBuildContrastiveDataset, ftTrainEncoder | placeholder |
+| testHybridSearchReturnsResults | Ensure hybrid search returns results | test | @todo | hybridSearch | placeholder |
+| testIngestAndChunkProcessesDocuments | Validate document ingestion and chunking pipeline | test | @todo | ingestPdfs, chunkText | placeholder |
+| testMetricsExpectedJSONMatchesSchema | Confirm metrics JSON matches expected schema | test | @todo | evalRetrieval | placeholder |
+| testPDFIngestReadsPdfs | Verify PDF ingestion reads provided files | test | @todo | ingestPdfs | placeholder |
+| testProjectionAutoloadPipelineLoadsHead | Ensure projection head autoloads correctly | test | @todo | trainProjectionHead | placeholder |
+| testProjectionHeadSimulatedTrainsHead | Check projection head training pathway | test | @todo | trainProjectionHead | placeholder |
+| testRegressionMetricsSimulatedComputesMetrics | Compute regression metrics on simulated data | test | @todo | trainMultilabel, evalPerLabel | placeholder |
+| testReportArtifactGeneratesReport | Generate evaluation report artifact | test | @todo | evalRetrieval | placeholder |
+| testRulesAndModelTrainsModel | Train weak rules and baseline model | test | @todo | weakRules, trainMultilabel | placeholder |
+| testGoldMetricsEvaluatesGold | Evaluate gold data metrics | test | @todo | loadGold, evalPerLabel | placeholder |
 
 ---
 
