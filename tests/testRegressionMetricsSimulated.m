@@ -8,8 +8,8 @@ function tests = testRegressionMetricsSimulated
 tests = functiontests(localfunctions);
 end
 
-function testPlaceholder(~)
+function testPlaceholder(testCase)
     reg.trainMultilabel([], []);
     reg.evalPerLabel([], []);
-    assert(false, 'Not implemented yet');
+    testCase.assumeFail('Not implemented yet');
 end

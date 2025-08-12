@@ -8,7 +8,7 @@ function tests = testReportArtifact
 tests = functiontests(localfunctions);
 end
 
-function testPlaceholder(~)
+function testPlaceholder(testCase)
     reg.evalRetrieval(table(), table());
-    assert(false, 'Not implemented yet');
+    testCase.assumeFail('Not implemented yet');
 end

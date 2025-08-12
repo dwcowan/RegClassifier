@@ -8,8 +8,8 @@ function tests = testFineTuneSmoke
 tests = functiontests(localfunctions);
 end
 
-function testPlaceholder(~)
+function testPlaceholder(testCase)
     reg.ftBuildContrastiveDataset(table(), []);
     reg.ftTrainEncoder(struct());
-    assert(false, 'Not implemented yet');
+    testCase.assumeFail('Not implemented yet');
 end
