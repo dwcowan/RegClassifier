@@ -25,8 +25,8 @@ C.labels = ["IRB","CreditRisk","Securitisation","SRT","MarketRisk_FRTB", ...
             "AML_KYC","Governance","Reporting_COREP_FINREP","StressTesting","Outsourcing_ICT_DORA"];
 
 % Chunking defaults
-C.chunk_size_tokens = 350;
-C.chunk_overlap     = 60;
+C.chunk_size_tokens = 300;
+C.chunk_overlap     = 80;
 
 % FastText embedding (Text Analytics Toolbox)
 C.embeddings_backend = 'bert'; % 'bert' or 'fasttext'
