@@ -1,11 +1,11 @@
 # Identifier Registry
 
 
-This is the **single source of truth** for classes, functions, variables, 
-constants, files/modules, tests, and other identifiers, that are defined 
-in the project. The [identifier registry](identifier_registry.md) is the 
-definitve source for the collection of 
-all identifiers, **not** how to name the indentifiers.
+This is the **single source of truth** for classes, functions, variables,
+constants, files/modules, tests, and other identifiers that are defined
+in the project. The [identifier registry](identifier_registry.md) is the
+definitive source for the collection of
+all identifiers, **not** how to name the identifiers.
 Update it via PR and keep it in sync with code.
 
 Refer to [Matlab Style Guide](Matlab_Style_Guide.md) for naming rules and [README_NAMING](README_NAMING.md) for process guidelines.
@@ -15,16 +15,16 @@ Refer to [Matlab Style Guide](Matlab_Style_Guide.md) for naming rules and [READM
 
 ---
 
-## Conventions 
+## Conventions
 
-- **Classes:** `PascalCase` (e.g., `InvoiceProcessor`)
-- **Functions:** `camelCase` (e.g., `parseDocument`)
+- **Classes:** `UpperCamelCase` (e.g., `InvoiceProcessor`)
+- **Functions:** `lowerCamelCase` (e.g., `parseDocument`)
 - **Class properties:** `lowerCamelCase` (e.g., `learningRate`)
 - **Variables:** `lowerCamelCase` (e.g., `docIndex`)
-- **Constants/Enums:** `UPPER_SNAKE_CASE` (e.g., `MAX_RETRY_COUNT`)
+- **Constants/Enums:** `UPPER_CASE_WITH_UNDERSCORES` (e.g., `MAX_RETRY_COUNT`)
 - **Files/Modules:** `lowerCamelCase.m` (e.g., `pdfIngest.m`, `textChunker.m`)
-- **Tests:** `testFunctionName.m` (e.g., `test_parse_document.m`)
-- **Temporary Variables** Short names such as `tmp` or `idx` are permitted only for a few lines and must not escape the local scope.
+- **Tests:** `testFunctionName.m` (e.g., `testParseDocument.m`)
+- **Temporary Variables:** Short names such as `tmp` or `idx` are permitted only for a few lines and must not escape the local scope.
 
 Scopes:
 - **global** (shared across modules), **module** (file/local package), **local** (function scope), **test** (only in tests)
@@ -46,7 +46,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 
 | Name | Purpose | Scope | Owner | Related Files | Notes |
 |------|---------|-------|-------|---------------|-------|
-| InvoiceProcessor | Extracts data from invoices | module | @janedoe | pdf_ingest.m | example |
+| InvoiceProcessor | Extracts data from invoices | module | @janedoe | pdfIngest.m | example |
 |  |  |  |  |  |  |
 
 ## Functions
@@ -60,7 +60,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 
 | Name | Purpose | Scope | Type | Default | Constraints | Notes |
 |------|---------|-------|------|---------|-------------|-------|
-| doc_index | Tracks current document position | local | double | 0 | non-negative | example |
+| docIndex | Tracks current document position | local | double | 0 | non-negative | example |
 |  |  |  |  |  |  |
 
 ## Constants / Enums
@@ -74,7 +74,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 
 | File | Purpose | Public API | Owner | Notes |
 |------|---------|-----------|-------|------|
-| pdf_ingest.m | Read PDFs into text | ingestPdf | @janedoe | example |
+| pdfIngest.m | Read PDFs into text | pdfIngest | @janedoe | example |
 |  |  |  |  |  |
 
 
