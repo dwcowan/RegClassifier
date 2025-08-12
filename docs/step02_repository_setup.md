@@ -34,11 +34,11 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 
 ### config
 - **Parameters:** none.
-- **Returns:** struct `C` with fields derived from `pipeline.json`, `knobs.json`, and `params.json` overrides.
+- **Returns:** struct `configStruct` with fields derived from `pipeline.json`, `knobs.json`, and `params.json` overrides.
 - **Side Effects:** reads configuration files from disk.
 - **Usage Example:**
   ```matlab
-  C = config;
+  configStruct = config;
   ```
 
 Data structures referenced in later modules are detailed in [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts).
