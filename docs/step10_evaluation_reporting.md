@@ -5,7 +5,11 @@
 **Depends on:** Model artifacts from [Step 7](step07_baseline_classifier.md), [Step 8](step08_projection_head.md), or [Step 9](step09_encoder_finetuning.md).
 
 ## Instructions
-1. Run the evaluation routine to compute retrieval metrics and generate a PDF report:
+
+Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeletons before beginning this step.
+
+1. Run the evaluation script to compute retrieval metrics and generate a PDF report:
+
    ```matlab
    reg.evalRetrieval(resultsTbl, goldTbl);
    ```

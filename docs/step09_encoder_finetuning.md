@@ -5,6 +5,8 @@
 **Depends on:** [Step 8: Projection Head Workflow](step08_projection_head.md) and [Step 6: Embedding Generation](step06_embedding_generation.md).
 
 ## Instructions
+Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeletons before beginning this step.
+
 1. Build the contrastive training dataset:
    ```matlab
    ds = reg.ftBuildContrastiveDataset(chunks, Yboot);

@@ -5,6 +5,8 @@
 **Depends on:** [Step 3: Data Ingestion](step03_data_ingestion.md).
 
 ## Instructions
+Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeletons before beginning this step.
+
 1. Load the ingested documents table:
    ```matlab
    load('data/docs.mat','docs')

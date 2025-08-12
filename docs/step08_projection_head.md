@@ -5,6 +5,8 @@
 **Depends on:** [Step 7: Baseline Classifier & Retrieval](step07_baseline_classifier.md).
 
 ## Instructions
+Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeletons before beginning this step.
+
 1. Load embeddings and weak labels as in Step 7.
 2. Train the projection head:
    ```matlab

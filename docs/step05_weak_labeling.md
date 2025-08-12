@@ -5,6 +5,8 @@
 **Depends on:** [Step 4: Text Chunking](step04_text_chunking.md).
 
 ## Instructions
+Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeletons before beginning this step.
+
 1. Load chunk data:
    ```matlab
    load('data/chunks.mat','chunks')

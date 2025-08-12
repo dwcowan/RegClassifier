@@ -5,6 +5,8 @@
 **Depends on:** [Step 1: Environment & Tooling](step01_environment_tooling.md) and prior steps if integrating with the pipeline.
 
 ## Instructions
+Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeletons before beginning this step.
+
 1. Synchronize the Common Rulebook (CRR) or similar sources:
    ```matlab
    reg.crrSync();
