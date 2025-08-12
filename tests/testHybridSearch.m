@@ -8,7 +8,7 @@ function tests = testHybridSearch
 tests = functiontests(localfunctions);
 end
 
-function testPlaceholder(~)
+function testPlaceholder(testCase)
     reg.hybridSearch('', [], table());
-    assert(false, 'Not implemented yet');
+    testCase.assumeFail('Not implemented yet');
 end

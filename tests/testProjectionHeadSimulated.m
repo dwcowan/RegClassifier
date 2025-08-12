@@ -8,7 +8,7 @@ function tests = testProjectionHeadSimulated
 tests = functiontests(localfunctions);
 end
 
-function testPlaceholder(~)
+function testPlaceholder(testCase)
     reg.trainProjectionHead([], []);
-    assert(false, 'Not implemented yet');
+    testCase.assumeFail('Not implemented yet');
 end
