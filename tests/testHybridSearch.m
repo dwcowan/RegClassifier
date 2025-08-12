@@ -10,6 +10,13 @@ end
 
 %TESTHYBRIDSEARCHRETURNSRESULTS Ensure hybrid search returns results.
 function testHybridSearchReturnsResults(testCase)
-    reg.hybridSearch('', [], table());
-    testCase.assumeFail('Not implemented yet');
+    [queryStr, xMat, docTbl] = minimalHybridInputs();
+    resultsTbl = reg.hybridSearch(queryStr, xMat, docTbl);
+    testCase.verifyClass(resultsTbl, 'table');
+end
+
+function [queryStr, xMat, docTbl] = minimalHybridInputs()
+    queryStr = "";
+    xMat = zeros(0, 0);
+    docTbl = table();
 end
