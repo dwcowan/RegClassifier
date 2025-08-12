@@ -46,14 +46,11 @@ Keep the illustrative examples below in sync with the current naming conventions
 
 | Name | Purpose | Scope | Owner | Related Files | Notes |
 |------|---------|-------|-------|---------------|-------|
-| RegPipeline | Orchestrates end-to-end workflow | global | @todo | reg_pipeline.m | planned |
 
 ## Functions
 
 | Name | Purpose | Scope | Input Contract | Output Contract | Owner | Notes |
 |------|---------|-------|----------------|-----------------|-------|------|
-| parseDocument | Convert raw text into tokens | module | `text` string | token array | @janedoe | example |
-| config | Load project configuration files | module | – | struct `C` | @todo | stub |
 | ingestPdfs | Convert PDFs into text documents | module | `pdfPathsCell` cell array | `docTbl` table | @todo | stub |
 | chunkText | Split documents into token chunks | module | `docTbl`, `chunkSizeTokens`, `chunkOverlap` | `chunkTbl` table | @todo | stub |
 | weakRules | Generate weak labels for chunks | module | `chunkTbl` table | sparse matrix `yBootMat` | @todo | stub |
@@ -69,15 +66,12 @@ Keep the illustrative examples below in sync with the current naming conventions
 | loadGold | Load gold annotation data | module | `pathStr` string | `goldTbl` table | @todo | stub |
 | crrDiffVersions | Compare CRR versions | module | `oldPathStr` string, `newPathStr` string | diff struct | @todo | stub |
 | crrDiffArticles | Compare CRR articles | module | `articleId` string, `versionA` string, `versionB` string | diff struct | @todo | stub |
-| crrSync | Fetch latest regulatory corpus | module | – | downloaded files | @todo | stub |
-| crrDiffReport | Render diff report between versions | module | `diffStruct` struct | report files | @todo | stub |
 
 
 ## Function Interface Reference
 
 | Function | Parameters | Returns | Side Effects |
 |----------|------------|---------|--------------|
-| config | none | struct of settings from JSON files | reads configuration files |
 | reg.ingest_pdfs | inputDir string | docs table `{docId,text}` | reads PDFs, OCR fallback |
 | reg.chunk_text | docs table, chunk_size_tokens double, chunk_overlap double | chunks table `{chunkId,docId,text}` | none |
 | reg.weak_rules | text array, labels array | sparse matrix `Yweak` | none |
@@ -90,9 +84,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 | reg.ft_train_encoder | dataset `ds`, unfreeze_top double | encoder struct | updates model weights |
 | reg_eval_and_report | none | metrics tables | writes report files |
 | reg_eval_gold | none | metrics tables | reads gold annotations |
-| reg_crr_sync | none | none | downloads corpus to `data/raw` |
 | reg.crr_diff_versions | `vA` string, `vB` string | diff struct | none |
-| reg_crr_diff_report | none | none | writes HTML/PDF summaries |
 | runtests | testFolder string, IncludeSubfolders logical, UseParallel logical | results table | executes test suite |
 
 
