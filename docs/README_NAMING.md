@@ -3,7 +3,7 @@
 This repository enforces consistent naming through:
 1. A **single source of truth**: `naming_registry.md`
 2. Editor aids and grep-able breadcrumbs
-3. naming converntion is detailed in the matlab style guide
+3. Naming convention is detailed in the MATLAB style guide
 ## TL;DR
 
 | Category | Rule |
@@ -13,14 +13,15 @@ This repository enforces consistent naming through:
 | Functions | lowerCamelCase; filename matches function |
 | Classes | UpperCamelCase |
 | Indentation | Two spaces, no tabs |
-| Line width | ≤ 80 characters |
+| Line width | Limit lines to 80 characters |
 | Comments | `%` for line, `%%` for section |
 | Tests | Located in `tests/`; run with `runtests` |
 
 
 ## CI
 
-A GitHub Action runs on every PR/push and fails the build if naming violations are found.
+A GitHub Action runs on every PR/push and fails the build if naming
+violations are found.
 
 ## Updating Names
 
