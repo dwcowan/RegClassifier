@@ -1,4 +1,4 @@
-name: matlab-lint (changed files only)
+name: matlab-lint (PR:any, push:error)
 
 on:
   workflow_dispatch:
@@ -11,8 +11,6 @@ jobs:
   mlint:
     runs-on: ubuntu-latest
     env:
-      # Default policy; adjust to 'any' or 'none' as needed
-      MLINT_FAIL_ON: "error"
       MLINT_EXCLUDE: ".git/**,.github/**,node_modules/**,external/**,thirdparty/**,build/**,dist/**,generated/**"
     steps:
       - name: Checkout
@@ -40,7 +38,7 @@ jobs:
           elif [[ "$EVENT" == "push" ]]; then
             BASE="${{ github.event.before }}"
             if [[ -z "$BASE" || "$BASE" == "0000000000000000000000000000000000000000" ]]; then
-              echo "Push with empty 'before'; using merge-base with default branch."
+              echo "Push event without valid 'before'; falling back to merge-base with default branch"
               git fetch --no-tags --prune --depth=1 origin "$DEFAULT_BRANCH":"refs/remotes/origin/$DEFAULT_BRANCH"
               BASE="$(git merge-base "origin/$DEFAULT_BRANCH" "$HEAD" || true)"
             fi
@@ -70,21 +68,21 @@ jobs:
             echo "include=$INCLUDE" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Publish summary (no MATLAB changes)
-        if: steps.changed.outputs.has_files == 'false'
+      - name: Set MLINT policy (PR:any, push:error)
+        id: policy
         run: |
-          {
-            echo "## MATLAB Lint Summary"
-            echo ""
-            echo "_No MATLAB (.m) files changed in this ${GITHUB_EVENT_NAME} — skipping lint._"
-          } >> "$GITHUB_STEP_SUMMARY"
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "value=any" >> $GITHUB_OUTPUT
+          else
+            echo "value=error" >> $GITHUB_OUTPUT
+          fi
 
       - name: Run mlint (from ./scripts) on changed files
         if: steps.changed.outputs.has_files == 'true'
         uses: matlab-actions/run-command@v2
         env:
           MLINT_INCLUDE: ${{ steps.changed.outputs.include }}
-          MLINT_FAIL_ON: ${{ env.MLINT_FAIL_ON }}
+          MLINT_FAIL_ON: ${{ steps.policy.outputs.value }}
           MLINT_EXCLUDE: ${{ env.MLINT_EXCLUDE }}
         with:
           command: addpath('scripts'); run_mlint
@@ -97,9 +95,6 @@ jobs:
           path: lint/**
           if-no-files-found: warn
 
-      - name: Publish run summary (results)
-        if: always()
-        run: |
-          if [ -f lint/mlint-summary.md ]; then
-            cat lint/mlint-summary.md >> "$GITHUB_STEP_SUMMARY"
-          fi
+      - name: Publish run summary
+        if: always() && hashFiles('lint/mlint-summary.md') != ''
+        run: cat lint/mlint-summary.md >> "$GITHUB_STEP_SUMMARY"
