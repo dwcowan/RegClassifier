@@ -14,6 +14,7 @@ This is the **single source of truth** for object, method, variable, and file na
 - **Variables:** `snake_case` (e.g., `doc_index`)
 - **Constants/Enums:** `UPPER_SNAKE_CASE` (e.g., `MAX_RETRY_COUNT`)
 - **Files/Modules:** `lower_snake_case.ext` (e.g., `pdf_ingest.m`, `text_chunker.m`)
+- **Temporary Variables** Short names such as `tmp` or `idx` are permitted only for a few lines and must not escape the local scope.
 
 Scopes:
 - **global** (shared across modules), **module** (file/local package), **local** (function scope), **test** (only in tests)
@@ -76,3 +77,4 @@ Common test scopes or prefixes include:
 ## Changelog
 
 - YYYY-MM-DD: Initial registry created.
+
