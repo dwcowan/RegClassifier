@@ -1,0 +1,29 @@
+# Step 9: Encoder Fine-Tuning Workflow
+
+**Goal:** Unfreeze BERT layers and apply contrastive learning for better representations.
+
+**Depends on:** [Step 8: Projection Head Workflow](step08_projection_head.md) and [Step 6: Embedding Generation](step06_embedding_generation.md).
+
+## Instructions
+1. Build the contrastive training dataset:
+   ```matlab
+   ds = reg.ft_build_contrastive_dataset(chunks, Yboot);
+   ```
+2. Fine-tune the encoder starting from the pretrained weights:
+   ```matlab
+   ftEncoder = reg.ft_train_encoder(ds, 'unfreeze_top', 4);
+   save('models/fine_tuned_bert.mat','ftEncoder')
+   ```
+3. Update pipeline settings to point to the fine-tuned encoder if needed.
+
+## Verification
+- `fine_tuned_bert.mat` is saved and contains updated weights.
+- Run fine-tuning tests:
+  ```matlab
+  runtests({'tests/TestFineTuneSmoke.m', ...
+            'tests/TestFineTuneResume.m'})
+  ```
+  Tests check basic convergence and checkpoint resume.
+
+## Next Steps
+Continue to [Step 10: Evaluation & Reporting](step10_evaluation_reporting.md).

@@ -1,0 +1,30 @@
+# Step 4: Text Chunking
+
+**Goal:** Split long documents into overlapping token chunks.
+
+**Depends on:** [Step 3: Data Ingestion](step03_data_ingestion.md).
+
+## Instructions
+1. Load the ingested documents table:
+   ```matlab
+   load('data/docs.mat','docs')
+   ```
+2. Chunk each document with the helper function:
+   ```matlab
+   chunks = reg.chunk_text(docs, 'chunk_size_tokens', 512, 'chunk_overlap', 64);
+   ```
+3. Save the chunks for later modules:
+   ```matlab
+   save('data/chunks.mat','chunks')
+   ```
+
+## Verification
+- `chunks` contains `chunk_id`, `doc_id`, and `text` for each segment.
+- Run the chunking test:
+  ```matlab
+  runtests('tests/TestIngestAndChunk.m')
+  ```
+  The test confirms expected chunk counts and boundaries.
+
+## Next Steps
+Continue to [Step 5: Weak Labeling](step05_weak_labeling.md).
