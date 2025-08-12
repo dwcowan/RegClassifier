@@ -10,6 +10,10 @@ end
 
 %TESTPDFINGESTREADSPDFS Verify PDF ingestion reads provided files.
 function testPDFIngestReadsPdfs(testCase)
-    reg.ingestPdfs({});
-    testCase.assumeFail('Not implemented yet');
+  tmpFolderFixture = testCase.applyFixture(matlab.unittest.fixtures.TemporaryFolderFixture);
+  pdfPath = fullfile(tmpFolderFixture.Folder, "dummy.pdf");
+  fid = fopen(pdfPath, "w"); fclose(fid);
+  pdfPathsCell = {pdfPath};
+  reg.ingestPdfs(pdfPathsCell);
+  testCase.assumeFail('Not implemented yet');
 end
