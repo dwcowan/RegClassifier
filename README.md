@@ -12,7 +12,7 @@ test using SQLite (no external server required).
 - `tests/` — MATLAB unit tests (no network required), plus sample fixture PDF text.
 
 ## Running
-1. Optionally tweak `pipeline.json` (pipeline settings) and `knobs.json` (training knobs).
+1. Optionally tweak `pipeline.json` (pipeline settings) and `knobs.json` (training knobs, including chunking; defaults are 300-token chunks with 80-token overlap).
 2. Put PDFs under `data/pdfs` (or use the provided dummy).
 3. Open MATLAB in this folder and run:
    ```matlab
