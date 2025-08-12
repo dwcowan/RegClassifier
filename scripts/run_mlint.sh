@@ -3,13 +3,13 @@
 # Exits with non-zero status if any issues are found.
 set -euo pipefail
 
-status=0
-while IFS= read -r file; do
-  echo "Linting ${file}"
-  matlab -batch "issues = checkcode('${file}', '-id'); if ~isempty(issues); disp(issues); exit(1); end"
-  if [ $? -ne 0 ]; then
-    status=1
-  fi
-done < <(find . -name '*.m')
+find . -name '*.m' -print0 | (
+  status=0
+  while IFS= read -r -d '' file; do
+    echo "Linting ${file}"
+    matlab -batch "issues = checkcode('${file}', '-id'); if ~isempty(issues); disp(issues); exit(1); end" || status=1
+  done
+  exit $status
+)
 
-exit $status
+exit $?
