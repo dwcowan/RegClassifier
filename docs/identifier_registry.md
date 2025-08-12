@@ -110,7 +110,8 @@ Keep the illustrative examples below in sync with the current naming conventions
 | Name | Purpose | Scope | Type | Default | Constraints | Notes |
 |------|---------|-------|------|---------|-------------|-------|
 | docIndex | Tracks current document position | local | double | 0 | non-negative | example |
-|  |  |  |  |  |  |
+| gpuInfoStruct | GPU device information | local | struct | n/a | CUDA-enabled | obtained via `gpuDevice` |
+| productsTbl | Installed MATLAB products | local | table | n/a | includes required toolboxes | obtained via `ver` |
 
 ## Constants / Enums
 
