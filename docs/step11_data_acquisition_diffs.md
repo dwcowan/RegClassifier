@@ -11,12 +11,12 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
    ```matlab
    reg.crrSync();
    ```
-2. Generate diff reports between document versions:
+2. Generate diffStruct reports between document versions:
    ```matlab
-   reg.crrDiffVersions('versionA','versionB');
+   diffStruct = reg.crrDiffVersions('versionA','versionB');
    reg.crrDiffReport;
    ```
-3. Review HTML or PDF diff outputs for changes.
+3. Review HTML or PDF diffStruct outputs for changes.
 
 ## Function Interface
 
