@@ -10,8 +10,10 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 1. Load `embeddingMat` and `bootLabelMat` as in Step 7.
 2. Train the projection head:
    ```matlab
+
    projectionHeadStruct = reg.trainProjectionHead(embeddingMat, bootLabelMat);
    save('models/projection_head.mat','projectionHeadStruct')
+
    ```
 3. The pipeline automatically uses `projection_head.mat` when present.
 
@@ -20,12 +22,14 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 ### reg.trainProjectionHead
 - **Parameters:**
   - `embeddingMat` (double matrix): embeddings from Step 6.
+
   - `bootLabelMat` (sparse logical matrix): weak labels from Step 5.
 - **Returns:** struct `projectionHeadStruct` with fields `weights` and `bias` used for retrieval enhancement (see [ProjectionHead](identifier_registry.md#projectionhead)).
 - **Side Effects:** none.
 - **Usage Example:**
   ```matlab
   projectionHeadStruct = reg.trainProjectionHead(embeddingMat, bootLabelMat);
+
   ```
 
 See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schema references including `ProjectionHead`.
