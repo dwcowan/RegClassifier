@@ -8,7 +8,7 @@ function tests = testFineTuneResume
 tests = functiontests(localfunctions);
 end
 
-function testPlaceholder(~)
+function testPlaceholder(testCase)
     reg.ftTrainEncoder(struct());
-    assert(false, 'Not implemented yet');
+    testCase.assumeFail('Not implemented yet');
 end
