@@ -37,16 +37,30 @@ Place tests in the `tests/` folder and name each file `testFunctionName.m`. Refe
 
 1. Review the [Matlab Style Guide](Matlab_Style_Guide.md) for the latest
    naming guidance.
-2. Before coding, check the `identifier_registry.md` for existing classes,
-   functions, variables, constants, files/modules, tests, and other
-   identifiers that may be affected by your task.
+2. Before coding, search for existing classes, functions, variables,
+   constants, files/modules, tests, and other identifiers that may be
+   affected by your task:
+   - Review `identifier_registry.md`.
+   - Search the repository with `rg <identifier>` or MATLAB's *Find Files*
+     (`which <identifier>`) to confirm the name is not already in use.
 3. Note identifiers currently in use, use these consistently in your code, if required.
 4. Update the codebase accordingly.
 5. When introducing new identifiers in your code, **always** crosscheck this
    name isnt in use and **always** update the `identifier_registry.md` with
    new classes, functions, variables, constants, files/modules, tests, and
    other identifiers through a PR with your new code.
-6. Run CI to ensure naming checks pass.
+6. Run CI to ensure naming checks pass. Locally, you can execute
+   `runtests` or the `run_smoke_test` script to verify.
+
+### Example
+
+```bash
+# verify that "myNewFunction" isn't already defined
+rg myNewFunction
+
+# run a quick smoke test locally
+matlab -batch "run_smoke_test"  # or: matlab -batch "runtests"
+```
 
 
 ## CI

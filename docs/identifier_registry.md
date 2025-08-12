@@ -75,7 +75,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 | File | Purpose | Public API | Owner | Notes |
 |------|---------|-----------|-------|------|
 | pdfIngest.m | Read PDFs into text | pdfIngest | @janedoe | example |
-|  |  |  |  |  |
+
 
 
 
@@ -96,7 +96,7 @@ Common test scopes or prefixes include:
 
 | Producer → Consumer | Payload Schema | Format | Validation | Notes |
 |--------------------|----------------|--------|-----------|-------|
-| ingest → preprocess | `{ doc_id: string, pages: string[], meta: {...} }` | JSON | schema v1 | draft |
+| ingest → preprocess | `{ docId: string, pages: string[], meta: {...} }` | JSON | schema v1 | draft |
 
 ---
 
