@@ -54,15 +54,14 @@ Keep the illustrative examples below in sync with the current naming conventions
 |------|---------|-------|----------------|-----------------|-------|------|
 | startup | RegClassifier project initialization | module | `project` object | none | @todo | |
 | shutdown | RegClassifier project cleanup | module | project object | none | @todo | |
-| ingestPdfs | Convert PDFs into text documents | module | `pdfPathsCell` cell array | `docsTbl` table | @todo | stub |
-| chunkText | Split documents into token chunks | module | `docsTbl`, `chunkSizeTokens`, `chunkOverlap` | `chunksTbl` table | @todo | stub |
-| ftBuildContrastiveDataset | Build dataset for encoder fine-tuning | module | `chunksTbl` table, `yMat` matrix | dataset struct | @todo | stub |
-| weakRules | Generate weak labels for chunks | module | `chunkTbl` table | sparse matrix `bootLabelMat` | @todo | stub |
+| ingestPdfs | Convert PDFs into text documents | module | `pdfPathsCell` cell array | `docTbl` table | @todo | stub |
+| chunkText | Split documents into token chunks | module | `docTbl`, `chunkSizeTokens`, `chunkOverlap` | `chunkTbl` table | @todo | stub |
+| weakRules | Generate weak labels for chunks | module | `chunkTbl` table | sparse matrix `yBootMat` | @todo | stub |
 | docEmbeddingsBertGpu | Embed chunks using BERT on GPU | module | `chunkTbl` table | embedding matrix `embeddingMat` | @todo | stub |
 | precomputeEmbeddings | Precompute embeddings for chunks | module | `chunkTbl` table | embedding matrix `embeddingMat` | @todo | stub |
-| trainMultilabel | Train multi-label classifier | module | `embeddingMat` matrix, `bootLabelMat` matrix | model struct | @todo | stub |
-| hybridSearch | Retrieve documents with hybrid search | module | `queryStr` string, `embeddingMat` matrix, `docTbl` table | results table | @todo | stub |
-| trainProjectionHead | Train projection head on embeddings | module | `embeddingMat` matrix, `bootLabelMat` matrix | projectionHeadStruct struct | @todo | stub |
+| trainMultilabel | Train multi-label classifier | module | `embeddingMat` matrix, `bootLabelMat` matrix | `baselineModelStruct` struct | @todo | stub |
+| hybridSearch | Retrieve documents with hybrid search | module | `baselineModelStruct` struct, `embeddingMat` matrix, `queryStr` string | results table | @todo | stub |
+| trainProjectionHead | Train projection head on embeddings | module | `embeddingMat` matrix, `bootLabelMat` matrix | head struct | @todo | stub |
 | ftBuildContrastiveDataset | Build dataset for encoder fine-tuning | module | `chunkTbl` table, `bootLabelMat` matrix | dataset struct | @todo | stub |
 | ftTrainEncoder | Fine-tune encoder on contrastive dataset | module | `dsStruct` struct | encoder struct | @todo | stub |
 | evalRetrieval | Evaluate retrieval metrics | module | `resultsTbl` table, `goldTbl` table | metrics struct | @todo | stub |
@@ -88,16 +87,12 @@ Keep the illustrative examples below in sync with the current naming conventions
 | reg.ingestPdfs | inputDir string | docsTbl table `{docId,text}` | reads PDFs, OCR fallback |
 | reg.chunkText | docsTbl table, chunkSizeTokens double, chunkOverlap double | chunksTbl table `{chunkId,docId,text}` | none |
 | reg.weakRules | text array, labels array | sparse matrix `Yweak` | none |
-| reg.ftBuildContrastiveDataset | chunks table, `bootLabelMat` matrix | `contrastiveDatasetTbl` table | none |
-| reg.ftTrainEncoder | `contrastiveDatasetTbl` table, unfreezeTop double | `fineTunedEncoderStruct` struct | updates model weights |
 | reg.docEmbeddingsBertGpu | chunks table | matrix `embeddingMat` | loads model, uses GPU |
 | reg.precomputeEmbeddings | `embeddingMat` matrix, outPath string | none | writes embeddings to disk |
-| reg.trainMultilabel | `embeddingMat` matrix, `bootLabelMat` matrix | model struct | none |
-| reg.hybridSearch | model struct, `embeddingMat` matrix, query string | results table | none |
-| reg.trainProjectionHead | `embeddingMat` matrix, `bootLabelMat` matrix | projectionHeadStruct struct | none |
+| reg.trainMultilabel | `embeddingMat` matrix, `bootLabelMat` matrix | `baselineModelStruct` struct | none |
+| reg.hybridSearch | `baselineModelStruct` struct, `embeddingMat` matrix, query string | `resultsTbl` table | none |
+| reg.trainProjectionHead | `embeddingMat` matrix, `bootLabelMat` matrix | head struct | none |
 | reg.ftBuildContrastiveDataset | chunks table, `bootLabelMat` matrix | dataset struct | none |
-| reg.ftTrainEncoder | dataset `ds`, unfreezeTop double | encoder struct | updates model weights |
-
 | reg.evalRetrieval | resultsTbl table, goldTbl table | metrics tables | writes report files |
 | reg.loadGold | pathStr string | goldTbl table | reads gold annotations |
 | reg.evalPerLabel | predYMat matrix, trueYMat matrix | metrics table | none |
@@ -240,7 +235,7 @@ Common test scopes or prefixes include:
 | metric | string | Metric name |
 | value | double | Metric value |
 
-#### BaselineModel
+#### BaselineModelStruct
 | Field | Type | Description |
 |-------|------|-------------|
 | weights | double `[embeddingDim x numClasses]` | Classifier weights |
@@ -272,12 +267,12 @@ Common test scopes or prefixes include:
 | ingest → chunking | Document | MAT-file (`docsTbl.mat`) | non-empty `text` | see [Step 3](step03_data_ingestion.md) |
 | chunking → weak labeling / embeddings | Chunk | MAT-file (`chunks.mat`) | unique `chunkId` | see [Step 4](step04_text_chunking.md) |
 | weak labeling → classifier | Label | MAT-file (`bootLabelMat.mat`) | matches size of `chunks` | see [Step 5](step05_weak_labeling.md) |
-| embedding generation → classifier | Embedding | MAT-file (`embeddings.mat`) | matches size of `chunks` | see [Step 6](step06_embedding_generation.md) |
-| classifier → retrieval / eval | BaselineModel | MAT-file (`baseline_model.mat`) | fields exist | see [Step 7](step07_baseline_classifier.md) |
+| embedding generation → classifier | Embedding | MAT-file (`embeddingMat.mat`) | matches size of `chunks` | see [Step 6](step06_embedding_generation.md) |
+| classifier → retrieval / eval | BaselineModelStruct | MAT-file (`baseline_model.mat`) | fields exist | see [Step 7](step07_baseline_classifier.md) |
 | projection head training → retrieval | ProjectionHead | MAT-file (`projection_head.mat`) | fields exist | see [Step 8](step08_projection_head.md) |
-| retrieval → evaluation | RetrievalResult | MAT-file (`results.mat`) | fields exist | see [Step 7](step07_baseline_classifier.md) |
-| dataset build → fine-tune | contrastiveDatasetTbl | MAT-file (`contrastive_ds.mat`) | fields exist | see [Step 9](step09_encoder_finetuning.md) |
-| fine-tune → evaluation | fineTunedEncoderStruct struct with BERT weights | MAT-file (`fine_tuned_bert.mat`) | fields exist | see [Step 9](step09_encoder_finetuning.md) |
+| retrieval → evaluation | RetrievalResult | MAT-file (`resultsTbl.mat`) | fields exist | see [Step 7](step07_baseline_classifier.md) |
+| dataset build → fine-tune | ContrastiveDataset | MAT-file (`contrastive_ds.mat`) | fields exist | see [Step 9](step09_encoder_finetuning.md) |
+| fine-tune → evaluation | ftEncoder struct with BERT weights | MAT-file (`fine_tuned_bert.mat`) | fields exist | see [Step 9](step09_encoder_finetuning.md) |
 | evaluation → reports | Metric | CSV/PDF | schema check | see [Step 10](step10_evaluation_reporting.md) |
 
 ---

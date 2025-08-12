@@ -10,18 +10,19 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 1. Load embeddings and weak labels:
    ```matlab
 
-   load('data/embeddings.mat','embeddingMat');
-   load('data/Yboot.mat','Yboot');
+
+   load('data/embeddingMat.mat','embeddingMat');
+   load('data/bootLabelMat.mat','bootLabelMat');
    ```
 2. Train the baseline classifier:
    ```matlab
-   model = reg.trainMultilabel(embeddingMat, Yboot);
-
-   save('models/baseline_model.mat','model')
+   baselineModelStruct = reg.trainMultilabel(embeddingMat, bootLabelMat);
+   save('models/baseline_model.mat','baselineModelStruct')
    ```
 3. Enable hybrid retrieval combining cosine similarity and BM25:
    ```matlab
-   results = reg.hybridSearch(model, embeddingMat, 'query', 'sample text');
+   resultsTbl = reg.hybridSearch(baselineModelStruct, embeddingMat, 'query', 'sample text');
+
    ```
 
 ## Function Interface
@@ -30,30 +31,34 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 - **Parameters:**
 
   - `embeddingMat` (double matrix): embeddings from Step 6.
-  - `Yboot` (sparse logical matrix): weak labels from Step 5.
 
-- **Returns:** struct `model` with fields `weights` and `bias` (see [BaselineModel](identifier_registry.md#baselinemodel)).
+
+  - `bootLabelMat` (sparse logical matrix): weak labels from Step 5.
+- **Returns:** struct `baselineModelStruct` with fields `weights` and `bias` (see [BaselineModelStruct](identifier_registry.md#baselinemodelstruct)).
 - **Side Effects:** none.
 - **Usage Example:**
   ```matlab
+  baselineModelStruct = reg.trainMultilabel(embeddingMat, bootLabelMat);
 
-  model = reg.trainMultilabel(embeddingMat, Yboot);
 
   ```
 
 ### reg.hybridSearch
 - **Parameters:**
-  - `model` (struct)
+
+  - `baselineModelStruct` (struct)
   - `embeddingMat` (double matrix)
   - `'query'` (string): search text.
-- **Returns:** table `results` containing `docId` and `score` fields (see [RetrievalResult](identifier_registry.md#retrievalresult)).
+- **Returns:** table `resultsTbl` containing `docId` and `score` fields (see [RetrievalResult](identifier_registry.md#retrievalresult)).
 - **Side Effects:** none.
 - **Usage Example:**
   ```matlab
-  results = reg.hybridSearch(model, embeddingMat, 'query', 'example');
+
+  resultsTbl = reg.hybridSearch(baselineModelStruct, embeddingMat, 'query', 'example');
   ```
 
-See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schemas of `embeddingMat`, `Yboot`, `BaselineModel`, and `RetrievalResult` outputs.
+See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schemas of `embeddingMat`, `bootLabelMat`, `BaselineModelStruct`, and `RetrievalResult` outputs.
+
 
 
 
@@ -61,7 +66,7 @@ See [Identifier Registry – Data Contracts](identifier_registry.md#data-contrac
 - Classifier training completes and saves `baseline_model.mat`.
 - Verify model schema:
   ```matlab
-  assert(all(isfield(model, {'weights','bias'})));
+  assert(all(isfield(baselineModelStruct, {'weights','bias'})));
   ```
 - Run baseline tests:
   ```matlab
@@ -71,7 +76,7 @@ See [Identifier Registry – Data Contracts](identifier_registry.md#data-contrac
   Tests confirm baseline metrics and retrieval behavior.
 - Retrieval results contain expected fields:
   ```matlab
-  assert(all(ismember({'docId','score'}, results.Properties.VariableNames)));
+  assert(all(ismember({'docId','score'}, resultsTbl.Properties.VariableNames)));
   ```
 
 ## Next Steps
