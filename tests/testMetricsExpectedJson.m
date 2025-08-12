@@ -1,5 +1,5 @@
-%% NAME-REGISTRY:TEST testMetricsExpectedJSON
-function tests = testMetricsExpectedJSON
+%% NAME-REGISTRY:TEST testMetricsExpectedJson
+function tests = testMetricsExpectedJson
 %TESTMETRICSEXPECTEDJSON Placeholder tests for metrics JSON comparison.
 %
 % Outputs

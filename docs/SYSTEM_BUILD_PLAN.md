@@ -29,7 +29,7 @@ This guide outlines a clean-room rebuild of the MATLAB-based regulatory topic cl
 - **Goal:** Convert PDFs into raw text documents.
 - **Depends on:** Repository Setup.
 - **Implementation:** `reg.ingest_pdfs` with fixtures for text and image-only PDFs.
-- **Testing:** `tests/testPDFIngest.m` ensures OCR fallback and basic parsing.
+  - **Testing:** `tests/testPdfIngest.m` ensures OCR fallback and basic parsing.
 - **Output:** Table of documents (`doc_id`, `text`).
 
 ## 4. Text Chunking Module
@@ -83,7 +83,7 @@ This guide outlines a clean-room rebuild of the MATLAB-based regulatory topic cl
   - `reg.eval_retrieval` and `reg.eval_per_label` for metrics.
   - `reg_eval_and_report.m` generates `reg_eval_report.pdf` and trends.
   - Gold mini-pack support via `reg.load_gold` and `reg_eval_gold.m`.
-- **Testing:** `tests/testMetricsExpectedJSON.m`, `tests/testGoldMetrics.m`, `tests/testReportArtifact.m`.
+  - **Testing:** `tests/testMetricsExpectedJson.m`, `tests/testGoldMetrics.m`, `tests/testReportArtifact.m`.
 - **Output:** Metrics CSVs, PDF/HTML reports, gold evaluation results.
 
 ## 11. Data Acquisition & Diff Utilities (Optional)

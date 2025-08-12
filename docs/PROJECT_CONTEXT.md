@@ -108,10 +108,10 @@ From a **zero-knowledge start**, the assistant can:
 ---
 ## Update 2025-08-10 22:36:04
 Added comprehensive test suite items:
-- **PDF ingest tests** (`tests/testPDFIngest.m`) with fixtures:
+- **PDF ingest tests** (`tests/testPdfIngest.m`) with fixtures:
   - `tests/fixtures/sim_text.pdf` (text PDF)
   - `tests/fixtures/sim_image_only.pdf` (image-only PDF for OCR fallback)
-- **Metrics regression test** (`tests/testMetricsExpectedJSON.m`) that loads thresholds from
+- **Metrics regression test** (`tests/testMetricsExpectedJson.m`) that loads thresholds from
   `tests/fixtures/expected_metrics.json` and asserts deltas within tolerance.
 - **Projection head save/load (pipeline autoload)** (`tests/testProjectionAutoloadPipeline.m`) ensures
   `reg_pipeline` respects `projection_head.mat` and auto-applies it.
@@ -131,11 +131,11 @@ table(results)
 We have significantly expanded the MATLAB test suite to improve coverage and regression safety.
 
 #### **New Tests**
-1. **PDF Ingest Tests** (`tests/testPDFIngest.m`)
+1. **PDF Ingest Tests** (`tests/testPdfIngest.m`)
    - Uses `tests/fixtures/sim_text.pdf` for text-based PDF ingestion.
    - Uses `tests/fixtures/sim_image_only.pdf` to trigger OCR fallback (skips if OCR not available).
 
-2. **Metrics Regression Test** (`tests/testMetricsExpectedJSON.m`)
+2. **Metrics Regression Test** (`tests/testMetricsExpectedJson.m`)
    - Loads `tests/fixtures/expected_metrics.json` containing minimum acceptable values for:
      - Recall@10
      - mAP

@@ -146,7 +146,7 @@ Common test scopes or prefixes include:
 
 | Name | Purpose | Scope | Owner | Related Functions | Notes |
 |------|---------|-------|-------|-------------------|-------|
-| testPDFIngest | Test PDF ingestion | unit | @todo | ingestPdfs | stub |
+| testPdfIngest | Test PDF ingestion | unit | @todo | ingestPdfs | stub |
 | testIngestAndChunk | Test ingestion and chunking together | integration | @todo | ingestPdfs, chunkText | stub |
 | testRulesAndModel | Test weak rules and model training | unit | @todo | weakRules, trainMultilabel | stub |
 | testFeatures | Test embedding generation | unit | @todo | docEmbeddingsBertGpu, precomputeEmbeddings | verifies output types |
@@ -156,7 +156,7 @@ Common test scopes or prefixes include:
 | testProjectionAutoloadPipeline | Test projection head autoload pipeline | integration | @todo | trainProjectionHead | stub |
 | testFineTuneSmoke | Smoke test for encoder fine-tuning | smoke | @todo | ftBuildContrastiveDataset, ftTrainEncoder | stub |
 | testFineTuneResume | Test fine-tune resume | unit | @todo | ftTrainEncoder | stub |
-| testMetricsExpectedJSON | Test metrics JSON output | unit | @todo | evalRetrieval | stub |
+| testMetricsExpectedJson | Test metrics JSON output | unit | @todo | evalRetrieval | stub |
 | testGoldMetrics | Test gold metrics evaluation | unit | @todo | loadGold, evalPerLabel | stub |
 | testReportArtifact | Test report generation | unit | @todo | evalRetrieval | stub |
 | testFetchers | Test fetch utilities | unit | @todo | crrDiffVersions, crrDiffArticles | stub |
