@@ -19,6 +19,14 @@
    save('data/Yboot.mat','Yboot')
    ```
 
+## Function Interface
+- `reg.weak_rules(text, labels)`  
+  - `text` (string array): chunk content.  
+  - `labels` (string array): list of topic names.  
+  - returns `Yweak` (double sparse matrix) with confidence scores.
+- `Yboot = Yweak >= threshold` yields a sparse logical matrix used in later steps.  
+- See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schema of `Yboot`.
+
 > **Note:** `reg.weak_rules` requires `chunks.text` and the label list `C.labels`
 > from [`config.m`](../config.m). The confidence cutoff `C.min_rule_conf` is
 > optional and can be tuned in `config.m` or overridden via `knobs.json`.

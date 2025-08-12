@@ -17,8 +17,14 @@
    save('data/docs.mat','docs')
    ```
 
+## Function Interface
+- `reg.ingest_pdfs(inputDir)`  
+  - `inputDir` (string): folder containing source PDFs.  
+  - returns `docs` (`table`): columns `docId` (string), `text` (string).  
+  - See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schema.
+
 ## Verification
-- `docs` is a table with columns such as `doc_id` and `text`.
+- `docs` is a table with columns such as `docId` and `text`.
 - Run the unit test for ingestion:
   ```matlab
   runtests('tests/TestPDFIngest.m')

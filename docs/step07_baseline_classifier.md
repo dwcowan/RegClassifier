@@ -20,6 +20,17 @@
    results = reg.hybrid_search(model, X, 'query', 'sample text');
    ```
 
+## Function Interface
+- `reg.train_multilabel(X, Yboot)`  
+  - `X` (double matrix): embeddings from Step 6.  
+  - `Yboot` (sparse logical matrix): weak labels from Step 5.  
+  - returns `model` (struct): fields `weights`, `bias`.  
+- `reg.hybrid_search(model, X, 'query', text)`  
+  - `model` (struct) and `X` (double matrix).  
+  - `'query'` (string): search text.  
+  - returns `results` (table) with `docId` and score fields.  
+- See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schemas of `X`, `Yboot`, and model outputs.
+
 ## Verification
 - Classifier training completes and saves `baseline_model.mat`.
 - Run baseline tests:

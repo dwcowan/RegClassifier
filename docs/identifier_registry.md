@@ -96,7 +96,14 @@ Common test scopes or prefixes include:
 
 | Producer → Consumer | Payload Schema | Format | Validation | Notes |
 |--------------------|----------------|--------|-----------|-------|
-| ingest → preprocess | `{ docId: string, pages: string[], meta: {...} }` | JSON | schema v1 | draft |
+| ingest → chunking | `docs` table `{ docId: string, text: string }` | MAT-file (`docs.mat`) | non-empty `text` | see [Step 3](step03_data_ingestion.md) |
+| chunking → weak labeling / embeddings | `chunks` table `{ chunkId: string, docId: string, text: string }` | MAT-file (`chunks.mat`) | unique `chunkId` | see [Step 4](step04_text_chunking.md) |
+| weak labeling → classifier | `Yboot` sparse logical matrix `[numChunks x numClasses]` | MAT-file (`Yboot.mat`) | matches size of `chunks` | see [Step 5](step05_weak_labeling.md) |
+| embedding generation → classifier | `X` double matrix `[numChunks x embeddingDim]` | MAT-file (`embeddings.mat`) | matches size of `chunks` | see [Step 6](step06_embedding_generation.md) |
+| classifier → retrieval / eval | `model` struct `{ weights: double[embeddingDim x numClasses], bias: double[1 x numClasses] }` | MAT-file (`baseline_model.mat`) | fields exist | see [Step 7](step07_baseline_classifier.md) |
+| projection head training → retrieval | `head` struct `{ weights: double[?], bias: double[?] }` | MAT-file (`projection_head.mat`) | fields exist | see [Step 8](step08_projection_head.md) |
+| fine-tune → evaluation | `ftEncoder` struct with BERT weights | MAT-file (`fine_tuned_bert.mat`) | fields exist | see [Step 9](step09_encoder_finetuning.md) |
+| evaluation → reports | metrics table `{ metric: string, value: double }` | CSV/PDF | schema check | see [Step 10](step10_evaluation_reporting.md) |
 
 ---
 

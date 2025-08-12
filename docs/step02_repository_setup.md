@@ -20,6 +20,11 @@
    config
    ```
 
+## Function Interface
+- `addpath(genpath(pwd)); savepath` adds all subfolders to the MATLAB path.  
+- `config()` reads `pipeline.json`, `knobs.json`, and optional overrides, returning a struct printed to the console.  
+- Data structures referenced in later modules are detailed in [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts).
+
 ## Verification
 - `config` prints the contents of the JSON files without errors.
 - MATLAB can locate project functions such as `reg_pipeline`.

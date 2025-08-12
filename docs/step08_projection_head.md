@@ -13,6 +13,13 @@
    ```
 3. The pipeline automatically uses `projection_head.mat` when present.
 
+## Function Interface
+- `reg.train_projection_head(X, Yboot)`  
+  - `X` (double matrix): embeddings from Step 6.  
+  - `Yboot` (sparse logical matrix): weak labels from Step 5.  
+  - returns `head` (struct): fields `weights`, `bias` used for retrieval enhancement.  
+- See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schema references.
+
 ## Verification
 - `projection_head.mat` exists in the `models` folder.
 - Run projection head tests:

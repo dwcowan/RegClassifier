@@ -13,6 +13,12 @@
 2. Investigate any failures before committing changes.
 3. Optional: configure continuous integration (e.g., GitHub Actions) to run the same command on each push.
 
+## Function Interface
+- `runtests('tests','IncludeSubfolders',true,'UseParallel',false)`  
+  - Executes all MATLAB tests in the project.  
+  - returns `results` (table) with fields `Name`, `Passed`, `Failed`, `Incomplete`, `Duration`.  
+- See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for any test-related artifacts.
+
 ## Verification
 - All tests pass locally, producing a table with `Passed` outcomes.
 - CI reports clean builds.
