@@ -143,6 +143,13 @@ Keep the illustrative examples below in sync with the current naming conventions
 | run_mlint.m | Lint MATLAB files | run_mlint | @todo | errors on lint |
 | startup.m | Initialize project paths and defaults | startup | @todo | |
 | shutdown.m | Remove project paths and restore defaults | shutdown | @todo | |
+| regPipeline.m | Orchestrate end-to-end workflow | regPipeline | @todo | stub |
+| regProjectionWorkflow.m | Train projection head | regProjectionWorkflow | @todo | stub |
+| regFineTuneEncoderWorkflow.m | Fine-tune encoder with contrastive loss | regFineTuneEncoderWorkflow | @todo | stub |
+| regEvalAndReport.m | Evaluate models and generate reports | regEvalAndReport | @todo | stub |
+| regEvalGold.m | Evaluate metrics on gold dataset | regEvalGold | @todo | stub |
+| regCrrDiffReport.m | Produce PDF diff report for CRR versions | regCrrDiffReport | @todo | stub |
+| regCrrDiffReportHtml.m | Produce HTML diff report for CRR versions | regCrrDiffReportHtml | @todo | stub |
 
 
 
