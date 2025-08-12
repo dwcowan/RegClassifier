@@ -52,6 +52,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 
 | Name | Purpose | Scope | Input Contract | Output Contract | Owner | Notes |
 |------|---------|-------|----------------|-----------------|-------|------|
+| config | Load configuration from JSON files | module | none | `configStruct` struct | @todo | |
 | startup | RegClassifier project initialization | module | `project` object | none | @todo | |
 | shutdown | RegClassifier project cleanup | module | project object | none | @todo | |
 | ingestPdfs | Convert PDFs into text documents | module | `pdfPathsCell` cell array | `docTbl` table | @todo | stub |
@@ -79,7 +80,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 
 | Function | Parameters | Returns | Side Effects |
 |----------|------------|---------|--------------|
-| config | none | struct of settings from JSON files | reads configuration files |
+| config | none | `configStruct` struct | reads configuration files |
 | startup | project object | none | adds repo paths, sets defaults |
 | shutdown | project object | none | removes repo paths, restores defaults |
 | reg.ingestPdfs | inputDir string | docs table `{docId,text}` | reads PDFs, OCR fallback |
