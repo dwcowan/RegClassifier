@@ -2,6 +2,8 @@
 
 Detailed step-by-step guides for each task are available in the `docs/` folder.
 
+See [Master Scaffold](master_scaffold.md) for module stubs and test skeletons.
+
 This guide outlines a clean-room rebuild of the MATLAB-based regulatory topic classifier. Each task is scoped to minimize coupling and lists prerequisites so the system can be assembled and tested incrementally.
 
 ## 1. Environment & Tooling

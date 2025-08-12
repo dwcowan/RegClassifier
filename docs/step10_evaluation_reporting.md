@@ -5,17 +5,23 @@
 **Depends on:** Model artifacts from [Step 7](step07_baseline_classifier.md), [Step 8](step08_projection_head.md), or [Step 9](step09_encoder_finetuning.md).
 
 ## Instructions
+
+Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeletons before beginning this step.
+
 1. Run the evaluation script to compute retrieval metrics and generate a PDF report:
+
    ```matlab
-   reg_eval_and_report
+   reg.evalRetrieval(resultsTbl, goldTbl);
    ```
 2. Optional: evaluate against a gold mini-pack if available:
    ```matlab
-   reg_eval_gold
+   goldTbl = reg.loadGold('path/to/gold');
+   reg.evalPerLabel(predYMat, goldTbl.y);
    ```
 3. Inspect generated artifacts in the `reports` or `output` folder.
 
 ## Function Interface
+
 ### reg_eval_and_report
 - **Parameters:** none.
 - **Returns:** metrics tables and generates `reg_eval_report.pdf`.
@@ -35,6 +41,7 @@
   ```
 
 See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for metric schema references.
+
 
 ## Verification
 - Report files such as `reg_eval_report.pdf` and metric CSVs are created.

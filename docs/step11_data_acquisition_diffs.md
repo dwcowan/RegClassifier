@@ -5,18 +5,21 @@
 **Depends on:** [Step 1: Environment & Tooling](step01_environment_tooling.md) and prior steps if integrating with the pipeline.
 
 ## Instructions
+Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeletons before beginning this step.
+
 1. Synchronize the Common Rulebook (CRR) or similar sources:
    ```matlab
-   reg_crr_sync
+   reg.crrSync();
    ```
 2. Generate diff reports between document versions:
    ```matlab
-   reg.crr_diff_versions('versionA','versionB')
-   reg_crr_diff_report
+   reg.crrDiffVersions('versionA','versionB');
+   reg.crrDiffReport;
    ```
 3. Review HTML or PDF diff outputs for changes.
 
 ## Function Interface
+
 ### reg_crr_sync
 - **Parameters:** none.
 - **Returns:** none.
@@ -47,6 +50,7 @@
   ```
 
 See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for corpus schema references.
+
 
 ## Verification
 - Date-stamped corpora appear in the `data` directory.

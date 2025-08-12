@@ -5,15 +5,18 @@
 **Depends on:** [Step 7: Baseline Classifier & Retrieval](step07_baseline_classifier.md).
 
 ## Instructions
+Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeletons before beginning this step.
+
 1. Load embeddings and weak labels as in Step 7.
 2. Train the projection head:
    ```matlab
-   head = reg.train_projection_head(X, Yboot);
+   head = reg.trainProjectionHead(X, Yboot);
    save('models/projection_head.mat','head')
    ```
 3. The pipeline automatically uses `projection_head.mat` when present.
 
 ## Function Interface
+
 ### reg.train_projection_head
 - **Parameters:**
   - `X` (double matrix): embeddings from Step 6.
@@ -26,6 +29,7 @@
   ```
 
 See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schema references.
+
 
 ## Verification
 - `projection_head.mat` exists in the `models` folder.

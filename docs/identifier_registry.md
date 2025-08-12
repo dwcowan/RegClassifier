@@ -46,14 +46,14 @@ Keep the illustrative examples below in sync with the current naming conventions
 
 | Name | Purpose | Scope | Owner | Related Files | Notes |
 |------|---------|-------|-------|---------------|-------|
-| InvoiceProcessor | Extracts data from invoices | module | @janedoe | pdfIngest.m | example |
-|  |  |  |  |  |  |
+| RegPipeline | Orchestrates end-to-end workflow | global | @todo | reg_pipeline.m | planned |
 
 ## Functions
 
 | Name | Purpose | Scope | Input Contract | Output Contract | Owner | Notes |
 |------|---------|-------|----------------|-----------------|-------|------|
 | parseDocument | Convert raw text into tokens | module | `text` string | token array | @janedoe | example |
+| config | Load project configuration files | module | – | struct `C` | @todo | stub |
 | ingestPdfs | Convert PDFs into text documents | module | `pdfPathsCell` cell array | `docTbl` table | @todo | stub |
 | chunkText | Split documents into token chunks | module | `docTbl`, `chunkSizeTokens`, `chunkOverlap` | `chunkTbl` table | @todo | stub |
 | weakRules | Generate weak labels for chunks | module | `chunkTbl` table | sparse matrix `yBootMat` | @todo | stub |
@@ -69,14 +69,14 @@ Keep the illustrative examples below in sync with the current naming conventions
 | loadGold | Load gold annotation data | module | `pathStr` string | `goldTbl` table | @todo | stub |
 | crrDiffVersions | Compare CRR versions | module | `oldPathStr` string, `newPathStr` string | diff struct | @todo | stub |
 | crrDiffArticles | Compare CRR articles | module | `articleId` string, `versionA` string, `versionB` string | diff struct | @todo | stub |
+| crrSync | Fetch latest regulatory corpus | module | – | downloaded files | @todo | stub |
+| crrDiffReport | Render diff report between versions | module | `diffStruct` struct | report files | @todo | stub |
+
 
 ## Function Interface Reference
 
 | Function | Parameters | Returns | Side Effects |
 |----------|------------|---------|--------------|
-| gpuDevice | none | struct with GPU info | selects active GPU |
-| ver | none | table of installed products | prints to console |
-| addpath/savepath | rootDir string | none | modifies MATLAB search path |
 | config | none | struct of settings from JSON files | reads configuration files |
 | reg.ingest_pdfs | inputDir string | docs table `{docId,text}` | reads PDFs, OCR fallback |
 | reg.chunk_text | docs table, chunk_size_tokens double, chunk_overlap double | chunks table `{chunkId,docId,text}` | none |
@@ -94,7 +94,8 @@ Keep the illustrative examples below in sync with the current naming conventions
 | reg.crr_diff_versions | `vA` string, `vB` string | diff struct | none |
 | reg_crr_diff_report | none | none | writes HTML/PDF summaries |
 | runtests | testFolder string, IncludeSubfolders logical, UseParallel logical | results table | executes test suite |
-
+
+
 ## Variables
 
 | Name | Purpose | Scope | Type | Default | Constraints | Notes |
@@ -104,10 +105,13 @@ Keep the illustrative examples below in sync with the current naming conventions
 
 ## Constants / Enums
 
-| Name | Purpose | Scope | Value/Type | Notes |
-|------|---------|-------|-----------|-------|
-| MAX_RETRY_COUNT | Limits retry attempts | global | 3 | example |
-|  |  |  |  |  |
+| Name | Purpose | Scope | Value/Type | Owner | Notes |
+|------|---------|-------|-----------|-------|------|
+| MAX_RETRY_COUNT | Limits retry attempts | global | 3 | @janedoe | example |
+| CHUNK_SIZE_TOKENS | Default tokens per chunk | module | 300 | @todo | from `config.m` |
+| CHUNK_OVERLAP | Overlap between chunks | module | 80 | @todo | from `config.m` |
+| MIN_RULE_CONF | Weak label confidence cutoff | global | 0.0 | @todo | from `config.m` |
+| EMBEDDING_DIM | Dimensionality of BERT embeddings | global | 768 | @todo | BERT base |
 
 ## Files / Modules
 
@@ -142,37 +146,70 @@ Common test scopes or prefixes include:
 - `TestIntegration` for integration scenarios
 - `TestSmoke` for smoke tests
 
-| Name | Purpose | Related Functions | Notes |
-|------|---------|-------------------|-------|
-| TestPDFIngest | Stub test for ingestPdfs | ingestPdfs | stub |
-| TestIngestAndChunk | Stub test for ingestion and chunking | ingestPdfs, chunkText | stub |
-| TestRulesAndModel | Stub test for weak rules and model | weakRules, trainMultilabel | stub |
-| TestFeatures | Stub test for embedding generation | docEmbeddingsBertGpu, precomputeEmbeddings | stub |
-| TestRegressionMetricsSimulated | Stub test for regression metrics | trainMultilabel, evalPerLabel | stub |
-| TestHybridSearch | Stub test for hybrid search | hybridSearch | stub |
-| TestProjectionHeadSimulated | Stub test for projection head training | trainProjectionHead | stub |
-| TestProjectionAutoloadPipeline | Stub test for projection head autoload | trainProjectionHead | stub |
-| TestFineTuneSmoke | Stub test for encoder fine-tuning smoke | ftBuildContrastiveDataset, ftTrainEncoder | stub |
-| TestFineTuneResume | Stub test for fine-tune resume | ftTrainEncoder | stub |
-| TestMetricsExpectedJSON | Stub test for metrics JSON | evalRetrieval | stub |
-| TestGoldMetrics | Stub test for gold metrics | loadGold, evalPerLabel | stub |
-| TestReportArtifact | Stub test for report generation | evalRetrieval | stub |
-| TestFetchers | Stub test for fetch utilities | crrDiffVersions, crrDiffArticles | stub |
+| Name | Purpose | Scope | Owner | Related Functions | Notes |
+|------|---------|-------|-------|-------------------|-------|
+| TestPDFIngest | Test PDF ingestion | unit | @todo | ingestPdfs | stub |
+| TestIngestAndChunk | Test ingestion and chunking together | integration | @todo | ingestPdfs, chunkText | stub |
+| TestRulesAndModel | Test weak rules and model training | unit | @todo | weakRules, trainMultilabel | stub |
+| TestFeatures | Test embedding generation | unit | @todo | docEmbeddingsBertGpu, precomputeEmbeddings | stub |
+| TestRegressionMetricsSimulated | Test regression metrics | unit | @todo | trainMultilabel, evalPerLabel | stub |
+| TestHybridSearch | Test hybrid search | unit | @todo | hybridSearch | stub |
+| TestProjectionHeadSimulated | Test projection head training | unit | @todo | trainProjectionHead | stub |
+| TestProjectionAutoloadPipeline | Test projection head autoload pipeline | integration | @todo | trainProjectionHead | stub |
+| TestFineTuneSmoke | Smoke test for encoder fine-tuning | smoke | @todo | ftBuildContrastiveDataset, ftTrainEncoder | stub |
+| TestFineTuneResume | Test fine-tune resume | unit | @todo | ftTrainEncoder | stub |
+| TestMetricsExpectedJSON | Test metrics JSON output | unit | @todo | evalRetrieval | stub |
+| TestGoldMetrics | Test gold metrics evaluation | unit | @todo | loadGold, evalPerLabel | stub |
+| TestReportArtifact | Test report generation | unit | @todo | evalRetrieval | stub |
+| TestFetchers | Test fetch utilities | unit | @todo | crrDiffVersions, crrDiffArticles | stub |
 
 ---
 
 ## Data Contracts (Between Modules)
 
+### Schemas
+
+#### Document
+| Field | Type | Description |
+|-------|------|-------------|
+| docId | string | Unique document identifier |
+| text | string | Raw document text |
+
+#### Chunk
+| Field | Type | Description |
+|-------|------|-------------|
+| chunkId | string | Unique chunk identifier |
+| docId | string | Parent document reference |
+| text | string | Chunk content |
+
+#### Label
+| Name | Type | Description |
+|------|------|-------------|
+| Yboot | sparse logical `[numChunks x numClasses]` | Weak labels matrix |
+
+#### Embedding
+| Name | Type | Description |
+|------|------|-------------|
+| X | double `[numChunks x embeddingDim]` | Chunk embeddings |
+
+#### Metric
+| Field | Type | Description |
+|-------|------|-------------|
+| metric | string | Metric name |
+| value | double | Metric value |
+
+### Flows
+
 | Producer → Consumer | Payload Schema | Format | Validation | Notes |
 |--------------------|----------------|--------|-----------|-------|
-| ingest → chunking | `docs` table `{ docId: string, text: string }` | MAT-file (`docs.mat`) | non-empty `text` | see [Step 3](step03_data_ingestion.md) |
-| chunking → weak labeling / embeddings | `chunks` table `{ chunkId: string, docId: string, text: string }` | MAT-file (`chunks.mat`) | unique `chunkId` | see [Step 4](step04_text_chunking.md) |
-| weak labeling → classifier | `Yboot` sparse logical matrix `[numChunks x numClasses]` | MAT-file (`Yboot.mat`) | matches size of `chunks` | see [Step 5](step05_weak_labeling.md) |
-| embedding generation → classifier | `X` double matrix `[numChunks x embeddingDim]` | MAT-file (`embeddings.mat`) | matches size of `chunks` | see [Step 6](step06_embedding_generation.md) |
-| classifier → retrieval / eval | `model` struct `{ weights: double[embeddingDim x numClasses], bias: double[1 x numClasses] }` | MAT-file (`baseline_model.mat`) | fields exist | see [Step 7](step07_baseline_classifier.md) |
-| projection head training → retrieval | `head` struct `{ weights: double[?], bias: double[?] }` | MAT-file (`projection_head.mat`) | fields exist | see [Step 8](step08_projection_head.md) |
-| fine-tune → evaluation | `ftEncoder` struct with BERT weights | MAT-file (`fine_tuned_bert.mat`) | fields exist | see [Step 9](step09_encoder_finetuning.md) |
-| evaluation → reports | metrics table `{ metric: string, value: double }` | CSV/PDF | schema check | see [Step 10](step10_evaluation_reporting.md) |
+| ingest → chunking | Document | MAT-file (`docs.mat`) | non-empty `text` | see [Step 3](step03_data_ingestion.md) |
+| chunking → weak labeling / embeddings | Chunk | MAT-file (`chunks.mat`) | unique `chunkId` | see [Step 4](step04_text_chunking.md) |
+| weak labeling → classifier | Label | MAT-file (`Yboot.mat`) | matches size of `chunks` | see [Step 5](step05_weak_labeling.md) |
+| embedding generation → classifier | Embedding | MAT-file (`embeddings.mat`) | matches size of `chunks` | see [Step 6](step06_embedding_generation.md) |
+| classifier → retrieval / eval | model struct `{ weights: double[embeddingDim x numClasses], bias: double[1 x numClasses] }` | MAT-file (`baseline_model.mat`) | fields exist | see [Step 7](step07_baseline_classifier.md) |
+| projection head training → retrieval | head struct `{ weights: double[?], bias: double[?] }` | MAT-file (`projection_head.mat`) | fields exist | see [Step 8](step08_projection_head.md) |
+| fine-tune → evaluation | ftEncoder struct with BERT weights | MAT-file (`fine_tuned_bert.mat`) | fields exist | see [Step 9](step09_encoder_finetuning.md) |
+| evaluation → reports | Metric | CSV/PDF | schema check | see [Step 10](step10_evaluation_reporting.md) |
 
 ---
 

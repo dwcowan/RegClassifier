@@ -5,13 +5,15 @@
 **Depends on:** [Step 3: Data Ingestion](step03_data_ingestion.md).
 
 ## Instructions
+Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeletons before beginning this step.
+
 1. Load the ingested documents table:
    ```matlab
    load('data/docs.mat','docs')
    ```
-2. Chunk each document with the helper function (default `chunk_size_tokens=300`, `chunk_overlap=80`):
+2. Chunk each document with the helper function (default `chunkSizeTokens=300`, `chunkOverlap=80`):
    ```matlab
-   chunks = reg.chunk_text(docs, 'chunk_size_tokens', 300, 'chunk_overlap', 80);
+   chunks = reg.chunkText(docs, 'chunkSizeTokens', 300, 'chunkOverlap', 80);
    ```
 3. Save the chunks for later modules:
    ```matlab
@@ -19,6 +21,7 @@
    ```
 
 ## Function Interface
+
 ### reg.chunk_text
 - **Parameters:**
   - `docs` (table): from Step 3 with `docId` and `text` fields.
@@ -32,6 +35,7 @@
   ```
 
 See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schema.
+
 
 ## Verification
 - `chunks` contains `chunkId`, `docId`, and `text` for each segment.

@@ -5,13 +5,15 @@
 **Depends on:** [Step 4: Text Chunking](step04_text_chunking.md).
 
 ## Instructions
+Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeletons before beginning this step.
+
 1. Load chunk data:
    ```matlab
    load('data/chunks.mat','chunks')
    ```
 2. Generate weak labels with rule-based functions:
    ```matlab
-   Yweak = reg.weak_rules(chunks.text, C.labels);
+   Yweak = reg.weakRules(chunks.text, C.labels);
    Yboot = Yweak >= C.min_rule_conf; % optional threshold
    ```
 3. Store the sparse label matrix for future training:
@@ -20,6 +22,7 @@
    ```
 
 ## Function Interface
+
 ### reg.weak_rules
 - **Parameters:**
   - `text` (string array): chunk content.
@@ -43,6 +46,7 @@
   ```
 
 See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schema of `Yboot`.
+
 
 > **Note:** `reg.weak_rules` requires `chunks.text` and the label list `C.labels`
 > from [`config.m`](../config.m). The confidence cutoff `C.min_rule_conf` is
