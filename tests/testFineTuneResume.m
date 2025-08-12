@@ -8,7 +8,8 @@ function tests = testFineTuneResume
 tests = functiontests(localfunctions);
 end
 
-function testPlaceholder(testCase)
+%TESTFINETUNERESUMEPERSISTSSTATE Verify fine-tune resume persists training state.
+function testFineTuneResumePersistsState(testCase)
     reg.ftTrainEncoder(struct());
     testCase.assumeFail('Not implemented yet');
 end

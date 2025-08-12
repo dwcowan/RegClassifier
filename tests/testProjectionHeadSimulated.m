@@ -8,7 +8,8 @@ function tests = testProjectionHeadSimulated
 tests = functiontests(localfunctions);
 end
 
-function testPlaceholder(testCase)
+%TESTPROJECTIONHEADSIMULATEDTRAINSHEAD Check projection head training pathway.
+function testProjectionHeadSimulatedTrainsHead(testCase)
     reg.trainProjectionHead([], []);
     testCase.assumeFail('Not implemented yet');
 end

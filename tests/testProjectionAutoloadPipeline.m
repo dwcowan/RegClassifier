@@ -8,7 +8,8 @@ function tests = testProjectionAutoloadPipeline
 tests = functiontests(localfunctions);
 end
 
-function testPlaceholder(testCase)
+%TESTPROJECTIONAUTOLOADPIPELINELOADSHEAD Ensure projection head autoloads correctly.
+function testProjectionAutoloadPipelineLoadsHead(testCase)
     reg.trainProjectionHead([], []);
     testCase.assumeFail('Not implemented yet');
 end

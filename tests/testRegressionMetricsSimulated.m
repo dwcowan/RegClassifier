@@ -8,7 +8,8 @@ function tests = testRegressionMetricsSimulated
 tests = functiontests(localfunctions);
 end
 
-function testPlaceholder(testCase)
+%TESTREGRESSIONMETRICSSIMULATEDCOMPUTESMETRICS Compute regression metrics on simulated data.
+function testRegressionMetricsSimulatedComputesMetrics(testCase)
     reg.trainMultilabel([], []);
     reg.evalPerLabel([], []);
     testCase.assumeFail('Not implemented yet');

@@ -8,7 +8,8 @@ function tests = testReportArtifact
 tests = functiontests(localfunctions);
 end
 
-function testPlaceholder(testCase)
+%TESTREPORTARTIFACTGENERATESREPORT Generate evaluation report artifact.
+function testReportArtifactGeneratesReport(testCase)
     reg.evalRetrieval(table(), table());
     testCase.assumeFail('Not implemented yet');
 end

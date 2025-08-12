@@ -8,7 +8,8 @@ function tests = testHybridSearch
 tests = functiontests(localfunctions);
 end
 
-function testPlaceholder(testCase)
+%TESTHYBRIDSEARCHRETURNSRESULTS Ensure hybrid search returns results.
+function testHybridSearchReturnsResults(testCase)
     reg.hybridSearch('', [], table());
     testCase.assumeFail('Not implemented yet');
 end

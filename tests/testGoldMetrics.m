@@ -8,7 +8,8 @@ function tests = testGoldMetrics
 tests = functiontests(localfunctions);
 end
 
-function testPlaceholder(testCase)
+%TESTGOLDMETRICSEVALUATESGOLD Evaluate gold data metrics.
+function testGoldMetricsEvaluatesGold(testCase)
     reg.loadGold('');
     reg.evalPerLabel([], []);
     testCase.assumeFail('Not implemented yet');
