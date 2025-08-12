@@ -23,7 +23,7 @@ Refer to [Matlab Style Guide](Matlab_Style_Guide.md) for naming rules and [READM
 - **Variables:** `lowerCamelCase` (e.g., `docIndex`)
 - **Constants/Enums:** `UPPER_SNAKE_CASE` (e.g., `MAX_RETRY_COUNT`)
 - **Files/Modules:** `lowerCamelCase.m` (e.g., `pdfIngest.m`, `textChunker.m`)
-- **Tests:** `testFunctionName.m` (e.g., `test_parse_document.m`)
+- **Tests:** `testFunctionName.m` (e.g., `testParseDocument.m`)
 - **Temporary Variables** Short names such as `tmp` or `idx` are permitted only for a few lines and must not escape the local scope.
 
 Scopes:
@@ -46,7 +46,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 
 | Name | Purpose | Scope | Owner | Related Files | Notes |
 |------|---------|-------|-------|---------------|-------|
-| InvoiceProcessor | Extracts data from invoices | module | @janedoe | pdf_ingest.m | example |
+| InvoiceProcessor | Extracts data from invoices | module | @janedoe | pdfIngest.m | example |
 |  |  |  |  |  |  |
 
 ## Functions
@@ -60,7 +60,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 
 | Name | Purpose | Scope | Type | Default | Constraints | Notes |
 |------|---------|-------|------|---------|-------------|-------|
-| doc_index | Tracks current document position | local | double | 0 | non-negative | example |
+| docIndex | Tracks current document position | local | double | 0 | non-negative | example |
 |  |  |  |  |  |  |
 
 ## Constants / Enums
@@ -74,7 +74,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 
 | File | Purpose | Public API | Owner | Notes |
 |------|---------|-----------|-------|------|
-| pdf_ingest.m | Read PDFs into text | ingestPdf | @janedoe | example |
+| pdfIngest.m | Read PDFs into text | ingestPdf | @janedoe | example |
 |  |  |  |  |  |
 
 
@@ -96,7 +96,7 @@ Common test scopes or prefixes include:
 
 | Producer → Consumer | Payload Schema | Format | Validation | Notes |
 |--------------------|----------------|--------|-----------|-------|
-| ingest → preprocess | `{ doc_id: string, pages: string[], meta: {...} }` | JSON | schema v1 | draft |
+| ingest → preprocess | `{ docId: string, pages: string[], meta: {...} }` | JSON | schema v1 | draft |
 
 ---
 
