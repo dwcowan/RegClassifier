@@ -124,7 +124,7 @@ convention defined in **this** document [Matlab Style Guide](Matlab_Style_Guide.
 - Check key output properties before returning:
   ```matlab
   assert(isvector(output) && isnumeric(output))
-
+  ```
 
 
 ### 3. Testing
