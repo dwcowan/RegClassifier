@@ -33,12 +33,12 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 - **Parameters:**
   - `vA` (string): version identifier A.
   - `vB` (string): version identifier B.
-- **Returns:** structure describing added, removed, and changed documents.
+- **Returns:** `diffStruct` (struct) describing added, removed, and changed documents.
 - **Side Effects:** none.
 - **Usage Example:**
-  ```matlab
-  diff = reg.crrDiffVersions('v1','v2');
-  ```
+   ```matlab
+   diffStruct = reg.crrDiffVersions('v1','v2');
+   ```
 
 ### reg.crrDiffReport
 - **Parameters:** none.

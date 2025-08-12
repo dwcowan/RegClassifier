@@ -49,16 +49,17 @@ Place tests in the `tests/` folder and name each file `testName.m`. Refer to [Te
      (`which <identifier>`) to confirm the name is not already in use.
 3. Note identifiers currently in use, use these consistently in your code, if required.
 4. Update the codebase accordingly.
-5. When introducing new identifiers in your code, **always** crosscheck this
+5. Add or update tests: any new module or function must include a corresponding test file in `tests/`, and existing tests must be updated when module behavior changes.
+6. When introducing new identifiers in your code, **always** crosscheck this
    name isnt in use and **always** update the `identifier_registry.md` with
    new classes, functions, variables, constants, files/modules, tests, and
    other identifiers through a PR with your new code.
-6. Verify that any new or modified identifier has a corresponding entry in
+7. Verify that any new or modified identifier has a corresponding entry in
    [`docs/identifier_registry.md`](identifier_registry.md).
-7. Run the full test suite locally:
+8. Run the full test suite locally:
    - Placeholder tests must fail rather than being skipped or assumed.
    - Confirm that tests use fixtures via `testCase.applyFixture`.
-8. Run CI to ensure naming checks and tests pass. Locally, you can execute
+9. Run CI to ensure naming checks and tests pass. Locally, you can execute
    `runtests` or the `run_smoke_test` script to verify.
 
 ### Example
