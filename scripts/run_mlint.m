@@ -73,7 +73,7 @@ function run_mlint
         try
             issues = checkcode(filePath, "-id", "-fullpath");
         catch ME
-            warning("checkcode error on %s: %s", filePath, ME.message);
+            warning(ME.identifier, "checkcode error on %s: %s", filePath, ME.message);
             issues = [];
         end
         if ~isempty(issues)
