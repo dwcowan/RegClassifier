@@ -4,6 +4,8 @@
 This is the **single source of truth** for classes, functions, variables, constants, files/modules, tests, and other identifiers, that are defined in the project.
 Update it via PR and keep it in sync with code.
 
+Refer to [Matlab Style Guide](Matlab_Style_Guide.md) for naming rules and [README_NAMING](README_NAMING.md) for process guidelines.
+
 
 > Tip: In code, add grep-able breadcrumbs like `%% NAME-REGISTRY:CLASS InvoiceProcessor` (MATLAB), `# NAME-REGISTRY:FUNCTION parseDocument`, or `# NAME-REGISTRY:TEST testParseDocument` so you can jump from code → registry.
 
@@ -14,9 +16,9 @@ Update it via PR and keep it in sync with code.
 - **Classes:** `PascalCase` (e.g., `InvoiceProcessor`)
 - **Functions:** `camelCase` (e.g., `parseDocument`)
 - **Class properties:** `lowerCamelCase` (e.g., `learningRate`)
-- **Variables:** `snake_case` (e.g., `doc_index`)
+- **Variables:** `lowerCamelCase` (e.g., `docIndex`)
 - **Constants/Enums:** `UPPER_SNAKE_CASE` (e.g., `MAX_RETRY_COUNT`)
-- **Files/Modules:** `lower_snake_case.ext` (e.g., `pdf_ingest.m`, `text_chunker.m`)
+- **Files/Modules:** `lowerCamelCase.m` (e.g., `pdfIngest.m`, `textChunker.m`)
 - **Tests:** `testFunctionName.m` (e.g., `test_parse_document.m`)
 - **Temporary Variables** Short names such as `tmp` or `idx` are permitted only for a few lines and must not escape the local scope.
 
