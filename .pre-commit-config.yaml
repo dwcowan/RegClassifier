@@ -11,3 +11,8 @@ repos:
         entry: python scripts/validate_scaffold.py
         language: python
         pass_filenames: false
+      - id: ensure-tests
+        name: ensure tests accompany code changes
+        entry: python scripts/check_tests_modified.py
+        language: python
+        pass_filenames: false

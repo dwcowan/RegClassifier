@@ -16,4 +16,5 @@
 1. Consult the canonical documents before adding identifiers.
 2. Search the repo (e.g., `rg <identifier>` or MATLAB `which <identifier>`) to avoid name collisions.
 3. Update code and `docs/identifier_registry.md` with any new identifiers.
-4. Run tests locally (`matlab -batch "run_smoke_test"` or `matlab -batch "runtests"`) before committing.
+4. Commit tests alongside code changes: add a corresponding file in `tests/` for every new module or function, and update existing tests when module behavior changes.
+5. Run tests locally (`matlab -batch "run_smoke_test"` or `matlab -batch "runtests"`) before committing.
