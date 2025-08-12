@@ -111,7 +111,8 @@ Keep the illustrative examples below in sync with the current naming conventions
 |------|---------|-------|------|---------|-------------|-------|
 | docIndex | Tracks current document position | local | double | 0 | non-negative | example |
 | configStruct | Configuration settings loaded from JSON files | module | struct | n/a | fields must exist | returned by config |
-|  |  |  |  |  |  |
+| gpuInfoStruct | GPU device information | local | struct | n/a | CUDA-enabled | obtained via `gpuDevice` |
+| productsTbl | Installed MATLAB products | local | table | n/a | includes required toolboxes | obtained via `ver` |
 
 ## Constants / Enums
 
