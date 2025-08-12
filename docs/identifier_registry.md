@@ -70,6 +70,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 | crrDiffVersions | Compare CRR versions | module | `oldPathStr` string, `newPathStr` string | diff struct | @todo | stub |
 | crrDiffArticles | Compare CRR articles | module | `articleId` string, `versionA` string, `versionB` string | diff struct | @todo | stub |
 | run_mlint | Run MATLAB code analyzer on repository | module | none | none | @todo | errors on lint |
+| setSeeds | Set RNG and GPU seeds | module | `seed` integer scalar | none | @todo | |
 
 
 ## Function Interface Reference
@@ -95,6 +96,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 | reg.crrSync | none | none | downloads corpus to `data/raw` |
 | reg.crrDiffVersions | `vA` string, `vB` string | diff struct | none |
 | reg.crrDiffReport | none | none | writes HTML/PDF summaries |
+| reg.setSeeds | seed double | none | sets RNG and GPU seeds |
 | runtests | testFolder string, IncludeSubfolders logical, UseParallel logical | results table | executes test suite |
 
 
