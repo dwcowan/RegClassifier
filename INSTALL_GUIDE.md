@@ -61,6 +61,6 @@ run reg_eval_and_report
 - If `gold/` exists, report includes **Gold Mini-Pack Evaluation**.
 
 ## 8. Move to Real CRR PDFs
-- Drop into `data/raw/`.
+ - Drop into `data/pdfs/`. Download scripts deposit PDFs in `data/raw` by default. The pipeline's default `input_dir` is `data/pdfs`.
 - Adjust `config.m` paths.
 - Rerun `reg_pipeline` + `reg_eval_and_report`.

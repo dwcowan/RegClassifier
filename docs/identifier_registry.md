@@ -1,33 +1,37 @@
-# Naming Registry
+# Identifier Registry
 
-This is the **single source of truth** for class, function, variable,
-constant, file/module, test, and other identifier names. Update it via
-PR and keep it in sync with code.
 
-> Tip: In code, add grep-able breadcrumbs like `%% NAME-REGISTRY:CLASS InvoiceProcessor` (MATLAB) or `# NAME-REGISTRY:METHOD parseDocument` so you can jump from code → registry.
+This is the **single source of truth** for classes, functions, variables, constants, files/modules, tests, and other identifiers, that are defined in the project.
+Update it via PR and keep it in sync with code.
+
+
+> Tip: In code, add grep-able breadcrumbs like `%% NAME-REGISTRY:CLASS InvoiceProcessor` (MATLAB), `# NAME-REGISTRY:FUNCTION parseDocument`, or `# NAME-REGISTRY:TEST testParseDocument` so you can jump from code → registry.
 
 ---
 
-## Conventions (Authoritative)
+## Conventions 
 
-- **Classes/Objects:** `PascalCase` (e.g., `InvoiceProcessor`)
-- **Methods/Functions:** `camelCase` (e.g., `parseDocument`)
+- **Classes:** `PascalCase` (e.g., `InvoiceProcessor`)
+- **Functions:** `camelCase` (e.g., `parseDocument`)
+- **Class properties:** `lowerCamelCase` (e.g., `learningRate`)
 - **Variables:** `snake_case` (e.g., `doc_index`)
 - **Constants/Enums:** `UPPER_SNAKE_CASE` (e.g., `MAX_RETRY_COUNT`)
 - **Files/Modules:** `lower_snake_case.ext` (e.g., `pdf_ingest.m`, `text_chunker.m`)
+- **Tests:** `testFunctionName.m` (e.g., `test_parse_document.m`)
+- **Temporary Variables** Short names such as `tmp` or `idx` are permitted only for a few lines and must not escape the local scope.
 
 Scopes:
 - **global** (shared across modules), **module** (file/local package), **local** (function scope), **test** (only in tests)
 
 ---
 
-## Objects / Classes
+## Classes
 
 | Name | Purpose | Scope | Owner | Related Files | Notes |
 |------|---------|-------|-------|---------------|-------|
 |  |  |  |  |  |  |
 
-## Methods / Functions
+## Functions
 
 | Name | Purpose | Scope | Input Contract | Output Contract | Owner | Notes |
 |------|---------|-------|----------------|-----------------|-------|------|
@@ -51,6 +55,19 @@ Scopes:
 |------|---------|-----------|-------|------|
 |  |  |  |  |  |
 
+
+
+## Tests
+
+Test files reside in the `tests/` directory and follow the `testFunctionName.m` naming convention.
+
+Common test scopes or prefixes include:
+
+- `Test` for general unit tests
+- `TestIntegration` for integration scenarios
+- `TestSmoke` for smoke tests
+
+
 ---
 
 ## Data Contracts (Between Modules)
@@ -64,3 +81,4 @@ Scopes:
 ## Changelog
 
 - YYYY-MM-DD: Initial registry created.
+

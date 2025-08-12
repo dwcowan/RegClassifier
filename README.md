@@ -12,8 +12,12 @@ test using SQLite (no external server required).
 - `tests/` — MATLAB unit tests (no network required), plus sample fixture PDF text.
 
 ## Running
-1. Optionally tweak `pipeline.json` (pipeline settings) and `knobs.json` (training knobs).
+1. Optionally tweak `pipeline.json` (pipeline settings) and `knobs.json` (training knobs, including chunking; defaults are 300-token chunks with 80-token overlap).
 2. Put PDFs under `data/pdfs` (or use the provided dummy).
+
+   Automated download modules (e.g., `reg.fetch_crr_eurlex`) save PDFs to `data/raw`. Move the downloaded files into
+   `data/pdfs` or set `"input_dir": "data/raw"` in `pipeline.json` before running the pipeline.
+
 3. Open MATLAB in this folder and run:
    ```matlab
    results = runtests("tests","IncludeSubfolders",true,"UseParallel",false);

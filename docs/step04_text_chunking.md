@@ -9,9 +9,9 @@
    ```matlab
    load('data/docs.mat','docs')
    ```
-2. Chunk each document with the helper function:
+2. Chunk each document with the helper function (default `chunk_size_tokens=300`, `chunk_overlap=80`):
    ```matlab
-   chunks = reg.chunk_text(docs, 'chunk_size_tokens', 512, 'chunk_overlap', 64);
+   chunks = reg.chunk_text(docs, 'chunk_size_tokens', 300, 'chunk_overlap', 80);
    ```
 3. Save the chunks for later modules:
    ```matlab

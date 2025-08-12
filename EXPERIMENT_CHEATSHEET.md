@@ -2,11 +2,11 @@
 
 ## 0) One-time setup
 1) MATLAB Add-Ons → install **“Text Analytics Toolbox Model for BERT English.”**
-2) In `config.m` set:
+2) In `config.m` ensure:
    ```matlab
    C.embeddings_backend = 'bert';
-   C.chunk_size_tokens  = 300;
-   C.chunk_overlap      = 80;
+   C.chunk_size_tokens  = 300; % default
+   C.chunk_overlap      = 80;  % default
    C.lda_topics         = 0;
    C.db.enable          = false;
    ```

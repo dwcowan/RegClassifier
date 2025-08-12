@@ -11,12 +11,17 @@
    ```
 2. Generate weak labels with rule-based functions:
    ```matlab
-   Yboot = reg.weak_rules(chunks);
+   Yweak = reg.weak_rules(chunks.text, C.labels);
+   Yboot = Yweak >= C.min_rule_conf; % optional threshold
    ```
 3. Store the sparse label matrix for future training:
    ```matlab
    save('data/Yboot.mat','Yboot')
    ```
+
+> **Note:** `reg.weak_rules` requires `chunks.text` and the label list `C.labels`
+> from [`config.m`](../config.m). The confidence cutoff `C.min_rule_conf` is
+> optional and can be tuned in `config.m` or overridden via `knobs.json`.
 
 ## Verification
 - `Yboot` is a sparse matrix with rows matching `chunks` and columns representing topics.
