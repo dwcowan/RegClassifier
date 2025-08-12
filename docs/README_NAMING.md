@@ -1,7 +1,7 @@
-# Naming Conventions & Registry (Quick Start)
+# Naming Conventions & Identifier Registry (Quick Start)
 
 This repository enforces consistent naming through:
-1. A **single source of truth**: `naming_registry.md`
+1. A **single source of truth** for classes, functions, variables, constants, files/modules, and other identifiers: `identifier_registry.md`
 2. Editor aids and grep-able breadcrumbs
 3. Naming convention is detailed in the MATLAB style guide
 ## TL;DR
@@ -25,6 +25,6 @@ violations are found.
 
 ## Updating Names
 
-1. Propose changes in `naming_registry.md` with a PR.
+1. Propose changes in `identifier_registry.md` with a PR.
 2. Update code and commit.
 3. CI validates.
