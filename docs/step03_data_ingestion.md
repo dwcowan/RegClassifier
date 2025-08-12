@@ -1,6 +1,6 @@
 # Step 3: Data Ingestion
 
-**Goal:** Convert PDF documents into raw text records.
+**Goal:** Convert PDF documents into a `docsTbl` table of raw text records.
 
 **Depends on:** [Step 2: Repository Setup](step02_repository_setup.md).
 
@@ -13,8 +13,8 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
    ```matlab
    docsTbl = reg.ingestPdfs('data/pdfs');
    ```
-4. The function extracts text from each PDF. Image-only pages fall back to OCR if the Report Generator toolbox is installed.
-5. Save the resulting table for later steps:
+4. The function extracts text from each PDF into `docsTbl`. Image-only pages fall back to OCR if the Report Generator toolbox is installed.
+5. Save `docsTbl` for later steps:
    ```matlab
    save('data/docsTbl.mat','docsTbl')
    ```

@@ -7,9 +7,9 @@
 ## Instructions
 Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeletons before beginning this step.
 
-1. Load the ingested documents table:
+1. Load the ingested documents table `docsTbl`:
    ```matlab
-   load('data/docs.mat','docsTbl')
+   load('data/docsTbl.mat','docsTbl')
    ```
 2. Chunk each document with the helper function (default `chunkSizeTokens=300`, `chunkOverlap=80`):
    ```matlab
