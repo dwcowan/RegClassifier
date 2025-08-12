@@ -18,7 +18,7 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
    If a GPU is unavailable, the function automatically falls back to a CPU-friendly model.
 3. Cache embeddings for reuse:
    ```matlab
-   reg.precomputeEmbeddings(embeddingMat,'data/embeddings.mat');
+   reg.precomputeEmbeddings(embeddingMat,'data/embeddingMat.mat');
    ```
 
 ## Function Interface
@@ -41,7 +41,7 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 - **Side Effects:** writes embeddings to disk for reuse.
 - **Usage Example:**
   ```matlab
-  reg.precomputeEmbeddings(embeddingMat, 'embeddings_mock.mat');
+  reg.precomputeEmbeddings(embeddingMat, 'embeddingMat_mock.mat');
   ```
 
 See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schema of `embeddingMat`.

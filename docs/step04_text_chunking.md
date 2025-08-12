@@ -1,23 +1,23 @@
 # Step 4: Text Chunking
 
-**Goal:** Split long documents into overlapping token chunks.
+**Goal:** Split long documents into overlapping token chunksTbl.
 
 **Depends on:** [Step 3: Data Ingestion](step03_data_ingestion.md).
 
 ## Instructions
 Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeletons before beginning this step.
 
-1. Load the ingested documents table:
+1. Load the ingested documents table `docsTbl`:
    ```matlab
-   load('data/docs.mat','docsTbl')
+   load('data/docsTbl.mat','docsTbl')
    ```
 2. Chunk each document with the helper function (default `chunkSizeTokens=300`, `chunkOverlap=80`):
    ```matlab
    chunksTbl = reg.chunkText(docsTbl, 'chunkSizeTokens', 300, 'chunkOverlap', 80);
    ```
-3. Save the chunks for later modules:
+3. Save the chunksTbl for later modules:
    ```matlab
-   save('data/chunks.mat','chunksTbl')
+   save('data/chunksTbl.mat','chunksTbl')
    ```
 
 ## Function Interface
@@ -26,7 +26,7 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 - **Parameters:**
   - `docsTbl` (table): from Step 3 with `docId` and `text` fields.
   - `'chunkSizeTokens'` (double): tokens per chunk.
-  - `'chunkOverlap'` (double): overlap between chunks.
+  - `'chunkOverlap'` (double): overlap between chunksTbl.
 - **Returns:** table `chunksTbl` with columns `chunkId` (string), `docId` (string), and `text` (string).
 - **Side Effects:** none; pure transformation of input table.
 - **Usage Example:**

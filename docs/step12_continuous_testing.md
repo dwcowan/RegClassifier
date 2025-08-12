@@ -31,7 +31,7 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for any test-related artifacts.
 
 ## Verification
-- All tests pass locally, producing a table with `Passed` outcomes.
+- All tests pass locally, producing a `resultsTbl` with `Passed` outcomes.
 - CI reports clean builds.
 
 ## Next Steps
