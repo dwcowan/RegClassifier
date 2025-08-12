@@ -5,8 +5,21 @@ function startup(project)
 % Adds all project folders to the path and enables common defaults
 % so helpers like reg.ftBuildContrastiveDataset are discoverable.
 
+    if nargin < 1
+        try
+            project = matlab.project.currentProject;
+        catch
+            project = [];
+        end
+    end
+    if isempty(project)
+        rootDir = fileparts(mfilename('fullpath'));
+    else
+        rootDir = project.RootFolder;
+    end
+
     % 1. Add entire repository (packages, tests, scripts) to path
-    repoRoot = project.RootFolder;
+    repoRoot = rootDir;
     addpath(genpath(repoRoot));
 
     % 2. Optional: persist path for non‑project sessions
