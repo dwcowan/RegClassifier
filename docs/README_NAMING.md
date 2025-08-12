@@ -1,32 +1,34 @@
-# Naming Conventions & Registry (Quick Start)
+# Naming Conventions & Registry Workflow
 
-This repository enforces consistent naming across classes, functions,
-variables, constants, files/modules, tests, and other identifiers
-through:
-1. A **single source of truth** for all names: `naming_registry.md`
-2. Editor aids and grep-able breadcrumbs
-3. Naming convention is detailed in the MATLAB style guide
+This README is a process guide for maintaining naming consistency. The
+[Matlab Style Guide](Matlab_Style_Guide.md) is the normative reference for
+all naming rules.
+
+
 ## TL;DR
 
-| Category | Rule |
-|----------|------|
-| Variable names | lowerCamelCase, descriptive |
-| Constants | UPPER_CASE_WITH_UNDERSCORES |
-| Functions | lowerCamelCase; filename matches function |
-| Classes | UpperCamelCase |
-| Indentation | Two spaces, no tabs |
-| Line width | Limit lines to 80 characters |
-| Comments | `%` for line, `%%` for section |
-| Tests | Located in `tests/`; run with `runtests` |
+For specific perscribed rules, see the
+[Matlab Style Guide](Matlab_Style_Guide.md).
 
+## Workflow
+
+1. Review the [Matlab Style Guide](Matlab_Style_Guide.md) for the latest
+   naming guidance.
+2. Before coding check the `identifier_registry.md` for any variables that may be influenced by your tas.
+4. Note identifiers currently in use, use these consistently in your code, if required.
+5. Update the codebase accordingly.
+6. when introducing new identifiers in your code, **always** crosscheck this name isnt in use and **always** update 
+   the `identifier_registry.md` with new identifiers through a PR with your new code.
+4. Run CI to ensure naming checks pass.
 
 ## CI
 
-A GitHub Action runs on every PR/push and fails the build if naming
+A GitHub Action runs on every PR or push and fails the build if naming
 violations are found.
 
 ## Updating Names
 
-1. Propose changes in `naming_registry.md` with a PR.
-2. Update code and commit.
+1. Propose new identifiers in `identifier_registry.md` with a PR. **always** ensure you are **not** causing drift by introducing 
+   new identifiers and not recording them, or by not using existing identifiers consistently
+2. Update code and commit, with any new identifiers and the updated `identifier_registry.md`  
 3. CI validates.
