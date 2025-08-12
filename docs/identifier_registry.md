@@ -62,8 +62,8 @@ Keep the illustrative examples below in sync with the current naming conventions
 | trainMultilabel | Train multi-label classifier | module | `xMat` matrix, `yMat` matrix | model struct | @todo | stub |
 | hybridSearch | Retrieve documents with hybrid search | module | `queryStr` string, `xMat` matrix, `docTbl` table | results table | @todo | stub |
 | trainProjectionHead | Train projection head on embeddings | module | `xMat` matrix, `yMat` matrix | head struct | @todo | stub |
-| ftBuildContrastiveDataset | Build dataset for encoder fine-tuning | module | `chunkTbl` table, `yMat` matrix | dataset struct | @todo | stub |
-| ftTrainEncoder | Fine-tune encoder on contrastive dataset | module | `dsStruct` struct | encoder struct | @todo | stub |
+| ftBuildContrastiveDataset | Build dataset for encoder fine-tuning | module | `chunkTbl` table, `bootLabelMat` matrix | `contrastiveDatasetTbl` table | @todo | stub |
+| ftTrainEncoder | Fine-tune encoder on contrastive dataset | module | `contrastiveDatasetTbl` table | `fineTunedEncoderStruct` struct | @todo | stub |
 | evalRetrieval | Evaluate retrieval metrics | module | `resultsTbl` table, `goldTbl` table | metrics struct | @todo | stub |
 | evalPerLabel | Compute per-label metrics | module | `predYMat` matrix, `trueYMat` matrix | metrics table | @todo | stub |
 | loadGold | Load gold annotation data | module | `pathStr` string | `goldTbl` table | @todo | stub |
@@ -92,8 +92,8 @@ Keep the illustrative examples below in sync with the current naming conventions
 | reg.trainMultilabel | `X` matrix, `Yboot` matrix | model struct | none |
 | reg.hybridSearch | model struct, `X` matrix, query string | results table | none |
 | reg.trainProjectionHead | `X` matrix, `Yboot` matrix | head struct | none |
-| reg.ftBuildContrastiveDataset | chunks table, `Yboot` matrix | dataset struct | none |
-| reg.ftTrainEncoder | dataset `ds`, unfreezeTop double | encoder struct | updates model weights |
+| reg.ftBuildContrastiveDataset | chunks table, `bootLabelMat` matrix | `contrastiveDatasetTbl` table | none |
+| reg.ftTrainEncoder | `contrastiveDatasetTbl` table, unfreezeTop double | `fineTunedEncoderStruct` struct | updates model weights |
 | reg.evalRetrieval | resultsTbl table, goldTbl table | metrics tables | writes report files |
 | reg.loadGold | pathStr string | goldTbl table | reads gold annotations |
 | reg.evalPerLabel | predYMat matrix, trueYMat matrix | metrics table | none |
@@ -110,6 +110,9 @@ Keep the illustrative examples below in sync with the current naming conventions
 | Name | Purpose | Scope | Type | Default | Constraints | Notes |
 |------|---------|-------|------|---------|-------------|-------|
 | docIndex | Tracks current document position | local | double | 0 | non-negative | example |
+| bootLabelMat | Weak labels matrix | module | sparse logical `[numChunks x numClasses]` | n/a | matches size of `chunks` | used in Step 9 |
+| contrastiveDatasetTbl | Contrastive training pairs | module | table | n/a | fields `{anchorIdx,posIdx,negIdx}` | from ftBuildContrastiveDataset |
+| fineTunedEncoderStruct | Encoder weights after fine-tuning | module | struct | n/a | contains updated BERT layers | saved to `fine_tuned_bert.mat` |
 |  |  |  |  |  |  |
 
 ## Constants / Enums
@@ -269,8 +272,8 @@ Common test scopes or prefixes include:
 | classifier → retrieval / eval | BaselineModel | MAT-file (`baseline_model.mat`) | fields exist | see [Step 7](step07_baseline_classifier.md) |
 | projection head training → retrieval | ProjectionHead | MAT-file (`projection_head.mat`) | fields exist | see [Step 8](step08_projection_head.md) |
 | retrieval → evaluation | RetrievalResult | MAT-file (`results.mat`) | fields exist | see [Step 7](step07_baseline_classifier.md) |
-| dataset build → fine-tune | ContrastiveDataset | MAT-file (`contrastive_ds.mat`) | fields exist | see [Step 9](step09_encoder_finetuning.md) |
-| fine-tune → evaluation | ftEncoder struct with BERT weights | MAT-file (`fine_tuned_bert.mat`) | fields exist | see [Step 9](step09_encoder_finetuning.md) |
+| dataset build → fine-tune | contrastiveDatasetTbl | MAT-file (`contrastive_ds.mat`) | fields exist | see [Step 9](step09_encoder_finetuning.md) |
+| fine-tune → evaluation | fineTunedEncoderStruct struct with BERT weights | MAT-file (`fine_tuned_bert.mat`) | fields exist | see [Step 9](step09_encoder_finetuning.md) |
 | evaluation → reports | Metric | CSV/PDF | schema check | see [Step 10](step10_evaluation_reporting.md) |
 
 ---
