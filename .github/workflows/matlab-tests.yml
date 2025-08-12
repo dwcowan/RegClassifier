@@ -1,8 +1,10 @@
 name: MATLAB Tests
 
 on:
-  push:
+  push:  
+    branches: [ReBase]
   pull_request:
+    branches: [ReBase]
 
 jobs:
   test:
@@ -16,5 +18,6 @@ jobs:
           release: R2024b
       - name: Run MATLAB tests
         uses: matlab-actions/run-tests@v2
+
         
           
