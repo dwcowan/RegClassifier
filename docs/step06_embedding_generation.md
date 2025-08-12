@@ -23,17 +23,17 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 
 ## Function Interface
 
-### reg.doc_embeddings_bert_gpu
+### reg.docEmbeddingsBertGpu
 - **Parameters:**
   - `chunks` (table): as defined in Step 4.
 - **Returns:** double matrix `X` of size `[numChunks x 768]` by default.
 - **Side Effects:** loads BERT weights and uses GPU when available.
 - **Usage Example:**
   ```matlab
-  X = reg.doc_embeddings_bert_gpu(chunks);
+  X = reg.docEmbeddingsBertGpu(chunks);
   ```
 
-### reg.precompute_embeddings
+### reg.precomputeEmbeddings
 - **Parameters:**
   - `X` (double matrix)
   - `outPath` (string): destination MAT-file path.
@@ -41,7 +41,7 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 - **Side Effects:** writes embeddings to disk for reuse.
 - **Usage Example:**
   ```matlab
-  reg.precompute_embeddings(X, 'embeddings_mock.mat');
+  reg.precomputeEmbeddings(X, 'embeddings_mock.mat');
   ```
 
 See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schema of `X`.

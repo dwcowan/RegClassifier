@@ -24,7 +24,7 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 
 ## Function Interface
 
-### reg.train_multilabel
+### reg.trainMultilabel
 - **Parameters:**
   - `X` (double matrix): embeddings from Step 6.
   - `Yboot` (sparse logical matrix): weak labels from Step 5.
@@ -32,10 +32,10 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 - **Side Effects:** none.
 - **Usage Example:**
   ```matlab
-  model = reg.train_multilabel(X, Yboot);
+  model = reg.trainMultilabel(X, Yboot);
   ```
 
-### reg.hybrid_search
+### reg.hybridSearch
 - **Parameters:**
   - `model` (struct)
   - `X` (double matrix)
@@ -44,7 +44,7 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 - **Side Effects:** none.
 - **Usage Example:**
   ```matlab
-  results = reg.hybrid_search(model, X, 'query', 'example');
+  results = reg.hybridSearch(model, X, 'query', 'example');
   ```
 
 See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schemas of `X`, `Yboot`, `BaselineModel`, and `RetrievalResult` outputs.
