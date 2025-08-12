@@ -102,7 +102,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 | reg.crrDiffReport | none | none | writes HTML/PDF summaries |
 | reg.printActiveKnobs | knobsStruct struct | none | prints knob values to stdout |
 | reg.setSeeds | seed double | none | sets RNG and GPU seeds |
-| runtests | testFolder string, IncludeSubfolders logical, UseParallel logical | results table | executes test suite |
+| runtests | testFolder string, IncludeSubfolders logical, UseParallel logical | `resultsTbl` table | executes test suite |
 
 
 ## Variables
