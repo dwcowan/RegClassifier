@@ -54,8 +54,9 @@ Keep the illustrative examples below in sync with the current naming conventions
 |------|---------|-------|----------------|-----------------|-------|------|
 | startup | RegClassifier project initialization | module | `project` object | none | @todo | |
 | shutdown | RegClassifier project cleanup | module | project object | none | @todo | |
-| ingestPdfs | Convert PDFs into text documents | module | `pdfPathsCell` cell array | `docTbl` table | @todo | stub |
-| chunkText | Split documents into token chunks | module | `docTbl`, `chunkSizeTokens`, `chunkOverlap` | `chunkTbl` table | @todo | stub |
+| ingestPdfs | Convert PDFs into text documents | module | `pdfPathsCell` cell array | `docsTbl` table | @todo | stub |
+| chunkText | Split documents into token chunks | module | `docsTbl`, `chunkSizeTokens`, `chunkOverlap` | `chunksTbl` table | @todo | stub |
+| ftBuildContrastiveDataset | Build dataset for encoder fine-tuning | module | `chunksTbl` table, `yMat` matrix | dataset struct | @todo | stub |
 | weakRules | Generate weak labels for chunks | module | `chunkTbl` table | sparse matrix `bootLabelMat` | @todo | stub |
 | docEmbeddingsBertGpu | Embed chunks using BERT on GPU | module | `chunkTbl` table | embedding matrix `embeddingMat` | @todo | stub |
 | precomputeEmbeddings | Precompute embeddings for chunks | module | `chunkTbl` table | embedding matrix `embeddingMat` | @todo | stub |
@@ -85,7 +86,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 | startup | project object | none | adds repo paths, sets defaults |
 | shutdown | project object | none | removes repo paths, restores defaults |
 | reg.ingestPdfs | inputDir string | docsTbl table `{docId,text}` | reads PDFs, OCR fallback |
-| reg.chunkText | docsTbl table, chunkSizeTokens double, chunkOverlap double | chunks table `{chunkId,docId,text}` | none |
+| reg.chunkText | docsTbl table, chunkSizeTokens double, chunkOverlap double | chunksTbl table `{chunkId,docId,text}` | none |
 | reg.weakRules | text array, labels array | sparse matrix `Yweak` | none |
 | reg.ftBuildContrastiveDataset | chunks table, `bootLabelMat` matrix | `contrastiveDatasetTbl` table | none |
 | reg.ftTrainEncoder | `contrastiveDatasetTbl` table, unfreezeTop double | `fineTunedEncoderStruct` struct | updates model weights |
