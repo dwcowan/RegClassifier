@@ -1,13 +1,15 @@
 # Identifier Registry
 
-This is the **single source of truth** for classes, functions, variables, constants, files/modules, tests, and other identifiers.
+
+This is the **single source of truth** for classes, functions, variables, constants, files/modules, tests, and other identifiers, that are defined in the project.
 Update it via PR and keep it in sync with code.
+
 
 > Tip: In code, add grep-able breadcrumbs like `%% NAME-REGISTRY:CLASS InvoiceProcessor` (MATLAB), `# NAME-REGISTRY:FUNCTION parseDocument`, or `# NAME-REGISTRY:TEST testParseDocument` so you can jump from code → registry.
 
 ---
 
-## Conventions (Authoritative)
+## Conventions 
 
 - **Classes:** `PascalCase` (e.g., `InvoiceProcessor`)
 - **Functions:** `camelCase` (e.g., `parseDocument`)
