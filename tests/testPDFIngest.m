@@ -10,6 +10,11 @@ end
 
 %TESTPDFINGESTREADSPDFS Verify PDF ingestion reads provided files.
 function testPDFIngestReadsPdfs(testCase)
-    reg.ingestPdfs({});
-    testCase.assumeFail('Not implemented yet');
+    pdfPathsCell = minimalPdfPathsCell();
+    docTbl = reg.ingestPdfs(pdfPathsCell);
+    testCase.verifyClass(docTbl, 'table');
+end
+
+function pdfPathsCell = minimalPdfPathsCell()
+    pdfPathsCell = {};
 end

@@ -10,6 +10,12 @@ end
 
 %TESTPROJECTIONHEADSIMULATEDTRAINSHEAD Check projection head training pathway.
 function testProjectionHeadSimulatedTrainsHead(testCase)
-    reg.trainProjectionHead([], []);
-    testCase.assumeFail('Not implemented yet');
+    [xMat, yMat] = minimalTrainingMats();
+    headStruct = reg.trainProjectionHead(xMat, yMat);
+    testCase.verifyClass(headStruct, 'struct');
+end
+
+function [xMat, yMat] = minimalTrainingMats()
+    xMat = zeros(0, 0);
+    yMat = zeros(0, 0);
 end

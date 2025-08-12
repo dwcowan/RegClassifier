@@ -10,7 +10,20 @@ end
 
 %TESTRULESANDMODELTRAINSMODEL Train weak rules and baseline model.
 function testRulesAndModelTrainsModel(testCase)
-    reg.weakRules(table());
-    reg.trainMultilabel([], []);
-    testCase.assumeFail('Not implemented yet');
+    chunkTbl = minimalChunkTbl();
+    yBootMat = reg.weakRules(chunkTbl);
+    testCase.verifyTrue(issparse(yBootMat));
+
+    [xMat, yMat] = minimalTrainingData();
+    modelStruct = reg.trainMultilabel(xMat, yMat);
+    testCase.verifyClass(modelStruct, 'struct');
+end
+
+function chunkTbl = minimalChunkTbl()
+    chunkTbl = table();
+end
+
+function [xMat, yMat] = minimalTrainingData()
+    xMat = zeros(0, 0);
+    yMat = zeros(0, 0);
 end
