@@ -54,8 +54,22 @@ Keep the illustrative examples below in sync with the current naming conventions
 | Name | Purpose | Scope | Input Contract | Output Contract | Owner | Notes |
 |------|---------|-------|----------------|-----------------|-------|------|
 | parseDocument | Convert raw text into tokens | module | `text` string | token array | @janedoe | example |
-|  |  |  |  |  |  |
-
+| ingestPdfs | Convert PDFs into text documents | module | `pdfPathsCell` cell array | `docTbl` table | @todo | stub |
+| chunkText | Split documents into token chunks | module | `docTbl`, `chunkSizeTokens`, `chunkOverlap` | `chunkTbl` table | @todo | stub |
+| weakRules | Generate weak labels for chunks | module | `chunkTbl` table | sparse matrix `yBootMat` | @todo | stub |
+| docEmbeddingsBertGpu | Embed chunks using BERT on GPU | module | `chunkTbl` table | embedding matrix `xMat` | @todo | stub |
+| precomputeEmbeddings | Precompute embeddings for chunks | module | `chunkTbl` table | embedding matrix `xMat` | @todo | stub |
+| trainMultilabel | Train multi-label classifier | module | `xMat` matrix, `yMat` matrix | model struct | @todo | stub |
+| hybridSearch | Retrieve documents with hybrid search | module | `queryStr` string, `xMat` matrix, `docTbl` table | results table | @todo | stub |
+| trainProjectionHead | Train projection head on embeddings | module | `xMat` matrix, `yMat` matrix | head struct | @todo | stub |
+| ftBuildContrastiveDataset | Build dataset for encoder fine-tuning | module | `chunkTbl` table, `yMat` matrix | dataset struct | @todo | stub |
+| ftTrainEncoder | Fine-tune encoder on contrastive dataset | module | `dsStruct` struct | encoder struct | @todo | stub |
+| evalRetrieval | Evaluate retrieval metrics | module | `resultsTbl` table, `goldTbl` table | metrics struct | @todo | stub |
+| evalPerLabel | Compute per-label metrics | module | `predYMat` matrix, `trueYMat` matrix | metrics table | @todo | stub |
+| loadGold | Load gold annotation data | module | `pathStr` string | `goldTbl` table | @todo | stub |
+| crrDiffVersions | Compare CRR versions | module | `oldPathStr` string, `newPathStr` string | diff struct | @todo | stub |
+| crrDiffArticles | Compare CRR articles | module | `articleId` string, `versionA` string, `versionB` string | diff struct | @todo | stub |
+
 ## Variables
 
 | Name | Purpose | Scope | Type | Default | Constraints | Notes |
@@ -75,7 +89,21 @@ Keep the illustrative examples below in sync with the current naming conventions
 | File | Purpose | Public API | Owner | Notes |
 |------|---------|-----------|-------|------|
 | pdfIngest.m | Read PDFs into text | pdfIngest | @janedoe | example |
-
+| ingestPdfs.m | Convert PDFs into text documents | ingestPdfs | @todo | stub |
+| chunkText.m | Split documents into token chunks | chunkText | @todo | stub |
+| weakRules.m | Generate weak labels for chunks | weakRules | @todo | stub |
+| docEmbeddingsBertGpu.m | Embed chunks using BERT on GPU | docEmbeddingsBertGpu | @todo | stub |
+| precomputeEmbeddings.m | Precompute embeddings for chunks | precomputeEmbeddings | @todo | stub |
+| trainMultilabel.m | Train multi-label classifier | trainMultilabel | @todo | stub |
+| hybridSearch.m | Retrieve documents with hybrid search | hybridSearch | @todo | stub |
+| trainProjectionHead.m | Train projection head on embeddings | trainProjectionHead | @todo | stub |
+| ftBuildContrastiveDataset.m | Build dataset for encoder fine-tuning | ftBuildContrastiveDataset | @todo | stub |
+| ftTrainEncoder.m | Fine-tune encoder on contrastive dataset | ftTrainEncoder | @todo | stub |
+| evalRetrieval.m | Evaluate retrieval metrics | evalRetrieval | @todo | stub |
+| evalPerLabel.m | Compute per-label metrics | evalPerLabel | @todo | stub |
+| loadGold.m | Load gold annotation data | loadGold | @todo | stub |
+| crrDiffVersions.m | Compare CRR versions | crrDiffVersions | @todo | stub |
+| crrDiffArticles.m | Compare CRR articles | crrDiffArticles | @todo | stub |
 
 
 
@@ -89,6 +117,22 @@ Common test scopes or prefixes include:
 - `TestIntegration` for integration scenarios
 - `TestSmoke` for smoke tests
 
+| Name | Purpose | Related Functions | Notes |
+|------|---------|-------------------|-------|
+| TestPDFIngest | Stub test for ingestPdfs | ingestPdfs | stub |
+| TestIngestAndChunk | Stub test for ingestion and chunking | ingestPdfs, chunkText | stub |
+| TestRulesAndModel | Stub test for weak rules and model | weakRules, trainMultilabel | stub |
+| TestFeatures | Stub test for embedding generation | docEmbeddingsBertGpu, precomputeEmbeddings | stub |
+| TestRegressionMetricsSimulated | Stub test for regression metrics | trainMultilabel, evalPerLabel | stub |
+| TestHybridSearch | Stub test for hybrid search | hybridSearch | stub |
+| TestProjectionHeadSimulated | Stub test for projection head training | trainProjectionHead | stub |
+| TestProjectionAutoloadPipeline | Stub test for projection head autoload | trainProjectionHead | stub |
+| TestFineTuneSmoke | Stub test for encoder fine-tuning smoke | ftBuildContrastiveDataset, ftTrainEncoder | stub |
+| TestFineTuneResume | Stub test for fine-tune resume | ftTrainEncoder | stub |
+| TestMetricsExpectedJSON | Stub test for metrics JSON | evalRetrieval | stub |
+| TestGoldMetrics | Stub test for gold metrics | loadGold, evalPerLabel | stub |
+| TestReportArtifact | Stub test for report generation | evalRetrieval | stub |
+| TestFetchers | Stub test for fetch utilities | crrDiffVersions, crrDiffArticles | stub |
 
 ---
 
@@ -103,4 +147,5 @@ Common test scopes or prefixes include:
 ## Changelog
 
 - YYYY-MM-DD: Initial registry created.
+- 2025-08-12: Stub modules and tests added.
 
