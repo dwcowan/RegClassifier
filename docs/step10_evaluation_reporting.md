@@ -40,11 +40,15 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
   reg_eval_gold
   ```
 
-See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for metric schema references.
+See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for metric and `RetrievalResult` schema references.
 
 
 ## Verification
 - Report files such as `reg_eval_report.pdf` and metric CSVs are created.
+- Retrieval results table includes expected columns:
+  ```matlab
+  assert(all(ismember({'docId','score'}, resultsTbl.Properties.VariableNames)));
+  ```
 - Run evaluation tests:
   ```matlab
   runtests({'tests/testMetricsExpectedJSON.m', ...
