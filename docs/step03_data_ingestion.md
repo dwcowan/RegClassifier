@@ -11,12 +11,12 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 2. Before running `reg.ingestPdfs`, either copy PDFs into `data/pdfs` or update `pipeline.json` to read from `data/raw`.
 3. In MATLAB, call the ingestion routine:
    ```matlab
-   docs = reg.ingestPdfs('data/pdfs');
+   docsTbl = reg.ingestPdfs('data/pdfs');
    ```
 4. The function extracts text from each PDF. Image-only pages fall back to OCR if the Report Generator toolbox is installed.
 5. Save the resulting table for later steps:
    ```matlab
-   save('data/docs.mat','docs')
+   save('data/docsTbl.mat','docsTbl')
    ```
 
 ## Function Interface
@@ -24,18 +24,18 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 ### reg.ingestPdfs
 - **Parameters:**
   - `inputDir` (string): folder containing source PDFs.
-- **Returns:** table `docs` with columns `docId` (string) and `text` (string).
+- **Returns:** table `docsTbl` with columns `docId` (string) and `text` (string).
 - **Side Effects:** reads PDFs from disk and uses OCR for image-only pages.
 - **Usage Example:**
   ```matlab
-  docs = reg.ingestPdfs("data/pdfs_mock");
+  docsTbl = reg.ingestPdfs("data/pdfs_mock");
   ```
 
 See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schema.
 
 
 ## Verification
-- `docs` is a table with columns such as `docId` and `text`.
+- `docsTbl` is a table with columns such as `docId` and `text`.
 - Run the unit test for ingestion:
   ```matlab
   runtests('tests/testPDFIngest.m')
