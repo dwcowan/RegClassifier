@@ -13,7 +13,7 @@
     "pass": "pass",
     "server": "localhost",
     "port": 5432,
-    "sqlite_path": "./data/db/my_reg_topics.sqlite"
+    "sqlite_path": "data/db/my_reg_topics.sqlite"
   },
   "report_title": "Banking Regulation Topic Classifier — Snapshot"
 }
