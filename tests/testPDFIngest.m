@@ -8,7 +8,8 @@ function tests = testPDFIngest
 tests = functiontests(localfunctions);
 end
 
-function testPlaceholder(testCase)
+%TESTPDFINGESTREADSPDFS Verify PDF ingestion reads provided files.
+function testPDFIngestReadsPdfs(testCase)
     reg.ingestPdfs({});
     testCase.assumeFail('Not implemented yet');
 end

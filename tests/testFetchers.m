@@ -8,7 +8,8 @@ function tests = testFetchers
 tests = functiontests(localfunctions);
 end
 
-function testPlaceholder(testCase)
+%TESTFETCHERSHANDLESDIFFS Ensure diff fetch utilities run without errors.
+function testFetchersHandlesDiffs(testCase)
     reg.crrDiffVersions('', '');
     reg.crrDiffArticles('', '', '');
     testCase.assumeFail('Not implemented yet');

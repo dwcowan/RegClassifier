@@ -8,7 +8,8 @@ function tests = testMetricsExpectedJSON
 tests = functiontests(localfunctions);
 end
 
-function testPlaceholder(testCase)
+%TESTMETRICSEXPECTEDJSONMATCHESSCHEMA Confirm metrics JSON matches expected schema.
+function testMetricsExpectedJSONMatchesSchema(testCase)
     reg.evalRetrieval(table(), table());
     testCase.assumeFail('Not implemented yet');
 end

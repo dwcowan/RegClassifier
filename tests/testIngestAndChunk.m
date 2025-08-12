@@ -8,7 +8,8 @@ function tests = testIngestAndChunk
 tests = functiontests(localfunctions);
 end
 
-function testPlaceholder(testCase)
+%TESTINGESTANDCHUNKPROCESSESDOCUMENTS Validate document ingestion and chunking pipeline.
+function testIngestAndChunkProcessesDocuments(testCase)
     reg.ingestPdfs({});
     reg.chunkText(table(), 0, 0);
     testCase.assumeFail('Not implemented yet');

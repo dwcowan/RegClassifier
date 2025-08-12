@@ -8,7 +8,8 @@ function tests = testRulesAndModel
 tests = functiontests(localfunctions);
 end
 
-function testPlaceholder(testCase)
+%TESTRULESANDMODELTRAINSMODEL Train weak rules and baseline model.
+function testRulesAndModelTrainsModel(testCase)
     reg.weakRules(table());
     reg.trainMultilabel([], []);
     testCase.assumeFail('Not implemented yet');

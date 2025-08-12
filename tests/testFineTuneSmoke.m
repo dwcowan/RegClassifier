@@ -8,7 +8,8 @@ function tests = testFineTuneSmoke
 tests = functiontests(localfunctions);
 end
 
-function testPlaceholder(testCase)
+%TESTFINETUNESMOKERUNSENDTOEND Run encoder fine-tuning end-to-end.
+function testFineTuneSmokeRunsEndToEnd(testCase)
     reg.ftBuildContrastiveDataset(table(), []);
     reg.ftTrainEncoder(struct());
     testCase.assumeFail('Not implemented yet');
