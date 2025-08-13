@@ -137,7 +137,7 @@ Record each test with a scope identifying its coverage type:
 - `integration` – cross-module interactions
 - `regression` – verifies outputs against known good simulated data to guard against unintended changes
 
-For regression entries, specify the simulated dataset path, expected output, and dataset owner used as the baseline.
+Regression entries must include the simulated dataset path, expected output, and dataset owner used as the baseline. Future regression tests without these fields will not be accepted.
 
 | Name | Purpose | Scope | Owner | Related Functions | Golden Dataset Path | Expected Output | Dataset Owner | Notes |
 |------|---------|-------|-------|-------------------|---------------------|-----------------|---------------|-------|
