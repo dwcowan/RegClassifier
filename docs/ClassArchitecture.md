@@ -243,22 +243,22 @@ classdef baselineModelClass
     %BASELINEMODEL Multi-label classifier and hybrid retrieval index.
 
     properties (Access=public)
-        labelMat     % double Mat: Label matrix
-        embeddingMat % double Mat: Embedding matrix
-        weightMat    % double Mat: Model weights
+        labelMatrixObj % labelMatrixClass: Weak labels
+        embeddingVec   % embeddingClass Vec: Embeddings
+        weightMat      % double Mat: Model weights
     end
 
     methods (Access=public)
-        function obj = baselineModelClass(labelMat, embeddingMat)
+        function obj = baselineModelClass(labelMatrixObj, embeddingVec)
             %BASELINEMODELCLASS Construct baseline model.
-            %   obj = baselineModelClass(labelMat, embeddingMat)
-            %   labelMat (double Mat): Label matrix.
-            %   embeddingMat (double Mat): Embedding matrix.
+            %   obj = baselineModelClass(labelMatrixObj, embeddingVec)
+            %   labelMatrixObj (labelMatrixClass): Weak labels.
+            %   embeddingVec (embeddingClass Vec): Embeddings.
             %   obj (baselineModelClass): New instance.
             %
             %   Side effects: none.
-            obj.labelMat = labelMat;
-            obj.embeddingMat = embeddingMat;
+            obj.labelMatrixObj = labelMatrixObj;
+            obj.embeddingVec = embeddingVec;
             obj.weightMat = [];
         end
 
@@ -272,22 +272,22 @@ classdef baselineModelClass
             %   Side effects: updates weightMat.
         end
 
-        function probabilityVec = predict(obj, embeddingVec)
+        function probabilityVec = predict(obj, embeddingObj)
             %PREDICT Predict label probabilities for a single embedding.
-            %   probabilityVec = predict(obj, embeddingVec)
+            %   probabilityVec = predict(obj, embeddingObj)
             %   obj (baselineModelClass): Instance.
-            %   embeddingVec (double Vec): Input embedding.
+            %   embeddingObj (embeddingClass): Input embedding.
             %   probabilityVec (double Vec): Predicted probabilities.
             %
             %   Side effects: none.
             probabilityVec = [];
         end
 
-        function chunkVec = retrieve(obj, queryEmbeddingVec, topK)
+        function chunkVec = retrieve(obj, queryEmbeddingObj, topK)
             %RETRIEVE Retrieve top chunks for query embedding.
-            %   chunkVec = retrieve(obj, queryEmbeddingVec, topK)
+            %   chunkVec = retrieve(obj, queryEmbeddingObj, topK)
             %   obj (baselineModelClass): Instance.
-            %   queryEmbeddingVec (double Vec): Query embedding.
+            %   queryEmbeddingObj (embeddingClass): Query embedding.
             %   topK (double): Number of results.
             %   chunkVec (chunkClass Vec): Retrieved chunks.
             %
@@ -662,16 +662,16 @@ classdef baselineControllerClass
             model = baselineModel;
         end
 
-        function chunkVec = retrieve(~, model, queryEmbeddingVec, topK)
+        function chunkVec = retrieve(~, model, queryEmbeddingObj, topK)
             %RETRIEVE Retrieve top chunks using model.
-            %   chunkVec = retrieve(obj, model, queryEmbeddingVec, topK)
+            %   chunkVec = retrieve(obj, model, queryEmbeddingObj, topK)
             %   model (baselineModelClass): Model to query.
-            %   queryEmbeddingVec (double Vec): Query embedding.
+            %   queryEmbeddingObj (embeddingClass): Query embedding.
             %   topK (double): Number of results.
             %   chunkVec (chunkClass Vec): Retrieved chunks.
             %
             %   Side effects: none.
-            chunkVec = model.retrieve(queryEmbeddingVec, topK);
+            chunkVec = model.retrieve(queryEmbeddingObj, topK);
         end
     end
 end
