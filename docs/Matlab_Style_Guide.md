@@ -147,6 +147,31 @@ Class names, class properties, class methods, and interface definitions must als
   ```
 
 
+### 2.10 Property Validation
+- Validate class properties in `properties` blocks using size, type, or `mustBe*` constraints.
+- For complex or dynamic checks, use `validateattributes` within constructors or setter methods.
+
+```matlab
+classdef Person
+    properties (1,1) string {mustBeNonempty}
+        Name
+    end
+
+    properties (1,1) double
+        Age
+    end
+
+    methods
+        function obj = Person(name, age)
+            obj.Name = name;
+            validateattributes(age, {'double'}, {'scalar','positive'});
+            obj.Age = age;
+        end
+    end
+end
+```
+
+
 ### 3. Testing
 - Store tests in a `tests/` folder mirroring source structure.
 - Name each test file `testName.m` and ensure the function or class name matches the file.
