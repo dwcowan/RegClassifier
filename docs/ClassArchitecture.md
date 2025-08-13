@@ -643,8 +643,9 @@ classdef baselineControllerClass
             %   model (baselineModelClass): Trained model.
             %
             %   Side effects: none.
-            model = model.baselineModelClass(labelMatrixObj, embeddingVec);
-            model.train(numEpochs, learningRate);
+            baselineModel = model.baselineModelClass(labelMatrixObj, embeddingVec);
+            baselineModel.train(numEpochs, learningRate);
+            model = baselineModel;
         end
 
         function chunkVec = retrieve(~, model, queryEmbeddingVec, topK)

@@ -8,6 +8,8 @@
 
 Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeletons before beginning this step.
 
+Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new identifiers introduced in this step.
+
 1. Run the evaluation script to compute retrieval metrics and generate a PDF report:
 
    ```matlab
@@ -15,7 +17,8 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
    ```
 2. Optional: evaluate against a gold mini-pack if available:
    ```matlab
-   goldTbl = reg.loadGold('path/to/gold');
+   goldPath = 'path/to/gold';
+   goldTbl = reg.loadGold(goldPath);
    reg.evalPerLabel(predYMat, goldTbl.y);
    ```
 3. Inspect generated artifacts in the `reports` or `output` folder.
@@ -33,12 +36,13 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 
 ### reg.loadGold
 - **Parameters:**
-  - `pathStr` (string): location of gold annotations.
+  - `goldPath` (string): location of gold annotations.
 - **Returns:** table `goldTbl` of annotations.
 - **Side Effects:** reads curated annotation packs if available.
 - **Usage Example:**
   ```matlab
-  goldTbl = reg.loadGold('path/to/gold');
+  goldPath = 'path/to/gold';
+  goldTbl = reg.loadGold(goldPath);
   ```
 
 
@@ -53,7 +57,7 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
   reg.evalPerLabel(predYMat, goldTbl.y);
   ```
 
-See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for metric schema references. – Data Contracts](identifier_registry.md#data-contracts) for metric schema references.
+See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for metric schema references.
 
 
 

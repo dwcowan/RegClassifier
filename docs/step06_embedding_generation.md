@@ -7,13 +7,15 @@
 ## Instructions
 Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeletons before beginning this step.
 
-1. Load chunk data:
+Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new identifiers introduced in this step.
+
+1. Load chunk table:
    ```matlab
-   load('data/chunks.mat','chunks')
+   load('data/chunksTbl.mat','chunksTbl')
    ```
 2. Generate embeddings with the GPU-enabled BERT encoder:
    ```matlab
-   embeddingMat = reg.docEmbeddingsBertGpu(chunks);
+   embeddingMat = reg.docEmbeddingsBertGpu(chunksTbl);
    ```
    If a GPU is unavailable, the function automatically falls back to a CPU-friendly model.
 3. Cache embeddings for reuse:
@@ -25,12 +27,12 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 
 ### reg.docEmbeddingsBertGpu
 - **Parameters:**
-  - `chunks` (table): as defined in Step 4.
+  - `chunksTbl` (table): as defined in Step 4.
 - **Returns:** double matrix `embeddingMat` of size `[numChunks x 768]` by default.
 - **Side Effects:** loads BERT weights and uses GPU when available.
 - **Usage Example:**
   ```matlab
-  embeddingMat = reg.docEmbeddingsBertGpu(chunks);
+  embeddingMat = reg.docEmbeddingsBertGpu(chunksTbl);
   ```
 
 ### reg.precomputeEmbeddings
