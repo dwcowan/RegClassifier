@@ -47,7 +47,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 
 | Name | Purpose | Scope | Owner | Related Files | Notes |
 |------|---------|-------|-------|---------------|-------|
-| PipelineController | Orchestrate module controllers based on config | module | @todo | +reg/PipelineController.m | coordinates modules |
+| pipelineControllerClass | Orchestrate module controllers based on config | module | @todo | +reg/pipelineControllerClass.m | coordinates modules |
 
 
 
@@ -58,7 +58,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 
 | Class | Property | Type | Description |
 |-------|----------|------|-------------|
-| [BaselineModel](ClassArchitecture.md#L164-L194) | [weightMat](ClassArchitecture.md#L171) | double matrix | Learned classifier weights |
+| [baselineModelClass](ClassArchitecture.md#L164-L194) | [weightMat](ClassArchitecture.md#L171) | double matrix | Learned classifier weights |
 
 
 > **Note:** List every new or renamed class property here and follow `lowerCamelCase` naming.
@@ -66,15 +66,15 @@ Keep the illustrative examples below in sync with the current naming conventions
 ## Class Methods
 | Name | Class | Purpose | Notes |
 |------|-------|---------|-------|
-| [train](ClassArchitecture.md#L181-L183) | [BaselineModel](ClassArchitecture.md#L164-L194) | Fit classifier weights to embeddings and labels | |
-| tokenCount | Document, Chunk | Return number of tokens in text | Renamed from `length` |
+| [train](ClassArchitecture.md#L181-L183) | [baselineModelClass](ClassArchitecture.md#L164-L194) | Fit classifier weights to embeddings and labels | |
+| tokenCount | documentClass, chunkClass | Return number of tokens in text | Renamed from `length` |
 
 > **Note:** List every new or renamed class method here and follow `lowerCamelCase` naming.
 
 ## Class Interfaces
 | Interface | Purpose | Methods | Implementing Classes | Notes |
 |-----------|---------|---------|----------------------|-------|
-| IClassifier | Standardize classifier APIs | train, predict | BaselineModel | example interface |
+| IClassifier | Standardize classifier APIs | train, predict | baselineModelClass | example interface |
 
 
 
@@ -145,7 +145,7 @@ Regression entries must include the simulated dataset path, expected output, and
 
 | Name | Purpose | Scope | Owner | Related Functions | Golden Dataset Path | Expected Output | Dataset Owner | Notes |
 |------|---------|-------|-------|-------------------|---------------------|-----------------|---------------|-------|
-| testPipelineController | Validate pipeline coordination and failure handling | integration | @todo | PipelineController | n/a | n/a | n/a | uses mocks for controllers |
+| testPipelineControllerClass | Validate pipeline coordination and failure handling | integration | @todo | pipelineControllerClass | n/a | n/a | n/a | uses mocks for controllers |
 | testConfig | Test configuration override precedence | unit | @todo | config | n/a | n/a | n/a | verifies override precedence |
 | testSmokeStartup | Quick startup path check | smoke | @todo | startup | n/a | n/a | n/a | minimal path add |
 | testIntegrationIngestToChunk | Ingest to chunk pipeline | integration | @todo | ingest, chunk | n/a | n/a | n/a | |
