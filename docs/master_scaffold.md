@@ -22,6 +22,8 @@ Each module is a class file (`classdef`) stored under `src/reg/`. Every stub inc
 | 10 | Evaluation & reporting | View | `src/reg/view/evalRetrieval.m`, `src/reg/view/evalPerLabel.m`, `src/reg/view/loadGold.m` | `tests/reg/view/testMetricsExpectedJson.m`, `tests/reg/view/testGoldMetrics.m`, `tests/reg/view/testReportArtifact.m` |
 | 11 | Data acquisition & diff utilities | Controller | `src/reg/controller/crrDiffVersions.m`, `src/reg/controller/crrDiffArticles.m` | `tests/reg/controller/testFetchers.m` |
 
+Pipeline stages interact with the data directories as follows: [Step&nbsp;4 – Data Ingestion](SYSTEM_BUILD_PLAN.md#4-data-ingestion-module) consumes PDFs from `src/data/input/` and writes normalized text to `src/data/processing/`. Subsequent transformations in [Step&nbsp;5 – Text Chunking](SYSTEM_BUILD_PLAN.md#5-text-chunking-module), [Step&nbsp;6 – Weak Labeling](SYSTEM_BUILD_PLAN.md#6-weak-labeling-module), and [Step&nbsp;7 – Embedding Generation](SYSTEM_BUILD_PLAN.md#7-embedding-generation-module) read from that processing area. Persistent artifacts beginning with [Step&nbsp;7](SYSTEM_BUILD_PLAN.md#7-embedding-generation-module) and continuing through [Step&nbsp;10 – Encoder Fine-Tuning](SYSTEM_BUILD_PLAN.md#10-encoder-fine-tuning-workflow) are stored under `src/data/datastore/`. Reporting and optional diff utilities in [Step&nbsp;11 – Evaluation & Reporting](SYSTEM_BUILD_PLAN.md#11-evaluation--reporting) and [Step&nbsp;12 – Data Acquisition & Diff Utilities](SYSTEM_BUILD_PLAN.md#12-data-acquisition--diff-utilities-optional) produce outputs in `src/data/output/`.
+
 ### MVC Components
 
 #### Model
