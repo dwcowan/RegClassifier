@@ -50,6 +50,8 @@ Short-lived helpers such as `tmp` or `idx` should remain within a few lines of u
 Place tests in the `tests/` folder and name each file `testName.m`. Test files should mirror the source structure, and each `testName.m` defines a corresponding `classdef testName` in lowerCamelCase with a `test` prefix. Each class and public method must have:
 
 - At least one unit test verifying its core behavior.
+- Every test file subclasses `matlab.unittest.TestCase` and defines `methods (TestClassSetup)` / `methods (TestClassTeardown)` or uses `addTeardown` ([Testing](Matlab_Style_Guide.md#3-testing)).
+- Each test method is named in lowerCamelCase starting with a verb and declares `TestTags` such as `Unit`, `Smoke`, `Integration`, or `Regression` ([Testing](Matlab_Style_Guide.md#3-testing)).
 - Maintain separate `Smoke` and `Regression` suites; use `matlab -batch "run_smoke_test"` to run the `Smoke` suite quickly.
 - Integration tests are optional and added when cross-module behavior warrants them.
 
