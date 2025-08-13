@@ -4,11 +4,11 @@
 > [Matlab_Style_Guide](Matlab_Style_Guide.md), [README_NAMING](README_NAMING.md),
 > [SYSTEM_BUILD_PLAN](SYSTEM_BUILD_PLAN.md), and [identifier_registry](identifier_registry.md).
 
-This document summarizes the MATLAB `+reg` package, the stub modules required for each step of the pipeline, and the matching test skeletons. Use it as the starting point for test-driven development.
+This document summarizes the MATLAB package located at `src/+reg/`, the stub modules required for each step of the pipeline, and the matching test skeletons. Use it as the starting point for test-driven development.
 
 ## Package Structure
 
-Each module is implemented as a class file (`classdef`) under `src/+reg/`. Every stub includes a `%% NAME-REGISTRY:FUNCTION` breadcrumb and a `TODO` placeholder. The table below lists the modules in build order and their paired tests.
+Each module is a class file (`classdef`) stored under `src/+reg/`. Every stub includes a `%% NAME-REGISTRY:FUNCTION` breadcrumb and a `TODO` placeholder. The table below lists the modules in build order and their paired tests.
 
 | Step | Module | Stub `.m` file | Test skeleton(s) |
 |------|--------|----------------|------------------|
