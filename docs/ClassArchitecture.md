@@ -2,15 +2,15 @@
 
 | Class           | Purpose & Key Data                                                                 |
 | --------------- | ---------------------------------------------------------------------------------- |
-| `Document`      | Represents raw PDF text with identifiers (`docId`, `text`)                         |
-| `Chunk`         | Overlapping token segments of documents (`chunkId`, `docId`, `text`)               |
-| `LabelMatrix`   | Sparse weak labels (`labelMat`) aligned to chunks and topics                       |
-| `Embedding`     | Vector representation of each chunk (`embeddingVec`) produced by BERT or fallback models |
-| `BaselineModel` | Multi‑label classifier and hybrid retrieval artifacts                              |
-| `ProjectionHead`| MLP fine-tuning frozen embeddings to enhance retrieval                             |
-| `Encoder`       | Fine‑tuned BERT weights for contrastive learning workflows                         |
-| `Metrics`       | Evaluation results and per‑label performance data                                  |
-| `CorpusVersion` | Versioned corpora for diff operations and reports (`versionId`, `documentVec`)      |
+| `documentClass` | Represents raw PDF text with identifiers (`docId`, `text`)                         |
+| `chunkClass`         | Overlapping token segments of documents (`chunkId`, `docId`, `text`)               |
+| `labelMatrixClass`   | Sparse weak labels (`labelMat`) aligned to chunks and topics                       |
+| `embeddingClass`     | Vector representation of each chunk (`embeddingVec`) produced by BERT or fallback models |
+| `baselineModelClass` | Multi‑label classifier and hybrid retrieval artifacts                              |
+| `projectionHeadClass`| MLP fine-tuning frozen embeddings to enhance retrieval                             |
+| `encoderClass`       | Fine‑tuned BERT weights for contrastive learning workflows                         |
+| `metricsClass`       | Evaluation results and per‑label performance data                                  |
+| `corpusVersionClass` | Versioned corpora for diff operations and reports (`versionId`, `documentVec`)      |
 
 
 **View Layer (+view)**
@@ -18,32 +18,32 @@
 
 | Class Path                 | Purpose                                                                        |
 | -------------------------- | ------------------------------------------------------------------------------ |
-| `+view/EvalReportView.m`   | Generates PDF/HTML reports summarizing metrics and trends\\:codex-file-citation |
-| `+view/DiffReportView.m`   | Presents HTML or PDF diffs between regulatory versions\\:codex-file-citation    |
-| `+view/MetricsPlotsView.m` | Visualizes metrics/heatmaps (e.g., coretrieval, trend plots).                  |
+| `+view/evalReportViewClass.m`   | Generates PDF/HTML reports summarizing metrics and trends\\:codex-file-citation |
+| `+view/diffReportViewClass.m`   | Presents HTML or PDF diffs between regulatory versions\\:codex-file-citation    |
+| `+view/metricsPlotsViewClass.m` | Visualizes metrics/heatmaps (e.g., coretrieval, trend plots).                  |
 
 **Controller Layer (+controller)**
 
-| Class Path                               | Purpose                                                                                                        |
-| ---------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| `+controller/IngestionController.m`      | Runs `reg.ingest_pdfs` to populate `model.Document` models\\:codex-file-citation                               |
-| `+controller/ChunkingController.m`       | Splits documents into `model.Chunk` models via `reg.chunk_text`\\:codex-file-citation                          |
-| `+controller/WeakLabelingController.m`   | Applies heuristic rules to create `model.LabelMatrix` models\\:codex-file-citation                             |
-| `+controller/EmbeddingController.m`      | Generates and caches `model.Embedding` models (`reg.doc_embeddings_bert_gpu`)\\:codex-file-citation            |
-| `+controller/BaselineController.m`       | Trains `model.BaselineModel` and serves retrieval (`reg.train_multilabel`, `reg.hybrid_search`)\\:codex-file-citation |
-| `+controller/ProjectionHeadController.m` | Fits `model.ProjectionHead` and integrates it into the pipeline\\:codex-file-citation                          |
-| `+controller/FineTuneController.m`       | Builds contrastive datasets and produces `model.Encoder` models\\:codex-file-citation                          |
-| `+controller/EvaluationController.m`     | Computes metrics and invokes `view.EvalReportView` and gold pack evaluation\\:codex-file-citation              |
-| `+controller/DataAcquisitionController.m`| Fetches regulatory corpora and triggers diff analyses with `view.DiffReportView`\\:codex-file-citation         |
-| `+controller/PipelineController.m`       | Orchestrates end‑to‑end execution based on module dependencies\\:codex-file-citation                           |
-| `+controller/TestController.m`           | Executes continuous test suite to maintain reliability\\:codex-file-citation                                   |
+| Class Path                               | Purpose                                                                       |
+| ---------------------------------------- | ----------------------------------------------------------------------------- |
+| `+controller/ingestionControllerClass.m`      | Runs `reg.ingest_pdfs` to populate `model.documentClass` models\:codex-file-citation |
+| `+controller/chunkingControllerClass.m`       | Splits documents into `model.chunkClass` models via `reg.chunk_text`\:codex-file-citation |
+| `+controller/weakLabelingControllerClass.m`   | Applies heuristic rules to create `model.labelMatrixClass` models\:codex-file-citation |
+| `+controller/embeddingControllerClass.m`      | Generates and caches `model.embeddingClass` models (`reg.doc_embeddings_bert_gpu`)\:codex-file-citation |
+| `+controller/baselineControllerClass.m`       | Trains `model.baselineModelClass` and serves retrieval (`reg.train_multilabel`, `reg.hybrid_search`)\:codex-file-citation |
+| `+controller/projectionHeadControllerClass.m` | Fits `model.projectionHeadClass` and integrates it into the pipeline\:codex-file-citation |
+| `+controller/fineTuneControllerClass.m`       | Builds contrastive datasets and produces `model.encoderClass` models\:codex-file-citation |
+| `+controller/evaluationControllerClass.m`     | Computes metrics and invokes `view.evalReportViewClass` and gold pack evaluation\:codex-file-citation |
+| `+controller/dataAcquisitionControllerClass.m`| Fetches regulatory corpora and triggers diff analyses with `view.diffReportViewClass`\:codex-file-citation |
+| `+controller/pipelineControllerClass.m`       | Orchestrates end‑to‑end execution based on module dependencies\:codex-file-citation |
+| `+controller/testControllerClass.m`           | Executes continuous test suite to maintain reliability\:codex-file-citation |
 
 ## Class Definitions
 
 **Model Layer (+model)**
 
-% +model/Document.m
-classdef Document
+% +model/documentClass.m
+classdef documentClass
     %DOCUMENT Represents a regulatory PDF document.
     
     properties
@@ -52,7 +52,7 @@ classdef Document
     end
 
     methods
-        function obj = Document(docId, text)
+        function obj = documentClass(docId, text)
             obj.docId = docId;
             obj.text = text;
         end
@@ -62,16 +62,16 @@ classdef Document
             n = numel(obj.text);
         end
         
-        function md = metadata(obj)
+        function metadataStruct = metadata(obj)
             % Return additional metadata (source, title, etc.).
-            md = struct();
+            metadataStruct = struct();
         end
     end
 end
 
 
-% +model/Chunk.m
-classdef Chunk
+% +model/chunkClass.m
+classdef chunkClass
     %CHUNK Overlapping text segment from a document.
     
     properties
@@ -83,7 +83,7 @@ classdef Chunk
     end
 
     methods
-        function obj = Chunk(chunkId, docId, text, startIndex, endIndex)
+        function obj = chunkClass(chunkId, docId, text, startIndex, endIndex)
             obj.chunkId = chunkId;
             obj.docId = docId;
             obj.text = text;
@@ -104,8 +104,8 @@ classdef Chunk
 end
 
 
-% +model/LabelMatrix.m
-classdef LabelMatrix
+% +model/labelMatrixClass.m
+classdef labelMatrixClass
     %LABELMATRIX Sparse weak labels per chunk and topic.
     
     properties
@@ -115,7 +115,7 @@ classdef LabelMatrix
     end
 
     methods
-        function obj = LabelMatrix(chunkIdVec, topicIdVec, labelMat)
+        function obj = labelMatrixClass(chunkIdVec, topicIdVec, labelMat)
             obj.chunkIdVec = chunkIdVec;
             obj.topicIdVec = topicIdVec;
             obj.labelMat = labelMat;
@@ -133,8 +133,8 @@ classdef LabelMatrix
 end
 
 
-% +model/Embedding.m
-classdef Embedding
+% +model/embeddingClass.m
+classdef embeddingClass
     %EMBEDDING Vector representation of a chunk.
     
     properties
@@ -144,7 +144,7 @@ classdef Embedding
     end
 
     methods
-        function obj = Embedding(chunkId, embeddingVec, modelName)
+        function obj = embeddingClass(chunkId, embeddingVec, modelName)
             obj.chunkId = chunkId;
             obj.embeddingVec = embeddingVec;
             obj.modelName = modelName;
@@ -161,8 +161,8 @@ classdef Embedding
     end
 end
 
-% +model/BaselineModel.m
-classdef BaselineModel
+% +model/baselineModelClass.m
+classdef baselineModelClass
     %BASELINEMODEL Multi-label classifier and hybrid retrieval index.
     
     properties
@@ -172,19 +172,19 @@ classdef BaselineModel
     end
 
     methods
-        function obj = BaselineModel(labelMat, embeddingMat)
+        function obj = baselineModelClass(labelMat, embeddingMat)
             obj.labelMat = labelMat;
             obj.embeddingMat = embeddingMat;
             obj.weightMat = [];
         end
-        
-        function train(obj, epochs, lr)
+
+        function train(obj, numEpochs, learningRate)
             % Train the classifier.
         end
-        
-        function probs = predict(obj, embeddingVec)
+
+        function probabilityVec = predict(obj, embeddingVec)
             % Predict label probabilities for a single embedding.
-            probs = [];
+            probabilityVec = [];
         end
         
         function save(obj, path)
@@ -195,8 +195,8 @@ end
 
 
 
-% +model/ProjectionHead.m
-classdef ProjectionHead
+% +model/projectionHeadClass.m
+classdef projectionHeadClass
     %PROJECTIONHEAD MLP or shallow network for embedding transformation.
     
     properties
@@ -206,26 +206,26 @@ classdef ProjectionHead
     end
 
     methods
-        function obj = ProjectionHead(inputDim, outputDim)
+        function obj = projectionHeadClass(inputDim, outputDim)
             obj.inputDim = inputDim;
             obj.outputDim = outputDim;
             obj.paramStruct = struct();
         end
-        
-        function fit(obj, X, Y, epochs, lr)
+
+        function fit(obj, embeddingMat, labelMat, numEpochs, learningRate)
             % Train projection head.
         end
-        
-        function Xtrans = transform(obj, X)
+
+        function embeddingMatTrans = transform(obj, embeddingMat)
             % Apply transformation to embeddings.
-            Xtrans = [];
+            embeddingMatTrans = [];
         end
     end
 end
 
 
-% +model/Encoder.m
-classdef Encoder
+% +model/encoderClass.m
+classdef encoderClass
     %ENCODER Fine-tuned model for contrastive learning.
     
     properties
@@ -234,12 +234,12 @@ classdef Encoder
     end
 
     methods
-        function obj = Encoder(baseModel)
+        function obj = encoderClass(baseModel)
             obj.baseModel = baseModel;
             obj.stateStruct = [];
         end
-        
-        function fineTune(obj, dataset, epochs, lr)
+
+        function fineTune(obj, dataset, numEpochs, learningRate)
             % Contrastive fine-tuning procedure.
         end
         
@@ -251,8 +251,8 @@ classdef Encoder
 end
 
 
-% +model/Metrics.m
-classdef Metrics
+% +model/metricsClass.m
+classdef metricsClass
     %METRICS Encapsulates evaluation results.
     
     properties
@@ -261,7 +261,7 @@ classdef Metrics
     end
 
     methods
-        function obj = Metrics(metricName, scoreStruct)
+        function obj = metricsClass(metricName, scoreStruct)
             obj.metricName = metricName;
             obj.scoreStruct = scoreStruct;
         end
@@ -274,17 +274,17 @@ classdef Metrics
 end
 
 
-% +model/CorpusVersion.m
-classdef CorpusVersion
+% +model/corpusVersionClass.m
+classdef corpusVersionClass
     %CORPUSVERSION Versioned corpus handling for diff operations.
     
     properties
         versionId
-        documentVec  % Array of Document
+        documentVec  % Array of documentClass
     end
 
     methods
-        function obj = CorpusVersion(versionId, documentVec)
+        function obj = corpusVersionClass(versionId, documentVec)
             obj.versionId = versionId;
             obj.documentVec = documentVec;
         end
@@ -299,8 +299,8 @@ end
 
 **View Layer (+view)**
 
-% +view/EvalReportView.m
-classdef EvalReportView
+% +view/evalReportViewClass.m
+classdef evalReportViewClass
     %EVALREPORTVIEW Renders evaluation metrics into report format.
     
     methods
@@ -314,8 +314,8 @@ classdef EvalReportView
     end
 end
 
-% +view/DiffReportView.m
-classdef DiffReportView
+% +view/diffReportViewClass.m
+classdef diffReportViewClass
     %DIFFREPORTVIEW Renders document diffs between corpus versions.
     
     methods
@@ -329,8 +329,8 @@ classdef DiffReportView
 end
 
 
-% +view/MetricsPlotsView.m
-classdef MetricsPlotsView
+% +view/metricsPlotsViewClass.m
+classdef metricsPlotsViewClass
     %METRICSPLOTSVIEW Creates visual plots for metrics and trends.
     
     methods
@@ -347,9 +347,9 @@ end
 
 **Controller Layer (+controller)**
 
-% +controller/IngestionController.m
-classdef IngestionController
-    %INGESTIONCONTROLLER Parses PDFs and returns Document objects.
+% +controller/ingestionControllerClass.m
+classdef ingestionControllerClass
+    %INGESTIONCONTROLLER Parses PDFs and returns documentClass objects.
     
     methods
         function documentVec = run(~, sourcePaths)
@@ -359,8 +359,8 @@ classdef IngestionController
 end
 
 
-% +controller/ChunkingController.m
-classdef ChunkingController
+% +controller/chunkingControllerClass.m
+classdef chunkingControllerClass
     %CHUNKINGCONTROLLER Splits documents into overlapping chunks.
     
     methods
@@ -370,8 +370,8 @@ classdef ChunkingController
     end
 end
 
-% +controller/WeakLabelingController.m
-classdef WeakLabelingController
+% +controller/weakLabelingControllerClass.m
+classdef weakLabelingControllerClass
     %WEAKLABELINGCONTROLLER Applies heuristic rules to label chunks.
     
     methods
@@ -382,8 +382,8 @@ classdef WeakLabelingController
 end
 
 
-% +controller/EmbeddingController.m
-classdef EmbeddingController
+% +controller/embeddingControllerClass.m
+classdef embeddingControllerClass
     %EMBEDDINGCONTROLLER Generates embeddings for chunks.
     
     methods
@@ -394,8 +394,8 @@ classdef EmbeddingController
 end
 
 
-% +controller/BaselineController.m
-classdef BaselineController
+% +controller/baselineControllerClass.m
+classdef baselineControllerClass
     %BASELINECONTROLLER Trains baseline classifier and serves retrieval.
     
     methods
@@ -409,8 +409,8 @@ classdef BaselineController
     end
 end
 
-% +controller/ProjectionHeadController.m
-classdef ProjectionHeadController
+% +controller/projectionHeadControllerClass.m
+classdef projectionHeadControllerClass
     %PROJECTIONHEADCONTROLLER Manages projection head training and usage.
     
     methods
@@ -425,8 +425,8 @@ classdef ProjectionHeadController
 end
 
 
-% +controller/FineTuneController.m
-classdef FineTuneController
+% +controller/fineTuneControllerClass.m
+classdef fineTuneControllerClass
     %FINETUNECONTROLLER Fine-tunes base models.
     
     methods
@@ -437,8 +437,8 @@ classdef FineTuneController
 end
 
 
-% +controller/EvaluationController.m
-classdef EvaluationController
+% +controller/evaluationControllerClass.m
+classdef evaluationControllerClass
     %EVALUATIONCONTROLLER Computes metrics and generates reports.
     
     methods
@@ -453,8 +453,8 @@ classdef EvaluationController
 end
 
 
-% +controller/DataAcquisitionController.m
-classdef DataAcquisitionController
+% +controller/dataAcquisitionControllerClass.m
+classdef dataAcquisitionControllerClass
     %DATAACQUISITIONCONTROLLER Fetches corpora and runs diffs.
     
     methods
@@ -463,14 +463,14 @@ classdef DataAcquisitionController
         end
         
         function diffVersions(~, oldVersionId, newVersionId, outDir)
-            % Run diff and trigger DiffReportView.
+            % Run diff and trigger diffReportViewClass.
         end
     end
 end
 
 
-% +controller/PipelineController.m
-classdef PipelineController
+% +controller/pipelineControllerClass.m
+classdef pipelineControllerClass
     %PIPELINECONTROLLER High-level orchestration based on dependency graph.
     
     properties
@@ -478,7 +478,7 @@ classdef PipelineController
     end
 
     methods
-        function obj = PipelineController(controllerStruct)
+        function obj = pipelineControllerClass(controllerStruct)
             obj.controllerStruct = controllerStruct;
         end
 
@@ -489,8 +489,8 @@ classdef PipelineController
 end
 
 
-% +controller/TestController.m
-classdef TestController
+% +controller/testControllerClass.m
+classdef testControllerClass
     %TESTCONTROLLER Executes continuous test suite.
     
     methods
