@@ -13,7 +13,11 @@ all naming rules. All approved classes, class properties, class methods, functio
 
 ## Function and Script Names
 
-Use lowerCamelCase for all function and script names (e.g., `ingestPdfs`, `trainMultilabel`).
+Use lowerCamelCase for all function and script names (e.g., `ingestPdfs`, `trainMultilabel`). See the
+[Scripts](Matlab_Style_Guide.md#scripts) subsection of the style guide for detailed guidance.
+
+- Development scripts (e.g., `startup.m`, `run_mlint.m`) reside in the repository root or `scripts/` and are not tested.
+- Scripts that contribute to runtime behavior must live in `+helpers/` and have corresponding tests in `tests/`.
 
 ## Data-Type Suffixes
 
