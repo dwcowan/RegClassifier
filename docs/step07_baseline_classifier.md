@@ -11,8 +11,8 @@ Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new 
 
 1. Load embeddings and weak labels:
    ```matlab
-   load('data/embeddingMat.mat', 'embeddingMat');
-   load('data/bootLabelMat.mat', 'bootLabelMat');
+   load('src/data/embeddingMat.mat', 'embeddingMat');
+   load('src/data/bootLabelMat.mat', 'bootLabelMat');
    ```
 2. Train the baseline classifier:
    ```matlab

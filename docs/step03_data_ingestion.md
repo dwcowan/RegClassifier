@@ -9,16 +9,16 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 
 Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new identifiers introduced in this step.
 
-1. Place source PDFs in a folder referenced by `pipeline.json` (e.g., `data/pdfs`). Fetcher utilities save downloaded PDFs to `data/raw`.
-2. Before running `reg.ingestPdfs`, either copy PDFs into `data/pdfs` or update `pipeline.json` to read from `data/raw`.
+1. Place source PDFs in a folder referenced by `pipeline.json` (e.g., `src/data/input/pdfs`). Fetcher utilities save downloaded PDFs to `src/data/processing/raw`.
+2. Before running `reg.ingestPdfs`, either copy PDFs into `src/data/input/pdfs` or update `pipeline.json` to read from `src/data/processing/raw`.
 3. In MATLAB, call the ingestion routine:
    ```matlab
-   docsTbl = reg.ingestPdfs('data/pdfs');
+   docsTbl = reg.ingestPdfs('src/data/input/pdfs');
    ```
 4. The function extracts text from each PDF into `docsTbl`. Image-only pages fall back to OCR if the Report Generator toolbox is installed.
 5. Save `docsTbl` for later steps:
    ```matlab
-   save('data/docsTbl.mat', 'docsTbl')
+   save('src/data/docsTbl.mat', 'docsTbl')
    ```
 
 ## Function Interface
@@ -30,7 +30,7 @@ Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new 
 - **Side Effects:** reads PDFs from disk and uses OCR for image-only pages.
 - **Usage Example:**
   ```matlab
-  docsTbl = reg.ingestPdfs("data/pdfs_mock");
+  docsTbl = reg.ingestPdfs("src/data/input/pdfs_mock");
   ```
 
 See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schema.

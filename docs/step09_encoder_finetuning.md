@@ -11,10 +11,10 @@ Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new 
 
 1. Build the contrastive training dataset:
    ```matlab
-   load('data/chunksTbl.mat', 'chunksTbl');
-   load('data/bootLabelMat.mat', 'bootLabelMat');
+   load('src/data/chunksTbl.mat', 'chunksTbl');
+   load('src/data/bootLabelMat.mat', 'bootLabelMat');
    contrastiveDatasetTbl = reg.ftBuildContrastiveDataset(chunksTbl, bootLabelMat);
-   save('data/contrastiveDatasetTbl.mat', 'contrastiveDatasetTbl');
+   save('src/data/contrastiveDatasetTbl.mat', 'contrastiveDatasetTbl');
    ```
 2. Fine-tune the encoder starting from the pretrained weights:
    ```matlab

@@ -37,7 +37,7 @@ Orchestration and flow control code is located in `src/reg/controller/`.
 
 ## Runtime Data Layout
 
-Runtime data produced or consumed by the pipeline is organized as follows:
+Runtime data produced or consumed by the pipeline is organized under `src/data/` as follows:
 
 - `src/data/datastore/db/`
 - `src/data/processing/raw/`
