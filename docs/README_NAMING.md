@@ -13,7 +13,7 @@ all naming rules. All approved classes, class properties, class methods, functio
 
 ## Function, Script, and Class Names
 
-Use lowerCamelCase for all function and script names (e.g., `ingestPdfs`, `trainMultilabel`). See the
+Use lowerCamelCase for standalone functions and project helper scripts (e.g., `ingestPdfs`, `trainMultilabel`), and snake_case starting with a verb for development scripts. See the
 [Scripts](Matlab_Style_Guide.md#scripts) subsection of the style guide for detailed guidance.
 
 - Classes use UpperCamelCase ([Matlab Style Guide §1.2](Matlab_Style_Guide.md#12-naming-for-functions--classes)).
@@ -22,7 +22,7 @@ Use lowerCamelCase for all function and script names (e.g., `ingestPdfs`, `train
 - Package folder names use lowerCamelCase ([Matlab Style Guide §2.1](Matlab_Style_Guide.md#21-files-and-functions)).
 - Class properties use lowerCamelCase and class constants use UPPER_CASE ([Matlab Style Guide §1.2](Matlab_Style_Guide.md#12-naming-for-functions--classes)).
 
-- Development scripts (e.g., `startup.m`, `run_mlint.m`) reside in the repository root or `scripts/` and are not tested.
+- Development scripts use snake_case starting with a verb (e.g., `setup_paths.m`, `scripts/generate_docs.m`), reside in the repository root or `scripts/`, and are not tested.
 - Scripts that contribute to runtime behavior must live in `+helpers/` and have corresponding tests in `tests/`.
 
 ## Data-Type Suffixes
