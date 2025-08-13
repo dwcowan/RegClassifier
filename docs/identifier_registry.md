@@ -128,15 +128,21 @@ Keep the illustrative examples below in sync with the current naming conventions
 
 Test files reside in the `tests/` directory and follow the `testName.m` naming convention.
 
-Common test scopes or prefixes include:
+Record each test with a scope identifying its coverage type:
 
-- `test` for general unit tests
-- `testIntegration` for integration scenarios
-- `testSmoke` for smoke tests
+- `unit` – per-method verification of individual functions or class methods
+- `smoke` – quick environment or pipeline checks
+- `integration` – cross-module interactions
+- `regression` – verifies outputs against known good simulated data to guard against unintended changes
+
+For regression entries, specify the simulated dataset and the expected result used as the baseline.
 
 | Name | Purpose | Scope | Owner | Related Functions | Notes |
 |------|---------|-------|-------|-------------------|-------|
 | testConfig | Test configuration override precedence | unit | @todo | config | verifies override precedence |
+| testSmokeStartup | Quick startup path check | smoke | @todo | startup | minimal path add |
+| testIntegrationIngestToChunk | Ingest to chunk pipeline | integration | @todo | ingest, chunk | |
+| testRegressionSyntheticParse | Stable parsing on synthetic dataset | regression | @todo | parseDocument | compares output to expected tokens |
 
 | testShutdown | Test project cleanup removes repo root from path | unit | @todo | shutdown | |
 | testStartup | Verify startup adds repository to path | unit | @todo | startup | includes smoke and regression tags |
