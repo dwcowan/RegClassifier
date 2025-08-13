@@ -594,15 +594,16 @@ classdef weakLabelingControllerClass
     %WEAKLABELINGCONTROLLER Applies heuristic rules to label chunks.
     
     methods (Access=public)
-        function labelMat = run(~, chunkVec, labelingRules)
+        function labelMatrixObj = run(~, chunkVec, labelingRules)
             %RUN Apply weak labeling rules.
-            %   labelMat = run(obj, chunkVec, labelingRules)
+            %   labelMatrixObj = run(obj, chunkVec, labelingRules)
             %   chunkVec (chunkClass Vec): Chunks to label.
             %   labelingRules (cell): Rules.
-            %   labelMat (double Mat): Generated labels.
+            %   labelMatrixObj (labelMatrixClass): Generated labels.
             %
             %   Side effects: none.
             labelMat = [];
+            labelMatrixObj = model.labelMatrixClass([], [], labelMat);
         end
     end
 end
@@ -613,15 +614,15 @@ classdef embeddingControllerClass
     %EMBEDDINGCONTROLLER Generates embeddings for chunks.
     
     methods (Access=public)
-        function embeddingMat = run(~, chunkVec, modelName)
+        function embeddingVec = run(~, chunkVec, modelName)
             %RUN Generate embeddings.
-            %   embeddingMat = run(obj, chunkVec, modelName)
+            %   embeddingVec = run(obj, chunkVec, modelName)
             %   chunkVec (chunkClass Vec): Chunks to embed.
             %   modelName (string): Model to use.
-            %   embeddingMat (double Mat): Embeddings.
+            %   embeddingVec (embeddingClass Vec): Embeddings.
             %
             %   Side effects: may cache embeddings.
-            embeddingMat = [];
+            embeddingVec = model.embeddingClass.empty();
         end
     end
 end
@@ -632,17 +633,17 @@ classdef baselineControllerClass
     %BASELINECONTROLLER Constructs baseline model and delegates operations.
 
     methods (Access=public)
-        function model = train(~, labelMat, embeddingMat, numEpochs, learningRate)
+        function model = train(~, labelMatrixObj, embeddingVec, numEpochs, learningRate)
             %TRAIN Fit baseline classifier via model.
-            %   model = train(obj, labelMat, embeddingMat, numEpochs, learningRate)
-            %   labelMat (double Mat): Labels.
-            %   embeddingMat (double Mat): Embeddings.
+            %   model = train(obj, labelMatrixObj, embeddingVec, numEpochs, learningRate)
+            %   labelMatrixObj (labelMatrixClass): Labels.
+            %   embeddingVec (embeddingClass Vec): Embeddings.
             %   numEpochs (double): Number of training epochs.
             %   learningRate (double): Step size.
             %   model (baselineModelClass): Trained model.
             %
             %   Side effects: none.
-            model = model.baselineModelClass(labelMat, embeddingMat);
+            model = model.baselineModelClass(labelMatrixObj, embeddingVec);
             model.train(numEpochs, learningRate);
         end
 
