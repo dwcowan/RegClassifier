@@ -47,6 +47,10 @@ Keep the illustrative examples below in sync with the current naming conventions
 
 | Name | Purpose | Scope | Owner | Related Files | Notes |
 |------|---------|-------|-------|---------------|-------|
+| [EvaluationController](ClassArchitecture.md#L440-L453) | Orchestrates evaluation and invokes report views | module | @todo | +controller/EvaluationController.m | |
+| [EvalReportView](ClassArchitecture.md#L302-L315) | Generates PDF/HTML evaluation summaries | module | @todo | +view/EvalReportView.m | |
+| [DiffReportView](ClassArchitecture.md#L317-L329) | Renders diffs between model/corpus versions | module | @todo | +view/DiffReportView.m | |
+| [MetricsPlotsView](ClassArchitecture.md#L332-L345) | Produces metrics heatmaps and trend plots | module | @todo | +view/MetricsPlotsView.m | |
 
 
 
