@@ -1,8 +1,7 @@
 # Identifier Registry
 
 
-This is the **single source of truth** for classes, functions, variables,
-constants, files/modules, tests, and other identifiers that are defined
+This is the **single source of truth** for classes, class properties, class methods, functions, variables, constants, files/modules, tests, and other identifiers that are defined
 in the project. The [identifier registry](identifier_registry.md) is the
 definitive source for the collection of
 all identifiers, **not** how to name the identifiers.
@@ -33,7 +32,7 @@ Scopes:
 
 To document a new identifier:
 
-1. Locate the appropriate table (Classes, Functions, Variables, etc.).
+1. Locate the appropriate table (Classes, Class Properties, Class Methods, Functions, Variables, etc.).
 2. Add a row filling in every column for that section.
 3. Reference related files or tests when relevant.
 4. Ensure the name follows the conventions above.
