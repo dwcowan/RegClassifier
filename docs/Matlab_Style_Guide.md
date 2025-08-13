@@ -81,6 +81,7 @@ Function, script, and class identifiers must also be recorded in the [identifier
 - One function per file; file name matches the main function.
 - Filenames must match the main function/class name.
 - Use namespaced folders (e.g., `+utils`, `+internal`) to manage scope.
+- Package folders must be named in **lowerCamelCase** (e.g., `+dataProcessing`).
 - Avoid `global`, `assignin`, or `eval`.
 - Prefer function files over scripts for reusable code.
 - Avoid `clear all`, `clc`, and other workspace commands in scripts unless explicitly required.
