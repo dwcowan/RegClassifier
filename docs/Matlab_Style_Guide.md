@@ -154,7 +154,7 @@ Class names, class properties, class methods, and interface definitions must als
 - Maintain separate suites tagged with `Smoke` and `Regression`:
   - `run_smoke_test` executes a fast subset validating environment and key workflows.
   - The regression suite uses known good simulated data with expected results to detect unintended changes and runs alongside unit and integration tests.
-  - Module owners must curate and maintain the golden datasets used in regression tests. These datasets must be version-controlled and documented in `identifier_registry.md`.
+  - Module owners must design modules that generate reproducible golden datasets and expected outputs. These artifacts must be stored under version control and documented in `identifier_registry.md`. When requirements change, module owners are responsible for regenerating and updating the golden data accordingly.
 - Regression tests should rely on curated simulated datasets rather than reproductions of specific bugs.
 - Every test file must subclass `matlab.unittest.TestCase` and include `methods (TestClassSetup)` and `methods (TestClassTeardown)` blocks, or explicitly register cleanups using `addTeardown`.
 - Include:
