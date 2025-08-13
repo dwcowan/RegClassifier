@@ -2,7 +2,9 @@
 
 This sketch outlines how to compute and persist document embeddings. The routine prefers a GPU backend but falls back to the CPU when necessary.
 
-## 1. Load chunk table
+
+## 1. Load chunksTbl
+
 ```matlab
 chunksTbl = load('data/chunksTbl.mat').chunksTbl;
 numChunks = height(chunksTbl);
