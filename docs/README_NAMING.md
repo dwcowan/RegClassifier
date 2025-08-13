@@ -3,9 +3,10 @@
 
 This README is a process guide for maintaining naming consistency. The
 [Matlab Style Guide](Matlab_Style_Guide.md) is the normative reference for
-all naming rules. All approved classes, functions, variables, constants,
-files/modules, tests, and other identifiers are tracked in the
+all naming rules. All approved classes, class properties, class methods, functions, variables, constants, files/modules, tests, and other identifiers are tracked in the
 `identifier_registry.md`.
+
+New or modified class properties and class methods must be recorded in [`docs/identifier_registry.md`](identifier_registry.md) alongside the corresponding class names.
 
 
 ## Function and Script Names
@@ -41,8 +42,7 @@ Place tests in the `tests/` folder and name each file `testName.m`. Refer to [Te
 
 1. Review the [Matlab Style Guide](Matlab_Style_Guide.md) for the latest
    naming guidance.
-2. Before coding, search for existing classes, functions, variables,
-   constants, files/modules, tests, and other identifiers that may be
+2. Before coding, search for existing classes, class properties, class methods, functions, variables, constants, files/modules, tests, and other identifiers that may be
    affected by your task:
    - Review `identifier_registry.md`.
    - Search the repository with `rg <identifier>` or MATLAB's *Find Files*
@@ -52,8 +52,8 @@ Place tests in the `tests/` folder and name each file `testName.m`. Refer to [Te
 5. Add or update tests: any new module or function must include a corresponding test file in `tests/`, and existing tests must be updated when module behavior changes.
 6. When introducing new identifiers in your code, **always** crosscheck this
    name isnt in use and **always** update the `identifier_registry.md` with
-   new classes, functions, variables, constants, files/modules, tests, and
-   other identifiers through a PR with your new code.
+   new classes, class properties, class methods, functions, variables, constants,
+   files/modules, tests, and other identifiers through a PR with your new code.
 7. Verify that any new or modified identifier has a corresponding entry in
    [`docs/identifier_registry.md`](identifier_registry.md).
 8. Run the full test suite locally:
@@ -81,7 +81,7 @@ violations are found.
 ## How to propose a new identifier
 
 
-1. Propose new classes, functions, variables, constants, files/modules, tests, or other identifiers in
+1. Propose new classes, class properties, class methods, functions, variables, constants, files/modules, tests, or other identifiers in
  `identifier_registry.md` with a PR. **always** ensure you are **not** causing drift by introducing new 
   identifiers and not recording them, or by not using existing identifiers consistently.
 2. Update code and commit, with any new identifiers and the updated `identifier_registry.md`  
