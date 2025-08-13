@@ -79,6 +79,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 
 | Name | Purpose | Scope | Input Contract | Output Contract | Owner | Notes |
 |------|---------|-------|----------------|-----------------|-------|------|
+| config | Load configuration settings and apply overrides | module | none | struct `configStruct` | @todo | reads JSON files |
 | startup | RegClassifier project initialization | module | `project` object | none | @todo | |
 | shutdown | RegClassifier project cleanup | module | project object | none | @todo | |
 
