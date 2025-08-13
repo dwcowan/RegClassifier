@@ -11,13 +11,13 @@ Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new 
 
 1. Load embeddings and weak labels:
    ```matlab
-   load('data/embeddingMat.mat','embeddingMat');
-   load('data/bootLabelMat.mat','bootLabelMat');
+   load('data/embeddingMat.mat', 'embeddingMat');
+   load('data/bootLabelMat.mat', 'bootLabelMat');
    ```
 2. Train the baseline classifier:
    ```matlab
    baselineModelStruct = reg.trainMultilabel(embeddingMat, bootLabelMat);
-   save('models/baseline_model.mat','baselineModelStruct')
+   save('models/baselineModel.mat', 'baselineModelStruct');
    ```
 3. Enable hybrid retrieval combining cosine similarity and BM25:
    ```matlab
@@ -52,10 +52,10 @@ Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new 
 See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schemas of `embeddingMat`, `bootLabelMat`, `baselineModelStruct`, and `RetrievalResult` outputs.
 
 ## Verification
-- Classifier training completes and saves `baseline_model.mat`.
+- Classifier training completes and saves `baselineModel.mat`.
 - Verify `baselineModelStruct` schema:
   ```matlab
-  assert(all(isfield(baselineModelStruct, {'weights','bias'})));
+  assert(all(isfield(baselineModelStruct, {'weights', 'bias'})));
   ```
 - Run baseline tests:
   ```matlab
@@ -65,7 +65,7 @@ See [Identifier Registry – Data Contracts](identifier_registry.md#data-contrac
   Tests confirm baseline metrics and retrieval behavior.
 - Verify `resultsTbl` contains expected fields:
   ```matlab
-  assert(all(ismember({'docId','score'}, resultsTbl.Properties.VariableNames)));
+  assert(all(ismember({'docId', 'score'}, resultsTbl.Properties.VariableNames)));
   ```
 
 ## Next Steps
