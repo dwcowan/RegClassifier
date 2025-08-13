@@ -30,7 +30,7 @@
 | `+controller/chunkingControllerClass.m`       | Splits documents into `model.chunkClass` models via `reg.chunkText`\:codex-file-citation |
 | `+controller/weakLabelingControllerClass.m`   | Applies heuristic rules to create `model.labelMatrixClass` models\:codex-file-citation |
 | `+controller/embeddingControllerClass.m`      | Generates and caches `model.embeddingClass` models (`reg.docEmbeddingsBertGpu`)\:codex-file-citation |
-| `+controller/baselineControllerClass.m`       | Trains `model.baselineModelClass` and serves retrieval (`reg.trainMultilabel`, `reg.hybridSearch`)\:codex-file-citation |
+| `+controller/baselineControllerClass.m`       | Constructs `model.baselineModelClass` and delegates `train` and `retrieve` |
 | `+controller/projectionHeadControllerClass.m` | Fits `model.projectionHeadClass` and integrates it into the pipeline\:codex-file-citation |
 | `+controller/fineTuneControllerClass.m`       | Builds contrastive datasets and produces `model.encoderClass` models\:codex-file-citation |
 | `+controller/evaluationControllerClass.m`     | Computes metrics and invokes `view.evalReportViewClass` and gold pack evaluation\:codex-file-citation |
@@ -281,6 +281,18 @@ classdef baselineModelClass
             %
             %   Side effects: none.
             probabilityVec = [];
+        end
+
+        function chunkVec = retrieve(obj, queryEmbeddingVec, topK)
+            %RETRIEVE Retrieve top chunks for query embedding.
+            %   chunkVec = retrieve(obj, queryEmbeddingVec, topK)
+            %   obj (baselineModelClass): Instance.
+            %   queryEmbeddingVec (double Vec): Query embedding.
+            %   topK (double): Number of results.
+            %   chunkVec (chunkClass Vec): Retrieved chunks.
+            %
+            %   Side effects: none.
+            chunkVec = [];
         end
 
         function save(obj, path)
@@ -616,29 +628,33 @@ end
 
 % +controller/baselineControllerClass.m
 classdef baselineControllerClass
-    %BASELINECONTROLLER Trains baseline classifier and serves retrieval.
-    
+    %BASELINECONTROLLER Constructs baseline model and delegates operations.
+
     methods (Access=public)
-        function model = train(~, labelMat, embeddingMat)
-            %TRAIN Fit baseline classifier.
-            %   model = train(obj, labelMat, embeddingMat)
+        function model = train(~, labelMat, embeddingMat, numEpochs, learningRate)
+            %TRAIN Fit baseline classifier via model.
+            %   model = train(obj, labelMat, embeddingMat, numEpochs, learningRate)
             %   labelMat (double Mat): Labels.
             %   embeddingMat (double Mat): Embeddings.
+            %   numEpochs (double): Number of training epochs.
+            %   learningRate (double): Step size.
             %   model (baselineModelClass): Trained model.
             %
             %   Side effects: none.
-            model = [];
+            model = model.baselineModelClass(labelMat, embeddingMat);
+            model.train(numEpochs, learningRate);
         end
 
-        function chunkVec = retrieve(~, queryEmbeddingVec, topK)
-            %RETRIEVE Retrieve top chunks for query embedding.
-            %   chunkVec = retrieve(obj, queryEmbeddingVec, topK)
+        function chunkVec = retrieve(~, model, queryEmbeddingVec, topK)
+            %RETRIEVE Retrieve top chunks using model.
+            %   chunkVec = retrieve(obj, model, queryEmbeddingVec, topK)
+            %   model (baselineModelClass): Model to query.
             %   queryEmbeddingVec (double Vec): Query embedding.
             %   topK (double): Number of results.
             %   chunkVec (chunkClass Vec): Retrieved chunks.
             %
             %   Side effects: none.
-            chunkVec = [];
+            chunkVec = model.retrieve(queryEmbeddingVec, topK);
         end
     end
 end
