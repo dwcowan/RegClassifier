@@ -165,7 +165,6 @@ Environment → Repo Setup → MVC Scaffolding → Ingest → Chunk → Weak Lab
 9. Encoder Fine-Tuning Workflow
 10. Evaluation & Reporting
 11. Pipeline Controller
-
 12. Data Acquisition & Diff Utilities (optional)
 13. Continuous Testing Framework
 
