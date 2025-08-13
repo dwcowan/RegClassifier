@@ -11,13 +11,15 @@ Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new 
 
 1. Build the contrastive training dataset:
    ```matlab
+   load('data/chunksTbl.mat', 'chunksTbl');
+   load('data/bootLabelMat.mat', 'bootLabelMat');
    contrastiveDatasetTbl = reg.ftBuildContrastiveDataset(chunksTbl, bootLabelMat);
-   save('data/contrastive_ds.mat', 'contrastiveDatasetTbl')
+   save('data/contrastiveDatasetTbl.mat', 'contrastiveDatasetTbl');
    ```
 2. Fine-tune the encoder starting from the pretrained weights:
    ```matlab
    fineTunedEncoderStruct = reg.ftTrainEncoder(contrastiveDatasetTbl, 'unfreezeTop', 4);
-   save('models/fine_tuned_bert.mat','fineTunedEncoderStruct')
+   save('models/fineTunedBert.mat', 'fineTunedEncoderStruct');
    ```
 3. Update pipeline settings to point to the fine-tuned encoder if needed.
 
@@ -49,10 +51,10 @@ See [Identifier Registry – Data Contracts](identifier_registry.md#data-contrac
 
 
 ## Verification
-- `fine_tuned_bert.mat` is saved and contains updated weights.
+- `fineTunedBert.mat` is saved and contains updated weights.
 - Contrastive dataset has expected fields:
   ```matlab
-  assert(all(isfield(contrastiveDatasetTbl, {'anchorIdx','posIdx','negIdx'})));
+  assert(all(isfield(contrastiveDatasetTbl, {'anchorIdx', 'posIdx', 'negIdx'})));
   ```
 - Run fine-tuning tests:
   ```matlab
