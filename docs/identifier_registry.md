@@ -141,8 +141,8 @@ Keep the illustrative examples below in sync with the current naming conventions
 | [run](ClassArchitecture.md#L603-L612) | [EmbeddingController](ClassArchitecture.md#L598-L614) | Generate embeddings | |
 | [train](ClassArchitecture.md#L622-L631) | [BaselineController](ClassArchitecture.md#L617-L644) | Fit baseline classifier | |
 | [retrieve](ClassArchitecture.md#L633-L642) | [BaselineController](ClassArchitecture.md#L617-L644) | Retrieve top chunks for query embedding | |
-| [fit](ClassArchitecture.md#L651-L660) | [ProjectionHeadController](ClassArchitecture.md#L646-L673) | Train projection head | |
-| [apply](ClassArchitecture.md#L662-L671) | [ProjectionHeadController](ClassArchitecture.md#L646-L673) | Apply projection head to embeddings | |
+| [trainHead](ClassArchitecture.md#L651-L662) | [ProjectionHeadController](ClassArchitecture.md#L646-L673) | Instantiate and fit projection head | |
+| [applyHead](ClassArchitecture.md#L664-L671) | [ProjectionHeadController](ClassArchitecture.md#L646-L673) | Apply fitted projection head to embeddings | |
 | [run](ClassArchitecture.md#L681-L689) | [FineTuneController](ClassArchitecture.md#L676-L692) | Fine-tune encoder | |
 | [evaluate](ClassArchitecture.md#L700-L709) | [EvaluationController](ClassArchitecture.md#L695-L721) | Compute metrics for model | |
 | [generateReports](ClassArchitecture.md#L712-L719) | [EvaluationController](ClassArchitecture.md#L695-L721) | Produce evaluation reports | |
@@ -169,6 +169,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 | startup | RegClassifier project initialization | module | `project` object | none | @todo | |
 | shutdown | RegClassifier project cleanup | module | project object | none | @todo | |
 | run_mlint | Lint MATLAB files and emit artifacts for CI | module | none | none | @todo | |
+| testProjectionHeadControllerClass | Verify projection head controller delegates to model | test | none | none | @todo | |
 
 
 
