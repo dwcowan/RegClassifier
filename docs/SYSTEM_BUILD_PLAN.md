@@ -30,7 +30,7 @@ Every module must expose a MATLAB class with a clearly defined public interface 
 ## 3. Data Ingestion Module
 - **Goal:** Convert PDFs into raw text documents.
 - **Depends on:** Repository Setup.
-- **Implementation:** `reg.ingest_pdfs` with fixtures for text and image-only PDFs.
+- **Implementation:** `reg.ingestPdfs` with fixtures for text and image-only PDFs.
   - Reference the module's class name and any interfaces it implements.
 - **Testing:** `tests/testPDFIngest.m` ensures OCR fallback and basic parsing.
 - **Output:** Table of documents (`doc_id`, `text`).
@@ -38,7 +38,7 @@ Every module must expose a MATLAB class with a clearly defined public interface 
 ## 4. Text Chunking Module
 - **Goal:** Split long documents into overlapping token chunks.
 - **Depends on:** Data Ingestion Module.
-- **Implementation:** `reg.chunk_text` respecting `chunk_size_tokens` & `chunk_overlap`.
+- **Implementation:** `reg.chunkText` respecting `chunkSizeTokens` & `chunkOverlap`.
   - Reference the module's class name and any interfaces it implements.
 - **Testing:** `tests/testIngestAndChunk.m` verifies chunk counts and boundaries.
 - **Output:** Table of chunks (`chunk_id`, `doc_id`, `text`).
@@ -46,7 +46,7 @@ Every module must expose a MATLAB class with a clearly defined public interface 
 ## 5. Weak Labeling Module
 - **Goal:** Bootstrap labels using rule-based heuristics.
 - **Depends on:** Text Chunking Module.
-- **Implementation:** `reg.weak_rules` returning label matrix.
+- **Implementation:** `reg.weakRules` returning label matrix.
   - Reference the module's class name and any interfaces it implements.
 - **Testing:** `tests/testRulesAndModel.m` confirms label coverage and format.
  - **Output:** Sparse label matrix `bootLabelMat`.
@@ -54,7 +54,7 @@ Every module must expose a MATLAB class with a clearly defined public interface 
 ## 6. Embedding Generation Module
 - **Goal:** Embed chunks using BERT (GPU) or FastText fallback.
 - **Depends on:** Text Chunking Module.
-- **Implementation:** `reg.doc_embeddings_bert_gpu` & `reg.precompute_embeddings`.
+- **Implementation:** `reg.docEmbeddingsBertGpu` & `reg.precomputeEmbeddings`.
   - Reference the module's class name and any interfaces it implements.
 - **Testing:** `tests/testFeatures.m` checks embedding shapes & backend selection.
 - **Output:** Matrix `embeddingMat` of embeddings per chunk.
@@ -63,8 +63,8 @@ Every module must expose a MATLAB class with a clearly defined public interface 
 - **Goal:** Train a multi-label classifier and enable hybrid search.
 - **Depends on:** Weak Labeling Module and Embedding Generation Module.
 - **Implementation:**
-  - `reg.train_multilabel` for classifier.
-  - `reg.hybrid_search` for cosine + BM25 retrieval.
+  - `reg.trainMultilabel` for classifier.
+  - `reg.hybridSearch` for cosine + BM25 retrieval.
   - Reference the module's class name and any interfaces it implements.
 - **Testing:** `tests/testRegressionMetricsSimulated.m` & `tests/testHybridSearch.m` validate baseline metrics.
 - **Output:** Baseline model artifacts and retrieval functionality.
@@ -72,7 +72,7 @@ Every module must expose a MATLAB class with a clearly defined public interface 
 ## 8. Projection Head Workflow
 - **Goal:** Improve retrieval with an MLP on frozen embeddings.
 - **Depends on:** Baseline Classifier & Retrieval.
-- **Implementation:** `reg.train_projection_head` with `reg_projection_workflow.m` driver.
+- **Implementation:** `reg.trainProjectionHead` with `regProjectionWorkflow.m` driver.
   - Reference the module's class name and any interfaces it implements.
 - **Testing:** `tests/testProjectionHeadSimulated.m` ensures Recall@n increases over baseline. `tests/testProjectionAutoloadPipeline.m` verifies auto-use in `reg_pipeline`.
 - **Output:** `projection_head.mat` used automatically by the pipeline.
@@ -80,7 +80,7 @@ Every module must expose a MATLAB class with a clearly defined public interface 
 ## 9. Encoder Fine-Tuning Workflow
 - **Goal:** Unfreeze BERT layers and apply contrastive learning.
 - **Depends on:** Projection Head Workflow (optional but recommended) and Embedding Generation Module.
-- **Implementation:** `reg.ft_build_contrastive_dataset`, `reg.ft_train_encoder`, and `reg_finetune_encoder_workflow.m`.
+- **Implementation:** `reg.ftBuildContrastiveDataset`, `reg.ftTrainEncoder`, and `regFineTuneEncoderWorkflow.m`.
   - Reference the module's class name and any interfaces it implements.
 - **Testing:** `tests/testFineTuneSmoke.m` for basic convergence, `tests/testFineTuneResume.m` for checkpoint resume.
 - **Output:** `fine_tuned_bert.mat` encoder weights.
@@ -89,9 +89,9 @@ Every module must expose a MATLAB class with a clearly defined public interface 
 - **Goal:** Quantify performance and produce human-readable reports.
 - **Depends on:** Baseline/Projection/Fine-Tuned models.
 - **Implementation:**
-  - `reg.eval_retrieval` and `reg.eval_per_label` for metrics.
-  - `reg_eval_and_report.m` generates `reg_eval_report.pdf` and trends.
-  - Gold mini-pack support via `reg.load_gold` and `reg_eval_gold.m`.
+  - `reg.evalRetrieval` and `reg.evalPerLabel` for metrics.
+  - `regEvalAndReport.m` generates `regEvalReport.pdf` and trends.
+  - Gold mini-pack support via `reg.loadGold` and `regEvalGold.m`.
   - Reference the module's class name and any interfaces it implements.
 - **Testing:** `tests/testMetricsExpectedJSON.m`, `tests/testGoldMetrics.m`, `tests/testReportArtifact.m`.
 - **Output:** Metrics CSVs, PDF/HTML reports, gold evaluation results.
@@ -99,7 +99,7 @@ Every module must expose a MATLAB class with a clearly defined public interface 
 ## 11. Data Acquisition & Diff Utilities (Optional)
 - **Goal:** Automate CRR/EBA fetches and track version differences.
 - **Depends on:** Environment & Tooling.
-- **Implementation:** `reg_crr_sync.m`, `reg.crr_diff_versions`, `reg.crr_diff_articles`, and related HTML/PDF report generators.
+- **Implementation:** `regCrrSync.m`, `reg.crrDiffVersions`, `reg.crrDiffArticles`, and related HTML/PDF report generators.
   - Reference the module's class name and any interfaces it implements.
 - **Testing:** `tests/testFetchers.m` (network-tolerant).
 - **Output:** Date-stamped corpora and diff reports.
@@ -112,7 +112,7 @@ Every module must expose a MATLAB class with a clearly defined public interface 
   1. Run full suite: `results = runtests("tests","IncludeSubfolders",true,"UseParallel",false);`.
   2. Examine `table(results)` and address failures before proceeding.
   3. Consider adding CI (e.g., GitHub Actions) to run the same command headlessly.
-- **Output:** Passing tests with reproducible seeds (`reg.set_seeds`).
+- **Output:** Passing tests with reproducible seeds (`reg.setSeeds`).
 
 ## Task Dependency Summary
 ```

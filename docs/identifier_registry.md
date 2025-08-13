@@ -47,11 +47,29 @@ Keep the illustrative examples below in sync with the current naming conventions
 | Name | Purpose | Scope | Owner | Related Files | Notes |
 |------|---------|-------|-------|---------------|-------|
 | EnvironmentFixture | Manage MATLAB format, RNG, and GPU state for tests | test | @todo | tests/+fixtures/EnvironmentFixture.m | |
+| Document | Represents raw regulatory document text | module | @todo | docs/ClassArchitecture.md | |
+| Chunk | Overlapping text segments of documents | module | @todo | docs/ClassArchitecture.md | |
+| LabelMatrix | Sparse weak labels per chunk and topic | module | @todo | docs/ClassArchitecture.md | |
+| Embedding | Vector representation of chunk text | module | @todo | docs/ClassArchitecture.md | |
+| BaselineModel | Baseline classifier and retrieval artifact | module | @todo | docs/ClassArchitecture.md | |
+| ProjectionHead | MLP fine-tuning embeddings | module | @todo | docs/ClassArchitecture.md | |
+| Encoder | Fine-tuned BERT weights | module | @todo | docs/ClassArchitecture.md | |
+| Metrics | Evaluation results structure | module | @todo | docs/ClassArchitecture.md | |
+| CorpusVersion | Versioned corpus for diffs | module | @todo | docs/ClassArchitecture.md | |
 
 
 ## Class Properties
 
-
+| Class | Property | Type | Description |
+|-------|----------|------|-------------|
+| Document | docId | string | Unique document identifier |
+| Chunk | chunkId | string | Unique chunk identifier |
+| Chunk | docId | string | Parent document identifier |
+| LabelMatrix | chunkIdVec | vector | Chunk identifiers |
+| LabelMatrix | topicIdVec | vector | Topic identifiers |
+| LabelMatrix | labelMat | matrix | Sparse weak labels |
+| CorpusVersion | versionId | string | Corpus version identifier |
+| CorpusVersion | documentVec | vector | Documents in corpus |
 ## Class Methods
 
 
@@ -131,6 +149,28 @@ Common test scopes or prefixes include:
 |-------|------|-------------|
 | docId | string | Unique document identifier |
 | text | string | Raw document text |
+
+#### Chunk
+| Field | Type | Description |
+|-------|------|-------------|
+| chunkId | string | Unique chunk identifier |
+| docId | string | Parent document identifier |
+| text | string | Chunk text |
+| startIndex | double | Start token index |
+| endIndex | double | End token index |
+
+#### LabelMatrix
+| Field | Type | Description |
+|-------|------|-------------|
+| chunkIdVec | vector | Chunk identifiers |
+| topicIdVec | vector | Topic identifiers |
+| labelMat | matrix | Sparse weak labels |
+
+#### CorpusVersion
+| Field | Type | Description |
+|-------|------|-------------|
+| versionId | string | Corpus version identifier |
+| documentVec | vector | Documents in corpus |
 
 
 
