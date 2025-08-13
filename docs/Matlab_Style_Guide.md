@@ -163,6 +163,7 @@ Scripts fall into two categories:
   assert(isvector(output) && isnumeric(output))
   ```
 
+See [2.10 Property Validation](#210-property-validation) for class-property validation requirements.
 
 ### 2.10 Property Validation
 - Validate class properties in `properties` blocks using size, type, or `mustBe*` constraints.
