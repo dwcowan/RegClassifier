@@ -63,7 +63,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 | ChunkingController | Splits documents into overlapping chunks | module | @todo | [ClassArchitecture.md#L572-L589](ClassArchitecture.md#L572-L589) | |
 | WeakLabelingController | Applies heuristic rules to label chunks | module | @todo | [ClassArchitecture.md#L591-L607](ClassArchitecture.md#L591-L607) | |
 | EmbeddingController | Generates embeddings for chunks | module | @todo | [ClassArchitecture.md#L610-L626](ClassArchitecture.md#L610-L626) | |
-| BaselineController | Constructs baselineModelClass and delegates operations | module | @todo | [ClassArchitecture.md#L629-L660](ClassArchitecture.md#L629-L660) | |
+| BaselineController | Constructs BaselineModel and delegates operations | module | @todo | [ClassArchitecture.md#L629-L660](ClassArchitecture.md#L629-L660) | |
 | ProjectionHeadController | Manages projection head training and usage | module | @todo | [ClassArchitecture.md#L662-L689](ClassArchitecture.md#L662-L689) | |
 | FineTuneController | Fine-tunes base models | module | @todo | [ClassArchitecture.md#L692-L708](ClassArchitecture.md#L692-L708) | |
 | EvaluationController | Computes metrics and generates reports | module | @todo | [ClassArchitecture.md#L711-L737](ClassArchitecture.md#L711-L737) | |
@@ -156,7 +156,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 ## Class Interfaces
 | Interface | Purpose | Methods | Implementing Classes | Notes |
 |-----------|---------|---------|----------------------|-------|
-| IClassifier | Standardize classifier APIs | train, predict | [baselineModelClass](ClassArchitecture.md#L241-L307) | example interface |
+| IClassifier | Standardize classifier APIs | train, predict | [BaselineModel](ClassArchitecture.md#L241-L307) | example interface |
 
 
 
@@ -169,7 +169,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 | startup | RegClassifier project initialization | module | `project` object | none | @todo | |
 | shutdown | RegClassifier project cleanup | module | project object | none | @todo | |
 | run_mlint | Lint MATLAB files and emit artifacts for CI | module | none | none | @todo | |
-| testProjectionHeadControllerClass | Verify projection head controller delegates to model | test | none | none | @todo | |
+| testProjectionHeadController | Verify projection head controller delegates to model | test | none | none | @todo | |
 
 
 
@@ -228,7 +228,7 @@ Regression entries must include the simulated dataset path, expected output, and
 
 | Name | Purpose | Scope | Owner | Related Functions | Golden Dataset Path | Expected Output | Dataset Owner | Notes |
 |------|---------|-------|-------|-------------------|---------------------|-----------------|---------------|-------|
-| testPipelineControllerClass | Validate pipeline coordination and failure handling | integration | @todo | pipelineControllerClass | n/a | n/a | n/a | uses mocks for controllers |
+| testPipelineController | Validate pipeline coordination and failure handling | integration | @todo | PipelineController | n/a | n/a | n/a | uses mocks for controllers |
 | testConfig | Test configuration override precedence | unit | @todo | config | n/a | n/a | n/a | verifies override precedence |
 | testSmokeStartup | Quick startup path check | smoke | @todo | startup | n/a | n/a | n/a | minimal path add |
 | testIntegrationIngestToChunk | Ingest to chunk pipeline | integration | @todo | ingest, chunk | n/a | n/a | n/a | |
