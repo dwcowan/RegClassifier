@@ -72,4 +72,4 @@ See [Identifier Registry – Data Contracts](identifier_registry.md#data-contrac
   Tests confirm metrics and report generation.
 
 ## Next Steps
-Continue to [Step 11: Data Acquisition & Diff Utilities](step11_data_acquisition_diffs.md) or skip to [Step 12: Continuous Testing Framework](step12_continuous_testing.md) if data utilities are not needed.
+Continue to [Step 11: Pipeline Controller](step11_pipeline_controller.md). If data utilities are required, proceed to [Step 12: Data Acquisition & Diff Utilities](step12_data_acquisition_diffs.md); otherwise skip to [Step 13: Continuous Testing Framework](step13_continuous_testing.md).

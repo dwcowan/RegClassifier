@@ -109,6 +109,19 @@ Every module must expose a MATLAB class with a clearly defined public interface 
 - **Testing:** `tests/testMetricsExpectedJSON.m`, `tests/testGoldMetrics.m`, `tests/testReportArtifact.m`.
 - **Output:** Metrics CSVs, `regEvalReport.pdf`/`.html`, diff report artifacts, visualization images, and gold evaluation results.
 
+
+## 11. Pipeline Controller
+- **Goal:** Coordinate module execution through a central controller.
+- **Depends on:** Evaluation & Reporting.
+- **Implementation:**
+  - Implement `reg.PipelineController` to sequence ingestion, chunking, labeling, embedding, training, and evaluation controllers.
+  - Use configuration files (`pipeline.json`, `knobs.json`) to drive stage selection and parameters.
+  - Establish consistent logging with timestamps and module identifiers.
+  - Wrap each stage in `try/catch` blocks for graceful error handling and meaningful exception propagation.
+  - Reference the module's class name and any interfaces it implements.
+- **Testing:** `tests/testPipelineController.m` validates end-to-end coordination with mocked dependencies and failure handling.
+- **Output:** Reproducible pipeline runs with centralized logs and robust error reporting.
+
 ## 12. Data Acquisition & Diff Utilities (Optional)
 - **Goal:** Automate CRR/EBA fetches and track version differences.
 - **Depends on:** Environment & Tooling.
@@ -132,23 +145,27 @@ Every module must expose a MATLAB class with a clearly defined public interface 
 Environment → Repo Setup → MVC Scaffolding → Ingest → Chunk → Weak Labels
                   ↓                  ↘
               Embeddings → Baseline → Projection Head → Fine-Tune
-                                                ↓             ↓
-                                      Evaluation & Reporting  ↓
-                                                           Data Acquisition/Diffs
+                                                ↓
+                                      Evaluation & Reporting
+                                                ↓
+                                      Pipeline Controller
+                                                ↓
+                                     Data Acquisition/Diffs
 ```
 
 ## Suggested Module Build Order
 1. Environment & Tooling
 2. Repository Setup
-3. MVC Scaffolding & Persistence
-4. Data Ingestion
-5. Text Chunking
-6. Weak Labeling
-7. Embedding Generation
-8. Baseline Classifier & Retrieval
-9. Projection Head Workflow
-10. Encoder Fine-Tuning Workflow
-11. Evaluation & Reporting
+3. Data Ingestion
+4. Text Chunking
+5. Weak Labeling
+6. Embedding Generation
+7. Baseline Classifier & Retrieval
+8. Projection Head Workflow
+9. Encoder Fine-Tuning Workflow
+10. Evaluation & Reporting
+11. Pipeline Controller
+
 12. Data Acquisition & Diff Utilities (optional)
 13. Continuous Testing Framework
 

@@ -47,10 +47,8 @@ Keep the illustrative examples below in sync with the current naming conventions
 
 | Name | Purpose | Scope | Owner | Related Files | Notes |
 |------|---------|-------|-------|---------------|-------|
-| [EvaluationController](ClassArchitecture.md#L440-L453) | Orchestrates evaluation and invokes report views | module | @todo | +controller/EvaluationController.m | |
-| [EvalReportView](ClassArchitecture.md#L302-L315) | Generates PDF/HTML evaluation summaries | module | @todo | +view/EvalReportView.m | |
-| [DiffReportView](ClassArchitecture.md#L317-L329) | Renders diffs between model/corpus versions | module | @todo | +view/DiffReportView.m | |
-| [MetricsPlotsView](ClassArchitecture.md#L332-L345) | Produces metrics heatmaps and trend plots | module | @todo | +view/MetricsPlotsView.m | |
+| PipelineController | Orchestrate module controllers based on config | module | @todo | +reg/PipelineController.m | coordinates modules |
+
 
 
 
@@ -147,6 +145,7 @@ Regression entries must include the simulated dataset path, expected output, and
 
 | Name | Purpose | Scope | Owner | Related Functions | Golden Dataset Path | Expected Output | Dataset Owner | Notes |
 |------|---------|-------|-------|-------------------|---------------------|-----------------|---------------|-------|
+| testPipelineController | Validate pipeline coordination and failure handling | integration | @todo | PipelineController | n/a | n/a | n/a | uses mocks for controllers |
 | testConfig | Test configuration override precedence | unit | @todo | config | n/a | n/a | n/a | verifies override precedence |
 | testSmokeStartup | Quick startup path check | smoke | @todo | startup | n/a | n/a | n/a | minimal path add |
 | testIntegrationIngestToChunk | Ingest to chunk pipeline | integration | @todo | ingest, chunk | n/a | n/a | n/a | |
