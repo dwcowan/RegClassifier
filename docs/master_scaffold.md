@@ -1,5 +1,9 @@
 # Master Scaffold
 
+> Before implementing new modules or tests, review the canonical docs:
+> [Matlab_Style_Guide](Matlab_Style_Guide.md), [README_NAMING](README_NAMING.md),
+> [SYSTEM_BUILD_PLAN](SYSTEM_BUILD_PLAN.md), and [identifier_registry](identifier_registry.md).
+
 This document summarizes the MATLAB `+reg` package, the stub modules required for each step of the pipeline, and the matching test skeletons. Use it as the starting point for test-driven development.
 
 ## Package Structure
