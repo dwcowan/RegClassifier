@@ -58,10 +58,14 @@ Place tests in the `tests/` folder and name each file `testName.m`. Refer to [Te
 7. Add any new or modified class interfaces to [`docs/identifier_registry.md`](identifier_registry.md).
 8. Verify that any new or modified identifier has a corresponding entry in
    [`docs/identifier_registry.md`](identifier_registry.md).
-9. Run the full test suite locally:
+9. When data schemas or module-to-module flows are added or modified, update
+   [`docs/identifier_registry.md#data-contracts`](identifier_registry.md#data-contracts) and
+   [`docs/identifier_registry.md#flows`](identifier_registry.md#flows); triggers include new
+   payload structures or new producer/consumer pairs.
+10. Run the full test suite locally:
    - Placeholder tests must fail rather than being skipped or assumed.
    - Confirm that tests use fixtures via `testCase.applyFixture`.
-10. Run CI to ensure naming checks and tests pass. Locally, you can execute
+11. Run CI to ensure naming checks and tests pass. Locally, you can execute
    `runtests` or the `run_smoke_test` script to verify.
 
 ### Example
