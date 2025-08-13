@@ -53,6 +53,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 
 
 
+
 ## Class Properties
 
 | Class | Property | Type | Description |

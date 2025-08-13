@@ -27,15 +27,24 @@ Every module must expose a MATLAB class with a clearly defined public interface 
   3. Run `config.m` to confirm settings printout.
 - **Output:** Configured project skeleton ready for module development.
 
-## 3. Data Ingestion Module
-- **Goal:** Convert PDFs into raw text documents.
+## 3. MVC Scaffolding & Persistence
+- **Goal:** Establish the base MVC structure and storage layer.
 - **Depends on:** Repository Setup.
+- **Steps:**
+  1. Create `+model`, `+view`, and `+controller` directories.
+  2. Implement base classes (e.g., `model.Document`, `controller.IngestionController`).
+  3. Establish a persistence/service layer (repositories or DAOs) for model storage.
+- **Output:** MVC skeleton with persistence ready for module integration.
+
+## 4. Data Ingestion Module
+- **Goal:** Convert PDFs into raw text documents.
+- **Depends on:** Repository Setup and MVC Scaffolding & Persistence.
 - **Implementation:** `reg.ingestPdfs` with fixtures for text and image-only PDFs.
   - Reference the module's class name and any interfaces it implements.
 - **Testing:** `tests/testPDFIngest.m` ensures OCR fallback and basic parsing.
 - **Output:** Table of documents (`doc_id`, `text`).
 
-## 4. Text Chunking Module
+## 5. Text Chunking Module
 - **Goal:** Split long documents into overlapping token chunks.
 - **Depends on:** Data Ingestion Module.
 - **Implementation:** `reg.chunkText` respecting `chunkSizeTokens` & `chunkOverlap`.
@@ -43,7 +52,7 @@ Every module must expose a MATLAB class with a clearly defined public interface 
 - **Testing:** `tests/testIngestAndChunk.m` verifies chunk counts and boundaries.
 - **Output:** Table of chunks (`chunk_id`, `doc_id`, `text`).
 
-## 5. Weak Labeling Module
+## 6. Weak Labeling Module
 - **Goal:** Bootstrap labels using rule-based heuristics.
 - **Depends on:** Text Chunking Module.
 - **Implementation:** `reg.weakRules` returning label matrix.
@@ -51,7 +60,7 @@ Every module must expose a MATLAB class with a clearly defined public interface 
 - **Testing:** `tests/testRulesAndModel.m` confirms label coverage and format.
  - **Output:** Sparse label matrix `bootLabelMat`.
 
-## 6. Embedding Generation Module
+## 7. Embedding Generation Module
 - **Goal:** Embed chunks using BERT (GPU) or FastText fallback.
 - **Depends on:** Text Chunking Module.
 - **Implementation:** `reg.docEmbeddingsBertGpu` & `reg.precomputeEmbeddings`.
@@ -59,7 +68,7 @@ Every module must expose a MATLAB class with a clearly defined public interface 
 - **Testing:** `tests/testFeatures.m` checks embedding shapes & backend selection.
 - **Output:** Matrix `embeddingMat` of embeddings per chunk.
 
-## 7. Baseline Classifier & Retrieval
+## 8. Baseline Classifier & Retrieval
 - **Goal:** Train a multi-label classifier and enable hybrid search.
 - **Depends on:** Weak Labeling Module and Embedding Generation Module.
 - **Implementation:**
@@ -69,7 +78,7 @@ Every module must expose a MATLAB class with a clearly defined public interface 
 - **Testing:** `tests/testRegressionMetricsSimulated.m` & `tests/testHybridSearch.m` validate baseline metrics.
 - **Output:** Baseline model artifacts and retrieval functionality.
 
-## 8. Projection Head Workflow
+## 9. Projection Head Workflow
 - **Goal:** Improve retrieval with an MLP on frozen embeddings.
 - **Depends on:** Baseline Classifier & Retrieval.
 - **Implementation:** `reg.trainProjectionHead` with `regProjectionWorkflow.m` driver.
@@ -77,7 +86,7 @@ Every module must expose a MATLAB class with a clearly defined public interface 
 - **Testing:** `tests/testProjectionHeadSimulated.m` ensures Recall@n increases over baseline. `tests/testProjectionAutoloadPipeline.m` verifies auto-use in `reg_pipeline`.
 - **Output:** `projection_head.mat` used automatically by the pipeline.
 
-## 9. Encoder Fine-Tuning Workflow
+## 10. Encoder Fine-Tuning Workflow
 - **Goal:** Unfreeze BERT layers and apply contrastive learning.
 - **Depends on:** Projection Head Workflow (optional but recommended) and Embedding Generation Module.
 - **Implementation:** `reg.ftBuildContrastiveDataset`, `reg.ftTrainEncoder`, and `regFineTuneEncoderWorkflow.m`.
@@ -85,16 +94,21 @@ Every module must expose a MATLAB class with a clearly defined public interface 
 - **Testing:** `tests/testFineTuneSmoke.m` for basic convergence, `tests/testFineTuneResume.m` for checkpoint resume.
 - **Output:** `fine_tuned_bert.mat` encoder weights.
 
-## 10. Evaluation & Reporting
+## 11. Evaluation & Reporting
 - **Goal:** Quantify performance and produce human-readable reports.
 - **Depends on:** Baseline/Projection/Fine-Tuned models.
 - **Implementation:**
   - `reg.evalRetrieval` and `reg.evalPerLabel` for metrics.
-  - `regEvalAndReport.m` generates `regEvalReport.pdf` and trends.
+  - `controller.EvaluationController` drives evaluation and report generation:
+    - `view.EvalReportView` renders PDF/HTML summaries.
+    - `view.DiffReportView` compares model or corpus versions.
+    - `view.MetricsPlotsView` saves heatmaps and trend plots.
+  - `regEvalAndReport.m` acts as the entry point.
   - Gold mini-pack support via `reg.loadGold` and `regEvalGold.m`.
   - Reference the module's class name and any interfaces it implements.
 - **Testing:** `tests/testMetricsExpectedJSON.m`, `tests/testGoldMetrics.m`, `tests/testReportArtifact.m`.
-- **Output:** Metrics CSVs, PDF/HTML reports, gold evaluation results.
+- **Output:** Metrics CSVs, `regEvalReport.pdf`/`.html`, diff report artifacts, visualization images, and gold evaluation results.
+
 
 ## 11. Pipeline Controller
 - **Goal:** Coordinate module execution through a central controller.
@@ -128,8 +142,8 @@ Every module must expose a MATLAB class with a clearly defined public interface 
 
 ## Task Dependency Summary
 ```
-Environment → Repo Setup → Ingest → Chunk → Weak Labels
-                  ↓             ↘
+Environment → Repo Setup → MVC Scaffolding → Ingest → Chunk → Weak Labels
+                  ↓                  ↘
               Embeddings → Baseline → Projection Head → Fine-Tune
                                                 ↓
                                       Evaluation & Reporting
@@ -151,6 +165,7 @@ Environment → Repo Setup → Ingest → Chunk → Weak Labels
 9. Encoder Fine-Tuning Workflow
 10. Evaluation & Reporting
 11. Pipeline Controller
+
 12. Data Acquisition & Diff Utilities (optional)
 13. Continuous Testing Framework
 
