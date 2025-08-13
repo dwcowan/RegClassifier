@@ -121,36 +121,35 @@ Keep the illustrative examples below in sync with the current naming conventions
 | [getLabelsForChunk](ClassArchitecture.md#L181-L190) | [LabelMatrix](ClassArchitecture.md#L145-L192) | Return topic-weight pairs for a chunk | |
 | [cosineSimilarity](ClassArchitecture.md#L220-L228) | [Embedding](ClassArchitecture.md#L195-L239) | Compute cosine similarity with another embedding | |
 | [normalize](ClassArchitecture.md#L231-L237) | [Embedding](ClassArchitecture.md#L195-L239) | Normalize vector in-place | |
-| [train](ClassArchitecture.md#L265-L272) | [BaselineModel](ClassArchitecture.md#L241-L307) | Train the classifier | |
-| [predict](ClassArchitecture.md#L275-L283) | [BaselineModel](ClassArchitecture.md#L241-L307) | Predict label probabilities | |
-| [retrieve](ClassArchitecture.md#L286-L296) | [BaselineModel](ClassArchitecture.md#L241-L307) | Retrieve top chunks for query embedding | |
-| [save](ClassArchitecture.md#L298-L305) | [BaselineModel](ClassArchitecture.md#L241-L307) | Serialize model to disk | |
-| [fit](ClassArchitecture.md#L335-L345) | [ProjectionHead](ClassArchitecture.md#L311-L358) | Train projection head | |
-| [transform](ClassArchitecture.md#L347-L356) | [ProjectionHead](ClassArchitecture.md#L311-L358) | Apply transformation to embeddings | |
-| [fineTune](ClassArchitecture.md#L382-L391) | [Encoder](ClassArchitecture.md#L361-L404) | Contrastive fine-tuning procedure | |
-| [encode](ClassArchitecture.md#L393-L402) | [Encoder](ClassArchitecture.md#L361-L404) | Convert text to embedding | |
-| [summary](ClassArchitecture.md#L429-L437) | [Metrics](ClassArchitecture.md#L407-L439) | Return human-readable summary of metrics | |
-| [diff](ClassArchitecture.md#L464-L473) | [CorpusVersion](ClassArchitecture.md#L442-L475) | Return differences between versions | |
-| [renderPDF](ClassArchitecture.md#L485-L492) | [EvalReportView](ClassArchitecture.md#L480-L503) | Generate PDF report | |
-| [renderHTML](ClassArchitecture.md#L494-L501) | [EvalReportView](ClassArchitecture.md#L480-L503) | Generate HTML report | |
-| [render](ClassArchitecture.md#L510-L521) | [DiffReportView](ClassArchitecture.md#L505-L523) | Generate diff report in HTML or PDF | |
-| [plotHeatmap](ClassArchitecture.md#L531-L538) | [MetricsPlotsView](ClassArchitecture.md#L526-L549) | Render heatmap from metric matrix | |
-| [plotTrend](ClassArchitecture.md#L540-L547) | [MetricsPlotsView](ClassArchitecture.md#L526-L549) | Render line chart for metric trends | |
-| [run](ClassArchitecture.md#L559-L566) | [IngestionController](ClassArchitecture.md#L554-L569) | Parse PDFs to documents | |
-| [run](ClassArchitecture.md#L577-L586) | [ChunkingController](ClassArchitecture.md#L572-L589) | Split documents into chunks | |
-| [run](ClassArchitecture.md#L596-L604) | [WeakLabelingController](ClassArchitecture.md#L591-L607) | Apply weak labeling rules | |
-| [run](ClassArchitecture.md#L615-L623) | [EmbeddingController](ClassArchitecture.md#L610-L626) | Generate embeddings | |
-| [train](ClassArchitecture.md#L634-L646) | [BaselineController](ClassArchitecture.md#L629-L660) | Fit baseline classifier | delegates to model |
-| [retrieve](ClassArchitecture.md#L648-L657) | [BaselineController](ClassArchitecture.md#L629-L660) | Retrieve top chunks using model | |
-| [fit](ClassArchitecture.md#L667-L676) | [ProjectionHeadController](ClassArchitecture.md#L662-L689) | Train projection head | |
-| [apply](ClassArchitecture.md#L678-L687) | [ProjectionHeadController](ClassArchitecture.md#L662-L689) | Apply projection head to embeddings | |
-| [run](ClassArchitecture.md#L697-L705) | [FineTuneController](ClassArchitecture.md#L692-L708) | Fine-tune encoder | |
-| [evaluate](ClassArchitecture.md#L716-L725) | [EvaluationController](ClassArchitecture.md#L711-L737) | Compute metrics for model | |
-| [generateReports](ClassArchitecture.md#L728-L735) | [EvaluationController](ClassArchitecture.md#L711-L737) | Produce evaluation reports | |
-| [fetch](ClassArchitecture.md#L745-L752) | [DataAcquisitionController](ClassArchitecture.md#L740-L765) | Retrieve corpora from sources | |
-| [diffVersions](ClassArchitecture.md#L755-L763) | [DataAcquisitionController](ClassArchitecture.md#L740-L765) | Run diff and trigger report generation | |
-| [execute](ClassArchitecture.md#L787-L794) | [PipelineController](ClassArchitecture.md#L768-L796) | Execute pipeline steps | |
-| [runTests](ClassArchitecture.md#L804-L815) | [TestController](ClassArchitecture.md#L799-L817) | Execute selected tests | |
+| [train](ClassArchitecture.md#L265-L272) | [BaselineModel](ClassArchitecture.md#L241-L295) | Train the classifier | |
+| [predict](ClassArchitecture.md#L275-L283) | [BaselineModel](ClassArchitecture.md#L241-L295) | Predict label probabilities | |
+| [save](ClassArchitecture.md#L286-L293) | [BaselineModel](ClassArchitecture.md#L241-L295) | Serialize model to disk | |
+| [fit](ClassArchitecture.md#L323-L332) | [ProjectionHead](ClassArchitecture.md#L299-L346) | Train projection head | |
+| [transform](ClassArchitecture.md#L335-L344) | [ProjectionHead](ClassArchitecture.md#L299-L346) | Apply transformation to embeddings | |
+| [fineTune](ClassArchitecture.md#L370-L379) | [Encoder](ClassArchitecture.md#L349-L392) | Contrastive fine-tuning procedure | |
+| [encode](ClassArchitecture.md#L381-L389) | [Encoder](ClassArchitecture.md#L349-L392) | Convert text to embedding | |
+| [summary](ClassArchitecture.md#L417-L425) | [Metrics](ClassArchitecture.md#L395-L427) | Return human-readable summary of metrics | |
+| [diff](ClassArchitecture.md#L452-L460) | [CorpusVersion](ClassArchitecture.md#L430-L463) | Return differences between versions | |
+| [renderPDF](ClassArchitecture.md#L473-L480) | [EvalReportView](ClassArchitecture.md#L468-L491) | Generate PDF report | |
+| [renderHTML](ClassArchitecture.md#L482-L489) | [EvalReportView](ClassArchitecture.md#L468-L491) | Generate HTML report | |
+| [render](ClassArchitecture.md#L498-L509) | [DiffReportView](ClassArchitecture.md#L493-L511) | Generate diff report in HTML or PDF | |
+| [plotHeatmap](ClassArchitecture.md#L519-L526) | [MetricsPlotsView](ClassArchitecture.md#L514-L537) | Render heatmap from metric matrix | |
+| [plotTrend](ClassArchitecture.md#L528-L535) | [MetricsPlotsView](ClassArchitecture.md#L514-L537) | Render line chart for metric trends | |
+| [run](ClassArchitecture.md#L547-L555) | [IngestionController](ClassArchitecture.md#L542-L557) | Parse PDFs to documents | |
+| [run](ClassArchitecture.md#L565-L575) | [ChunkingController](ClassArchitecture.md#L560-L577) | Split documents into chunks | |
+| [run](ClassArchitecture.md#L584-L593) | [WeakLabelingController](ClassArchitecture.md#L579-L595) | Apply weak labeling rules | |
+| [run](ClassArchitecture.md#L603-L612) | [EmbeddingController](ClassArchitecture.md#L598-L614) | Generate embeddings | |
+| [train](ClassArchitecture.md#L622-L631) | [BaselineController](ClassArchitecture.md#L617-L644) | Fit baseline classifier | |
+| [retrieve](ClassArchitecture.md#L633-L642) | [BaselineController](ClassArchitecture.md#L617-L644) | Retrieve top chunks for query embedding | |
+| [trainHead](ClassArchitecture.md#L651-L662) | [ProjectionHeadController](ClassArchitecture.md#L646-L673) | Instantiate and fit projection head | |
+| [applyHead](ClassArchitecture.md#L664-L671) | [ProjectionHeadController](ClassArchitecture.md#L646-L673) | Apply fitted projection head to embeddings | |
+| [run](ClassArchitecture.md#L681-L689) | [FineTuneController](ClassArchitecture.md#L676-L692) | Fine-tune encoder | |
+| [evaluate](ClassArchitecture.md#L700-L709) | [EvaluationController](ClassArchitecture.md#L695-L721) | Compute metrics for model | |
+| [generateReports](ClassArchitecture.md#L712-L719) | [EvaluationController](ClassArchitecture.md#L695-L721) | Produce evaluation reports | |
+| [fetch](ClassArchitecture.md#L729-L737) | [DataAcquisitionController](ClassArchitecture.md#L724-L749) | Retrieve corpora from sources | |
+| [diffVersions](ClassArchitecture.md#L739-L747) | [DataAcquisitionController](ClassArchitecture.md#L724-L749) | Run diff and trigger report generation | |
+| [execute](ClassArchitecture.md#L771-L778) | [PipelineController](ClassArchitecture.md#L752-L780) | Execute pipeline steps | |
+| [runTests](ClassArchitecture.md#L788-L798) | [TestController](ClassArchitecture.md#L783-L800) | Execute selected tests | |
 
 > **Note:** List every new or renamed class method here and follow `lowerCamelCase` naming.
 
@@ -170,6 +169,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 | startup | RegClassifier project initialization | module | `project` object | none | @todo | |
 | shutdown | RegClassifier project cleanup | module | project object | none | @todo | |
 | run_mlint | Lint MATLAB files and emit artifacts for CI | module | none | none | @todo | |
+| testProjectionHeadControllerClass | Verify projection head controller delegates to model | test | none | none | @todo | |
 
 
 

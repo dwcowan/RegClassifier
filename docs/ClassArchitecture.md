@@ -7,7 +7,7 @@
 | `labelMatrixClass`   | Sparse weak labels (`labelMat`) aligned to chunks and topics                       |
 | `embeddingClass`     | Vector representation of each chunk (`embeddingVec`) produced by BERT or fallback models |
 | `baselineModelClass` | Multi‑label classifier and hybrid retrieval artifacts                              |
-| `projectionHeadClass`| MLP fine-tuning frozen embeddings to enhance retrieval                             |
+| `projectionHeadClass`| MLP fine-tuning frozen embeddings; training resides in the model layer            |
 | `encoderClass`       | Fine‑tuned BERT weights for contrastive learning workflows                         |
 | `metricsClass`       | Evaluation results and per‑label performance data                                  |
 | `corpusVersionClass` | Versioned corpora for diff operations and reports (`versionId`, `documentVec`)      |
@@ -18,25 +18,25 @@
 
 | Class Path                 | Purpose                                                                        |
 | -------------------------- | ------------------------------------------------------------------------------ |
-| `+view/evalReportViewClass.m`   | Generates PDF/HTML reports summarizing metrics and trends\\:codex-file-citation |
-| `+view/diffReportViewClass.m`   | Presents HTML or PDF diffs between regulatory versions\\:codex-file-citation    |
+| `+view/evalReportViewClass.m`   | Generates PDF/HTML reports summarizing metrics and trends |
+| `+view/diffReportViewClass.m`   | Presents HTML or PDF diffs between regulatory versions    |
 | `+view/metricsPlotsViewClass.m` | Visualizes metrics/heatmaps (e.g., coretrieval, trend plots).                  |
 
 **Controller Layer (+controller)**
 
 | Class Path                               | Purpose                                                                       |
 | ---------------------------------------- | ----------------------------------------------------------------------------- |
-| `+controller/ingestionControllerClass.m`      | Runs `reg.ingestPdfs` to populate `model.documentClass` models\:codex-file-citation |
-| `+controller/chunkingControllerClass.m`       | Splits documents into `model.chunkClass` models via `reg.chunkText`\:codex-file-citation |
-| `+controller/weakLabelingControllerClass.m`   | Applies heuristic rules to create `model.labelMatrixClass` models\:codex-file-citation |
-| `+controller/embeddingControllerClass.m`      | Generates and caches `model.embeddingClass` models (`reg.docEmbeddingsBertGpu`)\:codex-file-citation |
-| `+controller/baselineControllerClass.m`       | Constructs `model.baselineModelClass` and delegates `train` and `retrieve` |
-| `+controller/projectionHeadControllerClass.m` | Fits `model.projectionHeadClass` and integrates it into the pipeline\:codex-file-citation |
-| `+controller/fineTuneControllerClass.m`       | Builds contrastive datasets and produces `model.encoderClass` models\:codex-file-citation |
-| `+controller/evaluationControllerClass.m`     | Computes metrics and invokes `view.evalReportViewClass` and gold pack evaluation\:codex-file-citation |
-| `+controller/dataAcquisitionControllerClass.m`| Fetches regulatory corpora and triggers diff analyses with `view.diffReportViewClass`\:codex-file-citation |
-| `+controller/pipelineControllerClass.m`       | Orchestrates end‑to‑end execution based on module dependencies\:codex-file-citation |
-| `+controller/testControllerClass.m`           | Executes continuous test suite to maintain reliability\:codex-file-citation |
+| `+controller/ingestionControllerClass.m`      | Runs `reg.ingestPdfs` to populate `model.documentClass` models |
+| `+controller/chunkingControllerClass.m`       | Splits documents into `model.chunkClass` models via `reg.chunkText` |
+| `+controller/weakLabelingControllerClass.m`   | Applies heuristic rules to create `model.labelMatrixClass` models |
+| `+controller/embeddingControllerClass.m`      | Generates and caches `model.embeddingClass` models (`reg.docEmbeddingsBertGpu`) |
+| `+controller/baselineControllerClass.m`       | Trains `model.baselineModelClass` and serves retrieval (`reg.trainMultilabel`, `reg.hybridSearch`) |
+| `+controller/projectionHeadControllerClass.m` | Instantiates `model.projectionHeadClass` and delegates training and application |
+| `+controller/fineTuneControllerClass.m`       | Builds contrastive datasets and produces `model.encoderClass` models |
+| `+controller/evaluationControllerClass.m`     | Computes metrics and invokes `view.evalReportViewClass` and gold pack evaluation |
+| `+controller/dataAcquisitionControllerClass.m`| Fetches regulatory corpora and triggers diff analyses with `view.diffReportViewClass` |
+| `+controller/pipelineControllerClass.m`       | Orchestrates end‑to‑end execution based on module dependencies |
+| `+controller/testControllerClass.m`           | Executes continuous test suite to maintain reliability |
 
 ## Class Definitions
 
@@ -661,29 +661,29 @@ end
 
 % +controller/projectionHeadControllerClass.m
 classdef projectionHeadControllerClass
-    %PROJECTIONHEADCONTROLLER Manages projection head training and usage.
-    
+    %PROJECTIONHEADCONTROLLERCLASS Manages projection head training and usage.
+
     methods (Access=public)
-        function head = fit(~, embeddingMat, labelMat)
-            %FIT Train projection head.
-            %   head = fit(obj, embeddingMat, labelMat)
-            %   embeddingMat (double Mat): Embeddings.
-            %   labelMat (double Mat): Labels.
+        function head = trainHead(~, embeddingMat, labelMat, numEpochs, learningRate)
+            %TRAINHEAD Instantiate and fit projection head.
+            %   head = trainHead(obj, embeddingMat, labelMat, numEpochs, learningRate)
+            %   embeddingMat (double Mat): Embeddings. labelMat (double Mat): Labels.
+            %   numEpochs (double): Training epochs. learningRate (double): Step size.
             %   head (projectionHeadClass): Fitted head.
-            %
             %   Side effects: none.
-            head = [];
+            inputDim = size(embeddingMat, 2);
+            outputDim = size(labelMat, 2);
+            head = model.projectionHeadClass(inputDim, outputDim);
+            head.fit(embeddingMat, labelMat, numEpochs, learningRate);
         end
 
-        function transformed = apply(~, projectionHead, embeddingMat)
-            %APPLY Apply projection head to embeddings.
-            %   transformed = apply(obj, projectionHead, embeddingMat)
-            %   projectionHead (projectionHeadClass): Head to apply.
-            %   embeddingMat (double Mat): Embeddings.
-            %   transformed (double Mat): Transformed embeddings.
-            %
+        function embeddingMatTrans = applyHead(~, projectionHead, embeddingMat)
+            %APPLYHEAD Apply projection head to embeddings.
+            %   embeddingMatTrans = applyHead(obj, projectionHead, embeddingMat)
+            %   projectionHead (projectionHeadClass): Head to apply. embeddingMat (double Mat): Embeddings.
+            %   embeddingMatTrans (double Mat): Transformed embeddings.
             %   Side effects: none.
-            transformed = [];
+            embeddingMatTrans = projectionHead.transform(embeddingMat);
         end
     end
 end
