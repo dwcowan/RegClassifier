@@ -11,7 +11,7 @@ Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new 
 
 1. In MATLAB, run the full test suite regularly:
    ```matlab
-   resultsTbl = runtests('tests','IncludeSubfolders',true,'UseParallel',false);
+   resultsTbl = runtests('tests', 'IncludeSubfolders', true, 'UseParallel', false);
    table(resultsTbl)
    ```
 2. Investigate any failures before committing changes.
@@ -27,7 +27,7 @@ Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new 
 - **Side Effects:** executes all MATLAB tests in the project.
 - **Usage Example:**
   ```matlab
-  resultsTbl = runtests('tests','IncludeSubfolders',true,'UseParallel',false);
+  resultsTbl = runtests('tests', 'IncludeSubfolders', true, 'UseParallel', false);
   ```
 
 See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for any test-related artifacts.
