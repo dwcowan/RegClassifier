@@ -63,6 +63,12 @@ Class names, class properties, class methods, and interface definitions must als
 - Suffix with `Fn` or `Handle`  
   `costFn`, `updateHandle`
 
+### 1.6 Data Contracts and Flows
+- Struct schema names use **UpperCamelCase** (`SampleSchema`).
+- Field names use **lowerCamelCase** (`sampleField`).
+- Express data flows as `producer → consumer`.
+- Record new or revised schemas and flows in [identifier_registry.md](identifier_registry.md); see [README_NAMING.md](README_NAMING.md) for process details.
+
 ---
 
 ## 2. MATLAB Coding Style
