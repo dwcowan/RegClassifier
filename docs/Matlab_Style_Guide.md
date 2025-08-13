@@ -79,6 +79,7 @@ Class names, class properties, class methods, and interface definitions must als
 - One function per file; file name matches the main function.
 - Filenames must match the main function/class name.
 - Use namespaced folders (e.g., `+utils`, `+internal`) to manage scope.
+- Package folders must be named in **lowerCamelCase** (e.g., `+dataProcessing`).
 - Avoid `global`, `assignin`, or `eval`.
 - Prefer function files over scripts for reusable code.
 
