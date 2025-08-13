@@ -18,7 +18,7 @@ Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new 
 4. The function extracts text from each PDF into `docsTbl`. Image-only pages fall back to OCR if the Report Generator toolbox is installed.
 5. Save `docsTbl` for later steps:
    ```matlab
-   save('data/docsTbl.mat', 'docsTbl');
+   save('data/docsTbl.mat', 'docsTbl')
    ```
 
 ## Function Interface

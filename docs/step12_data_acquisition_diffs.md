@@ -39,7 +39,7 @@ Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new 
 - **Side Effects:** none.
 - **Usage Example:**
    ```matlab
-   diffStruct = reg.crrDiffVersions('versionA', 'versionB');
+   diffStruct = reg.crrDiffVersions('v1', 'v2');
    ```
 
 ### reg.crrDiffReport
