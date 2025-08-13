@@ -25,7 +25,7 @@ Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new 
 ### reg.crrSync
 - **Parameters:** none.
 - **Returns:** none.
-- **Side Effects:** downloads the latest corpus to `data/raw`.
+- **Side Effects:** downloads the latest corpus to `src/data/processing/raw`.
 - **Usage Example:**
   ```matlab
   reg.crrSync();
@@ -55,7 +55,7 @@ See [Identifier Registry – Data Contracts](identifier_registry.md#data-contrac
 
 
 ## Verification
-- Date-stamped corpora appear in the `data` directory.
+- Date-stamped corpora appear in the `src/data/processing/raw` directory.
 - Run fetcher tests:
   ```matlab
   runtests('tests/testFetchers.m')

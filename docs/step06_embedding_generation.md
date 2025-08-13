@@ -11,7 +11,7 @@ Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new 
 
 1. Load chunk table:
    ```matlab
-   load('data/chunksTbl.mat', 'chunksTbl');
+   load('src/data/chunksTbl.mat', 'chunksTbl');
    ```
 2. Generate embeddings with the GPU-enabled BERT encoder:
    ```matlab
@@ -20,7 +20,7 @@ Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new 
    If a GPU is unavailable, the function automatically falls back to a CPU-friendly model.
 3. Cache embeddings for reuse:
    ```matlab
-   reg.precomputeEmbeddings(embeddingMat, 'data/embeddingMat.mat');
+   reg.precomputeEmbeddings(embeddingMat, 'src/data/embeddingMat.mat');
    ```
 
 ## Function Interface
