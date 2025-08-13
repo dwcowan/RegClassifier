@@ -86,6 +86,19 @@ Function, script, and class identifiers must also be recorded in the [identifier
 - Prefer function files over scripts for reusable code.
 - Avoid `clear all`, `clc`, and other workspace commands in scripts unless explicitly required.
 
+#### Scripts
+Scripts fall into two categories:
+
+1. **Development scripts** – handle project maintenance or IDE automation.
+   - Must follow naming rules but are exempt from tests.
+   - Typically located in the repository root or the `scripts/` folder.
+   - Examples: `startup.m`, `scripts/generateDocs.m`.
+
+2. **Project helper scripts** – intended for use within the codebase.
+   - Store under the repository-root `+helpers/` package.
+   - Require tests like any other part of the codebase.
+   - Example: `+helpers/normalizeText.m` with `tests/+helpers/testNormalizeText.m`.
+
 ### 2.2 Object-Oriented Design
 - Scope modules with package folders (`+packageName`) to define namespaces.
 - Implement behavior as classes; avoid loose functions inside packages.
