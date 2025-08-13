@@ -11,7 +11,7 @@ Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new 
 
 1. Load the ingested documents table `docsTbl`:
    ```matlab
-   load('data/docsTbl.mat','docsTbl')
+   load('data/docsTbl.mat', 'docsTbl');
    ```
 2. Chunk each document with the helper function (default `chunkSizeTokens=300`, `chunkOverlap=80`):
    ```matlab
@@ -19,7 +19,7 @@ Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new 
    ```
 3. Save the chunksTbl for later modules:
    ```matlab
-   save('data/chunksTbl.mat','chunksTbl')
+   save('data/chunksTbl.mat', 'chunksTbl');
    ```
 
 ## Function Interface
