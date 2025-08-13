@@ -47,6 +47,29 @@ Keep the illustrative examples below in sync with the current naming conventions
 | Name | Purpose | Scope | Owner | Related Files | Notes |
 |------|---------|-------|-------|---------------|-------|
 | EnvironmentFixture | Manage MATLAB format, RNG, and GPU state for tests | test | @todo | tests/+fixtures/EnvironmentFixture.m | |
+| Document | Represents raw PDF text with identifiers (docID, text) | global | @todo | docs/ClassArchitecture.md | Model layer |
+| Chunk | Overlapping token segments of documents (chunkID, docID, text) | global | @todo | docs/ClassArchitecture.md | Model layer |
+| LabelMatrix | Sparse weak labels (Yboot) aligned to chunks and topics | global | @todo | docs/ClassArchitecture.md | Model layer |
+| Embedding | Vector representation of each chunk produced by BERT or fallback models | global | @todo | docs/ClassArchitecture.md | Model layer |
+| BaselineModel | Multi-label classifier and hybrid retrieval artifacts | global | @todo | docs/ClassArchitecture.md | Model layer |
+| ProjectionHead | MLP fine-tuning frozen embeddings to enhance retrieval | global | @todo | docs/ClassArchitecture.md | Model layer |
+| Encoder | Fine-tuned BERT weights for contrastive learning workflows | global | @todo | docs/ClassArchitecture.md | Model layer |
+| Metrics | Evaluation results and per-label performance data | global | @todo | docs/ClassArchitecture.md | Model layer |
+| CorpusVersion | Versioned corpora for diff operations and reports | global | @todo | docs/ClassArchitecture.md | Model layer |
+| EvalReportView | Generates PDF/HTML reports summarizing metrics and trends | global | @todo | docs/ClassArchitecture.md | View layer |
+| DiffReportView | Presents HTML or PDF diffs between regulatory versions | global | @todo | docs/ClassArchitecture.md | View layer |
+| MetricsPlotsView | Visualizes metrics and heatmaps such as coretrieval and trend plots | global | @todo | docs/ClassArchitecture.md | View layer |
+| IngestionController | Runs reg.ingest_pdfs to populate Document models | global | @todo | docs/ClassArchitecture.md | Controller layer |
+| ChunkingController | Splits documents into Chunk models via reg.chunk_text | global | @todo | docs/ClassArchitecture.md | Controller layer |
+| WeakLabelingController | Applies heuristic rules to create LabelMatrix models | global | @todo | docs/ClassArchitecture.md | Controller layer |
+| EmbeddingController | Generates and caches Embedding models (reg.doc_embeddings_bert_gpu) | global | @todo | docs/ClassArchitecture.md | Controller layer |
+| BaselineController | Trains BaselineModel and serves retrieval (reg.train_multilabel, reg.hybrid_search) | global | @todo | docs/ClassArchitecture.md | Controller layer |
+| ProjectionHeadController | Fits ProjectionHead and integrates it into the pipeline | global | @todo | docs/ClassArchitecture.md | Controller layer |
+| FineTuneController | Builds contrastive datasets and produces Encoder models | global | @todo | docs/ClassArchitecture.md | Controller layer |
+| EvaluationController | Computes metrics and invokes EvalReportView and gold pack evaluation | global | @todo | docs/ClassArchitecture.md | Controller layer |
+| DataAcquisitionController | Fetches regulatory corpora and triggers diff analyses with DiffReportView | global | @todo | docs/ClassArchitecture.md | Controller layer |
+| PipelineController | Orchestrates end-to-end execution based on module dependencies | global | @todo | docs/ClassArchitecture.md | Controller layer |
+| TestController | Executes continuous test suite to maintain reliability | global | @todo | docs/ClassArchitecture.md | Controller layer |
 
 
 ## Class Properties
