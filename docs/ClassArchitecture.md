@@ -725,13 +725,21 @@ classdef evaluationControllerClass
             metrics = [];
         end
 
-        function generateReports(~, metrics, outDir)
-            %GENERATEREPORTS Use view layer to produce reports.
-            %   generateReports(obj, metrics, outDir)
+        function generateReports(~, metrics, outDir, viewHandle)
+            %GENERATEREPORTS Use supplied view to produce reports.
+            %   generateReports(obj, metrics, outDir, viewHandle)
             %   metrics (metricsClass): Evaluation results.
             %   outDir (string): Output directory.
+            %   viewHandle (evalReportViewClass|function_handle): View dependency.
+            %       Must implement: render(metrics, outDir)
             %
             %   Side effects: writes reports to disk.
+            if isa(viewHandle, 'function_handle')
+                viewObj = viewHandle();
+            else
+                viewObj = viewHandle;
+            end
+            viewObj.render(metrics, outDir);
         end
     end
 end
