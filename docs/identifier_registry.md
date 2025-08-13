@@ -47,7 +47,29 @@ Keep the illustrative examples below in sync with the current naming conventions
 
 | Name | Purpose | Scope | Owner | Related Files | Notes |
 |------|---------|-------|-------|---------------|-------|
-| pipelineControllerClass | Orchestrate module controllers based on config | module | @todo | +reg/pipelineControllerClass.m | coordinates modules |
+| Document | Represents regulatory PDF document | module | @todo | [ClassArchitecture.md#L45-L87](ClassArchitecture.md#L45-L87) | |
+| Chunk | Overlapping text segment from a document | module | @todo | [ClassArchitecture.md#L90-L142](ClassArchitecture.md#L90-L142) | |
+| LabelMatrix | Sparse weak labels aligned to chunks and topics | module | @todo | [ClassArchitecture.md#L145-L192](ClassArchitecture.md#L145-L192) | |
+| Embedding | Vector representation of a chunk | module | @todo | [ClassArchitecture.md#L195-L239](ClassArchitecture.md#L195-L239) | |
+| BaselineModel | Multi-label classifier and retrieval artifacts | module | @todo | [ClassArchitecture.md#L241-L295](ClassArchitecture.md#L241-L295) | |
+| ProjectionHead | MLP transforming embeddings for retrieval | module | @todo | [ClassArchitecture.md#L299-L346](ClassArchitecture.md#L299-L346) | |
+| Encoder | Fine-tuned model for contrastive learning | module | @todo | [ClassArchitecture.md#L349-L392](ClassArchitecture.md#L349-L392) | |
+| Metrics | Evaluation results and per-label performance | module | @todo | [ClassArchitecture.md#L395-L427](ClassArchitecture.md#L395-L427) | |
+| CorpusVersion | Versioned corpora for diff operations | module | @todo | [ClassArchitecture.md#L430-L463](ClassArchitecture.md#L430-L463) | |
+| EvalReportView | Generates reports summarizing metrics | module | @todo | [ClassArchitecture.md#L468-L491](ClassArchitecture.md#L468-L491) | |
+| DiffReportView | Presents diffs between regulatory versions | module | @todo | [ClassArchitecture.md#L493-L511](ClassArchitecture.md#L493-L511) | |
+| MetricsPlotsView | Visualizes metrics and trend plots | module | @todo | [ClassArchitecture.md#L514-L537](ClassArchitecture.md#L514-L537) | |
+| IngestionController | Parses PDFs and produces Document models | module | @todo | [ClassArchitecture.md#L542-L557](ClassArchitecture.md#L542-L557) | |
+| ChunkingController | Splits documents into overlapping chunks | module | @todo | [ClassArchitecture.md#L560-L577](ClassArchitecture.md#L560-L577) | |
+| WeakLabelingController | Applies heuristic rules to label chunks | module | @todo | [ClassArchitecture.md#L579-L595](ClassArchitecture.md#L579-L595) | |
+| EmbeddingController | Generates embeddings for chunks | module | @todo | [ClassArchitecture.md#L598-L614](ClassArchitecture.md#L598-L614) | |
+| BaselineController | Trains baseline classifier and serves retrieval | module | @todo | [ClassArchitecture.md#L617-L644](ClassArchitecture.md#L617-L644) | |
+| ProjectionHeadController | Manages projection head training and usage | module | @todo | [ClassArchitecture.md#L646-L673](ClassArchitecture.md#L646-L673) | |
+| FineTuneController | Fine-tunes base models | module | @todo | [ClassArchitecture.md#L676-L692](ClassArchitecture.md#L676-L692) | |
+| EvaluationController | Computes metrics and generates reports | module | @todo | [ClassArchitecture.md#L695-L721](ClassArchitecture.md#L695-L721) | |
+| DataAcquisitionController | Fetches corpora and triggers diff analyses | module | @todo | [ClassArchitecture.md#L724-L749](ClassArchitecture.md#L724-L749) | |
+| PipelineController | Orchestrates end-to-end pipeline | module | @todo | [ClassArchitecture.md#L752-L780](ClassArchitecture.md#L752-L780) | |
+| TestController | Executes continuous test suite | module | @todo | [ClassArchitecture.md#L783-L800](ClassArchitecture.md#L783-L800) | |
 
 
 
@@ -58,7 +80,32 @@ Keep the illustrative examples below in sync with the current naming conventions
 
 | Class | Property | Type | Description |
 |-------|----------|------|-------------|
-| [baselineModelClass](ClassArchitecture.md#L164-L194) | [weightMat](ClassArchitecture.md#L171) | double matrix | Learned classifier weights |
+| [Document](ClassArchitecture.md#L45-L87) | [docId](ClassArchitecture.md#L50) | string | Unique identifier |
+| [Document](ClassArchitecture.md#L45-L87) | [text](ClassArchitecture.md#L51) | string | Raw text content |
+| [Chunk](ClassArchitecture.md#L90-L142) | [chunkId](ClassArchitecture.md#L95) | string | Chunk identifier |
+| [Chunk](ClassArchitecture.md#L90-L142) | [docId](ClassArchitecture.md#L96) | string | Parent document identifier |
+| [Chunk](ClassArchitecture.md#L90-L142) | [text](ClassArchitecture.md#L97) | string | Chunk text |
+| [Chunk](ClassArchitecture.md#L90-L142) | [startIndex](ClassArchitecture.md#L98) | double | Start token index |
+| [Chunk](ClassArchitecture.md#L90-L142) | [endIndex](ClassArchitecture.md#L99) | double | End token index |
+| [LabelMatrix](ClassArchitecture.md#L145-L192) | [chunkIdVec](ClassArchitecture.md#L150) | double Vec | Chunk identifiers |
+| [LabelMatrix](ClassArchitecture.md#L145-L192) | [topicIdVec](ClassArchitecture.md#L151) | double Vec | Topic identifiers |
+| [LabelMatrix](ClassArchitecture.md#L145-L192) | [labelMat](ClassArchitecture.md#L152) | sparse double Mat | Label weights |
+| [Embedding](ClassArchitecture.md#L195-L239) | [chunkId](ClassArchitecture.md#L200) | double | Chunk identifier |
+| [Embedding](ClassArchitecture.md#L195-L239) | [embeddingVec](ClassArchitecture.md#L201) | double Vec | Embedding vector |
+| [Embedding](ClassArchitecture.md#L195-L239) | [modelName](ClassArchitecture.md#L202) | string | Source model name |
+| [BaselineModel](ClassArchitecture.md#L241-L295) | [labelMat](ClassArchitecture.md#L246) | double Mat | Label matrix |
+| [BaselineModel](ClassArchitecture.md#L241-L295) | [embeddingMat](ClassArchitecture.md#L247) | double Mat | Embedding matrix |
+| [BaselineModel](ClassArchitecture.md#L241-L295) | [weightMat](ClassArchitecture.md#L248) | double Mat | Learned classifier weights |
+| [ProjectionHead](ClassArchitecture.md#L299-L346) | [inputDim](ClassArchitecture.md#L304) | double | Input dimension |
+| [ProjectionHead](ClassArchitecture.md#L299-L346) | [outputDim](ClassArchitecture.md#L305) | double | Output dimension |
+| [ProjectionHead](ClassArchitecture.md#L299-L346) | [paramStruct](ClassArchitecture.md#L306) | struct | Model parameters |
+| [Encoder](ClassArchitecture.md#L349-L392) | [baseModel](ClassArchitecture.md#L354) | struct | Base model data |
+| [Encoder](ClassArchitecture.md#L349-L392) | [stateStruct](ClassArchitecture.md#L355) | struct | Fine-tuning state |
+| [Metrics](ClassArchitecture.md#L395-L427) | [metricName](ClassArchitecture.md#L400) | string | Name of metric set |
+| [Metrics](ClassArchitecture.md#L395-L427) | [scoreStruct](ClassArchitecture.md#L401) | struct | Scores |
+| [CorpusVersion](ClassArchitecture.md#L430-L463) | [versionId](ClassArchitecture.md#L435) | string | Corpus version identifier |
+| [CorpusVersion](ClassArchitecture.md#L430-L463) | [documentVec](ClassArchitecture.md#L436) | Document Vec | Documents in corpus |
+| [PipelineController](ClassArchitecture.md#L752-L780) | [controllerStruct](ClassArchitecture.md#L757) | struct | Controller instances |
 
 
 > **Note:** List every new or renamed class property here and follow `lowerCamelCase` naming.
@@ -66,8 +113,43 @@ Keep the illustrative examples below in sync with the current naming conventions
 ## Class Methods
 | Name | Class | Purpose | Notes |
 |------|-------|---------|-------|
-| [train](ClassArchitecture.md#L181-L183) | [baselineModelClass](ClassArchitecture.md#L164-L194) | Fit classifier weights to embeddings and labels | |
-| tokenCount | documentClass, chunkClass | Return number of tokens in text | Renamed from `length` |
+| [tokenCount](ClassArchitecture.md#L67-L75) | [Document](ClassArchitecture.md#L45-L87) | Return number of tokens in text | |
+| [metadata](ClassArchitecture.md#L77-L85) | [Document](ClassArchitecture.md#L45-L87) | Return additional metadata | |
+| [tokenCount](ClassArchitecture.md#L121-L129) | [Chunk](ClassArchitecture.md#L90-L142) | Return number of tokens in text | |
+| [overlaps](ClassArchitecture.md#L131-L140) | [Chunk](ClassArchitecture.md#L90-L142) | Determine if two chunks overlap | |
+| [addLabel](ClassArchitecture.md#L170-L179) | [LabelMatrix](ClassArchitecture.md#L145-L192) | Insert or update a label weight | |
+| [getLabelsForChunk](ClassArchitecture.md#L181-L190) | [LabelMatrix](ClassArchitecture.md#L145-L192) | Return topic-weight pairs for a chunk | |
+| [cosineSimilarity](ClassArchitecture.md#L220-L228) | [Embedding](ClassArchitecture.md#L195-L239) | Compute cosine similarity with another embedding | |
+| [normalize](ClassArchitecture.md#L231-L237) | [Embedding](ClassArchitecture.md#L195-L239) | Normalize vector in-place | |
+| [train](ClassArchitecture.md#L265-L272) | [BaselineModel](ClassArchitecture.md#L241-L295) | Train the classifier | |
+| [predict](ClassArchitecture.md#L275-L283) | [BaselineModel](ClassArchitecture.md#L241-L295) | Predict label probabilities | |
+| [save](ClassArchitecture.md#L286-L293) | [BaselineModel](ClassArchitecture.md#L241-L295) | Serialize model to disk | |
+| [fit](ClassArchitecture.md#L323-L332) | [ProjectionHead](ClassArchitecture.md#L299-L346) | Train projection head | |
+| [transform](ClassArchitecture.md#L335-L344) | [ProjectionHead](ClassArchitecture.md#L299-L346) | Apply transformation to embeddings | |
+| [fineTune](ClassArchitecture.md#L370-L379) | [Encoder](ClassArchitecture.md#L349-L392) | Contrastive fine-tuning procedure | |
+| [encode](ClassArchitecture.md#L381-L389) | [Encoder](ClassArchitecture.md#L349-L392) | Convert text to embedding | |
+| [summary](ClassArchitecture.md#L417-L425) | [Metrics](ClassArchitecture.md#L395-L427) | Return human-readable summary of metrics | |
+| [diff](ClassArchitecture.md#L452-L460) | [CorpusVersion](ClassArchitecture.md#L430-L463) | Return differences between versions | |
+| [renderPDF](ClassArchitecture.md#L473-L480) | [EvalReportView](ClassArchitecture.md#L468-L491) | Generate PDF report | |
+| [renderHTML](ClassArchitecture.md#L482-L489) | [EvalReportView](ClassArchitecture.md#L468-L491) | Generate HTML report | |
+| [render](ClassArchitecture.md#L498-L509) | [DiffReportView](ClassArchitecture.md#L493-L511) | Generate diff report in HTML or PDF | |
+| [plotHeatmap](ClassArchitecture.md#L519-L526) | [MetricsPlotsView](ClassArchitecture.md#L514-L537) | Render heatmap from metric matrix | |
+| [plotTrend](ClassArchitecture.md#L528-L535) | [MetricsPlotsView](ClassArchitecture.md#L514-L537) | Render line chart for metric trends | |
+| [run](ClassArchitecture.md#L547-L555) | [IngestionController](ClassArchitecture.md#L542-L557) | Parse PDFs to documents | |
+| [run](ClassArchitecture.md#L565-L575) | [ChunkingController](ClassArchitecture.md#L560-L577) | Split documents into chunks | |
+| [run](ClassArchitecture.md#L584-L593) | [WeakLabelingController](ClassArchitecture.md#L579-L595) | Apply weak labeling rules | |
+| [run](ClassArchitecture.md#L603-L612) | [EmbeddingController](ClassArchitecture.md#L598-L614) | Generate embeddings | |
+| [train](ClassArchitecture.md#L622-L631) | [BaselineController](ClassArchitecture.md#L617-L644) | Fit baseline classifier | |
+| [retrieve](ClassArchitecture.md#L633-L642) | [BaselineController](ClassArchitecture.md#L617-L644) | Retrieve top chunks for query embedding | |
+| [fit](ClassArchitecture.md#L651-L660) | [ProjectionHeadController](ClassArchitecture.md#L646-L673) | Train projection head | |
+| [apply](ClassArchitecture.md#L662-L671) | [ProjectionHeadController](ClassArchitecture.md#L646-L673) | Apply projection head to embeddings | |
+| [run](ClassArchitecture.md#L681-L689) | [FineTuneController](ClassArchitecture.md#L676-L692) | Fine-tune encoder | |
+| [evaluate](ClassArchitecture.md#L700-L709) | [EvaluationController](ClassArchitecture.md#L695-L721) | Compute metrics for model | |
+| [generateReports](ClassArchitecture.md#L712-L719) | [EvaluationController](ClassArchitecture.md#L695-L721) | Produce evaluation reports | |
+| [fetch](ClassArchitecture.md#L729-L737) | [DataAcquisitionController](ClassArchitecture.md#L724-L749) | Retrieve corpora from sources | |
+| [diffVersions](ClassArchitecture.md#L739-L747) | [DataAcquisitionController](ClassArchitecture.md#L724-L749) | Run diff and trigger report generation | |
+| [execute](ClassArchitecture.md#L771-L778) | [PipelineController](ClassArchitecture.md#L752-L780) | Execute pipeline steps | |
+| [runTests](ClassArchitecture.md#L788-L798) | [TestController](ClassArchitecture.md#L783-L800) | Execute selected tests | |
 
 > **Note:** List every new or renamed class method here and follow `lowerCamelCase` naming.
 
