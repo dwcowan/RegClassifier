@@ -51,25 +51,25 @@ Keep the illustrative examples below in sync with the current naming conventions
 | Chunk | Overlapping text segment from a document | module | @todo | [ClassArchitecture.md#L90-L142](ClassArchitecture.md#L90-L142) | |
 | LabelMatrix | Sparse weak labels aligned to chunks and topics | module | @todo | [ClassArchitecture.md#L145-L192](ClassArchitecture.md#L145-L192) | |
 | Embedding | Vector representation of a chunk | module | @todo | [ClassArchitecture.md#L195-L239](ClassArchitecture.md#L195-L239) | |
-| BaselineModel | Multi-label classifier and retrieval artifacts | module | @todo | [ClassArchitecture.md#L241-L295](ClassArchitecture.md#L241-L295) | |
-| ProjectionHead | MLP transforming embeddings for retrieval | module | @todo | [ClassArchitecture.md#L299-L346](ClassArchitecture.md#L299-L346) | |
-| Encoder | Fine-tuned model for contrastive learning | module | @todo | [ClassArchitecture.md#L349-L392](ClassArchitecture.md#L349-L392) | |
-| Metrics | Evaluation results and per-label performance | module | @todo | [ClassArchitecture.md#L395-L427](ClassArchitecture.md#L395-L427) | |
-| CorpusVersion | Versioned corpora for diff operations | module | @todo | [ClassArchitecture.md#L430-L463](ClassArchitecture.md#L430-L463) | |
-| EvalReportView | Generates reports summarizing metrics | module | @todo | [ClassArchitecture.md#L468-L491](ClassArchitecture.md#L468-L491) | |
-| DiffReportView | Presents diffs between regulatory versions | module | @todo | [ClassArchitecture.md#L493-L511](ClassArchitecture.md#L493-L511) | |
-| MetricsPlotsView | Visualizes metrics and trend plots | module | @todo | [ClassArchitecture.md#L514-L537](ClassArchitecture.md#L514-L537) | |
-| IngestionController | Parses PDFs and produces Document models | module | @todo | [ClassArchitecture.md#L542-L557](ClassArchitecture.md#L542-L557) | |
-| ChunkingController | Splits documents into overlapping chunks | module | @todo | [ClassArchitecture.md#L560-L577](ClassArchitecture.md#L560-L577) | |
-| WeakLabelingController | Applies heuristic rules to label chunks | module | @todo | [ClassArchitecture.md#L579-L595](ClassArchitecture.md#L579-L595) | |
-| EmbeddingController | Generates embeddings for chunks | module | @todo | [ClassArchitecture.md#L598-L614](ClassArchitecture.md#L598-L614) | |
-| BaselineController | Trains baseline classifier and serves retrieval | module | @todo | [ClassArchitecture.md#L617-L644](ClassArchitecture.md#L617-L644) | |
-| ProjectionHeadController | Manages projection head training and usage | module | @todo | [ClassArchitecture.md#L646-L673](ClassArchitecture.md#L646-L673) | |
-| FineTuneController | Fine-tunes base models | module | @todo | [ClassArchitecture.md#L676-L692](ClassArchitecture.md#L676-L692) | |
-| EvaluationController | Computes metrics and generates reports | module | @todo | [ClassArchitecture.md#L695-L721](ClassArchitecture.md#L695-L721) | |
-| DataAcquisitionController | Fetches corpora and triggers diff analyses | module | @todo | [ClassArchitecture.md#L724-L749](ClassArchitecture.md#L724-L749) | |
-| PipelineController | Orchestrates end-to-end pipeline | module | @todo | [ClassArchitecture.md#L752-L780](ClassArchitecture.md#L752-L780) | |
-| TestController | Executes continuous test suite | module | @todo | [ClassArchitecture.md#L783-L800](ClassArchitecture.md#L783-L800) | |
+| BaselineModel | Multi-label classifier and retrieval artifacts | module | @todo | [ClassArchitecture.md#L241-L307](ClassArchitecture.md#L241-L307) | |
+| ProjectionHead | MLP transforming embeddings for retrieval | module | @todo | [ClassArchitecture.md#L311-L358](ClassArchitecture.md#L311-L358) | |
+| Encoder | Fine-tuned model for contrastive learning | module | @todo | [ClassArchitecture.md#L361-L404](ClassArchitecture.md#L361-L404) | |
+| Metrics | Evaluation results and per-label performance | module | @todo | [ClassArchitecture.md#L407-L439](ClassArchitecture.md#L407-L439) | |
+| CorpusVersion | Versioned corpora for diff operations | module | @todo | [ClassArchitecture.md#L442-L475](ClassArchitecture.md#L442-L475) | |
+| EvalReportView | Generates reports summarizing metrics | module | @todo | [ClassArchitecture.md#L480-L503](ClassArchitecture.md#L480-L503) | |
+| DiffReportView | Presents diffs between regulatory versions | module | @todo | [ClassArchitecture.md#L505-L523](ClassArchitecture.md#L505-L523) | |
+| MetricsPlotsView | Visualizes metrics and trend plots | module | @todo | [ClassArchitecture.md#L526-L549](ClassArchitecture.md#L526-L549) | |
+| IngestionController | Parses PDFs and produces Document models | module | @todo | [ClassArchitecture.md#L554-L569](ClassArchitecture.md#L554-L569) | |
+| ChunkingController | Splits documents into overlapping chunks | module | @todo | [ClassArchitecture.md#L572-L589](ClassArchitecture.md#L572-L589) | |
+| WeakLabelingController | Applies heuristic rules to label chunks | module | @todo | [ClassArchitecture.md#L591-L607](ClassArchitecture.md#L591-L607) | |
+| EmbeddingController | Generates embeddings for chunks | module | @todo | [ClassArchitecture.md#L610-L626](ClassArchitecture.md#L610-L626) | |
+| BaselineController | Constructs baselineModelClass and delegates operations | module | @todo | [ClassArchitecture.md#L629-L660](ClassArchitecture.md#L629-L660) | |
+| ProjectionHeadController | Manages projection head training and usage | module | @todo | [ClassArchitecture.md#L662-L689](ClassArchitecture.md#L662-L689) | |
+| FineTuneController | Fine-tunes base models | module | @todo | [ClassArchitecture.md#L692-L708](ClassArchitecture.md#L692-L708) | |
+| EvaluationController | Computes metrics and generates reports | module | @todo | [ClassArchitecture.md#L711-L737](ClassArchitecture.md#L711-L737) | |
+| DataAcquisitionController | Fetches corpora and triggers diff analyses | module | @todo | [ClassArchitecture.md#L740-L765](ClassArchitecture.md#L740-L765) | |
+| PipelineController | Orchestrates end-to-end pipeline | module | @todo | [ClassArchitecture.md#L768-L796](ClassArchitecture.md#L768-L796) | |
+| TestController | Executes continuous test suite | module | @todo | [ClassArchitecture.md#L799-L817](ClassArchitecture.md#L799-L817) | |
 
 
 
@@ -93,9 +93,9 @@ Keep the illustrative examples below in sync with the current naming conventions
 | [Embedding](ClassArchitecture.md#L195-L239) | [chunkId](ClassArchitecture.md#L200) | double | Chunk identifier |
 | [Embedding](ClassArchitecture.md#L195-L239) | [embeddingVec](ClassArchitecture.md#L201) | double Vec | Embedding vector |
 | [Embedding](ClassArchitecture.md#L195-L239) | [modelName](ClassArchitecture.md#L202) | string | Source model name |
-| [BaselineModel](ClassArchitecture.md#L241-L295) | [labelMat](ClassArchitecture.md#L246) | double Mat | Label matrix |
-| [BaselineModel](ClassArchitecture.md#L241-L295) | [embeddingMat](ClassArchitecture.md#L247) | double Mat | Embedding matrix |
-| [BaselineModel](ClassArchitecture.md#L241-L295) | [weightMat](ClassArchitecture.md#L248) | double Mat | Learned classifier weights |
+| [BaselineModel](ClassArchitecture.md#L241-L307) | [labelMat](ClassArchitecture.md#L246) | double Mat | Label matrix |
+| [BaselineModel](ClassArchitecture.md#L241-L307) | [embeddingMat](ClassArchitecture.md#L247) | double Mat | Embedding matrix |
+| [BaselineModel](ClassArchitecture.md#L241-L307) | [weightMat](ClassArchitecture.md#L248) | double Mat | Learned classifier weights |
 | [ProjectionHead](ClassArchitecture.md#L299-L346) | [inputDim](ClassArchitecture.md#L304) | double | Input dimension |
 | [ProjectionHead](ClassArchitecture.md#L299-L346) | [outputDim](ClassArchitecture.md#L305) | double | Output dimension |
 | [ProjectionHead](ClassArchitecture.md#L299-L346) | [paramStruct](ClassArchitecture.md#L306) | struct | Model parameters |
@@ -156,7 +156,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 ## Class Interfaces
 | Interface | Purpose | Methods | Implementing Classes | Notes |
 |-----------|---------|---------|----------------------|-------|
-| IClassifier | Standardize classifier APIs | train, predict | baselineModelClass | example interface |
+| IClassifier | Standardize classifier APIs | train, predict | [baselineModelClass](ClassArchitecture.md#L241-L307) | example interface |
 
 
 
