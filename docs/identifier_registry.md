@@ -50,16 +50,20 @@ Keep the illustrative examples below in sync with the current naming conventions
 
 
 
+> **Note:** List every new or renamed class property here and follow `lowerCamelCase` naming.
+
 ## Class Properties
 
 | Class | Property | Type | Description |
 |-------|----------|------|-------------|
+| [BaselineModel](ClassArchitecture.md#L164-L194) | [weightMat](ClassArchitecture.md#L171) | double matrix | Learned classifier weights |
 
-
+> **Note:** List every new or renamed class method here and follow `lowerCamelCase` naming.
 
 ## Class Methods
 | Name | Class | Purpose | Notes |
 |------|-------|---------|-------|
+| [train](ClassArchitecture.md#L181-L183) | [BaselineModel](ClassArchitecture.md#L164-L194) | Fit classifier weights to embeddings and labels | |
 | tokenCount | Document, Chunk | Return number of tokens in text | Renamed from `length` |
 
 ## Class Interfaces
