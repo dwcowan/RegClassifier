@@ -3,14 +3,16 @@ classdef testShutdown < matlab.unittest.TestCase
     % NAME-REGISTRY:TEST testShutdown
 
     properties
-        repoRoot
-        originalPath
+        repoRoot (1,1) string
+        originalPath (1,1) string
     end
 
     methods(TestMethodSetup)
         function setup(tc)
             tc.repoRoot = string(fileparts(fileparts(mfilename('fullpath'))));
-            tc.originalPath = path;
+            tc.originalPath = string(path);
+            mustBeFolder(tc.repoRoot);
+            mustBeNonempty(tc.originalPath);
         end
     end
 
