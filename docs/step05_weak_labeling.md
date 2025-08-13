@@ -1,6 +1,6 @@
 # Step 5: Weak Labeling
 
-**Goal:** Bootstrap class labels for each text chunk using heuristic rules.
+**Goal:** Generate `weakLabelMat` and `bootLabelMat` for each text chunk using heuristic rules.
 
 **Depends on:** [Step 4: Text Chunking](step04_text_chunking.md).
 
@@ -18,7 +18,7 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
    bootLabelMat = weakLabelMat >= configStruct.minRuleConf; % optional threshold
 
    ```
-3. Store the sparse label matrix for future training:
+3. Store the thresholded label matrix for future training:
    ```matlab
    save('data/bootLabelMat.mat','bootLabelMat')
    ```
@@ -47,7 +47,7 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
   bootLabelMat = weakLabelMat >= 0.5;
   ```
 
-See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schema of `bootLabelMat`.
+See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schemas of `weakLabelMat` and `bootLabelMat`.
 
 
 > **Note:** `reg.weakRules` requires `chunks.text` and the label list `configStruct.labels`
@@ -55,6 +55,7 @@ See [Identifier Registry – Data Contracts](identifier_registry.md#data-contrac
 > optional and can be tuned in `config.m` or overridden via `knobs.json`.
 
 ## Verification
+- `weakLabelMat` contains confidence scores per label.
 - `bootLabelMat` is a sparse matrix with rows matching `chunks` and columns representing topics.
 - Run the labeling test:
   ```matlab

@@ -17,9 +17,9 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
    - `pipeline.json` – data locations and database settings.
    - `knobs.json` – chunking sizes, batch sizes, learning rates.
    - `params.json` – optional fine-tuning overrides.
-4. Run the configuration script to display current settings:
+4. Run the configuration script to display current settings and capture the struct:
    ```matlab
-   config
+   configStruct = config;
    ```
 
 ## Function Interface
