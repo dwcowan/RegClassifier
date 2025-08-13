@@ -18,7 +18,8 @@
 ## Gold Loading
 Load a curated gold mini-pack when available:
 ```matlab
-goldTbl = reg.loadGold(pathStr);
+goldPath = 'path/to/gold';
+goldTbl = reg.loadGold(goldPath);
 ```
 `goldTbl` schema:
 - `docId` (string): document identifier.
