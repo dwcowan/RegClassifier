@@ -70,7 +70,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 ## Class Interfaces
 | Interface | Purpose | Methods | Implementing Classes | Notes |
 |-----------|---------|---------|----------------------|-------|
-| ClassifierInterface | Standardize classifier APIs | train, predict | BaselineModel | example interface |
+| IClassifier | Standardize classifier APIs | train, predict | BaselineModel | example interface |
 
 
 
