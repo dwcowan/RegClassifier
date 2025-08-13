@@ -12,34 +12,38 @@
 | `Metrics`       | Evaluation results and per‑label performance data                                  |
 | `CorpusVersion` | Versioned corpora for diff operations and reports (`versionId`, `documentVec`)      |
 
-**View Layer**
 
-| Class            | Purpose                                                     |
-| ---------------- | ----------------------------------------------------------- |
-| `EvalReportView` | Generates PDF/HTML reports summarizing metrics and trends   |
-| `DiffReportView` | Presents HTML or PDF diffs between regulatory versions      |
-| `MetricsPlotsView` | Visualizes metrics/heatmaps (e.g., coretrieval, trend plots) |
+**View Layer (+view)**
 
-**Controller Layer**
 
-| Class                      | Coordinates                                                                  |
-| -------------------------- | ---------------------------------------------------------------------------- |
-| `IngestionController`      | Runs `reg.ingestPdfs` to populate `Document` models                          |
-| `ChunkingController`       | Splits documents into `Chunk` models via `reg.chunkText`                    |
-| `WeakLabelingController`   | Applies heuristic rules to create `LabelMatrix` models                       |
-| `EmbeddingController`      | Generates and caches `Embedding` models (`reg.docEmbeddingsBertGpu`)         |
-| `BaselineController`       | Trains `BaselineModel` and serves retrieval (`reg.trainMultilabel`, `reg.hybridSearch`) |
-| `ProjectionHeadController` | Fits `ProjectionHead` and integrates it into the pipeline                     |
-| `FineTuneController`       | Builds contrastive datasets and produces `Encoder` models                     |
-| `EvaluationController`     | Computes metrics and invokes `EvalReportView` and gold pack evaluation        |
-| `DataAcquisitionController`| Fetches regulatory corpora and triggers diff analyses with `DiffReportView`   |
-| `PipelineController`       | Orchestrates end‑to‑end execution based on module dependencies                |
-| `TestController`           | Executes continuous test suite to maintain reliability                        |
+| Class Path                 | Purpose                                                                        |
+| -------------------------- | ------------------------------------------------------------------------------ |
+| `+view/EvalReportView.m`   | Generates PDF/HTML reports summarizing metrics and trends\\:codex-file-citation |
+| `+view/DiffReportView.m`   | Presents HTML or PDF diffs between regulatory versions\\:codex-file-citation    |
+| `+view/MetricsPlotsView.m` | Visualizes metrics/heatmaps (e.g., coretrieval, trend plots).                  |
+
+**Controller Layer (+controller)**
+
+| Class Path                               | Purpose                                                                                                        |
+| ---------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `+controller/IngestionController.m`      | Runs `reg.ingest_pdfs` to populate `model.Document` models\\:codex-file-citation                               |
+| `+controller/ChunkingController.m`       | Splits documents into `model.Chunk` models via `reg.chunk_text`\\:codex-file-citation                          |
+| `+controller/WeakLabelingController.m`   | Applies heuristic rules to create `model.LabelMatrix` models\\:codex-file-citation                             |
+| `+controller/EmbeddingController.m`      | Generates and caches `model.Embedding` models (`reg.doc_embeddings_bert_gpu`)\\:codex-file-citation            |
+| `+controller/BaselineController.m`       | Trains `model.BaselineModel` and serves retrieval (`reg.train_multilabel`, `reg.hybrid_search`)\\:codex-file-citation |
+| `+controller/ProjectionHeadController.m` | Fits `model.ProjectionHead` and integrates it into the pipeline\\:codex-file-citation                          |
+| `+controller/FineTuneController.m`       | Builds contrastive datasets and produces `model.Encoder` models\\:codex-file-citation                          |
+| `+controller/EvaluationController.m`     | Computes metrics and invokes `view.EvalReportView` and gold pack evaluation\\:codex-file-citation              |
+| `+controller/DataAcquisitionController.m`| Fetches regulatory corpora and triggers diff analyses with `view.DiffReportView`\\:codex-file-citation         |
+| `+controller/PipelineController.m`       | Orchestrates end‑to‑end execution based on module dependencies\\:codex-file-citation                           |
+| `+controller/TestController.m`           | Executes continuous test suite to maintain reliability\\:codex-file-citation                                   |
+
 ## Class Definitions
 
 **Model Layer (+model)**
 
-classdef Document
+% +model/Document.m
+classdef model.Document
     %DOCUMENT Represents a regulatory PDF document.
     
     properties
@@ -55,7 +59,7 @@ classdef Document
         
         function n = tokenCount(obj)
             % Return number of tokens in text.
-            n = [];  %#ok<*NASGU>
+            n = numel(obj.text);
         end
         
         function md = metadata(obj)
@@ -66,7 +70,8 @@ classdef Document
 end
 
 
-classdef Chunk
+% +model/Chunk.m
+classdef model.Chunk
     %CHUNK Overlapping text segment from a document.
     
     properties
@@ -86,9 +91,9 @@ classdef Chunk
             obj.endIndex = endIndex;
         end
         
-        function len = length(obj)
+        function n = tokenCount(obj)
             % Return number of tokens in text.
-            len = [];
+            n = numel(obj.text);
         end
         
         function tf = overlaps(obj, other)
@@ -99,7 +104,8 @@ classdef Chunk
 end
 
 
-classdef LabelMatrix
+% +model/LabelMatrix.m
+classdef model.LabelMatrix
     %LABELMATRIX Sparse weak labels per chunk and topic.
     
     properties
@@ -127,7 +133,8 @@ classdef LabelMatrix
 end
 
 
-classdef Embedding
+% +model/Embedding.m
+classdef model.Embedding
     %EMBEDDING Vector representation of a chunk.
     
     properties
@@ -154,7 +161,8 @@ classdef Embedding
     end
 end
 
-classdef BaselineModel
+% +model/BaselineModel.m
+classdef model.BaselineModel
     %BASELINEMODEL Multi-label classifier and hybrid retrieval index.
     
     properties
@@ -187,7 +195,8 @@ end
 
 
 
-classdef ProjectionHead
+% +model/ProjectionHead.m
+classdef model.ProjectionHead
     %PROJECTIONHEAD MLP or shallow network for embedding transformation.
     
     properties
@@ -215,7 +224,8 @@ classdef ProjectionHead
 end
 
 
-classdef Encoder
+% +model/Encoder.m
+classdef model.Encoder
     %ENCODER Fine-tuned model for contrastive learning.
     
     properties
@@ -241,7 +251,8 @@ classdef Encoder
 end
 
 
-classdef Metrics
+% +model/Metrics.m
+classdef model.Metrics
     %METRICS Encapsulates evaluation results.
     
     properties
@@ -263,7 +274,8 @@ classdef Metrics
 end
 
 
-classdef CorpusVersion
+% +model/CorpusVersion.m
+classdef model.CorpusVersion
     %CORPUSVERSION Versioned corpus handling for diff operations.
     
     properties
@@ -287,7 +299,8 @@ end
 
 **View Layer (+view)**
 
-classdef EvalReportView
+% +view/EvalReportView.m
+classdef view.EvalReportView
     %EVALREPORTVIEW Renders evaluation metrics into report format.
     
     methods
@@ -301,7 +314,8 @@ classdef EvalReportView
     end
 end
 
-classdef DiffReportView
+% +view/DiffReportView.m
+classdef view.DiffReportView
     %DIFFREPORTVIEW Renders document diffs between corpus versions.
     
     methods
@@ -315,7 +329,8 @@ classdef DiffReportView
 end
 
 
-classdef MetricsPlotsView
+% +view/MetricsPlotsView.m
+classdef view.MetricsPlotsView
     %METRICSPLOTSVIEW Creates visual plots for metrics and trends.
     
     methods
@@ -332,7 +347,8 @@ end
 
 **Controller Layer (+controller)**
 
-classdef IngestionController
+% +controller/IngestionController.m
+classdef controller.IngestionController
     %INGESTIONCONTROLLER Parses PDFs and returns Document objects.
     
     methods
@@ -343,7 +359,8 @@ classdef IngestionController
 end
 
 
-classdef ChunkingController
+% +controller/ChunkingController.m
+classdef controller.ChunkingController
     %CHUNKINGCONTROLLER Splits documents into overlapping chunks.
     
     methods
@@ -353,7 +370,8 @@ classdef ChunkingController
     end
 end
 
-classdef WeakLabelingController
+% +controller/WeakLabelingController.m
+classdef controller.WeakLabelingController
     %WEAKLABELINGCONTROLLER Applies heuristic rules to label chunks.
     
     methods
@@ -364,7 +382,8 @@ classdef WeakLabelingController
 end
 
 
-classdef EmbeddingController
+% +controller/EmbeddingController.m
+classdef controller.EmbeddingController
     %EMBEDDINGCONTROLLER Generates embeddings for chunks.
     
     methods
@@ -375,7 +394,8 @@ classdef EmbeddingController
 end
 
 
-classdef BaselineController
+% +controller/BaselineController.m
+classdef controller.BaselineController
     %BASELINECONTROLLER Trains baseline classifier and serves retrieval.
     
     methods
@@ -389,7 +409,8 @@ classdef BaselineController
     end
 end
 
-classdef ProjectionHeadController
+% +controller/ProjectionHeadController.m
+classdef controller.ProjectionHeadController
     %PROJECTIONHEADCONTROLLER Manages projection head training and usage.
     
     methods
@@ -404,7 +425,8 @@ classdef ProjectionHeadController
 end
 
 
-classdef FineTuneController
+% +controller/FineTuneController.m
+classdef controller.FineTuneController
     %FINETUNECONTROLLER Fine-tunes base models.
     
     methods
@@ -415,7 +437,8 @@ classdef FineTuneController
 end
 
 
-classdef EvaluationController
+% +controller/EvaluationController.m
+classdef controller.EvaluationController
     %EVALUATIONCONTROLLER Computes metrics and generates reports.
     
     methods
@@ -430,7 +453,8 @@ classdef EvaluationController
 end
 
 
-classdef DataAcquisitionController
+% +controller/DataAcquisitionController.m
+classdef controller.DataAcquisitionController
     %DATAACQUISITIONCONTROLLER Fetches corpora and runs diffs.
     
     methods
@@ -445,7 +469,8 @@ classdef DataAcquisitionController
 end
 
 
-classdef PipelineController
+% +controller/PipelineController.m
+classdef controller.PipelineController
     %PIPELINECONTROLLER High-level orchestration based on dependency graph.
     
     properties
@@ -464,7 +489,8 @@ classdef PipelineController
 end
 
 
-classdef TestController
+% +controller/TestController.m
+classdef controller.TestController
     %TESTCONTROLLER Executes continuous test suite.
     
     methods

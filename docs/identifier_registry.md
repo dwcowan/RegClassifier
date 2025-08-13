@@ -42,42 +42,31 @@ Keep the illustrative examples below in sync with the current naming conventions
 
 ---
 
-## Classes
+### Classes
 
 | Name | Purpose | Scope | Owner | Related Files | Notes |
 |------|---------|-------|-------|---------------|-------|
-| EnvironmentFixture | Manage MATLAB format, RNG, and GPU state for tests | test | @todo | tests/+fixtures/EnvironmentFixture.m | |
-| Document | Represents raw regulatory document text | module | @todo | docs/ClassArchitecture.md | |
-| Chunk | Overlapping text segments of documents | module | @todo | docs/ClassArchitecture.md | |
-| LabelMatrix | Sparse weak labels per chunk and topic | module | @todo | docs/ClassArchitecture.md | |
-| Embedding | Vector representation of chunk text | module | @todo | docs/ClassArchitecture.md | |
-| BaselineModel | Baseline classifier and retrieval artifact | module | @todo | docs/ClassArchitecture.md | |
-| ProjectionHead | MLP fine-tuning embeddings | module | @todo | docs/ClassArchitecture.md | |
-| Encoder | Fine-tuned BERT weights | module | @todo | docs/ClassArchitecture.md | |
-| Metrics | Evaluation results structure | module | @todo | docs/ClassArchitecture.md | |
-| CorpusVersion | Versioned corpus for diffs | module | @todo | docs/ClassArchitecture.md | |
+
+
 
 
 ## Class Properties
 
 | Class | Property | Type | Description |
 |-------|----------|------|-------------|
-| Document | docId | string | Unique document identifier |
-| Chunk | chunkId | string | Unique chunk identifier |
-| Chunk | docId | string | Parent document identifier |
-| LabelMatrix | chunkIdVec | vector | Chunk identifiers |
-| LabelMatrix | topicIdVec | vector | Topic identifiers |
-| LabelMatrix | labelMat | matrix | Sparse weak labels |
-| CorpusVersion | versionId | string | Corpus version identifier |
-| CorpusVersion | documentVec | vector | Documents in corpus |
+
+
+
 ## Class Methods
+| Name | Class | Purpose | Notes |
+|------|-------|---------|-------|
+| tokenCount | Document, Chunk | Return number of tokens in text | Renamed from `length` |
+
+## Class Interfaces
 
 
-### Class Interfaces
 
-
-
-## Functions
+### Functions
 
 | Name | Purpose | Scope | Input Contract | Output Contract | Owner | Notes |
 |------|---------|-------|----------------|-----------------|-------|------|
@@ -96,7 +85,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 
 
 
-## Variables
+### Variables
 
 | Name | Purpose | Scope | Type | Default | Constraints | Notes |
 |------|---------|-------|------|---------|-------------|-------|
@@ -113,7 +102,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 | MIN_RULE_CONF | Weak label confidence cutoff | global | 0.0 | @todo | from `config.m` |
 | EMBEDDING_DIM | Dimensionality of BERT embeddings | global | 768 | @todo | BERT base |
 
-## Files / Modules
+### Files / Modules
 
 | File | Purpose | Public API | Owner | Notes |
 |------|---------|-----------|-------|------|
