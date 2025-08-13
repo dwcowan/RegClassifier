@@ -6,7 +6,8 @@ This README is a process guide for maintaining naming consistency. The
 all naming rules. All approved classes, class properties, class methods, functions, variables, constants, files/modules, tests, and other identifiers are tracked in the
 `identifier_registry.md`.
 
-New or modified class properties and class methods must be recorded in [`docs/identifier_registry.md`](identifier_registry.md) alongside the corresponding class names.
+- New or modified class properties and class methods must be recorded in [`docs/identifier_registry.md`](identifier_registry.md) alongside the corresponding class names.
+- New or modified class interfaces must be added to [`docs/identifier_registry.md`](identifier_registry.md) as well.
 
 
 ## Function and Script Names
@@ -52,14 +53,15 @@ Place tests in the `tests/` folder and name each file `testName.m`. Refer to [Te
 5. Add or update tests: any new module or function must include a corresponding test file in `tests/`, and existing tests must be updated when module behavior changes.
 6. When introducing new identifiers in your code, **always** crosscheck this
    name isnt in use and **always** update the `identifier_registry.md` with
-   new classes, class properties, class methods, functions, variables, constants,
+   new classes, class properties, class methods, class interfaces, functions, variables, constants,
    files/modules, tests, and other identifiers through a PR with your new code.
-7. Verify that any new or modified identifier has a corresponding entry in
+7. Add any new or modified class interfaces to [`docs/identifier_registry.md`](identifier_registry.md).
+8. Verify that any new or modified identifier has a corresponding entry in
    [`docs/identifier_registry.md`](identifier_registry.md).
-8. Run the full test suite locally:
+9. Run the full test suite locally:
    - Placeholder tests must fail rather than being skipped or assumed.
    - Confirm that tests use fixtures via `testCase.applyFixture`.
-9. Run CI to ensure naming checks and tests pass. Locally, you can execute
+10. Run CI to ensure naming checks and tests pass. Locally, you can execute
    `runtests` or the `run_smoke_test` script to verify.
 
 ### Example
