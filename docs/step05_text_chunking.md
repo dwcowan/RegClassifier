@@ -1,8 +1,8 @@
-# Step 4: Text Chunking
+# Step 5: Text Chunking
 
 **Goal:** Split long documents into overlapping token chunks.
 
-**Depends on:** [Step 3: Data Ingestion](step03_data_ingestion.md).
+**Depends on:** [Step 4: Data Ingestion](step04_data_ingestion.md).
 
 ## Instructions
 Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeletons before beginning this step.
@@ -26,7 +26,7 @@ Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new 
 
 ### reg.chunkText
 - **Parameters:**
-  - `docsTbl` (table): from Step 3 with `docId` and `text` fields.
+  - `docsTbl` (table): from Step 4 with `docId` and `text` fields.
   - `'chunkSizeTokens'` (double): tokens per chunk.
   - `'chunkOverlap'` (double): overlap between chunks.
 - **Returns:** table `chunksTbl` with columns `chunkId` (double), `docId` (string), and `text` (string).
@@ -48,4 +48,4 @@ See [Identifier Registry – Data Contracts](identifier_registry.md#data-contrac
   The test confirms expected chunk counts and boundaries.
 
 ## Next Steps
-Continue to [Step 5: Weak Labeling](step05_weak_labeling.md).
+Continue to [Step 6: Weak Labeling](step06_weak_labeling.md).

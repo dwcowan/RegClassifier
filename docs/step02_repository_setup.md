@@ -50,4 +50,4 @@ Data structures referenced in later modules are detailed in [Identifier Registry
 - MATLAB can locate project functions such as `regPipeline`.
 
 ## Next Steps
-Continue to [Step 3: Data Ingestion](step03_data_ingestion.md).
+Continue to [Step 3: MVC Scaffolding & Persistence](step03_mvc_scaffolding.md).

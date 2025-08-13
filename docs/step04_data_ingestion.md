@@ -1,8 +1,8 @@
-# Step 3: Data Ingestion
+# Step 4: Data Ingestion
 
 **Goal:** Convert PDF documents into a `docsTbl` table of raw text records.
 
-**Depends on:** [Step 2: Repository Setup](step02_repository_setup.md).
+**Depends on:** [Step 2: Repository Setup](step02_repository_setup.md) and [Step 3: MVC Scaffolding & Persistence](step03_mvc_scaffolding.md).
 
 ## Instructions
 Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeletons before beginning this step.
@@ -45,4 +45,4 @@ See [Identifier Registry – Data Contracts](identifier_registry.md#data-contrac
   The test should pass, confirming OCR fallback and basic parsing.
 
 ## Next Steps
-Continue to [Step 4: Text Chunking](step04_text_chunking.md).
+Continue to [Step 5: Text Chunking](step05_text_chunking.md).
