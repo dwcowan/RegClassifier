@@ -70,7 +70,15 @@ convention defined in **this** document [Matlab Style Guide](Matlab_Style_Guide.
 - Avoid `global`, `assignin`, or `eval`.
 - Prefer function files over scripts for reusable code.
 
-## 2.2 Documentation 
+### 2.2 Object-Oriented Design
+- Scope modules with package folders (`+packageName`) to define namespaces.
+- Implement behavior as classes; avoid loose functions inside packages.
+- Declare classes with `classdef` and group `properties` and `methods` blocks by visibility (`Public`, `Private`, `Protected`).
+- Use abstract base classes or interfaces (`classdef (Abstract)`) for contracts that multiple implementations must fulfill.
+- Favor composition over inheritance; use inheritance only for clear "is-a" relationships and document any overrides.
+- Document each method with a help block covering purpose, inputs, outputs, and side effects.
+
+### 2.3 Documentation
 - Every file must begin with a help block describing purpose, inputs, and outputs.
 - Document intermediate variables inline with type and purpose:
   ```matlab
@@ -81,7 +89,7 @@ convention defined in **this** document [Matlab Style Guide](Matlab_Style_Guide.
 - Keep comments concise and explanatory.
 
 
-### 2.3 Formatting
+### 2.4 Formatting
 | Rule | Example |
 |------|---------|
 | Indent with **two spaces** (no tabs) | `if condition` → `  statement` |
@@ -90,17 +98,17 @@ convention defined in **this** document [Matlab Style Guide](Matlab_Style_Guide.
 | Spaces around operators, commas, and after `;` | `a = b + c;` |
 | Insert blank lines between logical sections | Improves readability |
 
-### 2.4 Comments
+### 2.5 Comments
 - `%` for single-line comments; `%%` for section headers.
 - Place comments **above** the code they describe.
 - Keep comments concise but explanatory.
 
-### 2.5 Control Flow & Expressions
+### 2.6 Control Flow & Expressions
 - Use `&&` and `||` for short-circuit logic.
 - Avoid `clear all` or `clc` inside functions.
 - Use `numel` or `size` instead of `length` when dimensions matter.
 
-### 2.6 Error Handling
+### 2.7 Error Handling
 - At least two `assert`, `error`, or `warning` calls per function.
 - Prefer a single exit point where practical.
 - Wrap fragile logic (e.g., file I/O) in `try/catch` with fallbacks:
@@ -113,13 +121,13 @@ convention defined in **this** document [Matlab Style Guide](Matlab_Style_Guide.
   end
   ```
 
-## 2.7. Function Size & Complexity
+### 2.8 Function Size & Complexity
 - Max 100 lines of code per function.
 - Max 3 nested control levels.
 - Break logic with >20% branching into helper functions.
 - Target low cyclomatic complexity.
 
-## 2.8. Input & Output Validation
+### 2.9 Input & Output Validation
 - Validate inputs and outputs using `validateattributes`, `mustBe*` functions, or custom checks.
 - Check key output properties before returning:
   ```matlab
