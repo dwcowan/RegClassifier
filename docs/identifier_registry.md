@@ -137,9 +137,12 @@ Common test scopes or prefixes include:
 | Name | Purpose | Scope | Owner | Related Functions | Notes |
 |------|---------|-------|-------|-------------------|-------|
 | testConfig | Test configuration override precedence | unit | @todo | config | verifies override precedence |
+
+| testShutdown | Test project cleanup removes repo root from path | unit | @todo | shutdown | |
 | testStartup | Verify startup adds repository to path | unit | @todo | startup | includes smoke and regression tags |
 | testShutdown | Verify shutdown removes repository from path | unit | @todo | shutdown | includes smoke and regression tags |
 | testRunMlint | Ensure run\_mlint produces lint artifacts | unit | @todo | run\_mlint | |
+
 
 
 ---
