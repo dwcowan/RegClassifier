@@ -40,10 +40,13 @@ convention defined in **this** document [Matlab Style Guide](Matlab_Style_Guide.
 ### 1.2 Naming for Functions & Classes
 | Entity | Convention | Example |
 |--------|------------|---------|
-| Functions & Methods | lowerCamelCase | `loadData`, `computeScore` |
+| Standalone Functions | lowerCamelCase | `loadData`, `parseText` |
+| Class Methods | lowerCamelCase | `computeScore`, `updateModel` |
 | Classes | UpperCamelCase | `DocumentParser`, `EmbeddingModel` |
 | Class properties | lowerCamelCase | `maxEpochs`, `learningRate` |
 | Class constants | UPPER_CASE | `DEFAULT_TIMEOUT` |
+
+Class methods must also be recorded in the [identifier registry](identifier_registry.md) per the [process guide](README_NAMING.md).
 
 
 ### 1.3 Constants
