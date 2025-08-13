@@ -41,12 +41,11 @@ Short-lived helpers such as `tmp` or `idx` should remain within a few lines of u
 
 ## Tests
 
-Place tests in the `tests/` folder and name each file `testName.m`. Each class and public method must have:
+Place tests in the `tests/` folder and name each file `testName.m`. Test files should mirror the source structure, and each `testName.m` defines a corresponding `classdef testName` in lowerCamelCase with a `test` prefix. Each class and public method must have:
 
-- Unit tests validating core behavior.
-- Smoke tests confirming basic execution paths.
-- Integration tests exercising cross-module interactions.
-- Regression tests comparing outputs against known good simulated data to detect unintended changes.
+- At least one unit test verifying its core behavior.
+- Maintain separate `Smoke` and `Regression` suites; use `matlab -batch "run_smoke_test"` to run the `Smoke` suite quickly.
+- Integration tests are optional and added when cross-module behavior warrants them.
 
 Module owners must design modules that generate reproducible golden datasets and expected outputs. These artifacts must be stored under version control and documented in `identifier_registry.md`. When requirements change, module owners are responsible for regenerating and updating the golden data accordingly.
 
