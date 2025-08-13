@@ -108,8 +108,8 @@ Keep the illustrative examples below in sync with the current naming conventions
 | MAX_RETRY_COUNT | Limits retry attempts | global | 3 | @janedoe | example |
 | CHUNK_SIZE_TOKENS | Default tokens per chunk | module | 300 | @todo | from `config.m` |
 | CHUNK_OVERLAP | Overlap between chunks | module | 80 | @todo | from `config.m` |
-| MIN_RULE_CONF | Weak label confidence cutoff | global | 0.0 | @todo | from `config.m` |
-| EMBEDDING_DIM | Dimensionality of BERT embeddings | global | 768 | @todo | BERT base |
+| MIN_RULE_CONFIDENCE | Weak label confidence cutoff | global | 0.0 | @todo | from `config.m` |
+| EMBEDDING_DIMENSION | Dimensionality of BERT embeddings | global | 768 | @todo | BERT base |
 
 ### Files / Modules
 
