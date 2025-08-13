@@ -1,17 +1,38 @@
-function tests = testStartup
-% NAME-REGISTRY:TEST testStartup
-% Test project initialization adds repo root to path.
+classdef testStartup < matlab.unittest.TestCase
+    % NAME-REGISTRY:TEST testStartup
 
-tests = functiontests(localfunctions);
-end
+    properties
+        repoRoot
+        originalPath
+    end
 
-function testAddsRepoRootToPath(~)
-    repoRoot = fileparts(fileparts(mfilename('fullpath')));
-    originalPath = path;
-    cleanupObj = onCleanup(@() path(originalPath));
-    project = struct('RootFolder', repoRoot);
+    methods(TestMethodSetup)
+        function storePath(tc)
+            tc.repoRoot = string(fileparts(fileparts(mfilename('fullpath'))));
+            tc.originalPath = path;
+        end
+    end
 
-    startup(project);
+    methods(TestMethodTeardown)
+        function restorePath(tc)
+            path(tc.originalPath);
+        end
+    end
 
-    assert(contains(path, repoRoot), 'Startup did not add repo root to path');
+    methods(Test, TestTags={"Unit","Smoke"})
+        function testAddsRepoToPath(tc)
+            startup();
+            paths = split(string(path), pathsep);
+            tc.verifyTrue(any(paths == tc.repoRoot));
+        end
+    end
+
+    methods(Test, TestTags={"Unit","Regression"})
+        function testStartupWithProjectStruct(tc)
+            project.RootFolder = char(tc.repoRoot);
+            startup(project);
+            paths = split(string(path), pathsep);
+            tc.verifyTrue(any(paths == tc.repoRoot));
+        end
+    end
 end

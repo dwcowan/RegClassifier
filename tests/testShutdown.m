@@ -1,19 +1,32 @@
-function tests = testShutdown
-% NAME-REGISTRY:TEST testShutdown
-% Test project cleanup removes repo root from path.
 
-tests = functiontests(localfunctions);
-end
+classdef testShutdown < matlab.unittest.TestCase
+    % NAME-REGISTRY:TEST testShutdown
 
-function testRemovesRepoRootFromPath(~)
-    repoRoot = fileparts(fileparts(mfilename('fullpath')));
-    originalPath = path;
-    cleanupObj = onCleanup(@() path(originalPath));
-    project = struct('RootFolder', repoRoot);
+    properties
+        repoRoot
+        originalPath
+    end
 
-    startup(project);
-    assert(contains(path, repoRoot), 'Startup failed to add repo root to path');
+    methods(TestMethodSetup)
+        function setup(tc)
+            tc.repoRoot = string(fileparts(fileparts(mfilename('fullpath'))));
+            tc.originalPath = path;
+        end
+    end
 
-    shutdown(project);
-    assert(~contains(path, repoRoot), 'Shutdown did not remove repo root from path');
+    methods(TestMethodTeardown)
+        function teardown(tc)
+            path(tc.originalPath);
+        end
+    end
+
+    methods(Test, TestTags={"Unit","Regression","Smoke"})
+        function testRemovesRepoFromPath(tc)
+            startup();
+            project.RootFolder = char(tc.repoRoot);
+            shutdown(project);
+            paths = split(string(path), pathsep);
+            tc.verifyFalse(any(paths == tc.repoRoot));
+        end
+    end
 end
