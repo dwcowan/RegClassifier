@@ -43,7 +43,7 @@
 **Model Layer (+model)**
 
 % +model/Document.m
-classdef model.Document
+classdef Document
     %DOCUMENT Represents a regulatory PDF document.
     
     properties
@@ -71,7 +71,7 @@ end
 
 
 % +model/Chunk.m
-classdef model.Chunk
+classdef Chunk
     %CHUNK Overlapping text segment from a document.
     
     properties
@@ -105,7 +105,7 @@ end
 
 
 % +model/LabelMatrix.m
-classdef model.LabelMatrix
+classdef LabelMatrix
     %LABELMATRIX Sparse weak labels per chunk and topic.
     
     properties
@@ -134,7 +134,7 @@ end
 
 
 % +model/Embedding.m
-classdef model.Embedding
+classdef Embedding
     %EMBEDDING Vector representation of a chunk.
     
     properties
@@ -162,7 +162,7 @@ classdef model.Embedding
 end
 
 % +model/BaselineModel.m
-classdef model.BaselineModel
+classdef BaselineModel
     %BASELINEMODEL Multi-label classifier and hybrid retrieval index.
     
     properties
@@ -196,7 +196,7 @@ end
 
 
 % +model/ProjectionHead.m
-classdef model.ProjectionHead
+classdef ProjectionHead
     %PROJECTIONHEAD MLP or shallow network for embedding transformation.
     
     properties
@@ -225,7 +225,7 @@ end
 
 
 % +model/Encoder.m
-classdef model.Encoder
+classdef Encoder
     %ENCODER Fine-tuned model for contrastive learning.
     
     properties
@@ -252,7 +252,7 @@ end
 
 
 % +model/Metrics.m
-classdef model.Metrics
+classdef Metrics
     %METRICS Encapsulates evaluation results.
     
     properties
@@ -275,7 +275,7 @@ end
 
 
 % +model/CorpusVersion.m
-classdef model.CorpusVersion
+classdef CorpusVersion
     %CORPUSVERSION Versioned corpus handling for diff operations.
     
     properties
@@ -300,7 +300,7 @@ end
 **View Layer (+view)**
 
 % +view/EvalReportView.m
-classdef view.EvalReportView
+classdef EvalReportView
     %EVALREPORTVIEW Renders evaluation metrics into report format.
     
     methods
@@ -315,7 +315,7 @@ classdef view.EvalReportView
 end
 
 % +view/DiffReportView.m
-classdef view.DiffReportView
+classdef DiffReportView
     %DIFFREPORTVIEW Renders document diffs between corpus versions.
     
     methods
@@ -330,7 +330,7 @@ end
 
 
 % +view/MetricsPlotsView.m
-classdef view.MetricsPlotsView
+classdef MetricsPlotsView
     %METRICSPLOTSVIEW Creates visual plots for metrics and trends.
     
     methods
@@ -348,7 +348,7 @@ end
 **Controller Layer (+controller)**
 
 % +controller/IngestionController.m
-classdef controller.IngestionController
+classdef IngestionController
     %INGESTIONCONTROLLER Parses PDFs and returns Document objects.
     
     methods
@@ -360,7 +360,7 @@ end
 
 
 % +controller/ChunkingController.m
-classdef controller.ChunkingController
+classdef ChunkingController
     %CHUNKINGCONTROLLER Splits documents into overlapping chunks.
     
     methods
@@ -371,7 +371,7 @@ classdef controller.ChunkingController
 end
 
 % +controller/WeakLabelingController.m
-classdef controller.WeakLabelingController
+classdef WeakLabelingController
     %WEAKLABELINGCONTROLLER Applies heuristic rules to label chunks.
     
     methods
@@ -383,7 +383,7 @@ end
 
 
 % +controller/EmbeddingController.m
-classdef controller.EmbeddingController
+classdef EmbeddingController
     %EMBEDDINGCONTROLLER Generates embeddings for chunks.
     
     methods
@@ -395,7 +395,7 @@ end
 
 
 % +controller/BaselineController.m
-classdef controller.BaselineController
+classdef BaselineController
     %BASELINECONTROLLER Trains baseline classifier and serves retrieval.
     
     methods
@@ -410,7 +410,7 @@ classdef controller.BaselineController
 end
 
 % +controller/ProjectionHeadController.m
-classdef controller.ProjectionHeadController
+classdef ProjectionHeadController
     %PROJECTIONHEADCONTROLLER Manages projection head training and usage.
     
     methods
@@ -426,7 +426,7 @@ end
 
 
 % +controller/FineTuneController.m
-classdef controller.FineTuneController
+classdef FineTuneController
     %FINETUNECONTROLLER Fine-tunes base models.
     
     methods
@@ -438,7 +438,7 @@ end
 
 
 % +controller/EvaluationController.m
-classdef controller.EvaluationController
+classdef EvaluationController
     %EVALUATIONCONTROLLER Computes metrics and generates reports.
     
     methods
@@ -454,7 +454,7 @@ end
 
 
 % +controller/DataAcquisitionController.m
-classdef controller.DataAcquisitionController
+classdef DataAcquisitionController
     %DATAACQUISITIONCONTROLLER Fetches corpora and runs diffs.
     
     methods
@@ -470,7 +470,7 @@ end
 
 
 % +controller/PipelineController.m
-classdef controller.PipelineController
+classdef PipelineController
     %PIPELINECONTROLLER High-level orchestration based on dependency graph.
     
     properties
@@ -490,7 +490,7 @@ end
 
 
 % +controller/TestController.m
-classdef controller.TestController
+classdef TestController
     %TESTCONTROLLER Executes continuous test suite.
     
     methods
