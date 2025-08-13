@@ -17,7 +17,24 @@ The project is optimised for a **single-user Windows 10 machine** with:
 - 64 GB RAM  
 - Intel i9 CPU  
 - NVIDIA RTX 4060 Ti (16 GB VRAM)  
-- MATLAB R2024a and all relevant toolboxes installed (Text Analytics, Deep Learning, Statistics, Database, Report Generator, etc.)
+- MATLAB R2024a and te following toolboxes:
+- MATLAB                                                Version 24.2        (R2024b)
+- Curve Fitting Toolbox                                 Version 24.2        (R2024b)
+- Database Toolbox                                      Version 24.2        (R2024b)
+- Deep Learning Toolbox                                 Version 24.2        (R2024b)
+- Econometrics Toolbox                                  Version 24.2        (R2024b)
+- Financial Instruments Toolbox                         Version 24.2        (R2024b)
+- Financial Toolbox                                     Version 24.2        (R2024b)
+- Global Optimization Toolbox                           Version 24.2        (R2024b)
+- Image Processing Toolbox                              Version 24.2        (R2024b)
+- MATLAB Report Generator                               Version 24.2        (R2024b)
+- MATLAB Test                                           Version 24.2        (R2024b)
+- Optimization Toolbox                                  Version 24.2        (R2024b)
+- Parallel Computing Toolbox                            Version 24.2        (R2024b)
+- Reinforcement Learning Toolbox                        Version 24.2        (R2024b)
+- Risk Management Toolbox                               Version 24.2        (R2024b)
+- Statistics and Machine Learning Toolbox               Version 24.2        (R2024b)
+- Text Analytics Toolbox                                Version 24.2        (R2024b)
 
 ## 2. Major Features Implemented
 ### Core Pipeline
