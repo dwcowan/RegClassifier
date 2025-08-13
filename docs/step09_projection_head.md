@@ -1,15 +1,15 @@
-# Step 8: Projection Head Workflow
+# Step 9: Projection Head Workflow
 
 **Goal:** Improve retrieval by training a small MLP (projection head) on frozen embeddings.
 
-**Depends on:** [Step 7: Baseline Classifier & Retrieval](step07_baseline_classifier.md).
+**Depends on:** [Step 8: Baseline Classifier & Retrieval](step08_baseline_classifier.md).
 
 ## Instructions
 Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeletons before beginning this step.
 
 Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new identifiers introduced in this step.
 
-1. Load `embeddingMat` and `bootLabelMat` as in Step 7:
+1. Load `embeddingMat` and `bootLabelMat` as in Step 8:
    ```matlab
    load('data/embeddingMat.mat', 'embeddingMat');
    load('data/bootLabelMat.mat', 'bootLabelMat');
@@ -26,9 +26,9 @@ Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new 
 ### reg.trainProjectionHead
 - **Parameters:**
 
-  - `embeddingMat` (double matrix): embeddings from Step 6.
+  - `embeddingMat` (double matrix): embeddings from Step 7.
 
-  - `bootLabelMat` (sparse logical matrix): weak labels from Step 5.
+  - `bootLabelMat` (sparse logical matrix): weak labels from Step 6.
 - **Returns:** struct `projectionHeadStruct` with fields `weights` and `bias` used for retrieval enhancement (see [ProjectionHeadStruct](identifier_registry.md#projectionheadstruct)).
 - **Side Effects:** none.
 - **Usage Example:**
@@ -53,4 +53,4 @@ See [Identifier Registry – Data Contracts](identifier_registry.md#data-contrac
   Tests verify improved Recall@n and automatic loading by `regPipeline`.
 
 ## Next Steps
-Continue to [Step 9: Encoder Fine-Tuning Workflow](step09_encoder_finetuning.md).
+Continue to [Step 10: Encoder Fine-Tuning Workflow](step10_encoder_finetuning.md).

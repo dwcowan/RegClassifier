@@ -1,8 +1,8 @@
-# Step 11: Pipeline Controller
+# Step 12: Pipeline Controller
 
 **Goal:** Coordinate module controllers via configuration-driven stages.
 
-**Depends on:** [Step 10: Evaluation & Reporting](step10_evaluation_reporting.md).
+**Depends on:** [Step 11: Evaluation & Reporting](step11_evaluation_reporting.md).
 
 ## Instructions
 Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeletons before beginning this step.
@@ -30,4 +30,4 @@ Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new 
   Tests validate configuration-driven execution and error handling.
 
 ## Next Steps
-Continue to [Step 12: Data Acquisition & Diff Utilities](step12_data_acquisition_diffs.md) or proceed to [Step 13: Continuous Testing Framework](step13_continuous_testing.md).
+Continue to [Step 13: Data Acquisition & Diff Utilities](step13_data_acquisition_diffs.md) or proceed to [Step 14: Continuous Testing Framework](step14_continuous_testing.md).

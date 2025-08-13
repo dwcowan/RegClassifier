@@ -1,8 +1,8 @@
-# Step 9: Encoder Fine-Tuning Workflow
+# Step 10: Encoder Fine-Tuning Workflow
 
 **Goal:** Unfreeze BERT layers and apply contrastive learning for better representations.
 
-**Depends on:** [Step 8: Projection Head Workflow](step08_projection_head.md) and [Step 6: Embedding Generation](step06_embedding_generation.md).
+**Depends on:** [Step 9: Projection Head Workflow](step09_projection_head.md) and [Step 7: Embedding Generation](step07_embedding_generation.md).
 
 ## Instructions
 Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeletons before beginning this step.
@@ -27,7 +27,7 @@ Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new 
 
 ### reg.ftBuildContrastiveDataset
 - **Parameters:**
-  - `chunksTbl` (table): see Step 4.
+  - `chunksTbl` (table): see Step 5.
   - `bootLabelMat` (sparse logical `[numChunks x numClasses]`): bootstrapped labels.
 - **Returns:** table `contrastiveDatasetTbl` with columns `anchorIdx`, `posIdx`, and `negIdx` (see [ContrastiveDataset](identifier_registry.md#contrastivedataset)).
 - **Side Effects:** none.
@@ -64,4 +64,4 @@ See [Identifier Registry – Data Contracts](identifier_registry.md#data-contrac
   Tests check basic convergence and checkpoint resume.
 
 ## Next Steps
-Continue to [Step 10: Evaluation & Reporting](step10_evaluation_reporting.md).
+Continue to [Step 11: Evaluation & Reporting](step11_evaluation_reporting.md).

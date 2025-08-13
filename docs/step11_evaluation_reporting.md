@@ -1,8 +1,8 @@
-# Step 10: Evaluation & Reporting
+# Step 11: Evaluation & Reporting
 
 **Goal:** Measure system performance and produce human-readable reports.
 
-**Depends on:** Model artifacts from [Step 7](step07_baseline_classifier.md), [Step 8](step08_projection_head.md), or [Step 9](step09_encoder_finetuning.md).
+**Depends on:** Model artifacts from [Step 8](step08_baseline_classifier.md), [Step 9](step09_projection_head.md), or [Step 10](step10_encoder_finetuning.md).
 
 ## Instructions
 
@@ -76,4 +76,4 @@ See [Identifier Registry – Data Contracts](identifier_registry.md#data-contrac
   Tests confirm metrics and report generation.
 
 ## Next Steps
-Continue to [Step 11: Pipeline Controller](step11_pipeline_controller.md). If data utilities are required, proceed to [Step 12: Data Acquisition & Diff Utilities](step12_data_acquisition_diffs.md); otherwise skip to [Step 13: Continuous Testing Framework](step13_continuous_testing.md).
+Continue to [Step 12: Pipeline Controller](step12_pipeline_controller.md). If data utilities are required, proceed to [Step 13: Data Acquisition & Diff Utilities](step13_data_acquisition_diffs.md); otherwise skip to [Step 14: Continuous Testing Framework](step14_continuous_testing.md).

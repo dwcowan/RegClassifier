@@ -1,8 +1,8 @@
-# Step 7: Baseline Classifier & Retrieval
+# Step 8: Baseline Classifier & Retrieval
 
 **Goal:** Train a multi-label classifier and enable hybrid search.
 
-**Depends on:** [Step 6: Embedding Generation](step06_embedding_generation.md) and [Step 5: Weak Labeling](step05_weak_labeling.md).
+**Depends on:** [Step 7: Embedding Generation](step07_embedding_generation.md) and [Step 6: Weak Labeling](step06_weak_labeling.md).
 
 ## Instructions
 Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeletons before beginning this step.
@@ -28,8 +28,8 @@ Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new 
 
 ### reg.trainMultilabel
 - **Parameters:**
-  - `embeddingMat` (double matrix): embeddings from Step 6.
-  - `bootLabelMat` (sparse logical matrix): weak labels from Step 5.
+  - `embeddingMat` (double matrix): embeddings from Step 7.
+  - `bootLabelMat` (sparse logical matrix): weak labels from Step 6.
 - **Returns:** struct `baselineModelStruct` with fields `weights` and `bias` (see [BaselineModelStruct](identifier_registry.md#baselinemodelstruct)).
 - **Side Effects:** none.
 - **Usage Example:**
@@ -69,4 +69,4 @@ See [Identifier Registry – Data Contracts](identifier_registry.md#data-contrac
   ```
 
 ## Next Steps
-Continue to [Step 8: Projection Head Workflow](step08_projection_head.md).
+Continue to [Step 9: Projection Head Workflow](step09_projection_head.md).

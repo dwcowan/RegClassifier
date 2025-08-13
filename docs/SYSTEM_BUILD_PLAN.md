@@ -110,7 +110,7 @@ Every module must expose a MATLAB class with a clearly defined public interface 
 - **Output:** Metrics CSVs, `regEvalReport.pdf`/`.html`, diff report artifacts, visualization images, and gold evaluation results.
 
 
-## 11. Pipeline Controller
+## 12. Pipeline Controller
 - **Goal:** Coordinate module execution through a central controller.
 - **Depends on:** Evaluation & Reporting.
 - **Implementation:**
@@ -122,7 +122,7 @@ Every module must expose a MATLAB class with a clearly defined public interface 
 - **Testing:** `tests/testPipelineController.m` validates end-to-end coordination with mocked dependencies and failure handling.
 - **Output:** Reproducible pipeline runs with centralized logs and robust error reporting.
 
-## 12. Data Acquisition & Diff Utilities (Optional)
+## 13. Data Acquisition & Diff Utilities (Optional)
 - **Goal:** Automate CRR/EBA fetches and track version differences.
 - **Depends on:** Environment & Tooling.
 - **Implementation:** `regCrrSync.m`, `reg.crrDiffVersions`, `reg.crrDiffArticles`, and related HTML/PDF report generators.
@@ -130,7 +130,7 @@ Every module must expose a MATLAB class with a clearly defined public interface 
 - **Testing:** `tests/testFetchers.m` (network-tolerant).
 - **Output:** Date-stamped corpora and diff reports.
 
-## 13. Continuous Testing Framework
+## 14. Continuous Testing Framework
 - **Goal:** Ensure every module is validated locally and in CI.
 - **Depends on:** All previous modules.
 - **Testing Style:** All tests must subclass `matlab.unittest.TestCase` and use fixtures with explicit teardown methods.
@@ -156,16 +156,17 @@ Environment → Repo Setup → MVC Scaffolding → Ingest → Chunk → Weak Lab
 ## Suggested Module Build Order
 1. Environment & Tooling
 2. Repository Setup
-3. Data Ingestion
-4. Text Chunking
-5. Weak Labeling
-6. Embedding Generation
-7. Baseline Classifier & Retrieval
-8. Projection Head Workflow
-9. Encoder Fine-Tuning Workflow
-10. Evaluation & Reporting
-11. Pipeline Controller
-12. Data Acquisition & Diff Utilities (optional)
-13. Continuous Testing Framework
+3. MVC Scaffolding & Persistence
+4. Data Ingestion
+5. Text Chunking
+6. Weak Labeling
+7. Embedding Generation
+8. Baseline Classifier & Retrieval
+9. Projection Head Workflow
+10. Encoder Fine-Tuning Workflow
+11. Evaluation & Reporting
+12. Pipeline Controller
+13. Data Acquisition & Diff Utilities (optional)
+14. Continuous Testing Framework
 
 Following this order builds the system incrementally while keeping each component as independent as possible and providing explicit checkpoints for testing and quality control.

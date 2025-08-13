@@ -1,8 +1,8 @@
-# Step 5: Weak Labeling
+# Step 6: Weak Labeling
 
 **Goal:** Generate `weakLabelMat` and `bootLabelMat` for each text chunk using heuristic rules.
 
-**Depends on:** [Step 4: Text Chunking](step04_text_chunking.md).
+**Depends on:** [Step 5: Text Chunking](step05_text_chunking.md).
 
 ## Instructions
 Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeletons before beginning this step.
@@ -66,4 +66,4 @@ See [Identifier Registry – Data Contracts](identifier_registry.md#data-contrac
   The test verifies label coverage and format.
 
 ## Next Steps
-Continue to [Step 6: Embedding Generation](step06_embedding_generation.md).
+Continue to [Step 7: Embedding Generation](step07_embedding_generation.md).

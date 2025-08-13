@@ -274,7 +274,7 @@ Regression entries must include the simulated dataset path, expected output, and
 
 | Producer → Consumer | Payload Schema | Format | Validation | Notes |
 |--------------------|----------------|--------|-----------|-------|
-| ingest → chunking | Document | MAT-file (`docsTbl.mat`) | non-empty `text` | see [Step 3](step03_data_ingestion.md) |
+| ingest → chunking | Document | MAT-file (`docsTbl.mat`) | non-empty `text` | see [Step 4](step04_data_ingestion.md) |
 
 
 ---
