@@ -17,7 +17,7 @@ The project is optimised for a **single-user Windows 10 machine** with:
 - 64 GB RAM  
 - Intel i9 CPU  
 - NVIDIA RTX 4060 Ti (16 GB VRAM)  
-- MATLAB R2024a and te following toolboxes:
+- MATLAB R2024b and the following toolboxes:
 - MATLAB                                                Version 24.2        (R2024b)
 - Curve Fitting Toolbox                                 Version 24.2        (R2024b)
 - Database Toolbox                                      Version 24.2        (R2024b)
