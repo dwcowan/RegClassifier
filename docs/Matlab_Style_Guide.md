@@ -12,8 +12,10 @@ in the project** is the [identifier registry](identifier_registry.md).
 The [identifier registry](identifier_registry.md) is the definitve source 
 for the collection of all identifiers, **not** how to name the indentifiers.
 Identifiers defined here must be registered in the [identifier registry](identifier_registry.md)
-via [process guide](README_NAMING.md) and **must** follow the naming 
+via [process guide](README_NAMING.md) and **must** follow the naming
 convention defined in **this** document [Matlab Style Guide](Matlab_Style_Guide.md).
+
+Note: identifiers appearing only in pseudocode examples are for algorithm illustration and must remain within documentation; they are **not** to be registered in the [identifier registry](identifier_registry.md).
 
 ---
 

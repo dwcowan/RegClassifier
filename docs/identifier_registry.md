@@ -7,6 +7,8 @@ definitive source for the collection of
 all identifiers, **not** how to name the identifiers.
 Update it via PR and keep it in sync with code.
 
+Pseudocode identifiers used solely for algorithm illustration are excluded from this registry and should remain within documentation such as `docs/pseudocode/`.
+
 Refer to [Matlab Style Guide](Matlab_Style_Guide.md) for naming rules and [README_NAMING](README_NAMING.md) for process guidelines.
 
 
