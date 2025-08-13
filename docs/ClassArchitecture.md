@@ -2,15 +2,15 @@
 
 | Class           | Purpose & Key Data                                                                 |
 | --------------- | ---------------------------------------------------------------------------------- |
-| `documentClass` | Represents raw PDF text with identifiers (`docId`, `text`)                         |
-| `chunkClass`         | Overlapping token segments of documents (`chunkId`, `docId`, `text`)               |
-| `labelMatrixClass`   | Sparse weak labels (`labelMat`) aligned to chunks and topics                       |
-| `embeddingClass`     | Vector representation of each chunk (`embeddingVec`) produced by BERT or fallback models |
-| `baselineModelClass` | Multi‑label classifier and hybrid retrieval artifacts                              |
-| `projectionHeadClass`| MLP fine-tuning frozen embeddings; defines `fit` and `transform` so training stays in the model layer |
-| `encoderClass`       | Fine‑tuned BERT weights for contrastive learning workflows                         |
-| `metricsClass`       | Evaluation results and per‑label performance data                                  |
-| `corpusVersionClass` | Versioned corpora for diff operations and reports (`versionId`, `documentVec`)      |
+| `Document` | Represents raw PDF text with identifiers (`docId`, `text`)                         |
+| `Chunk`         | Overlapping token segments of documents (`chunkId`, `docId`, `text`)               |
+| `LabelMatrix`   | Sparse weak labels (`labelMat`) aligned to chunks and topics                       |
+| `Embedding`     | Vector representation of each chunk (`embeddingVec`) produced by BERT or fallback models |
+| `BaselineModel` | Multi‑label classifier and hybrid retrieval artifacts                              |
+| `ProjectionHead`| MLP fine-tuning frozen embeddings; defines `fit` and `transform` so training stays in the model layer |
+| `Encoder`       | Fine‑tuned BERT weights for contrastive learning workflows                         |
+| `Metrics`       | Evaluation results and per‑label performance data                                  |
+| `CorpusVersion` | Versioned corpora for diff operations and reports (`versionId`, `documentVec`)      |
 
 
 **View Layer (+view)**
@@ -18,32 +18,32 @@
 
 | Class Path                 | Purpose                                                                        |
 | -------------------------- | ------------------------------------------------------------------------------ |
-| `+view/evalReportViewClass.m`   | Provides `render` dispatcher for PDF/HTML metric reports |
-| `+view/diffReportViewClass.m`   | Presents HTML or PDF diffs between regulatory versions    |
-| `+view/metricsPlotsViewClass.m` | Visualizes metrics/heatmaps (e.g., coretrieval, trend plots).                  |
+| `+view/EvalReportView.m`   | Provides `render` dispatcher for PDF/HTML metric reports |
+| `+view/DiffReportView.m`   | Presents HTML or PDF diffs between regulatory versions    |
+| `+view/MetricsPlotsView.m` | Visualizes metrics/heatmaps (e.g., coretrieval, trend plots).                  |
 
 **Controller Layer (+controller)**
 
 | Class Path                               | Purpose                                                                       |
 | ---------------------------------------- | ----------------------------------------------------------------------------- |
-| `+controller/ingestionControllerClass.m`      | Runs `reg.ingestPdfs` to populate `model.documentClass` models |
-| `+controller/chunkingControllerClass.m`       | Splits documents into `model.chunkClass` models via `reg.chunkText` |
-| `+controller/weakLabelingControllerClass.m`   | Applies heuristic rules to create `model.labelMatrixClass` models |
-| `+controller/embeddingControllerClass.m`      | Generates and caches `model.embeddingClass` models (`reg.docEmbeddingsBertGpu`) |
-| `+controller/baselineControllerClass.m`       | Trains `model.baselineModelClass` and serves retrieval (`reg.trainMultilabel`, `reg.hybridSearch`) |
-| `+controller/projectionHeadControllerClass.m` | Instantiates `model.projectionHeadClass` and delegates calls without duplicate training logic |
-| `+controller/fineTuneControllerClass.m`       | Builds contrastive datasets and produces `model.encoderClass` models |
-| `+controller/evaluationControllerClass.m`     | Computes metrics and invokes `view.evalReportViewClass.render` and gold pack evaluation |
-| `+controller/dataAcquisitionControllerClass.m`| Fetches regulatory corpora and triggers diff analyses with `view.diffReportViewClass` |
-| `+controller/pipelineControllerClass.m`       | Orchestrates end‑to‑end execution based on module dependencies |
-| `+controller/testControllerClass.m`           | Executes continuous test suite to maintain reliability |
+| `+controller/IngestionController.m`      | Runs `reg.ingestPdfs` to populate `model.Document` models |
+| `+controller/ChunkingController.m`       | Splits documents into `model.Chunk` models via `reg.chunkText` |
+| `+controller/WeakLabelingController.m`   | Applies heuristic rules to create `model.LabelMatrix` models |
+| `+controller/EmbeddingController.m`      | Generates and caches `model.Embedding` models (`reg.docEmbeddingsBertGpu`) |
+| `+controller/BaselineController.m`       | Trains `model.BaselineModel` and serves retrieval (`reg.trainMultilabel`, `reg.hybridSearch`) |
+| `+controller/ProjectionHeadController.m` | Instantiates `model.ProjectionHead` and delegates calls without duplicate training logic |
+| `+controller/FineTuneController.m`       | Builds contrastive datasets and produces `model.Encoder` models |
+| `+controller/EvaluationController.m`     | Computes metrics and invokes `view.EvalReportView.render` and gold pack evaluation |
+| `+controller/DataAcquisitionController.m`| Fetches regulatory corpora and triggers diff analyses with `view.DiffReportView` |
+| `+controller/PipelineController.m`       | Orchestrates end‑to‑end execution based on module dependencies |
+| `+controller/TestController.m`           | Executes continuous test suite to maintain reliability |
 
 ## Class Definitions
 
 **Model Layer (+model)**
 
-% +model/documentClass.m
-classdef documentClass
+% +model/Document.m
+classdef Document
     %DOCUMENT Represents a regulatory PDF document.
 
     properties (Access=public)
@@ -52,12 +52,12 @@ classdef documentClass
     end
 
     methods (Access=public)
-        function obj = documentClass(docId, text)
-            %DOCUMENTCLASS Construct a documentClass instance.
-            %   obj = documentClass(docId, text)
+        function obj = Document(docId, text)
+            %DOCUMENT Construct a Document instance.
+            %   obj = Document(docId, text)
             %   docId (string): Unique identifier.
             %   text (string): Raw text content.
-            %   obj (documentClass): New instance.
+            %   obj (Document): New instance.
             %
             %   Side effects: none.
             obj.docId = docId;
@@ -67,7 +67,7 @@ classdef documentClass
         function n = tokenCount(obj)
             %TOKENCOUNT Return number of tokens in text.
             %   n = tokenCount(obj)
-            %   obj (documentClass): Instance.
+            %   obj (Document): Instance.
             %   n (double): Number of tokens.
             %
             %   Side effects: none.
@@ -77,7 +77,7 @@ classdef documentClass
         function metadataStruct = metadata(obj)
             %METADATA Return additional metadata.
             %   metadataStruct = metadata(obj)
-            %   obj (documentClass): Instance.
+            %   obj (Document): Instance.
             %   metadataStruct (struct): Meta information.
             %
             %   Side effects: none.
@@ -87,8 +87,8 @@ classdef documentClass
 end
 
 
-% +model/chunkClass.m
-classdef chunkClass
+% +model/Chunk.m
+classdef Chunk
     %CHUNK Overlapping text segment from a document.
 
     properties (Access=public)
@@ -100,15 +100,15 @@ classdef chunkClass
     end
 
     methods (Access=public)
-        function obj = chunkClass(chunkId, docId, text, startIndex, endIndex)
-            %CHUNKCLASS Construct chunkClass instance.
-            %   obj = chunkClass(chunkId, docId, text, startIndex, endIndex)
+        function obj = Chunk(chunkId, docId, text, startIndex, endIndex)
+            %CHUNK Construct Chunk instance.
+            %   obj = Chunk(chunkId, docId, text, startIndex, endIndex)
             %   chunkId (double): Chunk identifier.
             %   docId (string): Document identifier.
             %   text (string): Chunk text.
             %   startIndex (double): Start token index.
             %   endIndex (double): End token index.
-            %   obj (chunkClass): New instance.
+            %   obj (Chunk): New instance.
             %
             %   Side effects: none.
             obj.chunkId = chunkId;
@@ -121,7 +121,7 @@ classdef chunkClass
         function n = tokenCount(obj)
             %TOKENCOUNT Return number of tokens in text.
             %   n = tokenCount(obj)
-            %   obj (chunkClass): Instance.
+            %   obj (Chunk): Instance.
             %   n (double): Number of tokens.
             %
             %   Side effects: none.
@@ -131,8 +131,8 @@ classdef chunkClass
         function tf = overlaps(obj, other)
             %OVERLAPS Determine if two chunks overlap.
             %   tf = overlaps(obj, other)
-            %   obj (chunkClass): First chunk.
-            %   other (chunkClass): Second chunk.
+            %   obj (Chunk): First chunk.
+            %   other (Chunk): Second chunk.
             %   tf (logical): True if overlapping.
             %
             %   Side effects: none.
@@ -142,8 +142,8 @@ classdef chunkClass
 end
 
 
-% +model/labelMatrixClass.m
-classdef labelMatrixClass
+% +model/LabelMatrix.m
+classdef LabelMatrix
     %LABELMATRIX Sparse weak labels per chunk and topic.
     
     properties (Access=public)
@@ -153,13 +153,13 @@ classdef labelMatrixClass
     end
 
     methods (Access=public)
-        function obj = labelMatrixClass(chunkIdVec, topicIdVec, labelMat)
-            %LABELMATRIXCLASS Construct labelMatrixClass instance.
-            %   obj = labelMatrixClass(chunkIdVec, topicIdVec, labelMat)
+        function obj = LabelMatrix(chunkIdVec, topicIdVec, labelMat)
+            %LABELMATRIX Construct LabelMatrix instance.
+            %   obj = LabelMatrix(chunkIdVec, topicIdVec, labelMat)
             %   chunkIdVec (double Vec): Chunk identifiers.
             %   topicIdVec (double Vec): Topic identifiers.
             %   labelMat (sparse double Mat): Label weights.
-            %   obj (labelMatrixClass): New instance.
+            %   obj (LabelMatrix): New instance.
             %
             %   Side effects: none.
             obj.chunkIdVec = chunkIdVec;
@@ -170,7 +170,7 @@ classdef labelMatrixClass
         function addLabel(obj, chunkId, topicId, weight)
             %ADDLABEL Insert or update a label weight.
             %   addLabel(obj, chunkId, topicId, weight)
-            %   obj (labelMatrixClass): Instance.
+            %   obj (LabelMatrix): Instance.
             %   chunkId (double): Chunk identifier.
             %   topicId (double): Topic identifier.
             %   weight (double): Label weight.
@@ -181,7 +181,7 @@ classdef labelMatrixClass
         function labels = getLabelsForChunk(obj, chunkId)
             %GETLABELSFORCHUNK Return topic-weight pairs for a chunk.
             %   labels = getLabelsForChunk(obj, chunkId)
-            %   obj (labelMatrixClass): Instance.
+            %   obj (LabelMatrix): Instance.
             %   chunkId (double): Chunk identifier.
             %   labels (struct): Topics and weights.
             %
@@ -192,8 +192,8 @@ classdef labelMatrixClass
 end
 
 
-% +model/embeddingClass.m
-classdef embeddingClass
+% +model/Embedding.m
+classdef Embedding
     %EMBEDDING Vector representation of a chunk.
 
     properties (Access=public)
@@ -203,13 +203,13 @@ classdef embeddingClass
     end
 
     methods (Access=public)
-        function obj = embeddingClass(chunkId, embeddingVec, modelName)
-            %EMBEDDINGCLASS Construct embeddingClass instance.
-            %   obj = embeddingClass(chunkId, embeddingVec, modelName)
+        function obj = Embedding(chunkId, embeddingVec, modelName)
+            %EMBEDDING Construct Embedding instance.
+            %   obj = Embedding(chunkId, embeddingVec, modelName)
             %   chunkId (double): Chunk identifier.
             %   embeddingVec (double Vec): Embedding vector.
             %   modelName (string): Source model name.
-            %   obj (embeddingClass): New instance.
+            %   obj (Embedding): New instance.
             %
             %   Side effects: none.
             obj.chunkId = chunkId;
@@ -220,8 +220,8 @@ classdef embeddingClass
         function sim = cosineSimilarity(obj, other)
             %COSINESIMILARITY Compute cosine similarity with another embedding.
             %   sim = cosineSimilarity(obj, other)
-            %   obj (embeddingClass): First embedding.
-            %   other (embeddingClass): Second embedding.
+            %   obj (Embedding): First embedding.
+            %   other (Embedding): Second embedding.
             %   sim (double): Cosine similarity score.
             %
             %   Side effects: none.
@@ -231,30 +231,30 @@ classdef embeddingClass
         function normalize(obj)
             %NORMALIZE Normalize vector in-place.
             %   normalize(obj)
-            %   obj (embeddingClass): Instance.
+            %   obj (Embedding): Instance.
             %
             %   Side effects: modifies embeddingVec.
         end
     end
 end
 
-% +model/baselineModelClass.m
-classdef baselineModelClass
+% +model/BaselineModel.m
+classdef BaselineModel
     %BASELINEMODEL Multi-label classifier and hybrid retrieval index.
 
     properties (Access=public)
-        labelMatrixObj % labelMatrixClass: Weak labels
-        embeddingVec   % embeddingClass Vec: Embeddings
+        labelMatrixObj % LabelMatrix: Weak labels
+        embeddingVec   % Embedding Vec: Embeddings
         weightMat      % double Mat: Model weights
     end
 
     methods (Access=public)
-        function obj = baselineModelClass(labelMatrixObj, embeddingVec)
-            %BASELINEMODELCLASS Construct baseline model.
-            %   obj = baselineModelClass(labelMatrixObj, embeddingVec)
-            %   labelMatrixObj (labelMatrixClass): Weak labels.
-            %   embeddingVec (embeddingClass Vec): Embeddings.
-            %   obj (baselineModelClass): New instance.
+        function obj = BaselineModel(labelMatrixObj, embeddingVec)
+            %BASELINEMODEL Construct baseline model.
+            %   obj = BaselineModel(labelMatrixObj, embeddingVec)
+            %   labelMatrixObj (LabelMatrix): Weak labels.
+            %   embeddingVec (Embedding Vec): Embeddings.
+            %   obj (BaselineModel): New instance.
             %
             %   Side effects: none.
             obj.labelMatrixObj = labelMatrixObj;
@@ -265,7 +265,7 @@ classdef baselineModelClass
         function train(obj, numEpochs, learningRate)
             %TRAIN Train the classifier.
             %   train(obj, numEpochs, learningRate)
-            %   obj (baselineModelClass): Instance.
+            %   obj (BaselineModel): Instance.
             %   numEpochs (double): Number of training epochs.
             %   learningRate (double): Step size.
             %
@@ -275,8 +275,8 @@ classdef baselineModelClass
         function probabilityVec = predict(obj, embeddingObj)
             %PREDICT Predict label probabilities for a single embedding.
             %   probabilityVec = predict(obj, embeddingObj)
-            %   obj (baselineModelClass): Instance.
-            %   embeddingObj (embeddingClass): Input embedding.
+            %   obj (BaselineModel): Instance.
+            %   embeddingObj (Embedding): Input embedding.
             %   probabilityVec (double Vec): Predicted probabilities.
             %
             %   Side effects: none.
@@ -286,10 +286,10 @@ classdef baselineModelClass
         function chunkVec = retrieve(obj, queryEmbeddingObj, topK)
             %RETRIEVE Retrieve top chunks for query embedding.
             %   chunkVec = retrieve(obj, queryEmbeddingObj, topK)
-            %   obj (baselineModelClass): Instance.
-            %   queryEmbeddingObj (embeddingClass): Query embedding.
+            %   obj (BaselineModel): Instance.
+            %   queryEmbeddingObj (Embedding): Query embedding.
             %   topK (double): Number of results.
-            %   chunkVec (chunkClass Vec): Retrieved chunks.
+            %   chunkVec (Chunk Vec): Retrieved chunks.
             %
             %   Side effects: none.
             chunkVec = [];
@@ -298,7 +298,7 @@ classdef baselineModelClass
         function save(obj, path)
             %SAVE Serialize model to disk.
             %   save(obj, path)
-            %   obj (baselineModelClass): Instance.
+            %   obj (BaselineModel): Instance.
             %   path (string): File path.
             %
             %   Side effects: writes model to disk.
@@ -308,8 +308,8 @@ end
 
 
 
-% +model/projectionHeadClass.m
-classdef projectionHeadClass
+% +model/ProjectionHead.m
+classdef ProjectionHead
     %PROJECTIONHEAD MLP or shallow network for embedding transformation.
 
     properties (Access=public)
@@ -319,12 +319,12 @@ classdef projectionHeadClass
     end
 
     methods (Access=public)
-        function obj = projectionHeadClass(inputDim, outputDim)
-            %PROJECTIONHEADCLASS Construct projection head.
-            %   obj = projectionHeadClass(inputDim, outputDim)
+        function obj = ProjectionHead(inputDim, outputDim)
+            %PROJECTIONHEAD Construct projection head.
+            %   obj = ProjectionHead(inputDim, outputDim)
             %   inputDim (double): Input dimension.
             %   outputDim (double): Output dimension.
-            %   obj (projectionHeadClass): New instance.
+            %   obj (ProjectionHead): New instance.
             %
             %   Side effects: initializes paramStruct.
             obj.inputDim = inputDim;
@@ -335,7 +335,7 @@ classdef projectionHeadClass
         function fit(obj, embeddingMat, labelMat, numEpochs, learningRate)
             %FIT Train projection head.
             %   fit(obj, embeddingMat, labelMat, numEpochs, learningRate)
-            %   obj (projectionHeadClass): Instance.
+            %   obj (ProjectionHead): Instance.
             %   embeddingMat (double Mat): Embedding matrix.
             %   labelMat (double Mat): Labels.
             %   numEpochs (double): Training epochs.
@@ -347,7 +347,7 @@ classdef projectionHeadClass
         function embeddingMatTrans = transform(obj, embeddingMat)
             %TRANSFORM Apply transformation to embeddings.
             %   embeddingMatTrans = transform(obj, embeddingMat)
-            %   obj (projectionHeadClass): Instance.
+            %   obj (ProjectionHead): Instance.
             %   embeddingMat (double Mat): Input embeddings.
             %   embeddingMatTrans (double Mat): Transformed embeddings.
             %
@@ -357,8 +357,8 @@ classdef projectionHeadClass
     end
 end
 
-% +model/encoderClass.m
-classdef encoderClass
+% +model/Encoder.m
+classdef Encoder
     %ENCODER Fine-tuned model for contrastive learning.
 
     properties (Access=public)
@@ -367,11 +367,11 @@ classdef encoderClass
     end
 
     methods (Access=public)
-        function obj = encoderClass(baseModel)
-            %ENCODERCLASS Construct encoderClass.
-            %   obj = encoderClass(baseModel)
+        function obj = Encoder(baseModel)
+            %ENCODER Construct Encoder.
+            %   obj = Encoder(baseModel)
             %   baseModel (struct): Base model data.
-            %   obj (encoderClass): New instance.
+            %   obj (Encoder): New instance.
             %
             %   Side effects: none.
             obj.baseModel = baseModel;
@@ -381,7 +381,7 @@ classdef encoderClass
         function fineTune(obj, dataset, numEpochs, learningRate)
             %FINETUNE Contrastive fine-tuning procedure.
             %   fineTune(obj, dataset, numEpochs, learningRate)
-            %   obj (encoderClass): Instance.
+            %   obj (Encoder): Instance.
             %   dataset (Tbl): Training dataset.
             %   numEpochs (double): Training epochs.
             %   learningRate (double): Step size.
@@ -392,7 +392,7 @@ classdef encoderClass
         function emb = encode(obj, text)
             %ENCODE Convert text to embedding.
             %   emb = encode(obj, text)
-            %   obj (encoderClass): Instance.
+            %   obj (Encoder): Instance.
             %   text (string): Input text.
             %   emb (double Vec): Embedding.
             %
@@ -403,8 +403,8 @@ classdef encoderClass
 end
 
 
-% +model/metricsClass.m
-classdef metricsClass
+% +model/Metrics.m
+classdef Metrics
     %METRICS Encapsulates evaluation results.
 
     properties (Access=public)
@@ -413,12 +413,12 @@ classdef metricsClass
     end
 
     methods (Access=public)
-        function obj = metricsClass(metricName, scoreStruct)
-            %METRICSCLASS Construct metricsClass instance.
-            %   obj = metricsClass(metricName, scoreStruct)
+        function obj = Metrics(metricName, scoreStruct)
+            %METRICS Construct Metrics instance.
+            %   obj = Metrics(metricName, scoreStruct)
             %   metricName (string): Name of metric set.
             %   scoreStruct (struct): Scores.
-            %   obj (metricsClass): New instance.
+            %   obj (Metrics): New instance.
             %
             %   Side effects: none.
             obj.metricName = metricName;
@@ -428,7 +428,7 @@ classdef metricsClass
         function s = summary(obj)
             %SUMMARY Return human-readable summary of metrics.
             %   s = summary(obj)
-            %   obj (metricsClass): Instance.
+            %   obj (Metrics): Instance.
             %   s (string): Summary text.
             %
             %   Side effects: none.
@@ -438,22 +438,22 @@ classdef metricsClass
 end
 
 
-% +model/corpusVersionClass.m
-classdef corpusVersionClass
+% +model/CorpusVersion.m
+classdef CorpusVersion
     %CORPUSVERSION Versioned corpus handling for diff operations.
 
     properties (Access=public)
         versionId   % string: Corpus version identifier
-        documentVec % documentClass Vec: Documents in version
+        documentVec % Document Vec: Documents in version
     end
 
     methods (Access=public)
-        function obj = corpusVersionClass(versionId, documentVec)
-            %CORPUSVERSIONCLASS Construct corpusVersionClass.
-            %   obj = corpusVersionClass(versionId, documentVec)
+        function obj = CorpusVersion(versionId, documentVec)
+            %CORPUSVERSION Construct CorpusVersion.
+            %   obj = CorpusVersion(versionId, documentVec)
             %   versionId (string): Identifier for corpus version.
-            %   documentVec (documentClass Vec): Documents.
-            %   obj (corpusVersionClass): New instance.
+            %   documentVec (Document Vec): Documents.
+            %   obj (CorpusVersion): New instance.
             %
             %   Side effects: none.
             obj.versionId = versionId;
@@ -463,8 +463,8 @@ classdef corpusVersionClass
         function diffResult = diff(obj, other)
             %DIFF Return differences between versions.
             %   diffResult = diff(obj, other)
-            %   obj (corpusVersionClass): First version.
-            %   other (corpusVersionClass): Second version.
+            %   obj (CorpusVersion): First version.
+            %   other (CorpusVersion): Second version.
             %   diffResult (struct): Differences.
             %
             %   Side effects: none.
@@ -476,15 +476,15 @@ end
 
 **View Layer (+view)**
 
-% +view/evalReportViewClass.m
-classdef evalReportViewClass
+% +view/EvalReportView.m
+classdef EvalReportView
     %EVALREPORTVIEW Renders evaluation metrics into report format.
     
     methods (Access=public)
         function render(obj, metrics, outPath)
             %RENDER Dispatch to PDF or HTML renderer.
             %   render(obj, metrics, outPath)
-            %   metrics (metricsClass): Metrics to report.
+            %   metrics (Metrics): Metrics to report.
             %   outPath (string): Output file path.
             %
             %   Side effects: writes file to disk.
@@ -498,7 +498,7 @@ classdef evalReportViewClass
         function renderPDF(~, metrics, path)
             %RENDERPDF Generate PDF report.
             %   renderPDF(obj, metrics, path)
-            %   metrics (metricsClass): Metrics to report.
+            %   metrics (Metrics): Metrics to report.
             %   path (string): Output PDF path.
             %
             %   Side effects: writes file to disk.
@@ -507,7 +507,7 @@ classdef evalReportViewClass
         function renderHTML(~, metrics, path)
             %RENDERHTML Generate HTML report.
             %   renderHTML(obj, metrics, path)
-            %   metrics (metricsClass): Metrics to report.
+            %   metrics (Metrics): Metrics to report.
             %   path (string): Output HTML path.
             %
             %   Side effects: writes file to disk.
@@ -515,8 +515,8 @@ classdef evalReportViewClass
     end
 end
 
-% +view/diffReportViewClass.m
-classdef diffReportViewClass
+% +view/DiffReportView.m
+classdef DiffReportView
     %DIFFREPORTVIEW Renders document diffs between corpus versions.
     %   Expects diff results from a controller or caller that computes
     %   version differences.
@@ -538,15 +538,15 @@ classdef diffReportViewClass
 end
 
 
-% +view/metricsPlotsViewClass.m
-classdef metricsPlotsViewClass
+% +view/MetricsPlotsView.m
+classdef MetricsPlotsView
     %METRICSPLOTSVIEW Creates visual plots for metrics and trends.
     
     methods (Access=public)
         function plotHeatmap(~, metrics, path)
             %PLOTHEATMAP Render heatmap from metric matrix.
             %   plotHeatmap(obj, metrics, path)
-            %   metrics (metricsClass): Metrics to visualize.
+            %   metrics (Metrics): Metrics to visualize.
             %   path (string): Output path.
             %
             %   Side effects: writes file to disk.
@@ -555,7 +555,7 @@ classdef metricsPlotsViewClass
         function plotTrend(~, metricHistoryVec, path)
             %PLOTTREND Render line chart for metric trends.
             %   plotTrend(obj, metricHistoryVec, path)
-            %   metricHistoryVec (metricsClass Vec): Metrics over time.
+            %   metricHistoryVec (Metrics Vec): Metrics over time.
             %   path (string): Output path.
             %
             %   Side effects: writes file to disk.
@@ -566,16 +566,16 @@ end
 
 **Controller Layer (+controller)**
 
-% +controller/ingestionControllerClass.m
-classdef ingestionControllerClass
-    %INGESTIONCONTROLLER Parses PDFs and returns documentClass objects.
+% +controller/IngestionController.m
+classdef IngestionController
+    %INGESTIONCONTROLLER Parses PDFs and returns Document objects.
     
     methods (Access=public)
         function documentVec = run(~, sourcePaths)
             %RUN Parse PDFs to documents.
             %   documentVec = run(obj, sourcePaths)
             %   sourcePaths (string Cell): Paths to PDFs.
-            %   documentVec (documentClass Vec): Parsed documents.
+            %   documentVec (Document Vec): Parsed documents.
             %
             %   Side effects: reads files from disk.
             documentVec = [];
@@ -584,18 +584,18 @@ classdef ingestionControllerClass
 end
 
 
-% +controller/chunkingControllerClass.m
-classdef chunkingControllerClass
+% +controller/ChunkingController.m
+classdef ChunkingController
     %CHUNKINGCONTROLLER Splits documents into overlapping chunks.
     
     methods (Access=public)
         function chunkVec = run(~, documentVec, window, overlap)
             %RUN Split documents into chunks.
             %   chunkVec = run(obj, documentVec, window, overlap)
-            %   documentVec (documentClass Vec): Documents.
+            %   documentVec (Document Vec): Documents.
             %   window (double): Window size.
             %   overlap (double): Overlap amount.
-            %   chunkVec (chunkClass Vec): Generated chunks.
+            %   chunkVec (Chunk Vec): Generated chunks.
             %
             %   Side effects: none.
             chunkVec = [];
@@ -603,61 +603,61 @@ classdef chunkingControllerClass
     end
 end
 
-% +controller/weakLabelingControllerClass.m
-classdef weakLabelingControllerClass
+% +controller/WeakLabelingController.m
+classdef WeakLabelingController
     %WEAKLABELINGCONTROLLER Applies heuristic rules to label chunks.
     
     methods (Access=public)
         function labelMatrixObj = run(~, chunkVec, labelingRules)
             %RUN Apply weak labeling rules.
             %   labelMatrixObj = run(obj, chunkVec, labelingRules)
-            %   chunkVec (chunkClass Vec): Chunks to label.
+            %   chunkVec (Chunk Vec): Chunks to label.
             %   labelingRules (cell): Rules.
-            %   labelMatrixObj (labelMatrixClass): Generated labels.
+            %   labelMatrixObj (LabelMatrix): Generated labels.
             %
             %   Side effects: none.
             labelMat = [];
-            labelMatrixObj = model.labelMatrixClass([], [], labelMat);
+            labelMatrixObj = model.LabelMatrix([], [], labelMat);
         end
     end
 end
 
 
-% +controller/embeddingControllerClass.m
-classdef embeddingControllerClass
+% +controller/EmbeddingController.m
+classdef EmbeddingController
     %EMBEDDINGCONTROLLER Generates embeddings for chunks.
     
     methods (Access=public)
         function embeddingVec = run(~, chunkVec, modelName)
             %RUN Generate embeddings.
             %   embeddingVec = run(obj, chunkVec, modelName)
-            %   chunkVec (chunkClass Vec): Chunks to embed.
+            %   chunkVec (Chunk Vec): Chunks to embed.
             %   modelName (string): Model to use.
-            %   embeddingVec (embeddingClass Vec): Embeddings.
+            %   embeddingVec (Embedding Vec): Embeddings.
             %
             %   Side effects: may cache embeddings.
-            embeddingVec = model.embeddingClass.empty();
+            embeddingVec = model.Embedding.empty();
         end
     end
 end
 
 
-% +controller/baselineControllerClass.m
-classdef baselineControllerClass
+% +controller/BaselineController.m
+classdef BaselineController
     %BASELINECONTROLLER Constructs baseline model and delegates operations.
 
     methods (Access=public)
         function model = train(~, labelMatrixObj, embeddingVec, numEpochs, learningRate)
             %TRAIN Fit baseline classifier via model.
             %   model = train(obj, labelMatrixObj, embeddingVec, numEpochs, learningRate)
-            %   labelMatrixObj (labelMatrixClass): Labels.
-            %   embeddingVec (embeddingClass Vec): Embeddings.
+            %   labelMatrixObj (LabelMatrix): Labels.
+            %   embeddingVec (Embedding Vec): Embeddings.
             %   numEpochs (double): Number of training epochs.
             %   learningRate (double): Step size.
-            %   model (baselineModelClass): Trained model.
+            %   model (BaselineModel): Trained model.
             %
             %   Side effects: none.
-            baselineModel = model.baselineModelClass(labelMatrixObj, embeddingVec);
+            baselineModel = model.BaselineModel(labelMatrixObj, embeddingVec);
             baselineModel.train(numEpochs, learningRate);
             model = baselineModel;
         end
@@ -665,10 +665,10 @@ classdef baselineControllerClass
         function chunkVec = retrieve(~, model, queryEmbeddingObj, topK)
             %RETRIEVE Retrieve top chunks using model.
             %   chunkVec = retrieve(obj, model, queryEmbeddingObj, topK)
-            %   model (baselineModelClass): Model to query.
-            %   queryEmbeddingObj (embeddingClass): Query embedding.
+            %   model (BaselineModel): Model to query.
+            %   queryEmbeddingObj (Embedding): Query embedding.
             %   topK (double): Number of results.
-            %   chunkVec (chunkClass Vec): Retrieved chunks.
+            %   chunkVec (Chunk Vec): Retrieved chunks.
             %
             %   Side effects: none.
             chunkVec = model.retrieve(queryEmbeddingObj, topK);
@@ -676,38 +676,38 @@ classdef baselineControllerClass
     end
 end
 
-% +controller/projectionHeadControllerClass.m
-classdef projectionHeadControllerClass
-    %PROJECTIONHEADCONTROLLERCLASS Instantiates projection head model and delegates work.
+% +controller/ProjectionHeadController.m
+classdef ProjectionHeadController
+    %PROJECTIONHEADCONTROLLER Instantiates projection head model and delegates work.
 
     properties (Access=private)
-        head % projectionHeadClass instance
+        head % ProjectionHead instance
     end
 
     methods (Access=public)
-        function obj = projectionHeadControllerClass(inputDim, outputDim)
-            %PROJECTIONHEADCONTROLLERCLASS Construct controller and underlying model.
-            %   obj = projectionHeadControllerClass(inputDim, outputDim)
+        function obj = ProjectionHeadController(inputDim, outputDim)
+            %PROJECTIONHEADCONTROLLER Construct controller and underlying model.
+            %   obj = ProjectionHeadController(inputDim, outputDim)
             %   inputDim (double): Input dimension.
             %   outputDim (double): Output dimension.
-            %   obj (projectionHeadControllerClass): New instance.
-            obj.head = model.projectionHeadClass(inputDim, outputDim);
+            %   obj (ProjectionHeadController): New instance.
+            obj.head = model.ProjectionHead(inputDim, outputDim);
         end
 
         function train(obj, embeddingMat, labelMat, numEpochs, learningRate)
-            %TRAIN Delegate training to projectionHeadClass.
+            %TRAIN Delegate training to ProjectionHead.
             obj.head.fit(embeddingMat, labelMat, numEpochs, learningRate);
         end
 
         function embeddingMatTrans = project(obj, embeddingMat)
-            %PROJECT Delegate projection to projectionHeadClass.
+            %PROJECT Delegate projection to ProjectionHead.
             embeddingMatTrans = obj.head.transform(embeddingMat);
         end
     end
 end
 
-% +controller/fineTuneControllerClass.m
-classdef fineTuneControllerClass
+% +controller/FineTuneController.m
+classdef FineTuneController
     %FINETUNECONTROLLER Fine-tunes base models.
     
     methods (Access=public)
@@ -715,8 +715,8 @@ classdef fineTuneControllerClass
             %RUN Fine-tune encoder.
             %   encoder = run(obj, datasetTbl, baseModel)
             %   datasetTbl (Tbl): Training data.
-            %   baseModel (encoderClass): Base model.
-            %   encoder (encoderClass): Fine-tuned encoder.
+            %   baseModel (Encoder): Base model.
+            %   encoder (Encoder): Fine-tuned encoder.
             %
             %   Side effects: none.
             encoder = [];
@@ -725,18 +725,18 @@ classdef fineTuneControllerClass
 end
 
 
-% +controller/evaluationControllerClass.m
-classdef evaluationControllerClass
+% +controller/EvaluationController.m
+classdef EvaluationController
     %EVALUATIONCONTROLLER Computes metrics and generates reports.
     
     methods (Access=public)
         function metrics = evaluate(~, model, testEmbeddingMat, trueLabelMat)
             %EVALUATE Compute metrics for model.
             %   metrics = evaluate(obj, model, testEmbeddingMat, trueLabelMat)
-            %   model (baselineModelClass): Model to evaluate.
+            %   model (BaselineModel): Model to evaluate.
             %   testEmbeddingMat (double Mat): Test embeddings.
             %   trueLabelMat (double Mat): True labels.
-            %   metrics (metricsClass): Results.
+            %   metrics (Metrics): Results.
             %
             %   Side effects: none.
             metrics = [];
@@ -745,9 +745,9 @@ classdef evaluationControllerClass
         function generateReports(~, metrics, outDir, viewHandle)
             %GENERATEREPORTS Use supplied view's unified render interface.
             %   generateReports(obj, metrics, outDir, viewHandle)
-            %   metrics (metricsClass): Evaluation results.
+            %   metrics (Metrics): Evaluation results.
             %   outDir (string): Output directory.
-            %   viewHandle (evalReportViewClass|function_handle): View dependency.
+            %   viewHandle (EvalReportView|function_handle): View dependency.
             %       Must implement: render(metrics, outDir)
             %
             %   Side effects: writes reports to disk.
@@ -762,11 +762,11 @@ classdef evaluationControllerClass
 end
 
 
-% +controller/dataAcquisitionControllerClass.m
-classdef dataAcquisitionControllerClass
+% +controller/DataAcquisitionController.m
+classdef DataAcquisitionController
 %DATAACQUISITIONCONTROLLER Fetches corpora and returns raw or diff data.
 %   Report generation is handled by the caller or a dedicated controller
-%   using diffReportViewClass.
+%   using DiffReportView.
     
     methods (Access=public)
         function corpusStruct = fetch(~, sources)
@@ -785,10 +785,10 @@ classdef dataAcquisitionControllerClass
             %   oldVersionId (string): Baseline version.
             %   newVersionId (string): New version.
             %   diffStruct (struct): Differences between versions with fields:
-            %       addedDocs (documentClass Vec): Only in newVersionId.
-            %       removedDocs (documentClass Vec): Only in oldVersionId.
-            %       changedDocs (documentClass Vec): Present in both but modified.
-            %   Callers can pass diffStruct to diffReportViewClass.render.
+            %       addedDocs (Document Vec): Only in newVersionId.
+            %       removedDocs (Document Vec): Only in oldVersionId.
+            %       changedDocs (Document Vec): Present in both but modified.
+            %   Callers can pass diffStruct to DiffReportView.render.
             %
             %   Side effects: accesses external resources.
             oldCorpus = loadCorpus(oldVersionId);
@@ -802,17 +802,17 @@ end
 
 % Example diff workflow
 %   Demonstrates computing corpus diffs and rendering a report.
-%   diffStruct = dataAcquisitionControllerClass().diffVersions("v1", "v2");
-%   diffReportViewClass().render(diffStruct, "out/diff", "html");
+%   diffStruct = DataAcquisitionController().diffVersions("v1", "v2");
+%   DiffReportView().render(diffStruct, "out/diff", "html");
 %
 %   % tests/testDiffWorkflow.m
 %   function testDiffWorkflow(~)
-%       diffStruct = dataAcquisitionControllerClass().diffVersions("v1", "v2");
-%       diffReportViewClass().render(diffStruct, tempname, "html");
+%       diffStruct = DataAcquisitionController().diffVersions("v1", "v2");
+%       DiffReportView().render(diffStruct, tempname, "html");
 %   end
 
-% +controller/pipelineControllerClass.m
-classdef pipelineControllerClass
+% +controller/PipelineController.m
+classdef PipelineController
     %PIPELINECONTROLLER High-level orchestration based on dependency graph.
     
     properties (Access=public)
@@ -820,11 +820,11 @@ classdef pipelineControllerClass
     end
 
     methods (Access=public)
-        function obj = pipelineControllerClass(controllerStruct)
-            %PIPELINECONTROLLERCLASS Construct pipeline controller.
-            %   obj = pipelineControllerClass(controllerStruct)
+        function obj = PipelineController(controllerStruct)
+            %PIPELINECONTROLLER Construct pipeline controller.
+            %   obj = PipelineController(controllerStruct)
             %   controllerStruct (struct): Controller instances.
-            %   obj (pipelineControllerClass): New instance.
+            %   obj (PipelineController): New instance.
             %
             %   Side effects: none.
             obj.controllerStruct = controllerStruct;
@@ -833,7 +833,7 @@ classdef pipelineControllerClass
         function execute(obj, configStruct)
             %EXECUTE Execute pipeline steps using controllerStruct.
             %   execute(obj, configStruct)
-            %   obj (pipelineControllerClass): Instance.
+            %   obj (PipelineController): Instance.
             %   configStruct (struct): Configuration for steps.
             %
             %   Side effects: orchestrates pipeline execution.
@@ -842,8 +842,8 @@ classdef pipelineControllerClass
 end
 
 
-% +controller/testControllerClass.m
-classdef testControllerClass
+% +controller/TestController.m
+classdef TestController
     %TESTCONTROLLER Executes continuous test suite.
     
     methods (Access=public)
