@@ -357,7 +357,6 @@ classdef projectionHeadClass
     end
 end
 
-
 % +model/encoderClass.m
 classdef encoderClass
     %ENCODER Fine-tuned model for contrastive learning.
@@ -687,7 +686,6 @@ classdef projectionHeadControllerClass
         end
     end
 end
-
 
 % +controller/fineTuneControllerClass.m
 classdef fineTuneControllerClass
