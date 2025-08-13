@@ -99,11 +99,15 @@ Every module must expose a MATLAB class with a clearly defined public interface 
 - **Depends on:** Baseline/Projection/Fine-Tuned models.
 - **Implementation:**
   - `reg.evalRetrieval` and `reg.evalPerLabel` for metrics.
-  - `regEvalAndReport.m` generates `regEvalReport.pdf` and trends.
+  - `controller.EvaluationController` drives evaluation and report generation:
+    - `view.EvalReportView` renders PDF/HTML summaries.
+    - `view.DiffReportView` compares model or corpus versions.
+    - `view.MetricsPlotsView` saves heatmaps and trend plots.
+  - `regEvalAndReport.m` acts as the entry point.
   - Gold mini-pack support via `reg.loadGold` and `regEvalGold.m`.
   - Reference the module's class name and any interfaces it implements.
 - **Testing:** `tests/testMetricsExpectedJSON.m`, `tests/testGoldMetrics.m`, `tests/testReportArtifact.m`.
-- **Output:** Metrics CSVs, PDF/HTML reports, gold evaluation results.
+- **Output:** Metrics CSVs, `regEvalReport.pdf`/`.html`, diff report artifacts, visualization images, and gold evaluation results.
 
 ## 12. Data Acquisition & Diff Utilities (Optional)
 - **Goal:** Automate CRR/EBA fetches and track version differences.
