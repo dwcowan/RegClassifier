@@ -43,6 +43,7 @@ Note: identifiers appearing only in pseudocode examples are for algorithm illust
 | Entity | Convention | Example |
 |--------|------------|---------|
 | Standalone Functions | lowerCamelCase | `loadData`, `parseText` |
+| Scripts | lowerCamelCase; file name matches script name | `runPipeline` |
 | Class Methods | lowerCamelCase | `computeScore`, `updateModel` |
 | Classes | UpperCamelCase | `DocumentParser`, `EmbeddingModel` |
 | Test Classes | lowerCamelCase prefixed with `test` | `testFeature` |
@@ -50,7 +51,7 @@ Note: identifiers appearing only in pseudocode examples are for algorithm illust
 | Class properties | lowerCamelCase | `maxEpochs`, `learningRate` |
 | Class constants | UPPER_CASE | `DEFAULT_TIMEOUT` |
 
-Class names, class properties, class methods, and interface definitions must also be recorded in the [identifier registry](identifier_registry.md) per the [process guide](README_NAMING.md).
+Function, script, and class identifiers must also be recorded in the [identifier registry](identifier_registry.md) per the [process guide](README_NAMING.md#function-and-script-names).
 
 
 ### 1.3 Constants
