@@ -21,10 +21,10 @@ The project is optimised for a **single-user Windows 10 machine** with:
 
 ## 2. Major Features Implemented
 ### Core Pipeline
-- **`reg_pipeline.m`**: End-to-end ingestion, chunking, embeddings, classification, retrieval.
-- **`reg_projection_workflow.m`**: Triplet training of a projection head on embeddings.
-- **`reg_finetune_encoder_workflow.m`**: Full/partial unfreeze of BERT encoder layers with contrastive loss.
-- **`reg_eval_and_report.m`**: Evaluates models (baseline, projection, fine-tuned) and generates PDF reports.
+- **`regPipeline.m`**: End-to-end ingestion, chunking, embeddings, classification, retrieval.
+- **`regProjectionWorkflow.m`**: Triplet training of a projection head on embeddings.
+- **`regFinetuneEncoderWorkflow.m`**: Full/partial unfreeze of BERT encoder layers with contrastive loss.
+- **`regEvalAndReport.m`**: Evaluates models (baseline, projection, fine-tuned) and generates PDF reports.
 
 ### Parameter Management
 - `knobs.json` — single file for “must-know” parameters:
@@ -32,8 +32,8 @@ The project is optimised for a **single-user Windows 10 machine** with:
   - Projection head dim / epochs / LR
   - Fine-tuning loss / unfreeze layers / epochs
   - Chunk size / overlap
-- `+reg/load_knobs.m` — loads JSON
-- `+reg/print_active_knobs.m` — prints active config at run start  
+- `+reg/loadKnobs.m` — loads JSON
+- `+reg/printActiveKnobs.m` — prints active config at run start  
 - `config.m` — reads knobs and applies overrides.
 
 ### Testing & Validation
@@ -60,19 +60,19 @@ Fixtures include:
    - Configure parameters in `knobs.json`
 2. **Baseline Run**
    ```matlab
-   run reg_pipeline
+   run regPipeline
    ```
 3. **Train Projection Head**
    ```matlab
-   run reg_projection_workflow
+   run regProjectionWorkflow
    ```
 4. **Fine-Tune Encoder (optional)**
    ```matlab
-   run reg_finetune_encoder_workflow
+   run regFinetuneEncoderWorkflow
    ```
 5. **Evaluate & Report**
    ```matlab
-   run reg_eval_and_report
+   run regEvalAndReport
    ```
 6. **Run Tests**
    ```matlab
@@ -114,7 +114,7 @@ Added comprehensive test suite items:
 - **Metrics regression test** (`tests/testMetricsExpectedJSON.m`) that loads thresholds from
   `tests/fixtures/expected_metrics.json` and asserts deltas within tolerance.
 - **Projection head save/load (pipeline autoload)** (`tests/testProjectionAutoloadPipeline.m`) ensures
-  `reg_pipeline` respects `projection_head.mat` and auto-applies it.
+  `regPipeline` respects `projection_head.mat` and auto-applies it.
 - **Fine-tune checkpoint resume** (`tests/testFineTuneResume.m`) to verify resuming from
   `checkpoints/ft_epochXX.mat`.
 
@@ -145,7 +145,7 @@ We have significantly expanded the MATLAB test suite to improve coverage and reg
 3. **Projection Head Autoload Test** (`tests/testProjectionAutoloadPipeline.m`)
    - Trains a small projection head on simulated data.
    - Saves it as `projection_head.mat`.
-   - Runs `reg_pipeline` and verifies it auto-applies the projection head.
+   - Runs `regPipeline` and verifies it auto-applies the projection head.
 
 4. **Fine-Tune Checkpoint Resume Test** (`tests/testFineTuneResume.m`)
    - Runs a short fine-tuning to produce `checkpoints/ft_epochXX.mat`.
@@ -176,11 +176,11 @@ table(results)
 ---
 ## Update 2025-08-10 22:41:01
 **First bundle improvements added:**
-- Seed control (`+reg/set_seeds.m`) and invoked in fine-tune workflow.
-- Knobs validator (`+reg/validate_knobs.m`) called at run start.
+- Seed control (`+reg/setSeeds.m`) and invoked in fine-tune workflow.
+- Knobs validator (`+reg/validateKnobs.m`) called at run start.
 - Fine-tune early stopping on nDCG@10 with patience + min-delta; saves `checkpoints/ft_best.mat`.
 - Simple **hard-negative mining** between epochs using current encoder.
-- **Per-label metrics** helper (`+reg/eval_per_label.m`).
+- **Per-label metrics** helper (`+reg/evalPerLabel.m`).
 - **Golden artifact test** (`tests/testReportArtifact.m`) ensuring `reg_eval_report.pdf` exists and is non-trivial.
 
 ---
@@ -188,18 +188,18 @@ table(results)
 **Gold mini-pack added** for high-confidence regression testing:
 - Folder **gold/** with sample files:
   - `sample_gold_chunks.csv`, `sample_gold_labels.json`, `sample_gold_Ytrue.csv`, `expected_metrics.json`
-- Loader: `+reg/load_gold.m`
-- Runner: `reg_eval_gold.m` → produces `gold_eval_report.pdf`
+- Loader: `+reg/loadGold.m`
+- Runner: `regEvalGold.m` → produces `gold_eval_report.pdf`
 - Test: `tests/testGoldMetrics.m` enforces overall + per-label thresholds
-- Helper: `+testutil/make_gold_from_simulated.m` generates gold directly from the simulated set.
+- Helper: `+testutil/makeGoldFromSimulated.m` generates gold directly from the simulated set.
 
 **Should we use simulated data to seed the gold pack?**  
-Yes — it’s a good starting point. Use `testutil.make_gold_from_simulated("gold")` to create a consistent, known-good baseline you can extend toward 50–200 labeled chunks. Over time, replace/augment rows with real CRR chunks to better match production language while keeping the same file formats and tests.
+Yes — it’s a good starting point. Use `testutil.makeGoldFromSimulated("gold")` to create a consistent, known-good baseline you can extend toward 50–200 labeled chunks. Over time, replace/augment rows with real CRR chunks to better match production language while keeping the same file formats and tests.
 
 ---
 ## Update 2025-08-10 22:48:13
 **Gold metrics integration into main report**:
-- `reg_eval_and_report.m` now appends a "Gold Mini-Pack Metrics" section to the PDF if `gold/` exists.
+- `regEvalAndReport.m` now appends a "Gold Mini-Pack Metrics" section to the PDF if `gold/` exists.
 - Includes overall metrics and per-label Recall@10 table from gold pack.
 
 ---
@@ -212,23 +212,23 @@ Main report now includes a **Gold Mini-Pack** section (if `gold/*` exists), show
 ## Update 2025-08-10 22:57:32
 **Data acquisition + diffs added:**
   - Fetchers:
-    - `+reg/fetch_crr_eurlex.m` — downloads consolidated CRR PDF by consolidation date.
-    - `+reg/fetch_crr_eba.m` — scrapes EBA ISRB per-article pages (HTML + plaintext) with index CSV.
+    - `+reg/fetchCrrEurlex.m` — downloads consolidated CRR PDF by consolidation date.
+    - `+reg/fetchCrrEba.m` — scrapes EBA ISRB per-article pages (HTML + plaintext) with index CSV.
     - All fetchers save downloads to `data/raw`.
   - Diffs:
-    - `+reg/crr_diff_versions.m` — compare two CRR corpora (e.g., older vs newer EBA text dumps), write CSV + patch.
-    - `+reg/diff_methods.m` — compare Top-10 retrievals across baseline/projection/fine-tuned for a query set.
+    - `+reg/crrDiffVersions.m` — compare two CRR corpora (e.g., older vs newer EBA text dumps), write CSV + patch.
+    - `+reg/diffMethods.m` — compare Top-10 retrievals across baseline/projection/fine-tuned for a query set.
   - Tests: `tests/testFetchers.m` (network-tolerant signatures).
   - When switching from raw downloads to pipeline ingestion, move the files into `data/pdfs` or update `pipeline.json`'s `input_dir` to point at `data/raw`.
 
 ---
 ## Update 2025-08-10 22:59:21
 **CRR sync + richer diffs added:**
-- `reg_crr_sync.m` — one command to fetch **EUR-Lex PDF** and **EBA ISRB** into a date-stamped folder.
-- `+reg/fetch_crr_eba_parsed.m` — improved EBA fetcher that parses **Article numbers**.
-- `reg_crr_diff_report.m` — generates a **PDF report** summarizing version diffs, with a sample of textual changes.
+- `regCrrSync.m` — one command to fetch **EUR-Lex PDF** and **EBA ISRB** into a date-stamped folder.
+- `+reg/fetchCrrEbaParsed.m` — improved EBA fetcher that parses **Article numbers**.
+- `regCrrDiffReport.m` — generates a **PDF report** summarizing version diffs, with a sample of textual changes.
 \n---
 ## Update 2025-08-10 23:00:40
 **Article-aware diffs + HTML report**
-- `+reg/crr_diff_articles.m` — aligns by `article_num` and writes `summary_by_article.csv` and `patch_by_article.txt`.
-- `reg_crr_diff_report_html.m` — generates an HTML report with clickable links back to EBA for changed articles.\n
+- `+reg/crrDiffArticles.m` — aligns by `article_num` and writes `summary_by_article.csv` and `patch_by_article.txt`.
+- `regCrrDiffReportHtml.m` — generates an HTML report with clickable links back to EBA for changed articles.\n
