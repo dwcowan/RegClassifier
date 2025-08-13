@@ -53,7 +53,9 @@ Keep the illustrative examples below in sync with the current naming conventions
 
 
 ## Class Methods
-
+| Name | Class | Purpose | Notes |
+|------|-------|---------|-------|
+| tokenCount | Document, Chunk | Return number of tokens in text | Renamed from `length` |
 
 ### Class Interfaces
 
