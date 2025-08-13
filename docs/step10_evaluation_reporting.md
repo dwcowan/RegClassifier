@@ -8,6 +8,8 @@
 
 Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeletons before beginning this step.
 
+Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new identifiers introduced in this step.
+
 1. Run the evaluation script to compute retrieval metrics and generate a PDF report:
 
    ```matlab

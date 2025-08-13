@@ -7,6 +7,8 @@
 ## Instructions
 Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeletons before beginning this step.
 
+Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new identifiers introduced in this step.
+
 1. Implement a `reg.PipelineController` class that instantiates and sequences other controllers (ingest, chunk, weak label, embed, train, evaluate).
 2. Read execution order and parameters from `pipeline.json` and `knobs.json` to determine which stages run.
 3. Use a shared logger (e.g., `reg.getLogger`) so each stage logs with timestamps and module identifiers.

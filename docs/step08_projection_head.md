@@ -7,6 +7,8 @@
 ## Instructions
 Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeletons before beginning this step.
 
+Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new identifiers introduced in this step.
+
 1. Load `embeddingMat` and `bootLabelMat` as in Step 7.
 2. Train the projection head:
    ```matlab
