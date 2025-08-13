@@ -34,7 +34,7 @@
 | `+controller/projectionHeadControllerClass.m` | Instantiates `model.projectionHeadClass` and delegates calls without duplicate training logic |
 | `+controller/fineTuneControllerClass.m`       | Builds contrastive datasets and produces `model.encoderClass` models |
 | `+controller/evaluationControllerClass.m`     | Computes metrics and invokes `view.evalReportViewClass` and gold pack evaluation |
-| `+controller/dataAcquisitionControllerClass.m`| Fetches regulatory corpora and triggers diff analyses with `view.diffReportViewClass` |
+| `+controller/dataAcquisitionControllerClass.m`| Fetches regulatory corpora, computes version diffs, and returns `diffStruct` for callers to pass to `view.diffReportViewClass` |
 | `+controller/pipelineControllerClass.m`       | Orchestrates end‑to‑end execution based on module dependencies |
 | `+controller/testControllerClass.m`           | Executes continuous test suite to maintain reliability |
 
@@ -770,9 +770,14 @@ classdef dataAcquisitionControllerClass
             %   diffStruct = diffVersions(obj, oldVersionId, newVersionId)
             %   oldVersionId (string): Baseline version.
             %   newVersionId (string): New version.
-            %   diffStruct (struct): Differences between versions.
+            %   diffStruct (struct): Differences between versions with fields:
+            %       addedDocVec (documentClass Vec): Documents only in newVersionId.
+            %       removedDocVec (documentClass Vec): Documents only in oldVersionId.
+            %       changedDocVec (documentClass Vec): Documents present in both but modified.
+            %   Callers should handle diffStruct (e.g., pass to diffReportViewClass).
             %
             %   Side effects: accesses external resources.
+            diffStruct = struct();
         end
     end
 end
