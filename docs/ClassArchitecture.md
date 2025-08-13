@@ -92,7 +92,7 @@ classdef chunkClass
     %CHUNK Overlapping text segment from a document.
 
     properties (Access=public)
-        chunkId
+        chunkId   % double: Chunk identifier
         docId
         text
         startIndex
@@ -103,7 +103,7 @@ classdef chunkClass
         function obj = chunkClass(chunkId, docId, text, startIndex, endIndex)
             %CHUNKCLASS Construct chunkClass instance.
             %   obj = chunkClass(chunkId, docId, text, startIndex, endIndex)
-            %   chunkId (string): Chunk identifier.
+            %   chunkId (double): Chunk identifier.
             %   docId (string): Document identifier.
             %   text (string): Chunk text.
             %   startIndex (double): Start token index.
@@ -147,9 +147,9 @@ classdef labelMatrixClass
     %LABELMATRIX Sparse weak labels per chunk and topic.
     
     properties (Access=public)
-        chunkIdVec
-        topicIdVec
-        labelMat  % Sparse representation
+        chunkIdVec  % double Vec: Chunk identifiers
+        topicIdVec  % double Vec: Topic identifiers
+        labelMat    % sparse double Mat: Label weights
     end
 
     methods (Access=public)
