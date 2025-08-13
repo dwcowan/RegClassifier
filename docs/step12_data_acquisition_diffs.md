@@ -15,7 +15,7 @@ Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new 
    ```
 2. Generate diffStruct reports between document versions:
    ```matlab
-   diffStruct = reg.crrDiffVersions('versionA','versionB');
+   diffStruct = reg.crrDiffVersions('versionA', 'versionB');
    reg.crrDiffReport();
    ```
 3. Review HTML or PDF diffStruct outputs for changes.
@@ -39,7 +39,7 @@ Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new 
 - **Side Effects:** none.
 - **Usage Example:**
    ```matlab
-   diffStruct = reg.crrDiffVersions('v1','v2');
+   diffStruct = reg.crrDiffVersions('v1', 'v2');
    ```
 
 ### reg.crrDiffReport
