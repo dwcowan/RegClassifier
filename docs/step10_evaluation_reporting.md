@@ -27,7 +27,7 @@ Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new 
 
 ### reg.evalRetrieval
 - **Parameters:** `resultsTbl` table, `goldTbl` table.
-- **Returns:** metrics tables and generates `reg_eval_report.pdf`.
+- **Returns:** metrics tables and generates `regEvalReport.pdf`.
 - **Side Effects:** reads model artifacts and writes report files to disk.
 - **Usage Example:**
   ```matlab
@@ -62,10 +62,10 @@ See [Identifier Registry – Data Contracts](identifier_registry.md#data-contrac
 
 
 ## Verification
-- Report files such as `reg_eval_report.pdf` and metric CSVs are created.
+- Report files such as `regEvalReport.pdf` and metric CSVs are created.
 - Retrieval results table includes expected columns:
   ```matlab
-  assert(all(ismember({'docId','score'}, resultsTbl.Properties.VariableNames)));
+  assert(all(ismember({'docId', 'score'}, resultsTbl.Properties.VariableNames)));
   ```
 - Run evaluation tests:
   ```matlab
