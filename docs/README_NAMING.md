@@ -43,6 +43,8 @@ Place tests in the `tests/` folder and name each file `testName.m`. Each class a
 - Integration tests exercising cross-module interactions.
 - Regression tests comparing outputs against known good simulated data to detect unintended changes.
 
+Module owners must curate and maintain golden datasets used in regression tests. These datasets must be version-controlled and documented in `identifier_registry.md`.
+
 Refer to [Testing](Matlab_Style_Guide.md#3-testing) for the complete testing conventions.
 
 ## Workflow
