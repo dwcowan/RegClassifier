@@ -81,6 +81,7 @@ Class names, class properties, class methods, and interface definitions must als
 - Use namespaced folders (e.g., `+utils`, `+internal`) to manage scope.
 - Avoid `global`, `assignin`, or `eval`.
 - Prefer function files over scripts for reusable code.
+- Avoid `clear all`, `clc`, and other workspace commands in scripts unless explicitly required.
 
 ### 2.2 Object-Oriented Design
 - Scope modules with package folders (`+packageName`) to define namespaces.
