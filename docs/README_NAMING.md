@@ -36,7 +36,14 @@ Short-lived helpers such as `tmp` or `idx` should remain within a few lines of u
 
 ## Tests
 
-Place tests in the `tests/` folder and name each file `testName.m`. Refer to [Testing](Matlab_Style_Guide.md#27-testing) for the complete testing conventions.
+Place tests in the `tests/` folder and name each file `testName.m`. Each class and public method must have:
+
+- Unit tests validating core behavior.
+- Smoke tests confirming basic execution paths.
+- Integration tests exercising cross-module interactions.
+- Regression tests comparing outputs against known good simulated data to detect unintended changes.
+
+Refer to [Testing](Matlab_Style_Guide.md#3-testing) for the complete testing conventions.
 
 ## Workflow
 

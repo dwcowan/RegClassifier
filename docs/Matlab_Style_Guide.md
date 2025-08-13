@@ -148,6 +148,11 @@ Class names, class properties, class methods, and interface definitions must als
 ### 3. Testing
 - Store tests in a `tests/` folder mirroring source structure.
 - Name each test file `testName.m` and ensure the function or class name matches the file.
+- Provide at least one unit test for every public function and class method.
+- Maintain separate suites tagged with `Smoke` and `Regression`:
+  - `run_smoke_test` executes a fast subset validating environment and key workflows.
+  - The regression suite uses known good simulated data with expected results to detect unintended changes and runs alongside unit and integration tests.
+- Regression tests should rely on curated simulated datasets rather than reproductions of specific bugs.
 - Every test file must subclass `matlab.unittest.TestCase` and include `methods (TestClassSetup)` and `methods (TestClassTeardown)` blocks, or explicitly register cleanups using `addTeardown`.
 - Include:
   - Valid input tests
@@ -198,7 +203,7 @@ Allowed tags:
 - `Unit` – verifies a single function or class in isolation.
 - `Smoke` – quick checks to confirm the environment or pipeline is working.
 - `Integration` – exercises interactions across modules or external services.
-- `Regression` – prevents reintroduction of previously fixed defects.
+- `Regression` – verifies outputs against known good simulated data to detect unintended changes.
 
 Example usage:
 
