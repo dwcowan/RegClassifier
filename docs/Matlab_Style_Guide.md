@@ -129,17 +129,46 @@ convention defined in **this** document [Matlab Style Guide](Matlab_Style_Guide.
 
 ### 3. Testing
 - Store tests in a `tests/` folder mirroring source structure.
-- Name each test file `testName.m` and ensure the function name matches the file.
-- Use MATLAB's `matlab.unittest.TestCase` for unit tests.
+- Name each test file `testName.m` and ensure the function or class name matches the file.
+- Every test file must subclass `matlab.unittest.TestCase` and include `methods (TestClassSetup)` and `methods (TestClassTeardown)` blocks, or explicitly register cleanups using `addTeardown`.
 - Include:
   - Valid input tests
   - Invalid input tests
   - Edge case tests
 - Use `TestParameter` and `SharedTestFixture` where relevant.
+- Manage external resources with `matlab.unittest.fixtures` via `testCase.applyFixture` (typically in `methods (TestMethodSetup)` or `methods (TestClassSetup)`); ensure cleanup in `methods (TestMethodTeardown)` or through `addTeardown`.
 - Every test method must declare `TestTags`.
-- Maintain reproducibility with `rng(seed)` and `addTeardown`.
-- All test files must leverage `testCase.applyFixture` for shared setup/teardown.
+- Maintain reproducibility with `rng(seed)`.
 - Any temporary or placeholder test must call `fatalAssertFail` (or similar) so it fails as incomplete.
+
+Example with per-method setup, teardown, and fixture usage:
+
+```matlab
+classdef testExample < matlab.unittest.TestCase
+    methods (TestMethodSetup)
+        function createFixture(testCase)
+            import matlab.unittest.fixtures.TemporaryFolderFixture
+            testCase.applyFixture(TemporaryFolderFixture);
+            fid = fopen("data.txt","w");
+            testCase.addTeardown(@() fclose(fid));
+        end
+    end
+
+    methods (Test)
+        function readsFile(testCase)
+            testCase.verifyTrue(isfile("data.txt"));
+        end
+    end
+
+    methods (TestMethodTeardown)
+        function removeFile(testCase)
+            if exist("data.txt","file")
+                delete("data.txt");
+            end
+        end
+    end
+end
+```
 
 #### 3.1 Test Tags
 
