@@ -20,10 +20,11 @@ Each module is implemented as a stub `.m` file under `+reg/`. Every stub include
 
 ## TDD Workflow
 
-1. **Write a failing test**
+1. **Write a test**
    - Create a skeleton in `tests/` named `testMyFeature.m`.
+   - Ensure appropriate setup, teardown, fixtures and golden data is generted to satisfy the test.
    - Include `%% NAME-REGISTRY:TEST testMyFeature` and call the target stub.
-   - Force the failure with `assert(false, 'Not implemented yet');`.
+   - Force the pass with using the appropriate command from the matlab test suite to force a not implemented result.
 
 2. **Add a stub module**
    - Under `+reg/`, create `myFeature.m` with the function signature, a `%% NAME-REGISTRY:FUNCTION myFeature` breadcrumb, and a `TODO` placeholder.
@@ -31,12 +32,5 @@ Each module is implemented as a stub `.m` file under `+reg/`. Every stub include
 3. **Update the identifier registry**
    - Add entries for the new function, file, and test in `docs/identifier_registry.md`.
 
-4. **Run the test suite**
-   - From MATLAB:
-     ```matlab
-     results = runtests("tests", "IncludeSubfolders", true, "UseParallel", false);
-     table(results)
-     ```
-   - Iterate until the new test passes and the placeholder assertion is removed.
 
 Following this scaffold keeps modules, tests, and the identifier registry synchronized.
