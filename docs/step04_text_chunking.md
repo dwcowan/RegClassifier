@@ -26,8 +26,8 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 - **Parameters:**
   - `docsTbl` (table): from Step 3 with `docId` and `text` fields.
   - `'chunkSizeTokens'` (double): tokens per chunk.
-  - `'chunkOverlap'` (double): overlap between chunksTbl.
-- **Returns:** table `chunksTbl` with columns `chunkId` (string), `docId` (string), and `text` (string).
+    - `'chunkOverlap'` (double): overlap between chunksTbl.
+- **Returns:** table `chunksTbl` with columns `chunkId` (double), `docId` (string), and `text` (string).
 - **Side Effects:** none; pure transformation of input table.
 - **Usage Example:**
   ```matlab
@@ -38,7 +38,7 @@ See [Identifier Registry – Data Contracts](identifier_registry.md#data-contrac
 
 
 ## Verification
-- `chunksTbl` contains `chunkId`, `docId`, and `text` for each segment.
+- `chunksTbl` contains numeric `chunkId`, along with `docId` and `text` for each segment.
 - Run the chunking test:
   ```matlab
   runtests('tests/testIngestAndChunk.m')

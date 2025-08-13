@@ -82,7 +82,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 |-------|----------|------|-------------|
 | [Document](ClassArchitecture.md#L45-L87) | [docId](ClassArchitecture.md#L50) | string | Unique identifier |
 | [Document](ClassArchitecture.md#L45-L87) | [text](ClassArchitecture.md#L51) | string | Raw text content |
-| [Chunk](ClassArchitecture.md#L90-L142) | [chunkId](ClassArchitecture.md#L95) | string | Chunk identifier |
+| [Chunk](ClassArchitecture.md#L90-L142) | [chunkId](ClassArchitecture.md#L95) | double | Chunk identifier |
 | [Chunk](ClassArchitecture.md#L90-L142) | [docId](ClassArchitecture.md#L96) | string | Parent document identifier |
 | [Chunk](ClassArchitecture.md#L90-L142) | [text](ClassArchitecture.md#L97) | string | Chunk text |
 | [Chunk](ClassArchitecture.md#L90-L142) | [startIndex](ClassArchitecture.md#L98) | double | Start token index |
@@ -247,7 +247,7 @@ Regression entries must include the simulated dataset path, expected output, and
 #### Chunk
 | Field | Type | Description |
 |-------|------|-------------|
-| chunkId | string | Unique chunk identifier |
+| chunkId | double | Unique chunk identifier |
 | docId | string | Parent document identifier |
 | text | string | Chunk text |
 | startIndex | double | Start token index |
@@ -256,9 +256,9 @@ Regression entries must include the simulated dataset path, expected output, and
 #### LabelMatrix
 | Field | Type | Description |
 |-------|------|-------------|
-| chunkIdVec | vector | Chunk identifiers |
-| topicIdVec | vector | Topic identifiers |
-| labelMat | matrix | Sparse weak labels |
+| chunkIdVec | double Vec | Chunk identifiers |
+| topicIdVec | double Vec | Topic identifiers |
+| labelMat | sparse double Mat | Sparse weak labels |
 
 #### CorpusVersion
 | Field | Type | Description |

@@ -5,7 +5,7 @@ Split a documents table into overlapping token chunks for downstream processing.
 
 ## Expected Table Schema
 - **Input `docsTbl`**: table with variables `docId` (string) and `text` (string).
-- **Output `chunksTbl`**: table with variables `chunkId` (string), `docId` (string), `text` (string), `startIndex` (double), `endIndex` (double).
+- **Output `chunksTbl`**: table with variables `chunkId` (double), `docId` (string), `text` (string), `startIndex` (double), `endIndex` (double).
 
 ## Variable Naming Conventions
 - Tables use the `Tbl` suffix (e.g., `docsTbl`, `chunksTbl`).
@@ -21,7 +21,7 @@ Split a documents table into overlapping token chunks for downstream processing.
    - While `startIdx` is less than or equal to the number of `tokens`:
      - Let `endIdx` be the lesser of `startIdx + chunkSizeTokens - 1` and the total number of `tokens`.
      - Combine tokens from `startIdx` to `endIdx` into `chunkText`.
-     - Form `chunkId` by concatenating `docId` with `startIdx`.
+     - Form `chunkId` as a unique numeric identifier (e.g., using `startIdx`).
      - Append a row `{chunkId, docId, chunkText, startIdx, endIdx}` to `chunksTbl`.
      - Increment `startIdx` by `chunkSizeTokens - chunkOverlap`.
 3. Return `chunksTbl`.
