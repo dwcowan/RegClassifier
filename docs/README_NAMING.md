@@ -44,7 +44,7 @@ Place tests in the `tests/` folder and name each file `testName.m`. Each class a
 - Integration tests exercising cross-module interactions.
 - Regression tests comparing outputs against known good simulated data to detect unintended changes.
 
-Module owners must curate and maintain golden datasets used in regression tests. These datasets must be version-controlled and documented in `identifier_registry.md`.
+Module owners must design modules that generate reproducible golden datasets and expected outputs. These artifacts must be stored under version control and documented in `identifier_registry.md`. When requirements change, module owners are responsible for regenerating and updating the golden data accordingly.
 
 Refer to [Testing](Matlab_Style_Guide.md#3-testing) for the complete testing conventions.
 
