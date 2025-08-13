@@ -61,7 +61,7 @@ classdef Document
         
         function n = tokenCount(obj)
             % Return number of tokens in text.
-            n = [];  %#ok<*NASGU>
+            n = numel(obj.text);
         end
         
         function md = metadata(obj)
@@ -92,9 +92,9 @@ classdef Chunk
             obj.endIndex = endIndex;
         end
         
-        function len = length(obj)
+        function n = tokenCount(obj)
             % Return number of tokens in text.
-            len = [];
+            n = numel(obj.text);
         end
         
         function tf = overlaps(obj, other)
