@@ -9,15 +9,17 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 
 Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new identifiers introduced in this step.
 
-1. Load `embeddingMat` and `bootLabelMat` as in Step 7.
+1. Load `embeddingMat` and `bootLabelMat` as in Step 7:
+   ```matlab
+   load('data/embeddingMat.mat', 'embeddingMat');
+   load('data/bootLabelMat.mat', 'bootLabelMat');
+   ```
 2. Train the projection head:
    ```matlab
-
-    projectionHeadStruct = reg.trainProjectionHead(embeddingMat, bootLabelMat);
-    save('models/projection_head.mat','projectionHeadStruct');
-
+   projectionHeadStruct = reg.trainProjectionHead(embeddingMat, bootLabelMat);
+   save('models/projectionHead.mat', 'projectionHeadStruct');
    ```
-3. The pipeline automatically uses `projection_head.mat` when present.
+3. The pipeline automatically uses `projectionHead.mat` when present.
 
 ## Function Interface
 
@@ -32,18 +34,16 @@ Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new 
 - **Usage Example:**
   ```matlab
   projectionHeadStruct = reg.trainProjectionHead(embeddingMat, bootLabelMat);
-
-
   ```
 
 See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schema references including `ProjectionHeadStruct`.
 
 
 ## Verification
-- `projection_head.mat` exists in the `models` folder.
+- `projectionHead.mat` exists in the `models` folder.
 - Validate projection head schema:
   ```matlab
-  assert(all(isfield(projectionHeadStruct, {'weights','bias'})));
+  assert(all(isfield(projectionHeadStruct, {'weights', 'bias'})));
   ```
 - Run projection head tests:
   ```matlab
