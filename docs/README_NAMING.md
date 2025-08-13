@@ -11,10 +11,16 @@ all naming rules. All approved classes, class properties, class methods, functio
 - New or modified class interfaces must be added to [`docs/identifier_registry.md`](identifier_registry.md) as well.
 
 
-## Function and Script Names
+## Function, Script, and Class Names
 
 Use lowerCamelCase for all function and script names (e.g., `ingestPdfs`, `trainMultilabel`). See the
 [Scripts](Matlab_Style_Guide.md#scripts) subsection of the style guide for detailed guidance.
+
+- Classes use UpperCamelCase ([Matlab Style Guide §1.2](Matlab_Style_Guide.md#12-naming-for-functions--classes)).
+- Interface classes use UpperCamelCase prefixed with `I` ([Matlab Style Guide §1.2](Matlab_Style_Guide.md#12-naming-for-functions--classes)).
+- Test classes use lowerCamelCase prefixed with `test` ([Matlab Style Guide §1.2](Matlab_Style_Guide.md#12-naming-for-functions--classes)).
+- Package folder names use lowerCamelCase ([Matlab Style Guide §2.1](Matlab_Style_Guide.md#21-files-and-functions)).
+- Class properties use lowerCamelCase and class constants use UPPER_CASE ([Matlab Style Guide §1.2](Matlab_Style_Guide.md#12-naming-for-functions--classes)).
 
 - Development scripts (e.g., `startup.m`, `run_mlint.m`) reside in the repository root or `scripts/` and are not tested.
 - Scripts that contribute to runtime behavior must live in `+helpers/` and have corresponding tests in `tests/`.

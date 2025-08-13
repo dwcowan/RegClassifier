@@ -51,7 +51,7 @@ Note: identifiers appearing only in pseudocode examples are for algorithm illust
 | Class properties | lowerCamelCase | `maxEpochs`, `learningRate` |
 | Class constants | UPPER_CASE | `DEFAULT_TIMEOUT` |
 
-Function, script, and class identifiers must also be recorded in the [identifier registry](identifier_registry.md) per the [process guide](README_NAMING.md#function-and-script-names).
+Function, script, and class identifiers must also be recorded in the [identifier registry](identifier_registry.md) per the [process guide](README_NAMING.md#function-script-and-class-names).
 
 
 ### 1.3 Constants
