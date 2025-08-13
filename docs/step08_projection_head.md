@@ -48,7 +48,7 @@ See [Identifier Registry – Data Contracts](identifier_registry.md#data-contrac
   runtests({'tests/testProjectionHeadSimulated.m', ...
             'tests/testProjectionAutoloadPipeline.m'})
   ```
-  Tests verify improved Recall@n and automatic loading by `reg_pipeline`.
+  Tests verify improved Recall@n and automatic loading by `regPipeline`.
 
 ## Next Steps
 Continue to [Step 9: Encoder Fine-Tuning Workflow](step09_encoder_finetuning.md).

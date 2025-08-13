@@ -45,7 +45,7 @@ Data structures referenced in later modules are detailed in [Identifier Registry
 
 ## Verification
 - `config` prints the contents of the JSON files without errors.
-- MATLAB can locate project functions such as `reg_pipeline`.
+- MATLAB can locate project functions such as `regPipeline`.
 
 ## Next Steps
 Continue to [Step 3: Data Ingestion](step03_data_ingestion.md).
