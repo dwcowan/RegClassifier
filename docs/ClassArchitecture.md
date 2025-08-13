@@ -785,17 +785,31 @@ classdef dataAcquisitionControllerClass
             %   oldVersionId (string): Baseline version.
             %   newVersionId (string): New version.
             %   diffStruct (struct): Differences between versions with fields:
-            %       addedDocVec (documentClass Vec): Documents only in newVersionId.
-            %       removedDocVec (documentClass Vec): Documents only in oldVersionId.
-            %       changedDocVec (documentClass Vec): Documents present in both but modified.
-            %   Callers should handle diffStruct (e.g., pass to diffReportViewClass).
+            %       addedDocs (documentClass Vec): Only in newVersionId.
+            %       removedDocs (documentClass Vec): Only in oldVersionId.
+            %       changedDocs (documentClass Vec): Present in both but modified.
+            %   Callers can pass diffStruct to diffReportViewClass.render.
             %
             %   Side effects: accesses external resources.
-            diffStruct = struct();
+            oldCorpus = loadCorpus(oldVersionId);
+            newCorpus = loadCorpus(newVersionId);
+            diffStruct.addedDocs = setdiff(newCorpus, oldCorpus);
+            diffStruct.removedDocs = setdiff(oldCorpus, newCorpus);
+            diffStruct.changedDocs = detectChanges(oldCorpus, newCorpus);
         end
     end
 end
 
+% Example diff workflow
+%   Demonstrates computing corpus diffs and rendering a report.
+%   diffStruct = dataAcquisitionControllerClass().diffVersions("v1", "v2");
+%   diffReportViewClass().render(diffStruct, "out/diff", "html");
+%
+%   % tests/testDiffWorkflow.m
+%   function testDiffWorkflow(~)
+%       diffStruct = dataAcquisitionControllerClass().diffVersions("v1", "v2");
+%       diffReportViewClass().render(diffStruct, tempname, "html");
+%   end
 
 % +controller/pipelineControllerClass.m
 classdef pipelineControllerClass
