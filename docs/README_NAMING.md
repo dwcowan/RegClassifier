@@ -67,15 +67,16 @@ Refer to [Testing](Matlab_Style_Guide.md#3-testing) for the complete testing con
 7. Add any new or modified class interfaces to [`docs/identifier_registry.md`](identifier_registry.md).
 8. Verify that any new or modified identifier has a corresponding entry in
    [`docs/identifier_registry.md`](identifier_registry.md).
-9. When data schemas or module-to-module flows are added or modified, update
-   [`docs/identifier_registry.md#data-contracts`](identifier_registry.md#data-contracts) and
-   [`docs/identifier_registry.md#flows`](identifier_registry.md#flows); triggers include new
-   payload structures or new producer/consumer pairs.
-10. Run the full test suite locally:
-   - Placeholder tests must fail rather than being skipped or assumed.
-   - Confirm that tests use fixtures via `testCase.applyFixture`.
-11. Run CI to ensure naming checks and tests pass. Locally, you can execute
-   `runtests` or the `run_smoke_test` script to verify.
+9. For pseudocode or documentation examples, keep placeholder identifiers within the documentation only; do not submit pseudocode identifiers to [`docs/identifier_registry.md`](identifier_registry.md).
+10. When data schemas or module-to-module flows are added or modified, update
+    [`docs/identifier_registry.md#data-contracts`](identifier_registry.md#data-contracts) and
+    [`docs/identifier_registry.md#flows`](identifier_registry.md#flows); triggers include new
+    payload structures or new producer/consumer pairs.
+11. Run the full test suite locally:
+    - Placeholder tests must fail rather than being skipped or assumed.
+    - Confirm that tests use fixtures via `testCase.applyFixture`.
+12. Run CI to ensure naming checks and tests pass. Locally, you can execute
+    `runtests` or the `run_smoke_test` script to verify.
 
 ### Example
 
