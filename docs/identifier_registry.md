@@ -135,6 +135,8 @@ Common test scopes or prefixes include:
 | Name | Purpose | Scope | Owner | Related Functions | Notes |
 |------|---------|-------|-------|-------------------|-------|
 | testConfig | Test configuration override precedence | unit | @todo | config | verifies override precedence |
+| testShutdown | Test project cleanup removes repo root from path | unit | @todo | shutdown | |
+| testStartup | Test project initialization adds repo root to path | unit | @todo | startup | |
 
 
 ---
