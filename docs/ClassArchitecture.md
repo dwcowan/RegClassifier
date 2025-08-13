@@ -504,6 +504,8 @@ end
 % +view/diffReportViewClass.m
 classdef diffReportViewClass
     %DIFFREPORTVIEW Renders document diffs between corpus versions.
+    %   Expects diff results from a controller or caller that computes
+    %   version differences.
     
     methods (Access=public)
         function render(~, diffResult, path, fmt)
@@ -737,7 +739,9 @@ end
 
 % +controller/dataAcquisitionControllerClass.m
 classdef dataAcquisitionControllerClass
-    %DATAACQUISITIONCONTROLLER Fetches corpora and runs diffs.
+%DATAACQUISITIONCONTROLLER Fetches corpora and returns raw or diff data.
+%   Report generation is handled by the caller or a dedicated controller
+%   using diffReportViewClass.
     
     methods (Access=public)
         function corpusStruct = fetch(~, sources)
@@ -750,14 +754,14 @@ classdef dataAcquisitionControllerClass
             corpusStruct = [];
         end
 
-        function diffVersions(~, oldVersionId, newVersionId, outDir)
-            %DIFFVERSIONS Run diff and trigger diffReportViewClass.
-            %   diffVersions(obj, oldVersionId, newVersionId, outDir)
+        function diffStruct = diffVersions(~, oldVersionId, newVersionId)
+            %DIFFVERSIONS Compute differences between corpus versions.
+            %   diffStruct = diffVersions(obj, oldVersionId, newVersionId)
             %   oldVersionId (string): Baseline version.
             %   newVersionId (string): New version.
-            %   outDir (string): Output directory.
+            %   diffStruct (struct): Differences between versions.
             %
-            %   Side effects: writes diff reports to disk.
+            %   Side effects: accesses external resources.
         end
     end
 end
