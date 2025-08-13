@@ -195,11 +195,11 @@ end
 % +model/embeddingClass.m
 classdef embeddingClass
     %EMBEDDING Vector representation of a chunk.
-    
+
     properties (Access=public)
-        chunkId
-        embeddingVec
-        modelName
+        chunkId      % double: Chunk identifier
+        embeddingVec % double Vec: Embedding vector
+        modelName    % string: Source model name
     end
 
     methods (Access=public)
@@ -241,11 +241,11 @@ end
 % +model/baselineModelClass.m
 classdef baselineModelClass
     %BASELINEMODEL Multi-label classifier and hybrid retrieval index.
-    
+
     properties (Access=public)
-        labelMat
-        embeddingMat
-        weightMat
+        labelMat     % double Mat: Label matrix
+        embeddingMat % double Mat: Embedding matrix
+        weightMat    % double Mat: Model weights
     end
 
     methods (Access=public)
@@ -299,11 +299,11 @@ end
 % +model/projectionHeadClass.m
 classdef projectionHeadClass
     %PROJECTIONHEAD MLP or shallow network for embedding transformation.
-    
+
     properties (Access=public)
-        inputDim
-        outputDim
-        paramStruct
+        inputDim    % double: Input dimension
+        outputDim   % double: Output dimension
+        paramStruct % struct: Learnable parameters
     end
 
     methods (Access=public)
@@ -349,10 +349,10 @@ end
 % +model/encoderClass.m
 classdef encoderClass
     %ENCODER Fine-tuned model for contrastive learning.
-    
+
     properties (Access=public)
-        baseModel
-        stateStruct
+        baseModel   % struct: Base model data
+        stateStruct % struct: Fine-tuned weights
     end
 
     methods (Access=public)
@@ -395,10 +395,10 @@ end
 % +model/metricsClass.m
 classdef metricsClass
     %METRICS Encapsulates evaluation results.
-    
+
     properties (Access=public)
-        metricName
-        scoreStruct  % e.g., containers.Map or struct
+        metricName  % string: Name of metric set
+        scoreStruct % struct: Metric scores
     end
 
     methods (Access=public)
@@ -430,10 +430,10 @@ end
 % +model/corpusVersionClass.m
 classdef corpusVersionClass
     %CORPUSVERSION Versioned corpus handling for diff operations.
-    
+
     properties (Access=public)
-        versionId
-        documentVec  % Array of documentClass
+        versionId   % string: Corpus version identifier
+        documentVec % documentClass Vec: Documents in version
     end
 
     methods (Access=public)
