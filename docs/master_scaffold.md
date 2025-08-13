@@ -10,17 +10,17 @@ This document summarizes the MATLAB package located at `src/reg/`, the stub modu
 
 Each module is a class file (`classdef`) stored under `src/reg/`. Every stub includes a `%% NAME-REGISTRY:FUNCTION` breadcrumb and a `TODO` placeholder. The table below lists the modules in build order and their paired tests.
 
-| Step | Module | Stub `.m` file | Test skeleton(s) |
-|------|--------|----------------|------------------|
-| 3 | Data ingestion | `src/reg/ingestPdfs.m` | `tests/testPDFIngest.m`, `tests/testIngestAndChunk.m` |
-| 4 | Text chunking | `src/reg/chunkText.m` | `tests/testIngestAndChunk.m` |
-| 5 | Weak labeling | `src/reg/weakRules.m` | `tests/testRulesAndModel.m` |
-| 6 | Embedding generation | `src/reg/docEmbeddingsBertGpu.m`, `src/reg/precomputeEmbeddings.m` | `tests/testFeatures.m` |
-| 7 | Baseline classifier & retrieval | `src/reg/trainMultilabel.m`, `src/reg/hybridSearch.m` | `tests/testRegressionMetricsSimulated.m`, `tests/testHybridSearch.m` |
-| 8 | Projection head | `src/reg/trainProjectionHead.m` | `tests/testProjectionHeadSimulated.m`, `tests/testProjectionAutoloadPipeline.m` |
-| 9 | Encoder fine-tuning | `src/reg/ftBuildContrastiveDataset.m`, `src/reg/ftTrainEncoder.m` | `tests/testFineTuneSmoke.m`, `tests/testFineTuneResume.m` |
-| 10 | Evaluation & reporting | `src/reg/evalRetrieval.m`, `src/reg/evalPerLabel.m`, `src/reg/loadGold.m` | `tests/testMetricsExpectedJSON.m`, `tests/testGoldMetrics.m`, `tests/testReportArtifact.m` |
-| 11 | Data acquisition & diff utilities | `src/reg/crrDiffVersions.m`, `src/reg/crrDiffArticles.m` | `tests/testFetchers.m` |
+| Step | Module | MVC Component | Stub `.m` file | Test skeleton(s) |
+|------|--------|---------------|----------------|------------------|
+| 3 | Data ingestion | Model | `src/reg/model/ingestPdfs.m` | `tests/reg/model/testPdfIngest.m`, `tests/reg/model/testIngestAndChunk.m` |
+| 4 | Text chunking | Model | `src/reg/model/chunkText.m` | `tests/reg/model/testIngestAndChunk.m` |
+| 5 | Weak labeling | Model | `src/reg/model/weakRules.m` | `tests/reg/model/testRulesAndModel.m` |
+| 6 | Embedding generation | Model | `src/reg/model/docEmbeddingsBertGpu.m`, `src/reg/model/precomputeEmbeddings.m` | `tests/reg/model/testFeatures.m` |
+| 7 | Baseline classifier & retrieval | Model | `src/reg/model/trainMultilabel.m`, `src/reg/model/hybridSearch.m` | `tests/reg/model/testRegressionMetricsSimulated.m`, `tests/reg/model/testHybridSearch.m` |
+| 8 | Projection head | Model | `src/reg/model/trainProjectionHead.m` | `tests/reg/model/testProjectionHeadSimulated.m`, `tests/reg/model/testProjectionAutoloadPipeline.m` |
+| 9 | Encoder fine-tuning | Model | `src/reg/model/ftBuildContrastiveDataset.m`, `src/reg/model/ftTrainEncoder.m` | `tests/reg/model/testFineTuneSmoke.m`, `tests/reg/model/testFineTuneResume.m` |
+| 10 | Evaluation & reporting | View | `src/reg/view/evalRetrieval.m`, `src/reg/view/evalPerLabel.m`, `src/reg/view/loadGold.m` | `tests/reg/view/testMetricsExpectedJson.m`, `tests/reg/view/testGoldMetrics.m`, `tests/reg/view/testReportArtifact.m` |
+| 11 | Data acquisition & diff utilities | Controller | `src/reg/controller/crrDiffVersions.m`, `src/reg/controller/crrDiffArticles.m` | `tests/reg/controller/testFetchers.m` |
 
 ### MVC Components
 
