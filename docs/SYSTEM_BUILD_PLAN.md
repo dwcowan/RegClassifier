@@ -96,7 +96,19 @@ Every module must expose a MATLAB class with a clearly defined public interface 
 - **Testing:** `tests/testMetricsExpectedJSON.m`, `tests/testGoldMetrics.m`, `tests/testReportArtifact.m`.
 - **Output:** Metrics CSVs, PDF/HTML reports, gold evaluation results.
 
-## 11. Data Acquisition & Diff Utilities (Optional)
+## 11. Pipeline Controller
+- **Goal:** Coordinate module execution through a central controller.
+- **Depends on:** Evaluation & Reporting.
+- **Implementation:**
+  - Implement `reg.PipelineController` to sequence ingestion, chunking, labeling, embedding, training, and evaluation controllers.
+  - Use configuration files (`pipeline.json`, `knobs.json`) to drive stage selection and parameters.
+  - Establish consistent logging with timestamps and module identifiers.
+  - Wrap each stage in `try/catch` blocks for graceful error handling and meaningful exception propagation.
+  - Reference the module's class name and any interfaces it implements.
+- **Testing:** `tests/testPipelineController.m` validates end-to-end coordination with mocked dependencies and failure handling.
+- **Output:** Reproducible pipeline runs with centralized logs and robust error reporting.
+
+## 12. Data Acquisition & Diff Utilities (Optional)
 - **Goal:** Automate CRR/EBA fetches and track version differences.
 - **Depends on:** Environment & Tooling.
 - **Implementation:** `regCrrSync.m`, `reg.crrDiffVersions`, `reg.crrDiffArticles`, and related HTML/PDF report generators.
@@ -104,7 +116,7 @@ Every module must expose a MATLAB class with a clearly defined public interface 
 - **Testing:** `tests/testFetchers.m` (network-tolerant).
 - **Output:** Date-stamped corpora and diff reports.
 
-## 12. Continuous Testing Framework
+## 13. Continuous Testing Framework
 - **Goal:** Ensure every module is validated locally and in CI.
 - **Depends on:** All previous modules.
 - **Testing Style:** All tests must subclass `matlab.unittest.TestCase` and use fixtures with explicit teardown methods.
@@ -119,9 +131,12 @@ Every module must expose a MATLAB class with a clearly defined public interface 
 Environment → Repo Setup → Ingest → Chunk → Weak Labels
                   ↓             ↘
               Embeddings → Baseline → Projection Head → Fine-Tune
-                                                ↓             ↓
-                                      Evaluation & Reporting  ↓
-                                                           Data Acquisition/Diffs
+                                                ↓
+                                      Evaluation & Reporting
+                                                ↓
+                                      Pipeline Controller
+                                                ↓
+                                     Data Acquisition/Diffs
 ```
 
 ## Suggested Module Build Order
@@ -135,7 +150,8 @@ Environment → Repo Setup → Ingest → Chunk → Weak Labels
 8. Projection Head Workflow
 9. Encoder Fine-Tuning Workflow
 10. Evaluation & Reporting
-11. Data Acquisition & Diff Utilities (optional)
-12. Continuous Testing Framework
+11. Pipeline Controller
+12. Data Acquisition & Diff Utilities (optional)
+13. Continuous Testing Framework
 
 Following this order builds the system incrementally while keeping each component as independent as possible and providing explicit checkpoints for testing and quality control.

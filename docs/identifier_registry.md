@@ -47,6 +47,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 
 | Name | Purpose | Scope | Owner | Related Files | Notes |
 |------|---------|-------|-------|---------------|-------|
+| PipelineController | Orchestrate module controllers based on config | module | @todo | +reg/PipelineController.m | coordinates modules |
 
 
 
@@ -143,6 +144,7 @@ Regression entries must include the simulated dataset path, expected output, and
 
 | Name | Purpose | Scope | Owner | Related Functions | Golden Dataset Path | Expected Output | Dataset Owner | Notes |
 |------|---------|-------|-------|-------------------|---------------------|-----------------|---------------|-------|
+| testPipelineController | Validate pipeline coordination and failure handling | integration | @todo | PipelineController | n/a | n/a | n/a | uses mocks for controllers |
 | testConfig | Test configuration override precedence | unit | @todo | config | n/a | n/a | n/a | verifies override precedence |
 | testSmokeStartup | Quick startup path check | smoke | @todo | startup | n/a | n/a | n/a | minimal path add |
 | testIntegrationIngestToChunk | Ingest to chunk pipeline | integration | @todo | ingest, chunk | n/a | n/a | n/a | |

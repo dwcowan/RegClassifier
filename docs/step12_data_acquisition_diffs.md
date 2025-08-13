@@ -1,4 +1,4 @@
-# Step 11: Data Acquisition & Diff Utilities (Optional)
+# Step 12: Data Acquisition & Diff Utilities (Optional)
 
 **Goal:** Fetch regulatory documents and track changes between versions.
 
@@ -61,4 +61,4 @@ See [Identifier Registry – Data Contracts](identifier_registry.md#data-contrac
   Tests handle network availability gracefully.
 
 ## Next Steps
-Proceed to [Step 12: Continuous Testing Framework](step12_continuous_testing.md).
+Proceed to [Step 13: Continuous Testing Framework](step13_continuous_testing.md).
