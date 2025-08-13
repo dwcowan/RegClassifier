@@ -7,7 +7,7 @@
 | `labelMatrixClass`   | Sparse weak labels (`labelMat`) aligned to chunks and topics                       |
 | `embeddingClass`     | Vector representation of each chunk (`embeddingVec`) produced by BERT or fallback models |
 | `baselineModelClass` | Multi‑label classifier and hybrid retrieval artifacts                              |
-| `projectionHeadClass`| MLP fine-tuning frozen embeddings; training resides in the model layer            |
+| `projectionHeadClass`| MLP fine-tuning frozen embeddings; defines `fit` and `transform` so training stays in the model layer |
 | `encoderClass`       | Fine‑tuned BERT weights for contrastive learning workflows                         |
 | `metricsClass`       | Evaluation results and per‑label performance data                                  |
 | `corpusVersionClass` | Versioned corpora for diff operations and reports (`versionId`, `documentVec`)      |
@@ -31,7 +31,7 @@
 | `+controller/weakLabelingControllerClass.m`   | Applies heuristic rules to create `model.labelMatrixClass` models |
 | `+controller/embeddingControllerClass.m`      | Generates and caches `model.embeddingClass` models (`reg.docEmbeddingsBertGpu`) |
 | `+controller/baselineControllerClass.m`       | Trains `model.baselineModelClass` and serves retrieval (`reg.trainMultilabel`, `reg.hybridSearch`) |
-| `+controller/projectionHeadControllerClass.m` | Instantiates `model.projectionHeadClass` and delegates training and application |
+| `+controller/projectionHeadControllerClass.m` | Instantiates `model.projectionHeadClass` and delegates calls without duplicate training logic |
 | `+controller/fineTuneControllerClass.m`       | Builds contrastive datasets and produces `model.encoderClass` models |
 | `+controller/evaluationControllerClass.m`     | Computes metrics and invokes `view.evalReportViewClass` and gold pack evaluation |
 | `+controller/dataAcquisitionControllerClass.m`| Fetches regulatory corpora and triggers diff analyses with `view.diffReportViewClass` |
@@ -662,29 +662,30 @@ end
 
 % +controller/projectionHeadControllerClass.m
 classdef projectionHeadControllerClass
-    %PROJECTIONHEADCONTROLLERCLASS Manages projection head training and usage.
+    %PROJECTIONHEADCONTROLLERCLASS Instantiates projection head model and delegates work.
+
+    properties (Access=private)
+        head % projectionHeadClass instance
+    end
 
     methods (Access=public)
-        function head = trainHead(~, embeddingMat, labelMat, numEpochs, learningRate)
-            %TRAINHEAD Instantiate and fit projection head.
-            %   head = trainHead(obj, embeddingMat, labelMat, numEpochs, learningRate)
-            %   embeddingMat (double Mat): Embeddings. labelMat (double Mat): Labels.
-            %   numEpochs (double): Training epochs. learningRate (double): Step size.
-            %   head (projectionHeadClass): Fitted head.
-            %   Side effects: none.
-            inputDim = size(embeddingMat, 2);
-            outputDim = size(labelMat, 2);
-            head = model.projectionHeadClass(inputDim, outputDim);
-            head.fit(embeddingMat, labelMat, numEpochs, learningRate);
+        function obj = projectionHeadControllerClass(inputDim, outputDim)
+            %PROJECTIONHEADCONTROLLERCLASS Construct controller and underlying model.
+            %   obj = projectionHeadControllerClass(inputDim, outputDim)
+            %   inputDim (double): Input dimension.
+            %   outputDim (double): Output dimension.
+            %   obj (projectionHeadControllerClass): New instance.
+            obj.head = model.projectionHeadClass(inputDim, outputDim);
         end
 
-        function embeddingMatTrans = applyHead(~, projectionHead, embeddingMat)
-            %APPLYHEAD Apply projection head to embeddings.
-            %   embeddingMatTrans = applyHead(obj, projectionHead, embeddingMat)
-            %   projectionHead (projectionHeadClass): Head to apply. embeddingMat (double Mat): Embeddings.
-            %   embeddingMatTrans (double Mat): Transformed embeddings.
-            %   Side effects: none.
-            embeddingMatTrans = projectionHead.transform(embeddingMat);
+        function train(obj, embeddingMat, labelMat, numEpochs, learningRate)
+            %TRAIN Delegate training to projectionHeadClass.
+            obj.head.fit(embeddingMat, labelMat, numEpochs, learningRate);
+        end
+
+        function embeddingMatTrans = project(obj, embeddingMat)
+            %PROJECT Delegate projection to projectionHeadClass.
+            embeddingMatTrans = obj.head.transform(embeddingMat);
         end
     end
 end
