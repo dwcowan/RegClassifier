@@ -26,11 +26,11 @@
 
 | Class Path                               | Purpose                                                                       |
 | ---------------------------------------- | ----------------------------------------------------------------------------- |
-| `+controller/ingestionControllerClass.m`      | Runs `reg.ingest_pdfs` to populate `model.documentClass` models\:codex-file-citation |
-| `+controller/chunkingControllerClass.m`       | Splits documents into `model.chunkClass` models via `reg.chunk_text`\:codex-file-citation |
+| `+controller/ingestionControllerClass.m`      | Runs `reg.ingestPdfs` to populate `model.documentClass` models\:codex-file-citation |
+| `+controller/chunkingControllerClass.m`       | Splits documents into `model.chunkClass` models via `reg.chunkText`\:codex-file-citation |
 | `+controller/weakLabelingControllerClass.m`   | Applies heuristic rules to create `model.labelMatrixClass` models\:codex-file-citation |
-| `+controller/embeddingControllerClass.m`      | Generates and caches `model.embeddingClass` models (`reg.doc_embeddings_bert_gpu`)\:codex-file-citation |
-| `+controller/baselineControllerClass.m`       | Trains `model.baselineModelClass` and serves retrieval (`reg.train_multilabel`, `reg.hybrid_search`)\:codex-file-citation |
+| `+controller/embeddingControllerClass.m`      | Generates and caches `model.embeddingClass` models (`reg.docEmbeddingsBertGpu`)\:codex-file-citation |
+| `+controller/baselineControllerClass.m`       | Trains `model.baselineModelClass` and serves retrieval (`reg.trainMultilabel`, `reg.hybridSearch`)\:codex-file-citation |
 | `+controller/projectionHeadControllerClass.m` | Fits `model.projectionHeadClass` and integrates it into the pipeline\:codex-file-citation |
 | `+controller/fineTuneControllerClass.m`       | Builds contrastive datasets and produces `model.encoderClass` models\:codex-file-citation |
 | `+controller/evaluationControllerClass.m`     | Computes metrics and invokes `view.evalReportViewClass` and gold pack evaluation\:codex-file-citation |
