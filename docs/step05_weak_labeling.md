@@ -7,14 +7,14 @@
 ## Instructions
 Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeletons before beginning this step.
 
-1. Load chunk data:
+1. Load chunk table:
    ```matlab
-   load('data/chunks.mat','chunks')
+   load('data/chunksTbl.mat','chunksTbl')
    ```
 2. Generate weak labels with rule-based functions:
    ```matlab
 
-   weakLabelMat = reg.weakRules(chunks.text, configStruct.labels);
+   weakLabelMat = reg.weakRules(chunksTbl.text, configStruct.labels);
    bootLabelMat = weakLabelMat >= configStruct.minRuleConf; % optional threshold
 
    ```
@@ -50,13 +50,13 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for schemas of `weakLabelMat` and `bootLabelMat`.
 
 
-> **Note:** `reg.weakRules` requires `chunks.text` and the label list `configStruct.labels`
+> **Note:** `reg.weakRules` requires `chunksTbl.text` and the label list `configStruct.labels`
 > from [`config.m`](../config.m). The confidence cutoff `configStruct.minRuleConf` is
 > optional and can be tuned in `config.m` or overridden via `knobs.json`.
 
 ## Verification
 - `weakLabelMat` contains confidence scores per label.
-- `bootLabelMat` is a sparse matrix with rows matching `chunks` and columns representing topics.
+- `bootLabelMat` is a sparse matrix with rows matching `chunksTbl` and columns representing topics.
 - Run the labeling test:
   ```matlab
   runtests('tests/testRulesAndModel.m')
