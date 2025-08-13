@@ -43,7 +43,8 @@ Note: identifiers appearing only in pseudocode examples are for algorithm illust
 | Entity | Convention | Example |
 |--------|------------|---------|
 | Standalone Functions | lowerCamelCase | `loadData`, `parseText` |
-| Scripts | lowerCamelCase; file name matches script name | `runPipeline` |
+| Development scripts | snake_case starting with a verb; file name matches script name | `generate_docs` |
+| Project helper scripts | lowerCamelCase; file name matches script name | `runPipeline` |
 | Class Methods | lowerCamelCase | `computeScore`, `updateModel` |
 | Classes | UpperCamelCase | `DocumentParser`, `EmbeddingModel` |
 | Test Classes | lowerCamelCase prefixed with `test` | `testFeature` |
@@ -91,13 +92,14 @@ Scripts fall into two categories:
 
 1. **Development scripts** – handle project maintenance or IDE automation.
    - Must follow naming rules but are exempt from tests.
+   - Must be named using `snake_case` starting with a verb.
    - Typically located in the repository root or the `scripts/` folder.
-   - Examples: `startup.m`, `scripts/generateDocs.m`.
+   - Examples: `setup_paths.m`, `scripts/generate_docs.m`.
 
 2. **Project helper scripts** – intended for use within the codebase.
    - Store under the repository-root `+helpers/` package.
    - Require tests like any other part of the codebase.
-   - Example: `+helpers/normalizeText.m` with `tests/+helpers/testNormalizeText.m`.
+   - Example: `+helpers/runPipeline.m` with `tests/+helpers/testRunPipeline.m`.
 
 ### 2.2 Object-Oriented Design
 - Scope modules with package folders (`+packageName`) to define namespaces.
