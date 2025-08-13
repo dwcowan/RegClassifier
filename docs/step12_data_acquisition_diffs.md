@@ -14,7 +14,7 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 2. Generate diffStruct reports between document versions:
    ```matlab
    diffStruct = reg.crrDiffVersions('versionA','versionB');
-   reg.crrDiffReport;
+   reg.crrDiffReport();
    ```
 3. Review HTML or PDF diffStruct outputs for changes.
 
@@ -26,7 +26,7 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 - **Side Effects:** downloads the latest corpus to `data/raw`.
 - **Usage Example:**
   ```matlab
-  reg.crrSync
+  reg.crrSync()
   ```
 
 ### reg.crrDiffVersions
@@ -46,7 +46,7 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 - **Side Effects:** renders HTML/PDF summaries to disk.
 - **Usage Example:**
   ```matlab
-  reg.crrDiffReport
+  reg.crrDiffReport()
   ```
 
 See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for corpus schema references.
