@@ -4,19 +4,19 @@ This document summarizes the MATLAB `+reg` package, the stub modules required fo
 
 ## Package Structure
 
-Each module is implemented as a stub `.m` file under `+reg/`. Every stub includes a `%% NAME-REGISTRY:FUNCTION` breadcrumb and a `TODO` placeholder. The table below lists the modules in build order and their paired tests.
+Each module is implemented as a class file (`classdef`) under `src/+reg/`. Every stub includes a `%% NAME-REGISTRY:FUNCTION` breadcrumb and a `TODO` placeholder. The table below lists the modules in build order and their paired tests.
 
 | Step | Module | Stub `.m` file | Test skeleton(s) |
 |------|--------|----------------|------------------|
-| 3 | Data ingestion | `+reg/ingestPdfs.m` | `tests/testPDFIngest.m`, `tests/testIngestAndChunk.m` |
-| 4 | Text chunking | `+reg/chunkText.m` | `tests/testIngestAndChunk.m` |
-| 5 | Weak labeling | `+reg/weakRules.m` | `tests/testRulesAndModel.m` |
-| 6 | Embedding generation | `+reg/docEmbeddingsBertGpu.m`, `+reg/precomputeEmbeddings.m` | `tests/testFeatures.m` |
-| 7 | Baseline classifier & retrieval | `+reg/trainMultilabel.m`, `+reg/hybridSearch.m` | `tests/testRegressionMetricsSimulated.m`, `tests/testHybridSearch.m` |
-| 8 | Projection head | `+reg/trainProjectionHead.m` | `tests/testProjectionHeadSimulated.m`, `tests/testProjectionAutoloadPipeline.m` |
-| 9 | Encoder fine-tuning | `+reg/ftBuildContrastiveDataset.m`, `+reg/ftTrainEncoder.m` | `tests/testFineTuneSmoke.m`, `tests/testFineTuneResume.m` |
-| 10 | Evaluation & reporting | `+reg/evalRetrieval.m`, `+reg/evalPerLabel.m`, `+reg/loadGold.m` | `tests/testMetricsExpectedJSON.m`, `tests/testGoldMetrics.m`, `tests/testReportArtifact.m` |
-| 11 | Data acquisition & diff utilities | `+reg/crrDiffVersions.m`, `+reg/crrDiffArticles.m` | `tests/testFetchers.m` |
+| 3 | Data ingestion | `src/+reg/ingestPdfs.m` | `tests/testPDFIngest.m`, `tests/testIngestAndChunk.m` |
+| 4 | Text chunking | `src/+reg/chunkText.m` | `tests/testIngestAndChunk.m` |
+| 5 | Weak labeling | `src/+reg/weakRules.m` | `tests/testRulesAndModel.m` |
+| 6 | Embedding generation | `src/+reg/docEmbeddingsBertGpu.m`, `src/+reg/precomputeEmbeddings.m` | `tests/testFeatures.m` |
+| 7 | Baseline classifier & retrieval | `src/+reg/trainMultilabel.m`, `src/+reg/hybridSearch.m` | `tests/testRegressionMetricsSimulated.m`, `tests/testHybridSearch.m` |
+| 8 | Projection head | `src/+reg/trainProjectionHead.m` | `tests/testProjectionHeadSimulated.m`, `tests/testProjectionAutoloadPipeline.m` |
+| 9 | Encoder fine-tuning | `src/+reg/ftBuildContrastiveDataset.m`, `src/+reg/ftTrainEncoder.m` | `tests/testFineTuneSmoke.m`, `tests/testFineTuneResume.m` |
+| 10 | Evaluation & reporting | `src/+reg/evalRetrieval.m`, `src/+reg/evalPerLabel.m`, `src/+reg/loadGold.m` | `tests/testMetricsExpectedJSON.m`, `tests/testGoldMetrics.m`, `tests/testReportArtifact.m` |
+| 11 | Data acquisition & diff utilities | `src/+reg/crrDiffVersions.m`, `src/+reg/crrDiffArticles.m` | `tests/testFetchers.m` |
 
 ## TDD Workflow
 
@@ -27,7 +27,7 @@ Each module is implemented as a stub `.m` file under `+reg/`. Every stub include
    - Force the pass with using the appropriate command from the matlab test suite to force a not implemented result.
 
 2. **Add a stub module**
-   - Under `+reg/`, create `myFeature.m` with the function signature, a `%% NAME-REGISTRY:FUNCTION myFeature` breadcrumb, and a `TODO` placeholder.
+   - Under `src/+reg/`, create `myFeature.m` with the function signature, a `%% NAME-REGISTRY:FUNCTION myFeature` breadcrumb, and a `TODO` placeholder.
 
 3. **Update the identifier registry**
    - Add entries for the new function, file, and test in `docs/identifier_registry.md`.
