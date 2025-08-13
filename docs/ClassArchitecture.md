@@ -18,7 +18,7 @@
 
 | Class Path                 | Purpose                                                                        |
 | -------------------------- | ------------------------------------------------------------------------------ |
-| `+view/evalReportViewClass.m`   | Generates PDF/HTML reports summarizing metrics and trends |
+| `+view/evalReportViewClass.m`   | Provides `render` dispatcher for PDF/HTML metric reports |
 | `+view/diffReportViewClass.m`   | Presents HTML or PDF diffs between regulatory versions    |
 | `+view/metricsPlotsViewClass.m` | Visualizes metrics/heatmaps (e.g., coretrieval, trend plots).                  |
 
@@ -33,7 +33,7 @@
 | `+controller/baselineControllerClass.m`       | Trains `model.baselineModelClass` and serves retrieval (`reg.trainMultilabel`, `reg.hybridSearch`) |
 | `+controller/projectionHeadControllerClass.m` | Instantiates `model.projectionHeadClass` and delegates calls without duplicate training logic |
 | `+controller/fineTuneControllerClass.m`       | Builds contrastive datasets and produces `model.encoderClass` models |
-| `+controller/evaluationControllerClass.m`     | Computes metrics and invokes `view.evalReportViewClass` and gold pack evaluation |
+| `+controller/evaluationControllerClass.m`     | Computes metrics and invokes `view.evalReportViewClass.render` and gold pack evaluation |
 | `+controller/dataAcquisitionControllerClass.m`| Fetches regulatory corpora and triggers diff analyses with `view.diffReportViewClass` |
 | `+controller/pipelineControllerClass.m`       | Orchestrates end‑to‑end execution based on module dependencies |
 | `+controller/testControllerClass.m`           | Executes continuous test suite to maintain reliability |
@@ -481,6 +481,20 @@ classdef evalReportViewClass
     %EVALREPORTVIEW Renders evaluation metrics into report format.
     
     methods (Access=public)
+        function render(obj, metrics, outPath)
+            %RENDER Dispatch to PDF or HTML renderer.
+            %   render(obj, metrics, outPath)
+            %   metrics (metricsClass): Metrics to report.
+            %   outPath (string): Output file path.
+            %
+            %   Side effects: writes file to disk.
+            if endsWith(lower(outPath), ".pdf")
+                obj.renderPDF(metrics, outPath);
+            else
+                obj.renderHTML(metrics, outPath);
+            end
+        end
+
         function renderPDF(~, metrics, path)
             %RENDERPDF Generate PDF report.
             %   renderPDF(obj, metrics, path)
@@ -729,7 +743,7 @@ classdef evaluationControllerClass
         end
 
         function generateReports(~, metrics, outDir, viewHandle)
-            %GENERATEREPORTS Use supplied view to produce reports.
+            %GENERATEREPORTS Use supplied view's unified render interface.
             %   generateReports(obj, metrics, outDir, viewHandle)
             %   metrics (metricsClass): Evaluation results.
             %   outDir (string): Output directory.
