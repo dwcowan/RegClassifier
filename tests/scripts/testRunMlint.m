@@ -2,15 +2,17 @@ classdef testRunMlint < matlab.unittest.TestCase
     % NAME-REGISTRY:TEST testRunMlint
 
     properties
-        repoRoot
-        originalFailOn
+        repoRoot (1,1) string
+        originalFailOn (1,1) string
     end
 
     methods(TestMethodSetup)
         function setup(tc)
             tc.repoRoot = string(fileparts(fileparts(mfilename('fullpath'))));
-            tc.originalFailOn = getenv('MLINT_FAIL_ON');
+            tc.originalFailOn = string(getenv('MLINT_FAIL_ON'));
             setenv('MLINT_FAIL_ON','none');
+            mustBeFolder(tc.repoRoot);
+            mustBeTextScalar(tc.originalFailOn);
         end
     end
 
