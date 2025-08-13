@@ -135,20 +135,18 @@ Record each test with a scope identifying its coverage type:
 - `integration` – cross-module interactions
 - `regression` – verifies outputs against known good simulated data to guard against unintended changes
 
-For regression entries, specify the simulated dataset and the expected result used as the baseline.
+For regression entries, specify the simulated dataset path, expected output, and dataset owner used as the baseline.
 
-| Name | Purpose | Scope | Owner | Related Functions | Notes |
-|------|---------|-------|-------|-------------------|-------|
-| testConfig | Test configuration override precedence | unit | @todo | config | verifies override precedence |
-| testSmokeStartup | Quick startup path check | smoke | @todo | startup | minimal path add |
-| testIntegrationIngestToChunk | Ingest to chunk pipeline | integration | @todo | ingest, chunk | |
-| testRegressionSyntheticParse | Stable parsing on synthetic dataset | regression | @todo | parseDocument | compares output to expected tokens |
-
-| testShutdown | Test project cleanup removes repo root from path | unit | @todo | shutdown | |
-| testStartup | Verify startup adds repository to path | unit | @todo | startup | includes smoke and regression tags |
-| testShutdown | Verify shutdown removes repository from path | unit | @todo | shutdown | includes smoke and regression tags |
-| testRunMlint | Ensure run\_mlint produces lint artifacts | unit | @todo | run\_mlint | |
-
+| Name | Purpose | Scope | Owner | Related Functions | Golden Dataset Path | Expected Output | Dataset Owner | Notes |
+|------|---------|-------|-------|-------------------|---------------------|-----------------|---------------|-------|
+| testConfig | Test configuration override precedence | unit | @todo | config | n/a | n/a | n/a | verifies override precedence |
+| testSmokeStartup | Quick startup path check | smoke | @todo | startup | n/a | n/a | n/a | minimal path add |
+| testIntegrationIngestToChunk | Ingest to chunk pipeline | integration | @todo | ingest, chunk | n/a | n/a | n/a | |
+| testRegressionSyntheticParse | Stable parsing on synthetic dataset | regression | @todo | parseDocument | [tests/data/synthetic_parse/golden_dataset.txt](../tests/data/synthetic_parse/golden_dataset.txt) | [tests/data/synthetic_parse/expected_output.txt](../tests/data/synthetic_parse/expected_output.txt) | @data-team | compares output to expected tokens |
+| testShutdown | Test project cleanup removes repo root from path | unit | @todo | shutdown | n/a | n/a | n/a | |
+| testStartup | Verify startup adds repository to path | unit | @todo | startup | n/a | n/a | n/a | includes smoke and regression tags |
+| testShutdown | Verify shutdown removes repository from path | unit | @todo | shutdown | n/a | n/a | n/a | includes smoke and regression tags |
+| testRunMlint | Ensure run_mlint produces lint artifacts | unit | @todo | run_mlint | n/a | n/a | n/a | |
 
 
 ---
