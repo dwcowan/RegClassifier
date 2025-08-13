@@ -144,12 +144,12 @@ Keep the illustrative examples below in sync with the current naming conventions
 | [trainHead](ClassArchitecture.md#L651-L662) | [ProjectionHeadController](ClassArchitecture.md#L646-L673) | Instantiate and fit projection head | |
 | [applyHead](ClassArchitecture.md#L664-L671) | [ProjectionHeadController](ClassArchitecture.md#L646-L673) | Apply fitted projection head to embeddings | |
 | [run](ClassArchitecture.md#L681-L689) | [FineTuneController](ClassArchitecture.md#L676-L692) | Fine-tune encoder | |
-| [evaluate](ClassArchitecture.md#L700-L709) | [EvaluationController](ClassArchitecture.md#L695-L721) | Compute metrics for model | |
-| [generateReports](ClassArchitecture.md#L712-L719) | [EvaluationController](ClassArchitecture.md#L695-L721) | Produce evaluation reports | |
-| [fetch](ClassArchitecture.md#L729-L737) | [DataAcquisitionController](ClassArchitecture.md#L724-L749) | Retrieve corpora from sources | |
-| [diffVersions](ClassArchitecture.md#L739-L747) | [DataAcquisitionController](ClassArchitecture.md#L724-L749) | Run diff and trigger report generation | |
-| [execute](ClassArchitecture.md#L771-L778) | [PipelineController](ClassArchitecture.md#L752-L780) | Execute pipeline steps | |
-| [runTests](ClassArchitecture.md#L788-L798) | [TestController](ClassArchitecture.md#L783-L800) | Execute selected tests | |
+| [evaluate](ClassArchitecture.md#L716-L726) | [EvaluationController](ClassArchitecture.md#L711-L744) | Compute metrics for model | |
+| [generateReports](ClassArchitecture.md#L728-L743) | [EvaluationController](ClassArchitecture.md#L711-L744) | Produce evaluation reports | |
+| [fetch](ClassArchitecture.md#L755-L763) | [DataAcquisitionController](ClassArchitecture.md#L748-L775) | Retrieve corpora from sources | |
+| [diffVersions](ClassArchitecture.md#L765-L773) | [DataAcquisitionController](ClassArchitecture.md#L748-L775) | Run diff and trigger report generation | |
+| [execute](ClassArchitecture.md#L797-L804) | [PipelineController](ClassArchitecture.md#L779-L806) | Execute pipeline steps | |
+| [runTests](ClassArchitecture.md#L814-L820) | [TestController](ClassArchitecture.md#L809-L820) | Execute selected tests | |
 
 > **Note:** List every new or renamed class method here and follow `lowerCamelCase` naming.
 
