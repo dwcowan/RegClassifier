@@ -11,7 +11,7 @@ Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new 
 
 1. Load chunk table:
    ```matlab
-   load('data/chunksTbl.mat','chunksTbl')
+   load('data/chunksTbl.mat', 'chunksTbl');
    ```
 2. Generate weak labels with rule-based functions:
    ```matlab
@@ -22,7 +22,7 @@ Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new 
    ```
 3. Store the thresholded label matrix for future training:
    ```matlab
-   save('data/bootLabelMat.mat','bootLabelMat')
+   save('data/bootLabelMat.mat', 'bootLabelMat');
    ```
 
 ## Function Interface
@@ -35,7 +35,7 @@ Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new 
 - **Side Effects:** none.
 - **Usage Example:**
   ```matlab
-  weakLabelMat = reg.weakRules(["example"], ["topicA","topicB"]);
+  weakLabelMat = reg.weakRules(["example"], ["topicA", "topicB"]);
   ```
 
 ### Thresholding

@@ -784,9 +784,14 @@ classdef dataAcquisitionControllerClass
             %   diffStruct = diffVersions(obj, oldVersionId, newVersionId)
             %   oldVersionId (string): Baseline version.
             %   newVersionId (string): New version.
-            %   diffStruct (struct): Differences between versions.
+            %   diffStruct (struct): Differences between versions with fields:
+            %       addedDocVec (documentClass Vec): Documents only in newVersionId.
+            %       removedDocVec (documentClass Vec): Documents only in oldVersionId.
+            %       changedDocVec (documentClass Vec): Documents present in both but modified.
+            %   Callers should handle diffStruct (e.g., pass to diffReportViewClass).
             %
             %   Side effects: accesses external resources.
+            diffStruct = struct();
         end
     end
 end
