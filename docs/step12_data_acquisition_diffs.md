@@ -28,13 +28,13 @@ Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new 
 - **Side Effects:** downloads the latest corpus to `data/raw`.
 - **Usage Example:**
   ```matlab
-  reg.crrSync()
+  reg.crrSync();
   ```
 
 ### reg.crrDiffVersions
 - **Parameters:**
-  - `vA` (string): version identifier A.
-  - `vB` (string): version identifier B.
+  - `versionA` (string): version identifier A.
+  - `versionB` (string): version identifier B.
 - **Returns:** `diffStruct` (struct) describing added, removed, and changed documents.
 - **Side Effects:** none.
 - **Usage Example:**
@@ -48,7 +48,7 @@ Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new 
 - **Side Effects:** renders HTML/PDF summaries to disk.
 - **Usage Example:**
   ```matlab
-  reg.crrDiffReport()
+  reg.crrDiffReport();
   ```
 
 See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for corpus schema references.
