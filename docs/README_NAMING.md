@@ -45,6 +45,14 @@ Suffix function handle variables with `Fn` or `Handle` to make their role explic
 
 Short-lived helpers such as `tmp` or `idx` should remain within a few lines of use. More guidance is available under [Temporary Variables](Matlab_Style_Guide.md#13-temporary-variables).
 
+## Data Contracts and Flows
+
+- Struct schema names use UpperCamelCase.
+- Field names use lowerCamelCase.
+- Flows are documented as `producer → consumer`.
+
+See [Matlab Style Guide §1.6](Matlab_Style_Guide.md#16-data-contracts-and-flows) for details.
+
 ## Tests
 
 Place tests in the `tests/` folder and name each file `testName.m`. Test files should mirror the source structure, and each `testName.m` defines a corresponding `classdef testName` in lowerCamelCase with a `test` prefix. Each class and public method must have:
