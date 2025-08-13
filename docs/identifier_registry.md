@@ -82,6 +82,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 | config | Load configuration settings and apply overrides | module | none | struct `configStruct` | @todo | reads JSON files |
 | startup | RegClassifier project initialization | module | `project` object | none | @todo | |
 | shutdown | RegClassifier project cleanup | module | project object | none | @todo | |
+| run_mlint | Lint MATLAB files and emit artifacts for CI | module | none | none | @todo | |
 
 
 
@@ -92,6 +93,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 | config | none | struct of settings from JSON files | reads configuration files |
 | startup | project object | none | adds repo paths, sets defaults |
 | shutdown | project object | none | removes repo paths, restores defaults |
+| run_mlint | none | none | writes lint artifacts to `lint/` and may error on issues |
 
 
 
@@ -135,6 +137,9 @@ Common test scopes or prefixes include:
 | Name | Purpose | Scope | Owner | Related Functions | Notes |
 |------|---------|-------|-------|-------------------|-------|
 | testConfig | Test configuration override precedence | unit | @todo | config | verifies override precedence |
+| testStartup | Verify startup adds repository to path | unit | @todo | startup | includes smoke and regression tags |
+| testShutdown | Verify shutdown removes repository from path | unit | @todo | shutdown | includes smoke and regression tags |
+| testRunMlint | Ensure run\_mlint produces lint artifacts | unit | @todo | run\_mlint | |
 
 
 ---
