@@ -167,6 +167,21 @@ Class names, class properties, class methods, and interface definitions must als
 - Maintain reproducibility with `rng(seed)`.
 - Any temporary or placeholder test must call `fatalAssertFail` (or similar) so it fails as incomplete.
 
+#### 3.1 Test Method Naming
+
+- Name test methods in **lowerCamelCase**.
+- Begin method names with descriptive verbs that express intent (e.g., `verifiesInputValidation`).
+
+Example:
+
+```matlab
+methods (Test)
+    function verifiesInputValidation(testCase)
+        % test logic
+    end
+end
+```
+
 Example with per-method setup, teardown, and fixture usage:
 
 ```matlab
@@ -196,7 +211,7 @@ classdef testExample < matlab.unittest.TestCase
 end
 ```
 
-#### 3.1 Test Tags
+#### 3.2 Test Tags
 
 Every test method must include one or more tags from the approved set to
 communicate scope and intent.
