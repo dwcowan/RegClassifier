@@ -1,0 +1,1 @@
+Placeholder for expected tokens output for synthetic parse regression test.
