@@ -38,6 +38,14 @@
 | `+controller/PipelineController.m`       | Orchestrates end‑to‑end execution based on module dependencies |
 | `+controller/TestController.m`           | Executes continuous test suite to maintain reliability |
 
+**Helper Functions (+helpers)**
+
+| Function Path                  | Purpose                                                              |
+| ------------------------------ | -------------------------------------------------------------------- |
+| `+helpers/loadCorpus.m`        | Load `model.Document` vectors for a corpus version identifier        |
+| `+helpers/setdiff.m`          | Return documents in first corpus missing from the second by `docId` |
+| `+helpers/detectChanges.m`     | Detect documents with identical `docId` but modified `text` content  |
+
 ## Class Definitions
 
 **Model Layer (+model)**
@@ -767,6 +775,58 @@ classdef EvaluationController
 end
 
 
+**Helper Functions (+helpers)**
+
+% +helpers/loadCorpus.m
+function documentVec = loadCorpus(versionId)
+    %LOADCORPUS Load corpus documents from a MAT file.
+    %   documentVec = loadCorpus(versionId)
+    %   versionId (string): Corpus version identifier.
+    %   documentVec (model.Document Vec): Loaded documents.
+    %
+    %   Side effects: reads `<versionId>.mat` from disk containing variable
+    %   `documentVec`.
+    dataStruct = load(versionId + ".mat", "documentVec");
+    if isfield(dataStruct, "documentVec")
+        documentVec = dataStruct.documentVec;
+    else
+        documentVec = model.Document.empty();
+    end
+end
+
+% +helpers/setdiff.m
+function diffDocsVec = setdiff(corpusAVec, corpusBVec)
+    %SETDIFF Documents in corpusAVec but not corpusBVec by `docId`.
+    %   diffDocsVec = setdiff(corpusAVec, corpusBVec)
+    %   corpusAVec (model.Document Vec): Candidate corpus.
+    %   corpusBVec (model.Document Vec): Corpus to subtract.
+    %   diffDocsVec (model.Document Vec): Unique documents.
+    %
+    %   Side effects: none.
+    [~, idxVec] = setdiff({corpusAVec.docId}, {corpusBVec.docId});
+    diffDocsVec = corpusAVec(idxVec);
+end
+
+% +helpers/detectChanges.m
+function changedDocsVec = detectChanges(oldCorpusVec, newCorpusVec)
+    %DETECTCHANGES Documents with same `docId` but different `text`.
+    %   changedDocsVec = detectChanges(oldCorpusVec, newCorpusVec)
+    %   oldCorpusVec (model.Document Vec): Baseline corpus.
+    %   newCorpusVec (model.Document Vec): Updated corpus.
+    %   changedDocsVec (model.Document Vec): Modified documents.
+    %
+    %   Side effects: none.
+    changedDocsVec = model.Document.empty();
+    for i = 1:numel(newCorpusVec)
+        newDoc = newCorpusVec(i);
+        idx = find(strcmp(newDoc.docId, {oldCorpusVec.docId}), 1);
+        if ~isempty(idx) && ~strcmp(newDoc.text, oldCorpusVec(idx).text)
+            changedDocsVec(end+1) = newDoc; %#ok<AGROW>
+        end
+    end
+end
+
+
 % +controller/DataAcquisitionController.m
 classdef DataAcquisitionController
 %DATAACQUISITIONCONTROLLER Fetches corpora and returns raw or diff data.
@@ -796,24 +856,39 @@ classdef DataAcquisitionController
             %   Callers can pass diffStruct to DiffReportView.render.
             %
             %   Side effects: accesses external resources.
-            oldCorpus = loadCorpus(oldVersionId);
-            newCorpus = loadCorpus(newVersionId);
-            diffStruct.addedDocs = setdiff(newCorpus, oldCorpus);
-            diffStruct.removedDocs = setdiff(oldCorpus, newCorpus);
-            diffStruct.changedDocs = detectChanges(oldCorpus, newCorpus);
+            oldCorpus = helpers.loadCorpus(oldVersionId);
+            newCorpus = helpers.loadCorpus(newVersionId);
+            diffStruct.addedDocs = helpers.setdiff(newCorpus, oldCorpus);
+            diffStruct.removedDocs = helpers.setdiff(oldCorpus, newCorpus);
+            diffStruct.changedDocs = helpers.detectChanges(oldCorpus, newCorpus);
         end
     end
 end
 
 % Example diff workflow
 %   Demonstrates computing corpus diffs and rendering a report.
-%   diffStruct = DataAcquisitionController().diffVersions("v1", "v2");
-%   DiffReportView().render(diffStruct, "out/diff", "html");
+%   documentVec = [model.Document("d1","A"), model.Document("d2","B")];
+%   save("v1.mat", "documentVec");
+%   documentVec = [model.Document("d2","B2"), model.Document("d3","C")];
+%   save("v2.mat", "documentVec");
+%   diffStruct = controller.DataAcquisitionController().diffVersions("v1", "v2");
+%   view.DiffReportView().render(diffStruct, "out/diff", "html");
 %
 %   % tests/testDiffWorkflow.m
-%   function testDiffWorkflow(~)
-%       diffStruct = DataAcquisitionController().diffVersions("v1", "v2");
-%       DiffReportView().render(diffStruct, tempname, "html");
+%   classdef testDiffWorkflow < matlab.unittest.TestCase
+%       methods (Test, TestTags={"Integration"})
+%           function verifiesEndToEndDiff(testCase)
+%               import model.Document
+%               documentVec = [Document("d1","A"), Document("d2","B")];
+%               save("v1.mat", "documentVec");
+%               documentVec = [Document("d2","B2"), Document("d3","C")];
+%               save("v2.mat", "documentVec");
+%               diffStruct = controller.DataAcquisitionController().diffVersions("v1", "v2");
+%               testCase.verifyEqual({diffStruct.addedDocs.docId}, {"d3"});
+%               testCase.verifyEqual({diffStruct.removedDocs.docId}, {"d1"});
+%               testCase.verifyEqual({diffStruct.changedDocs.docId}, {"d2"});
+%           end
+%       end
 %   end
 
 % +controller/PipelineController.m
