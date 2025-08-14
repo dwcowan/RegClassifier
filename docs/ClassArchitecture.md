@@ -493,17 +493,19 @@ classdef EvalReportView
     %EVALREPORTVIEW Renders evaluation metrics into report format.
     
     methods (Access=public)
-        function render(obj, metrics, reportPath)
+        function render(obj, metrics, reportPath, reportExt)
             %RENDER Dispatch to PDF or HTML renderer.
-            %   render(obj, metrics, reportPath)
+            %   render(obj, metrics, reportPath, reportExt)
             %   metrics (Metrics): Metrics to report.
-            %   reportPath (string): Output file path.
+            %   reportPath (string): Base output file path without extension.
+            %   reportExt (string): '.pdf' or '.html'.
             %
             %   Side effects: writes file to disk.
-            if endsWith(lower(reportPath), ".pdf")
-                obj.renderPDF(metrics, reportPath);
+            fullReportPath = reportPath + reportExt;
+            if reportExt == ".pdf"
+                obj.renderPDF(metrics, fullReportPath);
             else
-                obj.renderHTML(metrics, reportPath);
+                obj.renderHTML(metrics, fullReportPath);
             end
         end
 
@@ -754,13 +756,14 @@ classdef EvaluationController
             metrics = [];
         end
 
-        function generateReports(~, metrics, outDir, viewHandle)
+        function generateReports(~, metrics, reportPath, viewHandle, reportExt)
             %GENERATEREPORTS Use supplied view's unified render interface.
-            %   generateReports(obj, metrics, outDir, viewHandle)
+            %   generateReports(obj, metrics, reportPath, viewHandle, reportExt)
             %   metrics (Metrics): Evaluation results.
-            %   outDir (string): Directory for output file.
+            %   reportPath (string): Base output path without extension.
             %   viewHandle (EvalReportView|function_handle): View dependency.
-            %       Must implement: render(metrics, reportPath)
+            %       Must implement: render(metrics, reportPath, reportExt)
+            %   reportExt (string): '.pdf' or '.html'.
             %
             %   Side effects: writes report to disk.
             if isa(viewHandle, 'function_handle')
@@ -768,8 +771,7 @@ classdef EvaluationController
             else
                 viewObj = viewHandle;
             end
-            reportPath = fullfile(outDir, "metricsReport.pdf");
-            viewObj.render(metrics, reportPath);
+            viewObj.render(metrics, reportPath, reportExt);
         end
     end
 end

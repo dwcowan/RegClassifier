@@ -10,10 +10,10 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 
 Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new identifiers introduced in this step.
 
-1. Run the evaluation script to compute retrieval metrics and generate a PDF report:
+1. Run the evaluation script to compute retrieval metrics and generate a report in the desired format:
 
    ```matlab
-   reg.evalRetrieval(resultsTbl, goldTbl);
+   reg.evalRetrieval(resultsTbl, goldTbl, ".pdf");
    ```
 2. Optional: evaluate against a gold mini-pack if available:
    ```matlab
@@ -26,12 +26,12 @@ Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new 
 ## Function Interface
 
 ### reg.evalRetrieval
-- **Parameters:** `resultsTbl` table, `goldTbl` table.
-- **Returns:** metrics tables and generates `regEvalReport.pdf`.
+- **Parameters:** `resultsTbl` table, `goldTbl` table, `reportExt` string.
+- **Returns:** metrics tables and generates `regEvalReport` with the chosen extension.
 - **Side Effects:** reads model artifacts and writes report files to disk.
 - **Usage Example:**
   ```matlab
-  reg.evalRetrieval(resultsTbl, goldTbl);
+  reg.evalRetrieval(resultsTbl, goldTbl, ".html");
   ```
 
 ### reg.loadGold
@@ -62,7 +62,7 @@ See [Identifier Registry – Data Contracts](identifier_registry.md#data-contrac
 
 
 ## Verification
-- Report files such as `regEvalReport.pdf` and metric CSVs are created.
+- Report files such as `regEvalReport.pdf` or `regEvalReport.html` and metric CSVs are created.
 - Retrieval results table includes expected columns:
   ```matlab
   assert(all(ismember({'docId', 'score'}, resultsTbl.Properties.VariableNames)));
