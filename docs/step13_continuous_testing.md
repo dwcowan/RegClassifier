@@ -13,13 +13,14 @@ Refer to [Master Scaffold](master_scaffold.md) for stub modules and test skeleto
 Consult `README_NAMING.md`, `TESTING_POLICY.md`, and update `docs/identifier_registry.md`
 for any new identifiers introduced in this step.
 
-1. In MATLAB, run the full test suite regularly:
-   ```matlab
-   resultsTbl = runtests('tests', 'IncludeSubfolders', true, 'UseParallel', false);
-   table(resultsTbl)
+1. From MATLAB's project root, run tests via batch mode:
+   ```bash
+   matlab -batch "run_smoke_test"                                  # smoke suite
+   matlab -batch "runtests('tests','IncludeSubfolders',true)"       # full regression
    ```
 2. Investigate any failures before committing changes.
-3. Optional: configure continuous integration (e.g., GitHub Actions) to run the same command on each push.
+3. CI must provision golden datasets via fixtures, and failures against them halt the pipeline. See [TESTING_POLICY](TESTING_POLICY.md) for dataset refresh procedures.
+4. Optional: configure continuous integration (e.g., GitHub Actions) to run the same commands on each push.
 
 ## Function Interface
 ### runtests
@@ -30,8 +31,8 @@ for any new identifiers introduced in this step.
   - **Returns:** table `resultsTbl` with fields `Name`, `Passed`, `Failed`, `Incomplete`, and `Duration`.
 - **Side Effects:** executes all MATLAB tests in the project.
 - **Usage Example:**
-  ```matlab
-  resultsTbl = runtests('tests', 'IncludeSubfolders', true, 'UseParallel', false);
+  ```bash
+  matlab -batch "runtests('tests','IncludeSubfolders',true)"
   ```
 
 See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for any test-related artifacts.

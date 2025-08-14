@@ -49,9 +49,10 @@ Runtime data produced or consumed by the pipeline is organized under `src/data/`
 
 1. **Write a test**
    - Create a skeleton in `tests/` named `testMyFeature.m`.
-   - Ensure appropriate setup, teardown, fixtures and golden data is generted to satisfy the test.
+   - Define setup and teardown fixtures, using generator classes to produce golden data.
+   - Record golden dataset paths in `docs/identifier_registry.md`.
    - Include `%% NAME-REGISTRY:TEST testMyFeature` and call the target stub.
-   - Force the pass with using the appropriate command from the matlab test suite to force a not implemented result.
+   - Force the pass using the appropriate command from the MATLAB test suite to force a not implemented result.
 
 2. **Add a stub module**
    - Under `src/reg/`, create `myFeature.m` with the function signature, a `%% NAME-REGISTRY:FUNCTION myFeature` breadcrumb, and a `TODO` placeholder.
@@ -60,4 +61,4 @@ Runtime data produced or consumed by the pipeline is organized under `src/data/`
    - Add entries for the new function, file, and test in `docs/identifier_registry.md`.
 
 
-Following this scaffold keeps modules, tests, and the identifier registry synchronized.
+Following this scaffold keeps modules, tests, and the identifier registry synchronized. See [docs/TESTING_POLICY.md](TESTING_POLICY.md) for full methodology.

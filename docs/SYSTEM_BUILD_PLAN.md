@@ -3,8 +3,9 @@
 Detailed step-by-step guides for each task are available in the `docs/` folder.
 
 See [Master Scaffold](master_scaffold.md) for module stubs and test skeletons.
+All modules and tests must comply with the centralized testing policy in `docs/TESTING_POLICY.md`.
 
-This guide outlines a clean-room rebuild of the MATLAB-based regulatory topic classifier. Each task is scoped to minimize coupling and lists prerequisites so the system can be assembled and tested incrementally.
+This guide outlines a clean-room rebuild of the MATLAB-based regulatory topic classifier. Each task is scoped to minimize coupling and lists prerequisites so the system can be assembled and tested incrementally in accordance with [Testing Policy](TESTING_POLICY.md).
 
 Every module must expose a MATLAB class with a clearly defined public interface (methods/properties) and, where appropriate, an abstract superclass or interface class.
 
@@ -16,7 +17,7 @@ Every module must expose a MATLAB class with a clearly defined public interface 
   2. Install required toolboxes: Text Analytics, Deep Learning, Statistics and Machine Learning, Database, Parallel Computing, Report Generator, (optional) Computer Vision.
   3. Install add-on: *Deep Learning Toolbox Model for BERT-Base, English*.
   4. Verify GPU via `gpuDevice` (CUDA ≥12, e.g., RTX 4060 Ti 16 GB).
-- **Output:** Verified MATLAB environment capable of running tests and GPU workloads.
+  - **Output:** Verified MATLAB environment capable of running tests and GPU workloads as mandated by [Testing Policy](TESTING_POLICY.md).
 
 ## 2. Repository Setup
 - **Goal:** Acquire the project and confirm configuration wiring.
@@ -41,7 +42,7 @@ Every module must expose a MATLAB class with a clearly defined public interface 
 - **Depends on:** Repository Setup and MVC Scaffolding & Persistence.
 - **Implementation:** `reg.ingestPdfs` with fixtures for text and image-only PDFs.
   - Reference the module's class name and any interfaces it implements.
-- **Testing:** `tests/testPDFIngest.m` ensures OCR fallback and basic parsing.
+- **Testing:** `tests/testPDFIngest.m` ensures OCR fallback and basic parsing, in accordance with [Testing Policy](TESTING_POLICY.md).
 - **Output:** Table of documents (`doc_id`, `text`).
 
 ## 5. Text Chunking Module
@@ -49,7 +50,7 @@ Every module must expose a MATLAB class with a clearly defined public interface 
 - **Depends on:** Data Ingestion Module.
 - **Implementation:** `reg.chunkText` respecting `chunkSizeTokens` & `chunkOverlap`.
   - Reference the module's class name and any interfaces it implements.
-- **Testing:** `tests/testIngestAndChunk.m` verifies chunk counts and boundaries.
+- **Testing:** `tests/testIngestAndChunk.m` verifies chunk counts and boundaries in accordance with [Testing Policy](TESTING_POLICY.md).
 - **Output:** Table of chunks (`chunk_id`, `doc_id`, `text`).
 
 ## 6. Weak Labeling Module
@@ -57,7 +58,7 @@ Every module must expose a MATLAB class with a clearly defined public interface 
 - **Depends on:** Text Chunking Module.
 - **Implementation:** `reg.weakRules` returning label matrix.
   - Reference the module's class name and any interfaces it implements.
-- **Testing:** `tests/testRulesAndModel.m` confirms label coverage and format.
+- **Testing:** `tests/testRulesAndModel.m` confirms label coverage and format in accordance with [Testing Policy](TESTING_POLICY.md).
  - **Output:** Sparse label matrix `bootLabelMat`.
 
 ## 7. Embedding Generation Module
@@ -65,7 +66,7 @@ Every module must expose a MATLAB class with a clearly defined public interface 
 - **Depends on:** Text Chunking Module.
 - **Implementation:** `reg.docEmbeddingsBertGpu` & `reg.precomputeEmbeddings`.
   - Reference the module's class name and any interfaces it implements.
-- **Testing:** `tests/testFeatures.m` checks embedding shapes & backend selection.
+- **Testing:** `tests/testFeatures.m` checks embedding shapes & backend selection in accordance with [Testing Policy](TESTING_POLICY.md).
 - **Output:** Matrix `embeddingMat` of embeddings per chunk.
 
 ## 8. Baseline Classifier & Retrieval
@@ -75,7 +76,7 @@ Every module must expose a MATLAB class with a clearly defined public interface 
   - `reg.trainMultilabel` for classifier.
   - `reg.hybridSearch` for cosine + BM25 retrieval.
   - Reference the module's class name and any interfaces it implements.
-- **Testing:** `tests/testRegressionMetricsSimulated.m` & `tests/testHybridSearch.m` validate baseline metrics.
+- **Testing:** `tests/testRegressionMetricsSimulated.m` & `tests/testHybridSearch.m` validate baseline metrics in accordance with [Testing Policy](TESTING_POLICY.md).
 - **Output:** Baseline model artifacts and retrieval functionality.
 
 ## 9. Projection Head Workflow
@@ -83,7 +84,7 @@ Every module must expose a MATLAB class with a clearly defined public interface 
 - **Depends on:** Baseline Classifier & Retrieval.
 - **Implementation:** `reg.trainProjectionHead` with `regProjectionWorkflow.m` driver.
   - Reference the module's class name and any interfaces it implements.
-- **Testing:** `tests/testProjectionHeadSimulated.m` ensures Recall@n increases over baseline. `tests/testProjectionAutoloadPipeline.m` verifies auto-use in `reg_pipeline`.
+- **Testing:** `tests/testProjectionHeadSimulated.m` ensures Recall@n increases over baseline. `tests/testProjectionAutoloadPipeline.m` verifies auto-use in `reg_pipeline`. Both tests must follow [Testing Policy](TESTING_POLICY.md).
 - **Output:** `projection_head.mat` used automatically by the pipeline.
 
 ## 10. Encoder Fine-Tuning Workflow
@@ -91,7 +92,7 @@ Every module must expose a MATLAB class with a clearly defined public interface 
 - **Depends on:** Projection Head Workflow (optional but recommended) and Embedding Generation Module.
 - **Implementation:** `reg.ftBuildContrastiveDataset`, `reg.ftTrainEncoder`, and `regFineTuneEncoderWorkflow.m`.
   - Reference the module's class name and any interfaces it implements.
-- **Testing:** `tests/testFineTuneSmoke.m` for basic convergence, `tests/testFineTuneResume.m` for checkpoint resume.
+- **Testing:** `tests/testFineTuneSmoke.m` for basic convergence, `tests/testFineTuneResume.m` for checkpoint resume, all aligned with [Testing Policy](TESTING_POLICY.md).
 - **Output:** `fine_tuned_bert.mat` encoder weights.
 
 ## 11. Evaluation & Reporting
@@ -106,7 +107,7 @@ Every module must expose a MATLAB class with a clearly defined public interface 
   - `regEvalAndReport.m` acts as the entry point.
   - Gold mini-pack support via `reg.loadGold` and `regEvalGold.m`.
   - Reference the module's class name and any interfaces it implements.
-- **Testing:** `tests/testMetricsExpectedJSON.m`, `tests/testGoldMetrics.m`, `tests/testReportArtifact.m`.
+- **Testing:** `tests/testMetricsExpectedJSON.m`, `tests/testGoldMetrics.m`, `tests/testReportArtifact.m`, all adhering to [Testing Policy](TESTING_POLICY.md).
 - **Output:** Metrics CSVs, `regEvalReport.pdf`/`.html`, diff report artifacts, visualization images, and gold evaluation results.
 
 
@@ -119,7 +120,7 @@ Every module must expose a MATLAB class with a clearly defined public interface 
   - Establish consistent logging with timestamps and module identifiers.
   - Wrap each stage in `try/catch` blocks for graceful error handling and meaningful exception propagation.
   - Reference the module's class name and any interfaces it implements.
-- **Testing:** `tests/testPipelineController.m` validates end-to-end coordination with mocked dependencies and failure handling.
+- **Testing:** `tests/testPipelineController.m` validates end-to-end coordination with mocked dependencies and failure handling in accordance with [Testing Policy](TESTING_POLICY.md).
 - **Output:** Reproducible pipeline runs with centralized logs and robust error reporting.
 
 ## 12. Data Acquisition & Diff Utilities (Optional)
@@ -127,18 +128,18 @@ Every module must expose a MATLAB class with a clearly defined public interface 
 - **Depends on:** Environment & Tooling.
 - **Implementation:** `regCrrSync.m`, `reg.crrDiffVersions`, `reg.crrDiffArticles`, and related HTML/PDF report generators.
   - Reference the module's class name and any interfaces it implements.
-- **Testing:** `tests/testFetchers.m` (network-tolerant).
+- **Testing:** `tests/testFetchers.m` (network-tolerant) in accordance with [Testing Policy](TESTING_POLICY.md).
 - **Output:** Date-stamped corpora and diff reports.
 
 ## 13. Continuous Testing Framework
 - **Goal:** Ensure every module is validated locally and in CI.
 - **Depends on:** All previous modules.
-- **Testing Style:** All tests must subclass `matlab.unittest.TestCase` and use fixtures with explicit teardown methods.
+- **Testing Style:** All tests must subclass `matlab.unittest.TestCase` and use fixtures with explicit teardown methods, consistent with [Testing Policy](TESTING_POLICY.md).
 - **Steps:**
-  1. Run full suite: `results = runtests("tests","IncludeSubfolders",true,"UseParallel",false);`.
+   1. Per [Testing Policy](TESTING_POLICY.md), run full suite: `results = runtests("tests","IncludeSubfolders",true,"UseParallel",false);`.
   2. Examine `table(results)` and address failures before proceeding.
   3. Consider adding CI (e.g., GitHub Actions) to run the same command headlessly.
-- **Output:** Passing tests with reproducible seeds (`reg.setSeeds`).
+- **Output:** Passing tests with reproducible seeds (`reg.setSeeds`) as required by [Testing Policy](TESTING_POLICY.md).
 
 ## Task Dependency Summary
 ```
@@ -168,4 +169,4 @@ Environment → Repo Setup → MVC Scaffolding → Ingest → Chunk → Weak Lab
 12. Data Acquisition & Diff Utilities (optional)
 13. Continuous Testing Framework
 
-Following this order builds the system incrementally while keeping each component as independent as possible and providing explicit checkpoints for testing and quality control.
+Following this order builds the system incrementally while keeping each component as independent as possible and providing explicit checkpoints for testing and quality control in line with [Testing Policy](TESTING_POLICY.md).

@@ -212,6 +212,8 @@ end
 - Maintain reproducibility with `rng(seed)`.
 - Any temporary or placeholder test must call `fatalAssertFail` (or similar) so it fails as incomplete.
 
+Refer to [TESTING_POLICY.md](TESTING_POLICY.md) for workflow and golden-data governance.
+
 #### 3.1 Test Method Naming
 
 - Name test methods in **lowerCamelCase**.

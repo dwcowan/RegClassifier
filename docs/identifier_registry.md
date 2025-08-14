@@ -210,7 +210,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 |------|---------|-----------|-------|------|
 | startup.m | Initialize project paths and defaults | startup | @todo | |
 | shutdown.m | Remove project paths and restore defaults | shutdown | @todo | |
-| TESTING_POLICY.md | Policy on test scopes, golden data, and CI expectations | n/a | @todo | documentation |
+
 
 
 
@@ -228,7 +228,7 @@ Record each test with a scope identifying its coverage type:
 
 If a test spans multiple coverage types, list all applicable tags separated by commas in the Scope column.
 
-Regression entries must include the simulated dataset path, expected output, and dataset owner used as the baseline. Future regression tests without these fields will not be accepted.
+Regression entries must include the golden dataset path, expected output, and dataset owner, as specified in [docs/TESTING_POLICY.md](TESTING_POLICY.md). Future regression tests without these fields will not be accepted.
 
 | Name | Purpose | Scope | Owner | Related Functions | Golden Dataset Path | Expected Output | Dataset Owner | Notes |
 |------|---------|-------|-------|-------------------|---------------------|-----------------|---------------|-------|
