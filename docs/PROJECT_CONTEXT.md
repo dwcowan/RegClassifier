@@ -92,10 +92,11 @@ Fixtures include:
    run regEvalAndReport
    ```
 6. **Run Tests**
-   ```matlab
-   results = runtests("tests","IncludeSubfolders",true);
-   table(results)
+   ```bash
+   matlab -batch "run_smoke_test"
+   matlab -batch "runtests('tests','IncludeSubfolders',true)"
    ```
+   CI must provision golden datasets via fixtures, and failures against them halt the pipeline. See [TESTING_POLICY](TESTING_POLICY.md) for dataset refresh procedures.
 
 ## 4. What We’ve Been Optimising
 - **GPU batch sizes & sequence lengths** for the 16 GB 4060 Ti
@@ -109,9 +110,9 @@ Fixtures include:
 - **Full MATLAB project folder** (zip)
 - **Any recent console errors**
 - **Any failed test outputs** from:
-  ```matlab
-  results = runtests("tests","IncludeSubfolders",true);
-  table(results)
+  ```bash
+  matlab -batch "run_smoke_test"
+  matlab -batch "runtests('tests','IncludeSubfolders',true)"
   ```
 
 ## 6. How a New ChatGPT Session Can Help
