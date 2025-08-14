@@ -2,8 +2,8 @@ classdef SearchIndexModel < reg.mvc.BaseModel
     %SEARCHINDEXMODEL Stub model building retrieval index.
 
     properties
-        % Configuration for building the search index
-        config
+        % Configuration for building the search index (default: struct())
+        config = struct();
     end
 
     methods
@@ -16,17 +16,45 @@ classdef SearchIndexModel < reg.mvc.BaseModel
             end
         end
 
-        function inputs = load(~, varargin) %#ok<INUSD>
+        function indexInputs = load(~, varargin) %#ok<INUSD>
             %LOAD Gather data for index building.
-            %   INPUTS = LOAD(obj) retrieves documents and metadata for the
-            %   index. Equivalent to `upsert_chunks` preparation.
+            %   indexInputs = LOAD(obj) retrieves documents and metadata for
+            %   the index.
+            %   Parameters
+            %       varargin - Placeholder for future options (unused)
+            %   Returns
+            %       indexInputs (struct): Documents, embeddings and ids.
+            %   Side Effects
+            %       None.
+            %   Legacy Reference
+            %       Equivalent to `upsert_chunks` preparation.
+            %   Extension Point
+            %       Override to source documents from other systems.
+            % Pseudocode:
+            %   1. Load documents and embeddings
+            %   2. Package into indexInputs struct
+            %   3. Return indexInputs
             error("reg:model:NotImplemented", ...
                 "SearchIndexModel.load is not implemented.");
         end
-        function searchIx = process(~, inputs) %#ok<INUSD>
+        function searchIndex = process(~, indexInputs) %#ok<INUSD>
             %PROCESS Build or update the search index.
-            %   SEARCHIX = PROCESS(obj, inputs) returns index handle or id.
-            %   Equivalent to `upsert_chunks`.
+            %   searchIndex = PROCESS(obj, indexInputs) returns index handle
+            %   or identifier.
+            %   Parameters
+            %       indexInputs (struct): Data required to build the index.
+            %   Returns
+            %       searchIndex (struct): Handle or id for the created index.
+            %   Side Effects
+            %       May write index files or call external services.
+            %   Legacy Reference
+            %       Equivalent to `upsert_chunks`.
+            %   Extension Point
+            %       Plug in alternative indexing backends.
+            % Pseudocode:
+            %   1. Initialize search index backend
+            %   2. Upsert documents and embeddings from indexInputs
+            %   3. Return searchIndex identifier
             error("reg:model:NotImplemented", ...
                 "SearchIndexModel.process is not implemented.");
         end

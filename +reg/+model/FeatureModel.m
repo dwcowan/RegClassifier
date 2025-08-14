@@ -2,8 +2,8 @@ classdef FeatureModel < reg.mvc.BaseModel
     %FEATUREMODEL Stub model generating feature representations.
 
     properties
-        % Feature extraction configuration
-        config
+        % Feature extraction configuration (default: struct())
+        config = struct();
     end
 
     methods
@@ -17,18 +17,45 @@ classdef FeatureModel < reg.mvc.BaseModel
             end
         end
 
-        function chunksT = load(~, varargin) %#ok<INUSD>
+        function chunksTable = load(~, varargin) %#ok<INUSD>
             %LOAD Retrieve text chunks for feature extraction.
-            %   CHUNKST = LOAD(obj) returns a table of text segments.
-            %   Equivalent to `precompute_embeddings` input gathering.
+            %   chunksTable = LOAD(obj) returns a table of text segments.
+            %   Parameters
+            %       varargin - Placeholder for future options (unused)
+            %   Returns
+            %       chunksTable (table): Text segments awaiting embedding.
+            %   Side Effects
+            %       None.
+            %   Legacy Reference
+            %       Equivalent to `precompute_embeddings` input gathering.
+            %   Extension Point
+            %       Override to supply chunks from alternative sources.
+            % Pseudocode:
+            %   1. Read chunk records from storage
+            %   2. Return as chunksTable
             error("reg:model:NotImplemented", ...
                 "FeatureModel.load is not implemented.");
         end
-        function [features, embeddings, vocab] = process(~, chunksT) %#ok<INUSD>
+        function [features, embeddings, vocab] = process(~, chunksTable) %#ok<INUSD>
             %PROCESS Generate features and embeddings.
-            %   [FEATURES, EMBEDDINGS, VOCAB] = PROCESS(obj, chunksT) returns
-            %   numerical representations. Equivalent to
-            %   `precompute_embeddings`.
+            %   [features, embeddings, vocab] = PROCESS(obj, chunksTable)
+            %   produces numerical representations.
+            %   Parameters
+            %       chunksTable (table): Text segments to embed.
+            %   Returns
+            %       features (table): Derived feature table.
+            %       embeddings (double matrix): Embedding vectors.
+            %       vocab (string array): Vocabulary mapping.
+            %   Side Effects
+            %       May update feature caches on disk.
+            %   Legacy Reference
+            %       Equivalent to `precompute_embeddings`.
+            %   Extension Point
+            %       Customize embedding models or feature extraction steps.
+            % Pseudocode:
+            %   1. Tokenize text in chunksTable
+            %   2. Compute embeddings using configured model
+            %   3. Assemble features table and vocabulary
             error("reg:model:NotImplemented", ...
                 "FeatureModel.process is not implemented.");
         end
