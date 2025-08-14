@@ -2,8 +2,8 @@ classdef ConfigModel < reg.mvc.BaseModel
     %CONFIGMODEL Stub model retrieving configuration parameters.
 
     properties
-        % Configuration settings to retrieve
-        config
+        % Configuration settings loaded from knobs.json (default: struct())
+        config = struct();
     end
 
     methods
@@ -16,18 +16,43 @@ classdef ConfigModel < reg.mvc.BaseModel
             end
         end
 
-        function data = load(~, varargin) %#ok<INUSD>
+        function cfgStruct = load(~, varargin) %#ok<INUSD>
             %LOAD Retrieve configuration from source.
-            %   DATA = LOAD(obj) reads knob settings and returns a struct.
-            %   Equivalent to `load_knobs`.
+            %   cfgStruct = LOAD(obj) reads knob settings.
+            %   Parameters
+            %       varargin - Placeholder for future options (unused)
+            %   Returns
+            %       cfgStruct (struct): Key/value pairs of configuration.
+            %   Side Effects
+            %       None.
+            %   Legacy Reference
+            %       Equivalent to `load_knobs`.
+            %   Extension Point
+            %       Override to pull configuration from remote stores.
+            % Pseudocode:
+            %   1. Read knobs.json from disk
+            %   2. Decode JSON into struct cfgStruct
+            %   3. Return cfgStruct to caller
             error("reg:model:NotImplemented", ...
                 "ConfigModel.load is not implemented.");
         end
-        function result = process(~, data) %#ok<INUSD>
+        function validatedCfg = process(~, cfgStruct) %#ok<INUSD>
             %PROCESS Validate configuration values.
-            %   RESULT = PROCESS(obj, data) performs sanity checks and
-            %   returns the validated structure. Equivalent to
-            %   `validate_knobs`.
+            %   validatedCfg = PROCESS(obj, cfgStruct) performs sanity checks.
+            %   Parameters
+            %       cfgStruct (struct): Configuration to validate.
+            %   Returns
+            %       validatedCfg (struct): Sanitized configuration.
+            %   Side Effects
+            %       May log warnings for missing fields.
+            %   Legacy Reference
+            %       Equivalent to `validate_knobs`.
+            %   Extension Point
+            %       Extend to enforce custom validation rules.
+            % Pseudocode:
+            %   1. Verify required fields exist in cfgStruct
+            %   2. Fill defaults for missing values
+            %   3. Return validatedCfg
             error("reg:model:NotImplemented", ...
                 "ConfigModel.process is not implemented.");
         end

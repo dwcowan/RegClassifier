@@ -2,8 +2,8 @@ classdef PDFIngestModel < reg.mvc.BaseModel
     %PDFINGESTMODEL Stub model converting PDFs to document table.
 
     properties
-        % Directory containing the PDF files to ingest
-        inputDir
+        % Directory containing the PDF files to ingest (default: "")
+        inputDir = "";
     end
 
     methods
@@ -17,18 +17,45 @@ classdef PDFIngestModel < reg.mvc.BaseModel
             end
         end
 
-        function files = load(~, varargin) %#ok<INUSD>
+        function pdfFiles = load(~, varargin) %#ok<INUSD>
             %LOAD Locate PDF files for ingestion.
-            %   FILES = LOAD(obj) returns a list of file paths to be
-            %   processed. Returns a string array. Equivalent to
-            %   `ingest_pdfs` file discovery.
+            %   pdfFiles = LOAD(obj) returns a list of file paths to be
+            %   processed.
+            %   Parameters
+            %       varargin - Placeholder for future options (unused)
+            %   Returns
+            %       pdfFiles (string array): Paths to PDF documents.
+            %   Side Effects
+            %       None.
+            %   Legacy Reference
+            %       Equivalent to `ingest_pdfs` file discovery.
+            %   Extension Point
+            %       Override to support remote storage or filtering.
+            % Pseudocode:
+            %   1. Scan inputDir for *.pdf files
+            %   2. Sort or filter list as needed
+            %   3. Return pdfFiles
             error("reg:model:NotImplemented", ...
                 "PDFIngestModel.load is not implemented.");
         end
-        function docsT = process(~, files) %#ok<INUSD>
+        function documentsTable = process(~, pdfFiles) %#ok<INUSD>
             %PROCESS Convert PDFs to document table.
-            %   DOCST = PROCESS(obj, files) reads the PDF paths and returns a
-            %   table containing document data. Equivalent to `ingest_pdfs`.
+            %   documentsTable = PROCESS(obj, pdfFiles) reads the PDF paths
+            %   and returns a table containing document data.
+            %   Parameters
+            %       pdfFiles (string array): Paths to source PDFs.
+            %   Returns
+            %       documentsTable (table): Parsed document metadata and text.
+            %   Side Effects
+            %       May write intermediate artifacts such as extracted text.
+            %   Legacy Reference
+            %       Equivalent to `ingest_pdfs`.
+            %   Extension Point
+            %       Hook to inject custom parsers or metadata extraction.
+            % Pseudocode:
+            %   1. Loop over pdfFiles and extract text
+            %   2. Assemble document metadata into table rows
+            %   3. Return documentsTable
             error("reg:model:NotImplemented", ...
                 "PDFIngestModel.process is not implemented.");
         end

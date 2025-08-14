@@ -2,8 +2,8 @@ classdef GoldPackModel < reg.mvc.BaseModel
     %GOLDPACKMODEL Stub model providing labelled gold data.
 
     properties
-        % Configuration for gold data retrieval
-        config
+        % Configuration for gold data retrieval (default: struct())
+        config = struct();
     end
 
     methods
@@ -16,17 +16,44 @@ classdef GoldPackModel < reg.mvc.BaseModel
             end
         end
 
-        function data = load(~, varargin) %#ok<INUSD>
+        function goldDataStruct = load(~, varargin) %#ok<INUSD>
             %LOAD Retrieve gold labelled data.
-            %   DATA = LOAD(obj) reads pre-packaged gold datasets.
-            %   Equivalent to `load_gold`.
+            %   goldDataStruct = LOAD(obj) reads pre-packaged gold datasets.
+            %   Parameters
+            %       varargin - Placeholder for future options (unused)
+            %   Returns
+            %       goldDataStruct (struct): Loaded gold data.
+            %   Side Effects
+            %       None.
+            %   Legacy Reference
+            %       Equivalent to `load_gold`.
+            %   Extension Point
+            %       Override to retrieve from external repositories.
+            % Pseudocode:
+            %   1. Read gold dataset files from disk
+            %   2. Parse into goldDataStruct
+            %   3. Return goldDataStruct
             error("reg:model:NotImplemented", ...
                 "GoldPackModel.load is not implemented.");
         end
-        function result = process(~, data) %#ok<INUSD>
+        function goldTable = process(~, goldDataStruct) %#ok<INUSD>
             %PROCESS Return processed gold data.
-            %   RESULT = PROCESS(obj, data) outputs structured gold
-            %   artefacts. Equivalent to `load_gold` post-processing.
+            %   goldTable = PROCESS(obj, goldDataStruct) outputs structured
+            %   gold artefacts.
+            %   Parameters
+            %       goldDataStruct (struct): Raw gold dataset.
+            %   Returns
+            %       goldTable (table): Prepared gold references.
+            %   Side Effects
+            %       None.
+            %   Legacy Reference
+            %       Equivalent to `load_gold` post-processing.
+            %   Extension Point
+            %       Customize schema or filtering of gold data.
+            % Pseudocode:
+            %   1. Normalize fields in goldDataStruct
+            %   2. Convert to table format
+            %   3. Return goldTable
             error("reg:model:NotImplemented", ...
                 "GoldPackModel.process is not implemented.");
         end
