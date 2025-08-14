@@ -56,20 +56,20 @@ Keep the illustrative examples below in sync with the current naming conventions
 | Encoder | Fine-tuned model for contrastive learning | module | @todo | [ClassArchitecture.md#L361-L404](ClassArchitecture.md#L361-L404) | |
 | Metrics | Evaluation results and per-label performance | module | @todo | [ClassArchitecture.md#L407-L439](ClassArchitecture.md#L407-L439) | |
 | CorpusVersion | Versioned corpora for diff operations | module | @todo | [ClassArchitecture.md#L442-L475](ClassArchitecture.md#L442-L475) | |
-| EvalReportView | Generates reports summarizing metrics | module | @todo | [ClassArchitecture.md#L479-L516](ClassArchitecture.md#L479-L516) | |
-| DiffReportView | Presents diffs between regulatory versions | module | @todo | [ClassArchitecture.md#L505-L523](ClassArchitecture.md#L505-L523) | |
-| MetricsPlotsView | Visualizes metrics and trend plots | module | @todo | [ClassArchitecture.md#L526-L549](ClassArchitecture.md#L526-L549) | |
-| IngestionController | Parses PDFs and produces Document models | module | @todo | [ClassArchitecture.md#L554-L569](ClassArchitecture.md#L554-L569) | |
-| ChunkingController | Splits documents into overlapping chunks | module | @todo | [ClassArchitecture.md#L572-L589](ClassArchitecture.md#L572-L589) | |
-| WeakLabelingController | Applies heuristic rules to label chunks | module | @todo | [ClassArchitecture.md#L591-L607](ClassArchitecture.md#L591-L607) | |
-| EmbeddingController | Generates embeddings for chunks | module | @todo | [ClassArchitecture.md#L610-L626](ClassArchitecture.md#L610-L626) | |
-| BaselineController | Constructs BaselineModel and delegates operations | module | @todo | [ClassArchitecture.md#L629-L660](ClassArchitecture.md#L629-L660) | |
-| ProjectionHeadController | Manages projection head training and usage | module | @todo | [ClassArchitecture.md#L662-L689](ClassArchitecture.md#L662-L689) | |
-| FineTuneController | Fine-tunes base models | module | @todo | [ClassArchitecture.md#L692-L708](ClassArchitecture.md#L692-L708) | |
-| EvaluationController | Computes metrics and generates reports | module | @todo | [ClassArchitecture.md#L728-L763](ClassArchitecture.md#L728-L763) | |
-| DataAcquisitionController | Fetches corpora and returns diff data | module | @todo | [ClassArchitecture.md#L740-L765](ClassArchitecture.md#L740-L765) | |
-| PipelineController | Orchestrates end-to-end pipeline | module | @todo | [ClassArchitecture.md#L768-L796](ClassArchitecture.md#L768-L796) | |
-| TestController | Executes continuous test suite | module | @todo | [ClassArchitecture.md#L799-L817](ClassArchitecture.md#L799-L817) | |
+| EvalReportView | Generates reports summarizing metrics | module | @todo | [ClassArchitecture.md#L492-L530](ClassArchitecture.md#L492-L530) | |
+| DiffReportView | Presents diffs between regulatory versions | module | @todo | [ClassArchitecture.md#L533-L552](ClassArchitecture.md#L533-L552) | |
+| MetricsPlotsView | Visualizes metrics and trend plots | module | @todo | [ClassArchitecture.md#L555-L578](ClassArchitecture.md#L555-L578) | |
+| IngestionController | Parses PDFs and produces Document models | module | @todo | [ClassArchitecture.md#L584-L598](ClassArchitecture.md#L584-L598) | |
+| ChunkingController | Splits documents into overlapping chunks | module | @todo | [ClassArchitecture.md#L602-L618](ClassArchitecture.md#L602-L618) | |
+| WeakLabelingController | Applies heuristic rules to label chunks | module | @todo | [ClassArchitecture.md#L621-L637](ClassArchitecture.md#L621-L637) | |
+| EmbeddingController | Generates embeddings for chunks | module | @todo | [ClassArchitecture.md#L641-L656](ClassArchitecture.md#L641-L656) | |
+| BaselineController | Constructs BaselineModel and delegates operations | module | @todo | [ClassArchitecture.md#L660-L691](ClassArchitecture.md#L660-L691) | |
+| ProjectionHeadController | Manages projection head training and usage | module | @todo | [ClassArchitecture.md#L694-L721](ClassArchitecture.md#L694-L721) | |
+| FineTuneController | Fine-tunes base models | module | @todo | [ClassArchitecture.md#L724-L739](ClassArchitecture.md#L724-L739) | |
+| EvaluationController | Computes metrics and generates reports | module | @todo | [ClassArchitecture.md#L743-L777](ClassArchitecture.md#L743-L777) | |
+| DataAcquisitionController | Fetches corpora and returns diff data | module | @todo | [ClassArchitecture.md#L833-L871](ClassArchitecture.md#L833-L871) | |
+| PipelineController | Orchestrates end-to-end pipeline | module | @todo | [ClassArchitecture.md#L900-L927](ClassArchitecture.md#L900-L927) | |
+| TestController | Executes continuous test suite | module | @todo | [ClassArchitecture.md#L931-L948](ClassArchitecture.md#L931-L948) | |
 
 
 
@@ -130,26 +130,26 @@ Keep the illustrative examples below in sync with the current naming conventions
 | [encode](ClassArchitecture.md#L381-L389) | [Encoder](ClassArchitecture.md#L349-L392) | Convert text to embedding | |
 | [summary](ClassArchitecture.md#L417-L425) | [Metrics](ClassArchitecture.md#L395-L427) | Return human-readable summary of metrics | |
 | [diff](ClassArchitecture.md#L452-L460) | [CorpusVersion](ClassArchitecture.md#L430-L463) | Return differences between versions | |
-| [renderPDF](ClassArchitecture.md#L498-L505) | [EvalReportView](ClassArchitecture.md#L479-L516) | Generate PDF report | |
-| [renderHTML](ClassArchitecture.md#L507-L514) | [EvalReportView](ClassArchitecture.md#L479-L516) | Generate HTML report | |
-| [render](ClassArchitecture.md#L498-L509) | [DiffReportView](ClassArchitecture.md#L493-L511) | Generate diff report in HTML or PDF | |
-| [plotHeatmap](ClassArchitecture.md#L519-L526) | [MetricsPlotsView](ClassArchitecture.md#L514-L537) | Render heatmap from metric matrix | |
-| [plotTrend](ClassArchitecture.md#L528-L535) | [MetricsPlotsView](ClassArchitecture.md#L514-L537) | Render line chart for metric trends | |
-| [run](ClassArchitecture.md#L547-L555) | [IngestionController](ClassArchitecture.md#L542-L557) | Parse PDFs to documents | |
-| [run](ClassArchitecture.md#L565-L575) | [ChunkingController](ClassArchitecture.md#L560-L577) | Split documents into chunks | |
-| [run](ClassArchitecture.md#L584-L593) | [WeakLabelingController](ClassArchitecture.md#L579-L595) | Apply weak labeling rules | |
-| [run](ClassArchitecture.md#L603-L612) | [EmbeddingController](ClassArchitecture.md#L598-L614) | Generate embeddings | |
-| [train](ClassArchitecture.md#L622-L631) | [BaselineController](ClassArchitecture.md#L617-L644) | Fit baseline classifier | |
-| [retrieve](ClassArchitecture.md#L633-L642) | [BaselineController](ClassArchitecture.md#L617-L644) | Retrieve top chunks for query embedding | |
-| [trainHead](ClassArchitecture.md#L651-L662) | [ProjectionHeadController](ClassArchitecture.md#L646-L673) | Instantiate and fit projection head | |
-| [applyHead](ClassArchitecture.md#L664-L671) | [ProjectionHeadController](ClassArchitecture.md#L646-L673) | Apply fitted projection head to embeddings | |
-| [run](ClassArchitecture.md#L681-L689) | [FineTuneController](ClassArchitecture.md#L676-L692) | Fine-tune encoder | |
-| [evaluate](ClassArchitecture.md#L733-L743) | [EvaluationController](ClassArchitecture.md#L728-L763) | Compute metrics for model | |
-| [generateReports](ClassArchitecture.md#L745-L761) | [EvaluationController](ClassArchitecture.md#L728-L763) | Produce evaluation reports | |
-| [fetch](ClassArchitecture.md#L755-L763) | [DataAcquisitionController](ClassArchitecture.md#L748-L775) | Retrieve corpora from sources | |
-| [diffVersions](ClassArchitecture.md#L765-L773) | [DataAcquisitionController](ClassArchitecture.md#L748-L775) | Run diff and return `diffStruct` for reporting | |
-| [execute](ClassArchitecture.md#L797-L804) | [PipelineController](ClassArchitecture.md#L779-L806) | Execute pipeline steps | |
-| [runTests](ClassArchitecture.md#L814-L820) | [TestController](ClassArchitecture.md#L809-L820) | Execute selected tests | |
+| [renderPDF](ClassArchitecture.md#L512-L519) | [EvalReportView](ClassArchitecture.md#L492-L530) | Generate PDF report | |
+| [renderHTML](ClassArchitecture.md#L521-L528) | [EvalReportView](ClassArchitecture.md#L492-L530) | Generate HTML report | |
+| [render](ClassArchitecture.md#L539-L550) | [DiffReportView](ClassArchitecture.md#L533-L552) | Generate diff report in HTML or PDF | |
+| [plotHeatmap](ClassArchitecture.md#L560-L567) | [MetricsPlotsView](ClassArchitecture.md#L555-L578) | Render heatmap from metric matrix | |
+| [plotTrend](ClassArchitecture.md#L569-L576) | [MetricsPlotsView](ClassArchitecture.md#L555-L578) | Render line chart for metric trends | |
+| [run](ClassArchitecture.md#L588-L596) | [IngestionController](ClassArchitecture.md#L584-L598) | Parse PDFs to documents | |
+| [run](ClassArchitecture.md#L606-L616) | [ChunkingController](ClassArchitecture.md#L602-L618) | Split documents into chunks | |
+| [run](ClassArchitecture.md#L625-L635) | [WeakLabelingController](ClassArchitecture.md#L621-L637) | Apply weak labeling rules | |
+| [run](ClassArchitecture.md#L645-L654) | [EmbeddingController](ClassArchitecture.md#L641-L656) | Generate embeddings | |
+| [train](ClassArchitecture.md#L664-L677) | [BaselineController](ClassArchitecture.md#L660-L691) | Fit baseline classifier | |
+| [retrieve](ClassArchitecture.md#L679-L688) | [BaselineController](ClassArchitecture.md#L660-L691) | Retrieve top chunks for query embedding | |
+| [trainHead](ClassArchitecture.md#L711-L714) | [ProjectionHeadController](ClassArchitecture.md#L694-L721) | Instantiate and fit projection head | |
+| [applyHead](ClassArchitecture.md#L716-L718) | [ProjectionHeadController](ClassArchitecture.md#L694-L721) | Apply fitted projection head to embeddings | |
+| [run](ClassArchitecture.md#L728-L737) | [FineTuneController](ClassArchitecture.md#L724-L739) | Fine-tune encoder | |
+| [evaluate](ClassArchitecture.md#L747-L757) | [EvaluationController](ClassArchitecture.md#L743-L777) | Compute metrics for model | |
+| [generateReports](ClassArchitecture.md#L759-L775) | [EvaluationController](ClassArchitecture.md#L743-L777) | Produce evaluation reports | |
+| [fetch](ClassArchitecture.md#L839-L850) | [DataAcquisitionController](ClassArchitecture.md#L833-L871) | Retrieve corpora from sources | |
+| [diffVersions](ClassArchitecture.md#L852-L868) | [DataAcquisitionController](ClassArchitecture.md#L833-L871) | Run diff and return `diffStruct` for reporting | |
+| [execute](ClassArchitecture.md#L918-L925) | [PipelineController](ClassArchitecture.md#L900-L927) | Execute pipeline steps | |
+| [runTests](ClassArchitecture.md#L935-L946) | [TestController](ClassArchitecture.md#L931-L948) | Execute selected tests | |
 
 > **Note:** List every new or renamed class method here and follow `lowerCamelCase` naming.
 
@@ -190,6 +190,8 @@ Keep the illustrative examples below in sync with the current naming conventions
 | Name | Purpose | Scope | Type | Default | Constraints | Notes |
 |------|---------|-------|------|---------|-------------|-------|
 | configStruct | Configuration settings loaded from JSON files | module | struct | n/a | fields must exist | returned by config |
+| reportPath | Base path for evaluation report output | local | string | n/a | valid path | used by EvaluationController.generateReports |
+| reportExt | Desired report extension | local | string | ".pdf" | '.pdf' or '.html' | passed to EvalReportView.render |
 
 
 ## Constants / Enums
