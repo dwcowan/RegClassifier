@@ -1,19 +1,22 @@
 classdef DataAcquisitionController
 %DATAACQUISITIONCONTROLLER Fetch corpora and compute differences
     methods
-        function diffStruct = diffVersions(~, oldCorpusVec, newCorpusVec)
-        %DIFFVERSIONS Compute added and removed documents between corpora
-        %   diffStruct = DIFFVERSIONS(oldCorpusVec, newCorpusVec) returns a
-        %   struct with fields addedDocs and removedDocs.
+        function diffStruct = diffVersions(~, oldVersionId, newVersionId)
+        %DIFFVERSIONS Compute added and removed documents between versions
+        %   diffStruct = DIFFVERSIONS(oldVersionId, newVersionId) loads the
+        %   corpora identified by the given version identifiers and returns
+        %   a struct with fields addedDocs and removedDocs.
 
             arguments
-                oldCorpusVec (1,:) struct
-                newCorpusVec (1,:) struct
+                oldVersionId (1,1) string
+                newVersionId (1,1) string
             end
 
-            diffStruct = struct();
-            diffStruct.addedDocs = helpers.docSetdiff(newCorpusVec, oldCorpusVec);
-            diffStruct.removedDocs = helpers.docSetdiff(oldCorpusVec, newCorpusVec);
+            oldDocs = helpers.loadCorpus(oldVersionId);
+            newDocs = helpers.loadCorpus(newVersionId);
+            oldCorpus = model.CorpusVersion(oldVersionId, oldDocs);
+            newCorpus = model.CorpusVersion(newVersionId, newDocs);
+            diffStruct = oldCorpus.diff(newCorpus);
         end
     end
 end

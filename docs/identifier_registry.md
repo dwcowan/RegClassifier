@@ -181,7 +181,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 | startup | project object | none | adds repo paths, sets defaults |
 | shutdown | project object | none | removes repo paths, restores defaults |
 | run_mlint | none | none | writes lint artifacts to `lint/` and may error on issues |
-| docSetdiff | corpusAVec, corpusBVec | diffDocsVec | uses builtin `setdiff` to compare corpora |
+| loadCorpus | versionId | documentVec | reads `<versionId>.mat` from disk |
 
 
 
