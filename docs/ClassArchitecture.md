@@ -36,6 +36,18 @@
 | `+controller/PipelineController.m`       | Orchestrates end‑to‑end execution and configures TrainingController |
 | `+controller/TestController.m`           | Executes continuous test suite to maintain reliability |
 
+**Persistence Layer (+persistence)**
+
+| Class Path                                 | Purpose                                                                      |
+| ------------------------------------------ | ---------------------------------------------------------------------------- |
+| `+persistence/DocumentRepository.m`        | `save` and `load` `model.Document` vectors                                   |
+| `+persistence/ChunkRepository.m`           | `save` and `load` `model.Chunk` vectors                                      |
+| `+persistence/LabelMatrixRepository.m`     | `save` and `load` `model.LabelMatrix` artifacts                              |
+| `+persistence/EmbeddingRepository.m`       | `save` and `load` `model.Embedding` vectors                                  |
+| `+persistence/ModelArtifactRepository.m`   | Persist and retrieve baseline and fine-tuned model artifacts                 |
+
+Controllers obtain these repository services via dependency injection. `controller.PipelineController` constructs the required `persistence.*Repository` instances and supplies them to individual controllers (e.g., IngestionController uses `DocumentRepository`, ChunkingController uses `ChunkRepository`, etc.).
+
 **Helper Functions (+helpers)**
 
 | Function Path                  | Purpose                                                              |
@@ -478,6 +490,79 @@ classdef CorpusVersion
             %
             %   Side effects: none.
             diffResult = struct();
+        end
+    end
+end
+
+
+**Persistence Layer (+persistence)**
+
+% +persistence/DocumentRepository.m
+classdef DocumentRepository
+    %DOCUMENTREPOSITORY Persists model.Document vectors.
+    methods (Access=public)
+        function save(~, documentVec, matPath)
+            %SAVE Persist documentVec to matPath.
+        end
+        function documentVec = load(~, matPath)
+            %LOAD Load documentVec from matPath.
+            documentVec = model.Document.empty;
+        end
+    end
+end
+
+% +persistence/ChunkRepository.m
+classdef ChunkRepository
+    %CHUNKREPOSITORY Persists model.Chunk vectors.
+    methods (Access=public)
+        function save(~, chunkVec, matPath)
+            %SAVE Persist chunkVec to matPath.
+        end
+        function chunkVec = load(~, matPath)
+            %LOAD Load chunkVec from matPath.
+            chunkVec = model.Chunk.empty;
+        end
+    end
+end
+
+% +persistence/LabelMatrixRepository.m
+classdef LabelMatrixRepository
+    %LABELMATRIXREPOSITORY Persists model.LabelMatrix artifacts.
+    methods (Access=public)
+        function save(~, labelMatrix, matPath)
+            %SAVE Persist labelMatrix to matPath.
+        end
+        function labelMatrix = load(~, matPath)
+            %LOAD Load labelMatrix from matPath.
+            labelMatrix = model.LabelMatrix(sparse([]), []);
+        end
+    end
+end
+
+% +persistence/EmbeddingRepository.m
+classdef EmbeddingRepository
+    %EMBEDDINGREPOSITORY Persists model.Embedding vectors.
+    methods (Access=public)
+        function save(~, embeddingVec, matPath)
+            %SAVE Persist embeddingVec to matPath.
+        end
+        function embeddingVec = load(~, matPath)
+            %LOAD Load embeddingVec from matPath.
+            embeddingVec = model.Embedding.empty;
+        end
+    end
+end
+
+% +persistence/ModelArtifactRepository.m
+classdef ModelArtifactRepository
+    %MODELARTIFACTREPOSITORY Persists trained model artifacts.
+    methods (Access=public)
+        function save(~, modelObj, matPath)
+            %SAVE Persist model artifact to matPath.
+        end
+        function modelObj = load(~, matPath)
+            %LOAD Load model artifact from matPath.
+            modelObj = [];
         end
     end
 end
