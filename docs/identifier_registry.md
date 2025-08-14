@@ -67,7 +67,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 | ProjectionHeadController | Manages projection head training and usage | module | @todo | [ClassArchitecture.md#L662-L689](ClassArchitecture.md#L662-L689) | |
 | FineTuneController | Fine-tunes base models | module | @todo | [ClassArchitecture.md#L692-L708](ClassArchitecture.md#L692-L708) | |
 | EvaluationController | Computes metrics and generates reports | module | @todo | [ClassArchitecture.md#L711-L737](ClassArchitecture.md#L711-L737) | |
-| DataAcquisitionController | Fetches corpora and triggers diff analyses | module | @todo | [ClassArchitecture.md#L740-L765](ClassArchitecture.md#L740-L765) | |
+| DataAcquisitionController | Fetches corpora and returns diff data | module | @todo | [ClassArchitecture.md#L740-L765](ClassArchitecture.md#L740-L765) | |
 | PipelineController | Orchestrates end-to-end pipeline | module | @todo | [ClassArchitecture.md#L768-L796](ClassArchitecture.md#L768-L796) | |
 | TestController | Executes continuous test suite | module | @todo | [ClassArchitecture.md#L799-L817](ClassArchitecture.md#L799-L817) | |
 
@@ -147,7 +147,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 | [evaluate](ClassArchitecture.md#L716-L726) | [EvaluationController](ClassArchitecture.md#L711-L744) | Compute metrics for model | |
 | [generateReports](ClassArchitecture.md#L728-L743) | [EvaluationController](ClassArchitecture.md#L711-L744) | Produce evaluation reports | |
 | [fetch](ClassArchitecture.md#L755-L763) | [DataAcquisitionController](ClassArchitecture.md#L748-L775) | Retrieve corpora from sources | |
-| [diffVersions](ClassArchitecture.md#L765-L773) | [DataAcquisitionController](ClassArchitecture.md#L748-L775) | Run diff and trigger report generation | |
+| [diffVersions](ClassArchitecture.md#L765-L773) | [DataAcquisitionController](ClassArchitecture.md#L748-L775) | Run diff and return `diffStruct` for reporting | |
 | [execute](ClassArchitecture.md#L797-L804) | [PipelineController](ClassArchitecture.md#L779-L806) | Execute pipeline steps | |
 | [runTests](ClassArchitecture.md#L814-L820) | [TestController](ClassArchitecture.md#L809-L820) | Execute selected tests | |
 

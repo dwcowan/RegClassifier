@@ -13,12 +13,12 @@ Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new 
    ```matlab
    reg.crrSync();
    ```
-2. Generate diffStruct reports between document versions:
+2. Generate diff data between document versions and render a report:
    ```matlab
    diffStruct = reg.crrDiffVersions('versionA', 'versionB');
-   reg.crrDiffReport();
+   view.DiffReportView.render(diffStruct);
    ```
-3. Review HTML or PDF diffStruct outputs for changes.
+3. Review HTML or PDF diff outputs for changes.
 
 ## Function Interface
 
@@ -40,15 +40,19 @@ Consult `README_NAMING.md` and update `docs/identifier_registry.md` for any new 
 - **Usage Example:**
    ```matlab
    diffStruct = reg.crrDiffVersions('v1', 'v2');
+   view.DiffReportView.render(diffStruct);
    ```
 
-### reg.crrDiffReport
-- **Parameters:** none.
+### view.DiffReportView.render
+- **Parameters:**
+  - `diffStruct` (struct): Differences between versions.
+  - `outDir` (string, optional): Output directory.
+  - `format` (string, optional): `'html'` or `'pdf'`.
 - **Returns:** none.
-- **Side Effects:** renders HTML/PDF summaries to disk.
+- **Side Effects:** writes report to disk.
 - **Usage Example:**
   ```matlab
-  reg.crrDiffReport();
+  view.DiffReportView.render(diffStruct);
   ```
 
 See [Identifier Registry – Data Contracts](identifier_registry.md#data-contracts) for corpus schema references.

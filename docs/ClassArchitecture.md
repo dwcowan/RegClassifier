@@ -34,7 +34,7 @@
 | `+controller/ProjectionHeadController.m` | Instantiates `model.ProjectionHead` and delegates calls without duplicate training logic |
 | `+controller/FineTuneController.m`       | Builds contrastive datasets and produces `model.Encoder` models |
 | `+controller/EvaluationController.m`     | Computes metrics and invokes `view.EvalReportView.render` and gold pack evaluation |
-| `+controller/DataAcquisitionController.m`| Fetches regulatory corpora and triggers diff analyses with `view.DiffReportView` |
+| `+controller/DataAcquisitionController.m`| Fetches regulatory corpora and returns `diffStruct` for `view.DiffReportView.render` |
 | `+controller/PipelineController.m`       | Orchestrates end‑to‑end execution based on module dependencies |
 | `+controller/TestController.m`           | Executes continuous test suite to maintain reliability |
 
