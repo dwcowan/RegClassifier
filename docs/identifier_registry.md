@@ -210,6 +210,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 |------|---------|-----------|-------|------|
 | startup.m | Initialize project paths and defaults | startup | @todo | |
 | shutdown.m | Remove project paths and restore defaults | shutdown | @todo | |
+| TESTING_POLICY.md | Policy on test scopes, golden data, and CI expectations | n/a | @todo | documentation |
 
 
 

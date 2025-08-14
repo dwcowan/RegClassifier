@@ -6,6 +6,9 @@ This README is a process guide for maintaining naming consistency. The
 all naming rules. All approved classes, class properties, class methods, functions, variables, constants, files/modules, tests, and other identifiers are tracked in the
 `identifier_registry.md`.
 
+For guidance on writing and organizing tests, consult the
+[TESTING_POLICY](TESTING_POLICY.md).
+
 - Pseudocode identifiers used only for algorithm illustration must not be added to [`docs/identifier_registry.md`](identifier_registry.md); keep them within documentation such as `docs/pseudocode/`.
 - New or modified class properties and class methods must be recorded in [`docs/identifier_registry.md`](identifier_registry.md) alongside the corresponding class names.
 - New or modified class interfaces must be added to [`docs/identifier_registry.md`](identifier_registry.md) as well.
