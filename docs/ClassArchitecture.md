@@ -30,12 +30,10 @@
 | `+controller/ChunkingController.m`       | Splits documents into `model.Chunk` models via `reg.chunkText` |
 | `+controller/WeakLabelingController.m`   | Applies heuristic rules to create `model.LabelMatrix` models |
 | `+controller/EmbeddingController.m`      | Generates and caches `model.Embedding` models (`reg.docEmbeddingsBertGpu`) |
-| `+controller/BaselineController.m`       | Trains `model.BaselineModel` and serves retrieval (`reg.trainMultilabel`, `reg.hybridSearch`) |
-| `+controller/ProjectionHeadController.m` | Instantiates `model.ProjectionHead` and delegates calls without duplicate training logic |
-| `+controller/FineTuneController.m`       | Builds contrastive datasets and produces `model.Encoder` models |
+| `+controller/TrainingController.m`       | Handles baseline, projection, or finetune training via `mode` parameter |
 | `+controller/EvaluationController.m`     | Computes metrics and invokes `view.EvalReportView.render` and gold pack evaluation |
 | `+controller/DataAcquisitionController.m`| Fetches regulatory corpora and returns `diffStruct` for `view.DiffReportView.render` |
-| `+controller/PipelineController.m`       | Orchestrates end‑to‑end execution based on module dependencies |
+| `+controller/PipelineController.m`       | Orchestrates end‑to‑end execution and configures TrainingController |
 | `+controller/TestController.m`           | Executes continuous test suite to maintain reliability |
 
 **Helper Functions (+helpers)**
@@ -655,89 +653,39 @@ classdef EmbeddingController
 end
 
 
-% +controller/BaselineController.m
-classdef BaselineController
-    %BASELINECONTROLLER Constructs baseline model and delegates operations.
+
+% +controller/TrainingController.m
+classdef TrainingController
+    %TRAININGCONTROLLER Unifies baseline, projection, and finetune routines.
 
     methods (Access=public)
-        function model = train(~, labelMatrixObj, embeddingVec, numEpochs, learningRate)
-            %TRAIN Fit baseline classifier via model.
-            %   model = train(obj, labelMatrixObj, embeddingVec, numEpochs, learningRate)
-            %   labelMatrixObj (LabelMatrix): Labels.
-            %   embeddingVec (Embedding Vec): Embeddings.
-            %   numEpochs (double): Number of training epochs.
-            %   learningRate (double): Step size.
-            %   model (BaselineModel): Trained model.
+        function modelObj = run(~, mode, dataStruct)
+            %RUN Execute training routine.
+            %   modelObj = run(obj, mode, dataStruct)
+            %   mode (string): "baseline", "projection", or "finetune".
+            %   dataStruct (struct): Inputs for the selected routine.
+            %   modelObj (BaselineModel | ProjectionHead | Encoder): Trained model.
             %
             %   Side effects: none.
-            baselineModel = model.BaselineModel(labelMatrixObj, embeddingVec);
-            baselineModel.train(numEpochs, learningRate);
-            model = baselineModel;
-        end
-
-        function chunkVec = retrieve(~, model, queryEmbeddingObj, topK)
-            %RETRIEVE Retrieve top chunks using model.
-            %   chunkVec = retrieve(obj, model, queryEmbeddingObj, topK)
-            %   model (BaselineModel): Model to query.
-            %   queryEmbeddingObj (Embedding): Query embedding.
-            %   topK (double): Number of results.
-            %   chunkVec (Chunk Vec): Retrieved chunks.
-            %
-            %   Side effects: none.
-            chunkVec = model.retrieve(queryEmbeddingObj, topK);
+            switch mode
+                case "baseline"
+                    baselineModel = model.BaselineModel(dataStruct.labelMatrixObj, dataStruct.embeddingVec);
+                    baselineModel.train(dataStruct.numEpochs, dataStruct.learningRate);
+                    modelObj = baselineModel;
+                case "projection"
+                    head = model.ProjectionHead(dataStruct.inputDim, dataStruct.outputDim);
+                    head.fit(dataStruct.embeddingMat, dataStruct.labelMat, dataStruct.numEpochs, dataStruct.learningRate);
+                    modelObj = head;
+                case "finetune"
+                    encoder = model.Encoder(dataStruct.baseModel);
+                    encoder.fineTune(dataStruct.datasetTbl);
+                    modelObj = encoder;
+                otherwise
+                    error("Unsupported mode: %s", mode);
+            end
         end
     end
 end
-
-% +controller/ProjectionHeadController.m
-classdef ProjectionHeadController
-    %PROJECTIONHEADCONTROLLER Instantiates projection head model and delegates work.
-
-    properties (Access=private)
-        head % ProjectionHead instance
-    end
-
-    methods (Access=public)
-        function obj = ProjectionHeadController(inputDim, outputDim)
-            %PROJECTIONHEADCONTROLLER Construct controller and underlying model.
-            %   obj = ProjectionHeadController(inputDim, outputDim)
-            %   inputDim (double): Input dimension.
-            %   outputDim (double): Output dimension.
-            %   obj (ProjectionHeadController): New instance.
-            obj.head = model.ProjectionHead(inputDim, outputDim);
-        end
-
-        function train(obj, embeddingMat, labelMat, numEpochs, learningRate)
-            %TRAIN Delegate training to ProjectionHead.
-            obj.head.fit(embeddingMat, labelMat, numEpochs, learningRate);
-        end
-
-        function embeddingMatTrans = project(obj, embeddingMat)
-            %PROJECT Delegate projection to ProjectionHead.
-            embeddingMatTrans = obj.head.transform(embeddingMat);
-        end
-    end
-end
-
-% +controller/FineTuneController.m
-classdef FineTuneController
-    %FINETUNECONTROLLER Fine-tunes base models.
-    
-    methods (Access=public)
-        function encoder = run(~, datasetTbl, baseModel)
-            %RUN Fine-tune encoder.
-            %   encoder = run(obj, datasetTbl, baseModel)
-            %   datasetTbl (Tbl): Training data.
-            %   baseModel (Encoder): Base model.
-            %   encoder (Encoder): Fine-tuned encoder.
-            %
-            %   Side effects: none.
-            encoder = [];
-        end
-    end
-end
-
-
 % +controller/EvaluationController.m
 classdef EvaluationController
     %EVALUATIONCONTROLLER Computes metrics and generates reports.
@@ -907,6 +855,8 @@ classdef PipelineController
             %   configStruct (struct): Configuration for steps.
             %
             %   Side effects: orchestrates pipeline execution.
+            trainingMode = configStruct.trainingMode;
+            obj.controllerStruct.training = controller.TrainingController(trainingMode);
         end
     end
 end
