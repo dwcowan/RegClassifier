@@ -5,9 +5,12 @@ end
 
 function testDiffVersionsComputesAddedAndRemoved(testCase)
     controllerObj = controller.DataAcquisitionController();
-    oldCorpusVec = struct('docId', {'A', 'B'});
-    newCorpusVec = struct('docId', {'B', 'C'});
-    diffStruct = controllerObj.diffVersions(oldCorpusVec, newCorpusVec);
+    oldDocs = struct('docId', {'A', 'B'});
+    newDocs = struct('docId', {'B', 'C'});
+    save("old.mat", "-struct", struct('documentVec', oldDocs));
+    save("new.mat", "-struct", struct('documentVec', newDocs));
+    c = onCleanup(@() delete(["old.mat", "new.mat"]));
+    diffStruct = controllerObj.diffVersions("old", "new");
     verifyEqual(testCase, {diffStruct.addedDocs.docId}, {'C'});
     verifyEqual(testCase, {diffStruct.removedDocs.docId}, {'A'});
 end

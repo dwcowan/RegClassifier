@@ -43,7 +43,6 @@
 | Function Path                  | Purpose                                                              |
 | ------------------------------ | -------------------------------------------------------------------- |
 | `+helpers/loadCorpus.m`        | Load `model.Document` vectors for a corpus version identifier        |
-| `+helpers/docSetdiff.m`       | Return documents in first corpus missing from the second by `docId` |
 | `+helpers/detectChanges.m`     | Detect documents with identical `docId` but modified `text` content  |
 
 ## Class Definitions
@@ -794,19 +793,6 @@ function documentVec = loadCorpus(versionId)
     end
 end
 
-% +helpers/docSetdiff.m
-function diffDocsVec = docSetdiff(corpusAVec, corpusBVec)
-    %DOCSETDIFF Documents in corpusAVec but not corpusBVec by `docId`.
-    %   diffDocsVec = docSetdiff(corpusAVec, corpusBVec)
-    %   corpusAVec (model.Document Vec): Candidate corpus.
-    %   corpusBVec (model.Document Vec): Corpus to subtract.
-    %   diffDocsVec (model.Document Vec): Unique documents.
-    %
-    %   Side effects: none.
-    [~, idxVec] = builtin('setdiff', {corpusAVec.docId}, {corpusBVec.docId});
-    diffDocsVec = corpusAVec(idxVec);
-end
-
 % +helpers/detectChanges.m
 function changedDocsVec = detectChanges(oldCorpusVec, newCorpusVec)
     %DETECTCHANGES Documents with same `docId` but different `text`.
@@ -855,15 +841,14 @@ classdef DataAcquisitionController
             %   diffStruct (struct): Differences between versions with fields:
             %       addedDocs (Document Vec): Only in newVersionId.
             %       removedDocs (Document Vec): Only in oldVersionId.
-            %       changedDocs (Document Vec): Present in both but modified.
             %   Callers can pass diffStruct to DiffReportView.render.
             %
             %   Side effects: accesses external resources.
-            oldCorpus = helpers.loadCorpus(oldVersionId);
-            newCorpus = helpers.loadCorpus(newVersionId);
-            diffStruct.addedDocs = helpers.docSetdiff(newCorpus, oldCorpus);
-            diffStruct.removedDocs = helpers.docSetdiff(oldCorpus, newCorpus);
-            diffStruct.changedDocs = helpers.detectChanges(oldCorpus, newCorpus);
+            oldDocs = helpers.loadCorpus(oldVersionId);
+            newDocs = helpers.loadCorpus(newVersionId);
+            oldCorpus = model.CorpusVersion(oldVersionId, oldDocs);
+            newCorpus = model.CorpusVersion(newVersionId, newDocs);
+            diffStruct = oldCorpus.diff(newCorpus);
         end
     end
 end
