@@ -56,7 +56,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 | Encoder | Fine-tuned model for contrastive learning | module | @todo | [ClassArchitecture.md#L361-L404](ClassArchitecture.md#L361-L404) | |
 | Metrics | Evaluation results and per-label performance | module | @todo | [ClassArchitecture.md#L407-L439](ClassArchitecture.md#L407-L439) | |
 | CorpusVersion | Versioned corpora for diff operations | module | @todo | [ClassArchitecture.md#L442-L475](ClassArchitecture.md#L442-L475) | |
-| EvalReportView | Generates reports summarizing metrics | module | @todo | [ClassArchitecture.md#L480-L503](ClassArchitecture.md#L480-L503) | |
+| EvalReportView | Generates reports summarizing metrics | module | @todo | [ClassArchitecture.md#L479-L516](ClassArchitecture.md#L479-L516) | |
 | DiffReportView | Presents diffs between regulatory versions | module | @todo | [ClassArchitecture.md#L505-L523](ClassArchitecture.md#L505-L523) | |
 | MetricsPlotsView | Visualizes metrics and trend plots | module | @todo | [ClassArchitecture.md#L526-L549](ClassArchitecture.md#L526-L549) | |
 | IngestionController | Parses PDFs and produces Document models | module | @todo | [ClassArchitecture.md#L554-L569](ClassArchitecture.md#L554-L569) | |
@@ -66,7 +66,7 @@ Keep the illustrative examples below in sync with the current naming conventions
 | BaselineController | Constructs BaselineModel and delegates operations | module | @todo | [ClassArchitecture.md#L629-L660](ClassArchitecture.md#L629-L660) | |
 | ProjectionHeadController | Manages projection head training and usage | module | @todo | [ClassArchitecture.md#L662-L689](ClassArchitecture.md#L662-L689) | |
 | FineTuneController | Fine-tunes base models | module | @todo | [ClassArchitecture.md#L692-L708](ClassArchitecture.md#L692-L708) | |
-| EvaluationController | Computes metrics and generates reports | module | @todo | [ClassArchitecture.md#L711-L737](ClassArchitecture.md#L711-L737) | |
+| EvaluationController | Computes metrics and generates reports | module | @todo | [ClassArchitecture.md#L728-L763](ClassArchitecture.md#L728-L763) | |
 | DataAcquisitionController | Fetches corpora and returns diff data | module | @todo | [ClassArchitecture.md#L740-L765](ClassArchitecture.md#L740-L765) | |
 | PipelineController | Orchestrates end-to-end pipeline | module | @todo | [ClassArchitecture.md#L768-L796](ClassArchitecture.md#L768-L796) | |
 | TestController | Executes continuous test suite | module | @todo | [ClassArchitecture.md#L799-L817](ClassArchitecture.md#L799-L817) | |
@@ -130,8 +130,8 @@ Keep the illustrative examples below in sync with the current naming conventions
 | [encode](ClassArchitecture.md#L381-L389) | [Encoder](ClassArchitecture.md#L349-L392) | Convert text to embedding | |
 | [summary](ClassArchitecture.md#L417-L425) | [Metrics](ClassArchitecture.md#L395-L427) | Return human-readable summary of metrics | |
 | [diff](ClassArchitecture.md#L452-L460) | [CorpusVersion](ClassArchitecture.md#L430-L463) | Return differences between versions | |
-| [renderPDF](ClassArchitecture.md#L473-L480) | [EvalReportView](ClassArchitecture.md#L468-L491) | Generate PDF report | |
-| [renderHTML](ClassArchitecture.md#L482-L489) | [EvalReportView](ClassArchitecture.md#L468-L491) | Generate HTML report | |
+| [renderPDF](ClassArchitecture.md#L498-L505) | [EvalReportView](ClassArchitecture.md#L479-L516) | Generate PDF report | |
+| [renderHTML](ClassArchitecture.md#L507-L514) | [EvalReportView](ClassArchitecture.md#L479-L516) | Generate HTML report | |
 | [render](ClassArchitecture.md#L498-L509) | [DiffReportView](ClassArchitecture.md#L493-L511) | Generate diff report in HTML or PDF | |
 | [plotHeatmap](ClassArchitecture.md#L519-L526) | [MetricsPlotsView](ClassArchitecture.md#L514-L537) | Render heatmap from metric matrix | |
 | [plotTrend](ClassArchitecture.md#L528-L535) | [MetricsPlotsView](ClassArchitecture.md#L514-L537) | Render line chart for metric trends | |
@@ -144,8 +144,8 @@ Keep the illustrative examples below in sync with the current naming conventions
 | [trainHead](ClassArchitecture.md#L651-L662) | [ProjectionHeadController](ClassArchitecture.md#L646-L673) | Instantiate and fit projection head | |
 | [applyHead](ClassArchitecture.md#L664-L671) | [ProjectionHeadController](ClassArchitecture.md#L646-L673) | Apply fitted projection head to embeddings | |
 | [run](ClassArchitecture.md#L681-L689) | [FineTuneController](ClassArchitecture.md#L676-L692) | Fine-tune encoder | |
-| [evaluate](ClassArchitecture.md#L716-L726) | [EvaluationController](ClassArchitecture.md#L711-L744) | Compute metrics for model | |
-| [generateReports](ClassArchitecture.md#L728-L743) | [EvaluationController](ClassArchitecture.md#L711-L744) | Produce evaluation reports | |
+| [evaluate](ClassArchitecture.md#L733-L743) | [EvaluationController](ClassArchitecture.md#L728-L763) | Compute metrics for model | |
+| [generateReports](ClassArchitecture.md#L745-L761) | [EvaluationController](ClassArchitecture.md#L728-L763) | Produce evaluation reports | |
 | [fetch](ClassArchitecture.md#L755-L763) | [DataAcquisitionController](ClassArchitecture.md#L748-L775) | Retrieve corpora from sources | |
 | [diffVersions](ClassArchitecture.md#L765-L773) | [DataAcquisitionController](ClassArchitecture.md#L748-L775) | Run diff and return `diffStruct` for reporting | |
 | [execute](ClassArchitecture.md#L797-L804) | [PipelineController](ClassArchitecture.md#L779-L806) | Execute pipeline steps | |

@@ -481,34 +481,34 @@ classdef EvalReportView
     %EVALREPORTVIEW Renders evaluation metrics into report format.
     
     methods (Access=public)
-        function render(obj, metrics, outPath)
+        function render(obj, metrics, reportPath)
             %RENDER Dispatch to PDF or HTML renderer.
-            %   render(obj, metrics, outPath)
+            %   render(obj, metrics, reportPath)
             %   metrics (Metrics): Metrics to report.
-            %   outPath (string): Output file path.
+            %   reportPath (string): Output file path.
             %
             %   Side effects: writes file to disk.
-            if endsWith(lower(outPath), ".pdf")
-                obj.renderPDF(metrics, outPath);
+            if endsWith(lower(reportPath), ".pdf")
+                obj.renderPDF(metrics, reportPath);
             else
-                obj.renderHTML(metrics, outPath);
+                obj.renderHTML(metrics, reportPath);
             end
         end
 
-        function renderPDF(~, metrics, path)
+        function renderPDF(~, metrics, pdfPath)
             %RENDERPDF Generate PDF report.
-            %   renderPDF(obj, metrics, path)
+            %   renderPDF(obj, metrics, pdfPath)
             %   metrics (Metrics): Metrics to report.
-            %   path (string): Output PDF path.
+            %   pdfPath (string): Output PDF path.
             %
             %   Side effects: writes file to disk.
         end
 
-        function renderHTML(~, metrics, path)
+        function renderHTML(~, metrics, htmlPath)
             %RENDERHTML Generate HTML report.
-            %   renderHTML(obj, metrics, path)
+            %   renderHTML(obj, metrics, htmlPath)
             %   metrics (Metrics): Metrics to report.
-            %   path (string): Output HTML path.
+            %   htmlPath (string): Output HTML path.
             %
             %   Side effects: writes file to disk.
         end
@@ -746,17 +746,18 @@ classdef EvaluationController
             %GENERATEREPORTS Use supplied view's unified render interface.
             %   generateReports(obj, metrics, outDir, viewHandle)
             %   metrics (Metrics): Evaluation results.
-            %   outDir (string): Output directory.
+            %   outDir (string): Directory for output file.
             %   viewHandle (EvalReportView|function_handle): View dependency.
-            %       Must implement: render(metrics, outDir)
+            %       Must implement: render(metrics, reportPath)
             %
-            %   Side effects: writes reports to disk.
+            %   Side effects: writes report to disk.
             if isa(viewHandle, 'function_handle')
                 viewObj = viewHandle();
             else
                 viewObj = viewHandle;
             end
-            viewObj.render(metrics, outDir);
+            reportPath = fullfile(outDir, "metricsReport.pdf");
+            viewObj.render(metrics, reportPath);
         end
     end
 end
