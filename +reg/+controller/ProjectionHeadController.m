@@ -24,15 +24,43 @@ classdef ProjectionHeadController < reg.mvc.BaseController
 
         function run(obj)
             %RUN Execute projection head training and evaluation.
-            %   Equivalent to `reg_projection_workflow`.
-            chunks = obj.FeatureModel.load(); %#ok<NASGU>
-            [features, embeddings, vocab] = obj.FeatureModel.process([]); %#ok<NASGU>
-            tripletsRaw = obj.FineTuneDataModel.load(); %#ok<NASGU>
-            triplets = obj.FineTuneDataModel.process([]); %#ok<NASGU>
-            headRaw = obj.ProjectionHeadModel.load(); %#ok<NASGU>
-            projE = obj.ProjectionHeadModel.process([]); %#ok<NASGU>
-            evalRaw = obj.EvaluationModel.load(); %#ok<NASGU>
-            metrics = obj.EvaluationModel.process([]); %#ok<NASGU>
+            %   Orchestrates feature extraction, triplet building, head
+            %   training and metric computation.
+            %
+            %   Preconditions
+            %       * FeatureModel supplies chunk text
+            %       * FineTuneDataModel expects embeddings for triplet mining
+            %       * ProjectionHeadModel consumes triplets to learn weights
+            %   Side Effects
+            %       * Projection head parameters may be persisted
+            %       * Evaluation metrics displayed via view
+            %
+            %   Legacy mapping:
+            %       Step 1 ↔ `precompute_embeddings`
+            %       Step 3 ↔ `ft_build_contrastive_dataset`
+            %       Step 5 ↔ `train_projection_head`
+            %       Step 7 ↔ `eval_retrieval`
+
+            % Step 1: load chunks and derive features/embeddings
+            chunks = obj.FeatureModel.load();
+            [features, embeddings, vocab] = obj.FeatureModel.process(chunks); %#ok<NASGU>
+            %   Expect FeatureModel to validate chunk schema and handle
+            %   tokenizer/embedding errors internally.
+
+            % Step 3: construct contrastive triplets from embeddings
+            %   The data model should ensure non-empty triplets and balanced
+            %   sampling.
+            tripletsRaw = obj.FineTuneDataModel.load(embeddings);
+            triplets = obj.FineTuneDataModel.process(tripletsRaw);
+
+            % Step 5: train projection head using triplets
+            %   Model should check dimensions and raise if triplets malformed.
+            headRaw = obj.ProjectionHeadModel.load(triplets);
+            projE = obj.ProjectionHeadModel.process(headRaw);
+
+            % Step 7: evaluate retrieval performance with projected vectors
+            evalRaw = obj.EvaluationModel.load(projE);
+            metrics = obj.EvaluationModel.process(evalRaw);
             obj.View.display(metrics);
         end
     end

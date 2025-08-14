@@ -34,48 +34,79 @@ classdef PipelineController < reg.mvc.BaseController
 
         function run(obj)
             %RUN Execute the end-to-end pipeline.
-            %   RUN(obj) performs ingestion, feature extraction, training,
-            %   indexing, persistence and reporting. Equivalent to
-            %   `reg_pipeline`.
+            %   Orchestrates ingestion, feature extraction, weak labeling,
+            %   model training, indexing, persistence and reporting.
+            %
+            %   Preconditions
+            %       * All model properties must be configured
+            %       * Input directory and DB credentials defined in cfg
+            %   Side Effects
+            %       * Writes search index and classifier outputs to DB
+            %       * Produces a final PDF/HTML report via view
+            %
+            %   Legacy mapping follows `reg_pipeline`:
+            %       Step 2 ↔ `ingest_pdfs`
+            %       Step 3 ↔ `chunk_text`
+            %       Step 4 ↔ `ta_features` + embedding helpers
+            %       Step 5 ↔ `embed_with_head`
+            %       Step 6 ↔ `weak_rules`
+            %       Step 7 ↔ `train_multilabel`/`predict_multilabel`
+            %       Step 8 ↔ `hybrid_search`
+            %       Step 9 ↔ `upsert_chunks`
+            %       Step 10 ↔ `generate_reg_report`
+
             % Step 1: Retrieve configuration
-            cfgRaw = obj.ConfigModel.load(); %#ok<NASGU>
-            cfg = obj.ConfigModel.process(cfgRaw); %#ok<NASGU>
+            cfgRaw = obj.ConfigModel.load();
+            cfg = obj.ConfigModel.process(cfgRaw);
 
             % Step 2: Ingest PDFs into documents table
-            files = obj.PDFIngestModel.load(cfg); %#ok<NASGU>
-            docsT = obj.PDFIngestModel.process(files); %#ok<NASGU>
+            %   PDFIngestModel should verify file readability and handle OCR
+            %   failures gracefully.
+            files = obj.PDFIngestModel.load(cfg);
+            docsT = obj.PDFIngestModel.process(files);
 
             % Step 3: Chunk documents into text segments
-            chunksRaw = obj.TextChunkModel.load(docsT); %#ok<NASGU>
-            chunksT = obj.TextChunkModel.process(chunksRaw); %#ok<NASGU>
+            %   Relies on tokens/overlap parameters from cfg.
+            chunksRaw = obj.TextChunkModel.load(docsT);
+            chunksT = obj.TextChunkModel.process(chunksRaw);
 
             % Step 4: Extract features and embeddings
-            featuresRaw = obj.FeatureModel.load(chunksT); %#ok<NASGU>
+            %   FeatureModel expected to fall back (e.g., to fastText) if the
+            %   preferred embedding backend fails.
+            featuresRaw = obj.FeatureModel.load(chunksT);
             [features, embeddings, vocab] = obj.FeatureModel.process(featuresRaw); %#ok<NASGU>
 
             % Step 5: Apply projection head to embeddings
-            projRaw = obj.ProjectionHeadModel.load(embeddings); %#ok<NASGU>
-            projE = obj.ProjectionHeadModel.process(projRaw); %#ok<NASGU>
+            %   Head model should validate dimensions of embeddings and warn
+            %   if projection parameters are incompatible.
+            projRaw = obj.ProjectionHeadModel.load(embeddings);
+            projE = obj.ProjectionHeadModel.process(projRaw);
 
             % Step 6: Generate weak labels
-            weakRaw = obj.WeakLabelModel.load(projE); %#ok<NASGU>
+            %   WeakLabelModel enforces label schema and handles rule errors.
+            weakRaw = obj.WeakLabelModel.load(projE);
             [Yweak, Yboot] = obj.WeakLabelModel.process(weakRaw); %#ok<NASGU>
 
             % Step 7: Train classifiers and make predictions
-            clsRaw = obj.ClassifierModel.load(Yweak); %#ok<NASGU>
+            %   ClassifierModel should validate that Yweak is non-empty.
+            clsRaw = obj.ClassifierModel.load(Yweak);
             [models, scores, thresholds, pred] = obj.ClassifierModel.process(clsRaw); %#ok<NASGU>
 
             % Step 8: Build search index
-            searchRaw = obj.SearchIndexModel.load(pred); %#ok<NASGU>
+            %   SearchIndexModel must ensure vocabulary and embeddings align.
+            searchRaw = obj.SearchIndexModel.load(pred);
             searchIx = obj.SearchIndexModel.process(searchRaw); %#ok<NASGU>
 
             % Step 9: Persist results to database
-            dbRaw = obj.DatabaseModel.load(searchIx); %#ok<NASGU>
-            dbResult = obj.DatabaseModel.process(dbRaw); %#ok<NASGU>
+            %   DatabaseModel should handle connection errors and rollbacks.
+            dbRaw = obj.DatabaseModel.load(searchIx);
+            dbResult = obj.DatabaseModel.process(dbRaw);
 
             % Step 10: Assemble report data and display
-            reportRaw = obj.ReportModel.load(dbResult); %#ok<NASGU>
-            reportData = obj.ReportModel.process(reportRaw); %#ok<NASGU>
+            %   ReportModel verifies that metrics and predictions are present
+            %   before rendering.
+            reportRaw = obj.ReportModel.load(dbResult);
+            reportData = obj.ReportModel.process(reportRaw);
             obj.View.display(reportData);
         end
     end
