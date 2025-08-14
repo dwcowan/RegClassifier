@@ -4,6 +4,16 @@ End-to-end MATLAB project for ingesting banking regulations (PDFs), chunking, we
 multi-label training, hybrid retrieval, and reporting. Includes a full MATLAB Test suite and a DB
 test using SQLite (no external server required).
 
+## Prerequisites
+This project requires MATLAB with the following toolboxes:
+- Text Analytics Toolbox
+- Deep Learning Toolbox
+- Statistics and Machine Learning Toolbox
+- Database Toolbox
+- Parallel Computing Toolbox
+- MATLAB Report Generator
+- Computer Vision Toolbox
+
 ## Layout
 - `pipeline.json` — pipeline-wide settings (input dir, backend, DB, etc.)
 - `config.m` — loads defaults from JSON (labels, chunking, DB, etc.)
