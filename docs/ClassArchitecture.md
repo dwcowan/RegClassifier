@@ -43,7 +43,7 @@
 | Function Path                  | Purpose                                                              |
 | ------------------------------ | -------------------------------------------------------------------- |
 | `+helpers/loadCorpus.m`        | Load `model.Document` vectors for a corpus version identifier        |
-| `+helpers/setdiff.m`          | Return documents in first corpus missing from the second by `docId` |
+| `+helpers/docSetdiff.m`       | Return documents in first corpus missing from the second by `docId` |
 | `+helpers/detectChanges.m`     | Detect documents with identical `docId` but modified `text` content  |
 
 ## Class Definitions
@@ -794,16 +794,16 @@ function documentVec = loadCorpus(versionId)
     end
 end
 
-% +helpers/setdiff.m
-function diffDocsVec = setdiff(corpusAVec, corpusBVec)
-    %SETDIFF Documents in corpusAVec but not corpusBVec by `docId`.
-    %   diffDocsVec = setdiff(corpusAVec, corpusBVec)
+% +helpers/docSetdiff.m
+function diffDocsVec = docSetdiff(corpusAVec, corpusBVec)
+    %DOCSETDIFF Documents in corpusAVec but not corpusBVec by `docId`.
+    %   diffDocsVec = docSetdiff(corpusAVec, corpusBVec)
     %   corpusAVec (model.Document Vec): Candidate corpus.
     %   corpusBVec (model.Document Vec): Corpus to subtract.
     %   diffDocsVec (model.Document Vec): Unique documents.
     %
     %   Side effects: none.
-    [~, idxVec] = setdiff({corpusAVec.docId}, {corpusBVec.docId});
+    [~, idxVec] = builtin('setdiff', {corpusAVec.docId}, {corpusBVec.docId});
     diffDocsVec = corpusAVec(idxVec);
 end
 
@@ -858,8 +858,8 @@ classdef DataAcquisitionController
             %   Side effects: accesses external resources.
             oldCorpus = helpers.loadCorpus(oldVersionId);
             newCorpus = helpers.loadCorpus(newVersionId);
-            diffStruct.addedDocs = helpers.setdiff(newCorpus, oldCorpus);
-            diffStruct.removedDocs = helpers.setdiff(oldCorpus, newCorpus);
+            diffStruct.addedDocs = helpers.docSetdiff(newCorpus, oldCorpus);
+            diffStruct.removedDocs = helpers.docSetdiff(oldCorpus, newCorpus);
             diffStruct.changedDocs = helpers.detectChanges(oldCorpus, newCorpus);
         end
     end
