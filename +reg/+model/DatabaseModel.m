@@ -2,6 +2,9 @@ classdef DatabaseModel < reg.mvc.BaseModel
     %DATABASEMODEL Stub model persisting predictions to a database.
 
     properties
+        % Database connection handle created in `load`
+        conn
+
         % Database configuration structure
         dbConfig
     end
@@ -16,17 +19,28 @@ classdef DatabaseModel < reg.mvc.BaseModel
             end
         end
 
-        function inputs = load(~, varargin) %#ok<INUSD>
+        function inputs = load(obj, varargin) %#ok<INUSD>
             %LOAD Establish database connection.
-            %   INPUTS = LOAD(obj) prepares database handles for writing.
-            %   Equivalent to `ensure_db` connection setup.
+            %   INPUTS = LOAD(obj) prepares database handles for writing by
+            %   creating or reusing a connection in the `conn` property.
+            %   Equivalent to `ensure_db` connection setup. Implementations
+            %   should close any existing connection before opening a new
+            %   one.
             error("reg:model:NotImplemented", ...
                 "DatabaseModel.load is not implemented.");
         end
-        function process(~, inputs) %#ok<INUSD>
+
+        function process(obj, inputs) %#ok<INUSD>
             %PROCESS Persist predictions to database.
-            %   PROCESS(obj, inputs) writes results using the provided
-            %   configuration. Equivalent to `ensure_db` persistence.
+            %   PROCESS(obj, inputs) writes chunk predictions and scores
+            %   using `reg.upsert_chunks` so that rows in the `reg_chunks`
+            %   table are inserted or updated with `lbl_*` and `score_*`
+            %   columns for each label. Implementations should wrap
+            %   inserts in a transaction when supported and ensure
+            %   connections are committed or rolled back on error. Call
+            %   `close(obj.conn)` when database work is complete to free
+            %   resources.
+            %   Equivalent to `ensure_db` persistence.
             error("reg:model:NotImplemented", ...
                 "DatabaseModel.process is not implemented.");
         end
