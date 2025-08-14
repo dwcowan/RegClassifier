@@ -66,12 +66,14 @@ classdef Document
 
         function n = tokenCount(obj)
             %TOKENCOUNT Return number of tokens in text.
+            %   Tokens are whitespace-separated words.
             %   n = tokenCount(obj)
             %   obj (Document): Instance.
             %   n (double): Number of tokens.
             %
             %   Side effects: none.
-            n = numel(obj.text);
+            tokens = strsplit(obj.text);
+            n = numel(tokens);
         end
 
         function metadataStruct = metadata(obj)
@@ -120,12 +122,14 @@ classdef Chunk
 
         function n = tokenCount(obj)
             %TOKENCOUNT Return number of tokens in text.
+            %   Tokens are whitespace-separated words.
             %   n = tokenCount(obj)
             %   obj (Chunk): Instance.
             %   n (double): Number of tokens.
             %
             %   Side effects: none.
-            n = numel(obj.text);
+            tokens = strsplit(obj.text);
+            n = numel(tokens);
         end
 
         function tf = overlaps(obj, other)
