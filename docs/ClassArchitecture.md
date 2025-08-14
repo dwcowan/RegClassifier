@@ -834,14 +834,17 @@ classdef DataAcquisitionController
 %   using DiffReportView.
     
     methods (Access=public)
-        function corpusStruct = fetch(~, sources)
+        function corpusVersion = fetch(~, sources)
             %FETCH Retrieve corpora from sources.
-            %   corpusStruct = fetch(obj, sources)
+            %   corpusVersion = fetch(obj, sources)
             %   sources (string Cell): Data sources.
-            %   corpusStruct (struct): Retrieved corpus data.
+            %   corpusVersion (model.CorpusVersion): Retrieved corpus with fields:
+            %       versionId (string): Corpus version identifier.
+            %       documentVec (Document Vec): Documents in the corpus.
             %
             %   Side effects: accesses external resources.
-            corpusStruct = [];
+            documentVec = model.Document.empty;
+            corpusVersion = model.CorpusVersion("versionId", documentVec);
         end
 
         function diffStruct = diffVersions(~, oldVersionId, newVersionId)
