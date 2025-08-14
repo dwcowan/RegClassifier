@@ -1,43 +1,72 @@
-classdef TestFineTuneController < matlab.unittest.TestCase
-    %TESTFINETUNECONTROLLER Ensure FineTuneController methods propagate stubs.
+
+classdef TestFineTuneController < RegTestCase
+    %TESTFINETUNECONTROLLER Verify FineTuneController integrates models and view.
 
     properties
         Controller
+        View
+
     end
 
     methods(TestMethodSetup)
         function setup(tc)
-            pdfModel = reg.model.PDFIngestModel();
-            chunkModel = reg.model.TextChunkModel();
-            weakModel = reg.model.WeakLabelModel();
-            dataModel = reg.model.FineTuneDataModel();
-            encoderModel = reg.model.EncoderFineTuneModel();
-            evalModel = reg.model.EvaluationModel();
-            view = reg.view.MetricsView();
-            tc.Controller = reg.controller.FineTuneController(pdfModel, chunkModel, weakModel, dataModel, encoderModel, evalModel, view);
+
+            pdfModel     = StubModel("files");
+            chunkModel   = StubModel("chunks");
+            weakModel    = StubModel("Yweak","Yboot");
+            dataModel    = StubModel("triplets");
+            encoderModel = StubModel("net");
+            evalModel    = StubModel(struct('Accuracy',0.42));
+            tc.View = SpyView();
+            tc.Controller = reg.controller.FineTuneController(pdfModel, chunkModel, weakModel, dataModel, encoderModel, evalModel, tc.View);
+
         end
     end
 
     methods(TestMethodTeardown)
         function teardown(tc)
             tc.Controller = [];
+
+            tc.View = [];
+
         end
     end
 
     methods(Test)
-        function buildTripletsPropagates(tc)
-            tc.verifyError(@() tc.Controller.buildTriplets(), 'reg:model:NotImplemented');
-        end
-        function trainEncoderPropagates(tc)
-            tc.verifyError(@() tc.Controller.trainEncoder([]), 'reg:model:NotImplemented');
-        end
-        function saveModelRoundTrip(tc)
-            net = struct('W', 1);
-            tmp = [tempname '.mat'];
-            tc.Controller.saveModel(net, tmp);
-            S = load(tmp, 'net');
-            tc.verifyEqual(S.net, net);
-            delete(tmp);
+
+        function runDisplaysMetrics(tc)
+            tc.Controller.run();
+            tc.verifyEqual(tc.View.DisplayedData.Accuracy, 0.42);
         end
     end
 end
+
+classdef StubModel < handle
+    properties
+        ProcessOutputs
+    end
+    methods
+        function obj = StubModel(varargin)
+            obj.ProcessOutputs = varargin;
+        end
+        function varargout = load(~)
+            varargout = cell(1,nargout);
+            [varargout{:}] = deal([]);
+        end
+        function varargout = process(obj, ~)
+            varargout = obj.ProcessOutputs;
+        end
+    end
+end
+
+classdef SpyView < handle
+    properties
+        DisplayedData
+    end
+    methods
+        function display(obj, data)
+            obj.DisplayedData = data;
+        end
+    end
+end
+

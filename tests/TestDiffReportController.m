@@ -1,40 +1,39 @@
 classdef TestDiffReportController < RegTestCase
-    %TESTDIFFREPORTCONTROLLER Ensure diff report controller produces files.
+
+    %TESTDIFFREPORTCONTROLLER Verify diff report generation writes artifacts.
+
+    properties
+        WorkFolder
+    end
+
+    methods(TestMethodSetup)
+        function setup(tc)
+            tc.applyFixture(matlab.unittest.fixtures.WorkingFolderFixture);
+            tc.WorkFolder = pwd;
+        end
+    end
+
+    methods(TestMethodTeardown)
+        function teardown(tc)
+            tc.WorkFolder = [];
+        end
+    end
+
     methods(Test)
-        function runCreatesReports(tc)
-            outDir = tempname;
-            view = reg.view.ReportView();
-            ctrl = reg.controller.DiffReportController(view, @pdfStub, @htmlStub);
-            result = ctrl.run('dirA', 'dirB', outDir);
-            tc.verifyTrue(isfile(result.pdf));
-            tc.verifyTrue(isfile(result.html));
-            tc.verifyEqual(view.DisplayedData, result);
+        function generatesReport(tc)
+            tc.assumeTrue(exist('mlreportgen.report.Report','class') == 8, ...
+                'Requires MATLAB Report Generator');
+            dirA = fullfile(tc.WorkFolder,'A');
+            dirB = fullfile(tc.WorkFolder,'B');
+            mkdir(dirA); mkdir(dirB);
+            writelines("foo", fullfile(dirA,'f.txt'));
+            writelines("bar", fullfile(dirB,'f.txt'));
+            outDir = fullfile(tc.WorkFolder,'out');
+            reg_crr_diff_report(dirA, dirB, 'OutDir', outDir);
+            tc.verifyTrue(isfile(fullfile(outDir,'crr_diff_report.pdf')));
+            tc.verifyTrue(isfile(fullfile(outDir,'summary.csv')));
+            tc.verifyTrue(isfile(fullfile(outDir,'patch.txt')));
         end
     end
 end
 
-function pdfStub(~, ~, varargin)
-    p = inputParser;
-    addParameter(p, 'OutDir', tempdir);
-    parse(p, varargin{:});
-    outDir = p.Results.OutDir;
-    if ~exist(outDir, 'dir')
-        mkdir(outDir);
-    end
-    fid = fopen(fullfile(outDir, 'crr_diff_report.pdf'), 'w');
-    fwrite(fid, 'PDF');
-    fclose(fid);
-end
-
-function htmlStub(~, ~, varargin)
-    p = inputParser;
-    addParameter(p, 'OutDir', tempdir);
-    parse(p, varargin{:});
-    outDir = p.Results.OutDir;
-    if ~exist(outDir, 'dir')
-        mkdir(outDir);
-    end
-    fid = fopen(fullfile(outDir, 'crr_diff_report.html'), 'w');
-    fwrite(fid, '<html></html>');
-    fclose(fid);
-end

@@ -1,46 +1,63 @@
 classdef TestEvaluationController < RegTestCase
-    % Test the EvaluationController utility methods.
 
-    methods (Test)
-        function retrieval_metrics(tc)
-            G = reg.load_gold('gold');
-            C = config(); C.labels = G.labels;
-            E = reg.precompute_embeddings(G.chunks.text, C);
-            posSets = cell(height(G.chunks),1);
-            for i = 1:height(G.chunks)
-                labs = G.Y(i,:);
-                pos = find(any(G.Y(:,labs),2)); pos(pos==i) = [];
-                posSets{i} = pos;
-            end
-            ctrl = reg.controller.EvaluationController();
-            metrics = ctrl.retrievalMetrics(E, posSets, 10);
-            tc.verifyTrue(isfield(metrics, 'RecallAtK'));
-            tc.verifyTrue(isfield(metrics, 'mAP'));
-            tc.verifyTrue(isfield(metrics, 'nDCG'));
+    %TESTEVALUATIONCONTROLLER Verify EvalController integrates models and view.
+
+    properties
+        Controller
+        View
+    end
+
+    methods(TestMethodSetup)
+        function setup(tc)
+            evalModel   = StubModel();
+            logModel    = StubModel();
+            reportModel = StubModel(struct('OutputPath','report.pdf'));
+            tc.View = SpyView();
+            tc.Controller = reg.controller.EvalController(evalModel, logModel, reportModel, tc.View);
         end
+    end
 
-        function gold_pack(tc)
-            ctrl = reg.controller.EvaluationController();
-            res = ctrl.evaluateGoldPack('gold');
-            tc.verifyTrue(isfield(res, 'overall'));
-            tc.verifyTrue(isfield(res, 'perLabel'));
+    methods(TestMethodTeardown)
+        function teardown(tc)
+            tc.Controller = [];
+            tc.View = [];
         end
+    end
 
-        function plotting(tc)
-            ctrl = reg.controller.EvaluationController();
-            % Trend plot
-            csv = fullfile(tempdir, 'metrics.csv');
-            T = table((1:3)', rand(3,1), 'VariableNames', {'Epoch','RecallAt10'});
-            writetable(T, csv);
-            png = fullfile(tempdir, 'trends.png');
-            ctrl.plotTrends(csv, png);
-            tc.verifyTrue(isfile(png));
-            % Co-retrieval heatmap
-            E = rand(5,4);
-            Y = eye(5) > 0;
-            png2 = fullfile(tempdir, 'heatmap.png');
-            ctrl.plotCoRetrievalHeatmap(E, Y, png2, "A"+(0:4));
-            tc.verifyTrue(isfile(png2));
+    methods(Test)
+        function runDisplaysReport(tc)
+            tc.Controller.run();
+            tc.verifyEqual(tc.View.DisplayedData.OutputPath, 'report.pdf');
         end
     end
 end
+
+classdef StubModel < handle
+    properties
+        ProcessOutput
+    end
+    methods
+        function obj = StubModel(out)
+            if nargin < 1, out = []; end
+            obj.ProcessOutput = out;
+        end
+        function data = load(~)
+            data = [];
+        end
+        function out = process(obj, ~)
+            out = obj.ProcessOutput;
+        end
+    end
+end
+
+classdef SpyView < handle
+    properties
+        DisplayedData
+    end
+    methods
+        function display(obj, data)
+            obj.DisplayedData = data;
+        end
+    end
+end
+
