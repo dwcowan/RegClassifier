@@ -1,4 +1,5 @@
 classdef TestDiffReportController < RegTestCase
+
     %TESTDIFFREPORTCONTROLLER Verify diff report generation writes artifacts.
 
     properties

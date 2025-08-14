@@ -1,13 +1,16 @@
+
 classdef TestFineTuneController < RegTestCase
     %TESTFINETUNECONTROLLER Verify FineTuneController integrates models and view.
 
     properties
         Controller
         View
+
     end
 
     methods(TestMethodSetup)
         function setup(tc)
+
             pdfModel     = StubModel("files");
             chunkModel   = StubModel("chunks");
             weakModel    = StubModel("Yweak","Yboot");
@@ -16,17 +19,21 @@ classdef TestFineTuneController < RegTestCase
             evalModel    = StubModel(struct('Accuracy',0.42));
             tc.View = SpyView();
             tc.Controller = reg.controller.FineTuneController(pdfModel, chunkModel, weakModel, dataModel, encoderModel, evalModel, tc.View);
+
         end
     end
 
     methods(TestMethodTeardown)
         function teardown(tc)
             tc.Controller = [];
+
             tc.View = [];
+
         end
     end
 
     methods(Test)
+
         function runDisplaysMetrics(tc)
             tc.Controller.run();
             tc.verifyEqual(tc.View.DisplayedData.Accuracy, 0.42);

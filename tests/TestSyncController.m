@@ -26,4 +26,3 @@ classdef TestSyncController < RegTestCase
         end
     end
 end
-

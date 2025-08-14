@@ -1,4 +1,5 @@
 classdef TestEvaluationController < RegTestCase
+
     %TESTEVALUATIONCONTROLLER Verify EvalController integrates models and view.
 
     properties
