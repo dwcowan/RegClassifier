@@ -1,7 +1,18 @@
 classdef ReportModel < reg.mvc.BaseModel
     %REPORTMODEL Stub model assembling report data.
-    
+
+    properties
+        % Report generation configuration
+        config
+    end
+
     methods
+        function obj = ReportModel(config)
+            if nargin > 0
+                obj.config = config;
+            end
+        end
+
         function inputs = load(~, varargin) %#ok<INUSD>
             error("reg:model:NotImplemented", ...
                 "ReportModel.load is not implemented.");
