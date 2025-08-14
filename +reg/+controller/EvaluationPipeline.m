@@ -8,12 +8,19 @@ classdef EvaluationPipeline < handle
 
     methods
         function obj = EvaluationPipeline(controller, view)
+            %EVALUATIONPIPELINE Construct pipeline with controller and view.
+            %   OBJ = EVALUATIONPIPELINE(controller, view) wraps an
+            %   EvaluationController and a view. Equivalent to setup in
+            %   `reg_eval_and_report`.
             obj.Controller = controller;
             obj.View = view;
         end
 
         function run(obj, goldDir, metricsCSV)
             %RUN Execute evaluation workflow and render report.
+            %   RUN(obj, goldDir, metricsCSV) evaluates a gold pack, plots
+            %   trends and heatmaps, then displays a report. Equivalent to
+            %   `reg_eval_and_report`.
             if nargin < 2, goldDir = 'gold'; end
 
             % Gold pack evaluation and retrieval metrics

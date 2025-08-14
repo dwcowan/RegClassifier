@@ -16,6 +16,9 @@ classdef PipelineController < reg.mvc.BaseController
     
     methods
         function obj = PipelineController(cfgModel, pdfModel, chunkModel, featModel, projModel, weakModel, clsModel, searchModel, dbModel, reportModel, view)
+            %PIPELINECONTROLLER Construct controller wiring the full pipeline.
+            %   OBJ = PIPELINECONTROLLER(...) assembles all models and a view.
+            %   Equivalent to setup in `reg_pipeline`.
             obj@reg.mvc.BaseController(cfgModel, view);
             obj.ConfigModel = cfgModel;
             obj.PDFIngestModel = pdfModel;
@@ -30,6 +33,10 @@ classdef PipelineController < reg.mvc.BaseController
         end
 
         function run(obj)
+            %RUN Execute the end-to-end pipeline.
+            %   RUN(obj) performs ingestion, feature extraction, training,
+            %   indexing, persistence and reporting. Equivalent to
+            %   `reg_pipeline`.
             % Step 1: Retrieve configuration
             cfgRaw = obj.ConfigModel.load(); %#ok<NASGU>
             cfg = obj.ConfigModel.process(cfgRaw); %#ok<NASGU>
