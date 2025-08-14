@@ -63,11 +63,38 @@ classdef FineTuneController < reg.mvc.BaseController
 
         function run(obj)
             %RUN Execute full fine-tuning workflow.
-            %   Equivalent to `reg_finetune_pipeline`.
-            triplets = obj.buildTriplets(); %#ok<NASGU>
-            net = obj.trainEncoder(triplets); %#ok<NASGU>
+            %   Coordinates triplet creation, encoder training, evaluation
+            %   and model persistence.
+            %
+            %   Preconditions
+            %       * Underlying models must supply chunks and weak labels
+            %       * Disk should be writable for model checkpoint
+            %   Side Effects
+            %       * Trained encoder saved to MAT file
+            %       * Metrics rendered via view
+            %
+            %   Legacy mapping:
+            %       Step 1 ↔ `ft_build_contrastive_dataset`
+            %       Step 2 ↔ `ft_train_encoder`
+            %       Step 3 ↔ `ft_eval`
+
+            % Step 1: build contrastive triplets from corpus
+            %   Data model should validate that triplets cover all labels.
+            triplets = obj.buildTriplets();
+
+            % Step 2: fine-tune encoder using triplets
+            %   Encoder model expected to handle empty or malformed triplets
+            %   by raising informative errors.
+            net = obj.trainEncoder(triplets);
+
+            % Step 3: evaluate fine-tuned encoder
+            %   Evaluation model verifies metric inputs and reports issues.
             metrics = obj.evaluate(net);
+
+            % Step 4: persist model checkpoint
             obj.saveModel(net);
+
+            % Step 5: display evaluation metrics
             obj.View.display(metrics);
         end
     end

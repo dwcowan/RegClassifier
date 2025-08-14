@@ -31,18 +31,39 @@ classdef DiffReportController < reg.mvc.BaseController
 
         function report = run(obj, dirA, dirB, outDir)
             %RUN Produce diff reports for two directories.
-            %   REPORT = RUN(obj, dirA, dirB, outDir) compares the two input
-            %   directories and writes PDF and HTML reports to outDir.
-            %   Equivalent to calling `reg_crr_diff_report` and
-            %   `reg_crr_diff_report_html`.
+            %   REPORT = RUN(obj, dirA, dirB, outDir) compares document
+            %   trees and renders PDF and HTML outputs.
+            %
+            %   Preconditions
+            %       * dirA and dirB must exist and contain comparable files
+            %       * Generators should tolerate minor text mismatches
+            %   Side Effects
+            %       * Writes `crr_diff_report.[pdf,html]` under outDir
+            %       * Emits warnings if generation fails
+            %
+            %   The workflow mirrors legacy helpers
+            %       Step 1 ↔ `reg_crr_diff_report`
+            %       Step 2 ↔ `reg_crr_diff_report_html`
+
+            % Step 0: choose output directory (default under runs/)
             if nargin < 4 || isempty(outDir)
                 outDir = fullfile('runs', 'crr_diff_report');
             end
             if ~exist(outDir, 'dir')
                 mkdir(outDir);
             end
+
+            % Step 1: generate PDF diff via `reg_crr_diff_report`
+            %   Expect both directories to be readable; generator should
+            %   validate file pairs and throw descriptive errors.
             obj.PdfGenerator(dirA, dirB, 'OutDir', outDir);
+
+            % Step 2: generate HTML diff via `reg_crr_diff_report_html`
+            %   HTML generator shares the same inputs and should surface
+            %   comparison issues consistently with the PDF step.
             obj.HtmlGenerator(dirA, dirB, 'OutDir', outDir);
+
+            % Step 3: assemble artifact paths and forward to view
             report = struct('pdf', fullfile(outDir, 'crr_diff_report.pdf'), ...
                              'html', fullfile(outDir, 'crr_diff_report.html'));
             obj.View.display(report);

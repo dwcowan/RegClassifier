@@ -25,13 +25,28 @@ classdef SyncController < reg.mvc.BaseController
 
         function out = run(obj, date)
             %RUN Execute synchronization for a given date.
-            %   OUT = RUN(obj, date) calls the underlying sync function and
-            %   passes the resulting struct to the view. Equivalent to
-            %   invoking `reg_crr_sync`.
+            %   OUT = RUN(obj, date) delegates to a sync routine and
+            %   forwards results to the view.
+            %
+            %   Preconditions
+            %       * SyncFunction accepts a 'Date' parameter
+            %   Side Effects
+            %       * May create or update local files and databases
+            %       * Displays summary via view
+            %
+            %   Legacy mapping: invokes `reg_crr_sync`
+
+            % Step 1: determine target date (defaults to today)
             if nargin < 2 || isempty(date)
                 date = datestr(now, 'yyyymmdd');
             end
+
+            % Step 2: perform synchronization via legacy routine
+            %   SyncFunction should validate the date format and handle
+            %   network or IO errors internally.
             out = obj.SyncFunction('Date', date);
+
+            % Step 3: display sync summary
             obj.View.display(out);
         end
     end
