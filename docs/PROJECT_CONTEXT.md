@@ -54,7 +54,7 @@ The project is optimised for a **single-user Windows 10 machine** with:
 - `config.m` — reads knobs and applies overrides.
 
 ### Testing & Validation
-We have a **comprehensive MATLAB test suite** covering:
+All tests must follow the centralized policy in [docs/TESTING_POLICY.md](docs/TESTING_POLICY.md). We have a **comprehensive MATLAB test suite** covering:
 1. **Unit tests** — chunking, embeddings, weak rules, DB.
 2. **Integration tests** — simulated CRR-like dataset with ground truth labels.
 3. **Regression tests** — check that metrics stay above minimum thresholds.
@@ -65,7 +65,7 @@ We have a **comprehensive MATLAB test suite** covering:
 8. **Pipeline autoload test** — ensures projection head is used if present.
 9. **Fine-tune resume test** — validates checkpoint resume from previous run.
 
-Fixtures include:
+Fixtures provide golden simulated datasets with known inputs and outputs, including:
 - Synthetic CRR-style text PDF
 - Image-only PDF for OCR path
 - Expected metrics JSON thresholds
