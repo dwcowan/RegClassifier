@@ -12,6 +12,9 @@ classdef ReportView < reg.mvc.BaseView
         function display(obj, data)
             %DISPLAY Store report data for verification and expose key
             %evaluation sections for tests.
+            %   DISPLAY(obj, data) keeps summary tables, IRB subsets and
+            %   trend charts for inspection. Returns nothing. Equivalent to
+            %   rendering in `generate_reg_report`.
             obj.DisplayedData = data;
             if isstruct(data) && isfield(data, 'summaryTables')
                 obj.SummaryTables = data.summaryTables;

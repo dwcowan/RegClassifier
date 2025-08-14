@@ -7,9 +7,10 @@ classdef EvaluationController < handle
     methods
         function metrics = retrievalMetrics(~, embeddings, posSets, k)
             %RETRIEVALMETRICS Compute retrieval metrics at K.
-            %   metrics = retrievalMetrics(embeddings, posSets, k) returns a
+            %   METRICS = RETRIEVALMETRICS(embeddings, posSets, k) returns a
             %   struct with RecallAtK, mAP and nDCG computed from the
             %   provided embeddings and positive sets. K defaults to 10.
+            %   Equivalent to `eval_retrieval`.
             if nargin < 4, k = 10; end
             [recallAtK, mAP] = reg.eval_retrieval(embeddings, posSets, k);
             ndcgAtK = reg.metrics_ndcg(embeddings*embeddings.', posSets, k);
@@ -18,9 +19,9 @@ classdef EvaluationController < handle
 
         function results = evaluateGoldPack(obj, goldDir)
             %EVALUATEGOLDPACK Run evaluation against a gold mini-pack.
-            %   results = evaluateGoldPack(goldDir) loads the gold
-            %   artefacts, embeds the chunks and computes retrieval metrics
-            %   overall and per label.
+            %   RESULTS = EVALUATEGOLDPACK(goldDir) loads the gold artefacts,
+            %   embeds the chunks and computes retrieval metrics overall and
+            %   per label. Equivalent to `reg_eval_gold`.
             G = reg.load_gold(goldDir);
             C = config(); C.labels = G.labels;
             E = reg.precompute_embeddings(G.chunks.text, C);
@@ -39,11 +40,13 @@ classdef EvaluationController < handle
 
         function plotTrends(~, csvPath, pngPath)
             %PLOTTRENDS Generate trend plots from a metrics CSV history.
+            %   Equivalent to `plot_trends`.
             reg.plot_trends(csvPath, pngPath);
         end
 
         function plotCoRetrievalHeatmap(~, embeddings, labelMatrix, pngPath, labels)
             %PLOTCORETRIEVALHEATMAP Create a heatmap of label co-retrieval.
+            %   Equivalent to `plot_coretrieval_heatmap`.
             [M, order] = reg.label_coretrieval_matrix(embeddings, labelMatrix, 10);
             reg.plot_coretrieval_heatmap(M(order,order), string(labels(order)), pngPath);
         end

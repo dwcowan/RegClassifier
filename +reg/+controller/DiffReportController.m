@@ -12,6 +12,9 @@ classdef DiffReportController < reg.mvc.BaseController
     methods
         function obj = DiffReportController(view, pdfFunc, htmlFunc)
             %DIFFREPORTCONTROLLER Construct controller with generators and view.
+            %   OBJ = DIFFREPORTCONTROLLER(view, pdfFunc, htmlFunc) sets up
+            %   functions for PDF/HTML diff generation. Equivalent to
+            %   `reg_crr_diff_report` initialization.
             if nargin < 1 || isempty(view)
                 view = reg.view.ReportView();
             end
@@ -28,8 +31,10 @@ classdef DiffReportController < reg.mvc.BaseController
 
         function report = run(obj, dirA, dirB, outDir)
             %RUN Produce diff reports for two directories.
-            %   report = RUN(obj, dirA, dirB, outDir) compares the two input
+            %   REPORT = RUN(obj, dirA, dirB, outDir) compares the two input
             %   directories and writes PDF and HTML reports to outDir.
+            %   Equivalent to calling `reg_crr_diff_report` and
+            %   `reg_crr_diff_report_html`.
             if nargin < 4 || isempty(outDir)
                 outDir = fullfile('runs', 'crr_diff_report');
             end
