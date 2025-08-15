@@ -16,21 +16,41 @@ classdef EvaluationPipeline < handle
             obj.View = view;
         end
 
-        function run(obj, goldDir, metricsCSV) %#ok<INUSD>
+        function run(obj, goldDir, metricsCSV)
             %RUN Execute evaluation workflow and render report.
-            %   Should evaluate a gold pack, plot historical trends, generate
-            %   a co-retrieval heatmap and display a summary report.
-            %   Legacy mapping:
-            %       Step 1 ↔ `reg_eval_gold`
-            %       Step 2 ↔ `plot_trends`
-            %       Step 3 ↔ `plot_coretrieval_heatmap`
-            %   Pseudocode:
-            %       1. results = Controller.evaluateGoldPack(goldDir)
-            %       2. trendsPNG = VisualizationModel.plotTrends(metricsCSV)
-            %       3. heatPNG = VisualizationModel.plotCoRetrievalHeatmap(...)
-            %       4. View.display(struct(...))
-            error("reg:controller:NotImplemented", ...
-                "EvaluationPipeline.run is not implemented.");
+            %   The implementation is intentionally minimal and serves as a
+            %   usage example for how the visualization model would be wired
+            %   into a pipeline.
+            %   Step 1  - evaluate a gold pack via the controller
+            %   Step 2  - render historical trend plots
+            %   Step 3  - create a co‑retrieval heatmap
+            %   Step 4  - display aggregated results via the view
+
+            % Step 1: evaluate gold pack (legacy `reg_eval_gold`)
+            results = obj.Controller.evaluateGoldPack(goldDir);
+
+            % Step 2: plot historical trends (legacy `plot_trends`)
+            trendsPNG = obj.Controller.VisualizationModel.plotTrends(
+                metricsCSV, fullfile(tempdir(), 'trends.png'));
+
+            % Step 3: plot co‑retrieval heatmap (legacy
+            % `plot_coretrieval_heatmap`)
+            embeddings = [];
+            labelMatrix = [];
+            labels = [];
+            if isstruct(results)
+                if isfield(results, 'embeddings'), embeddings = results.embeddings; end
+                if isfield(results, 'labelMatrix'), labelMatrix = results.labelMatrix; end
+                if isfield(results, 'labels'), labels = results.labels; end
+            end
+            heatPNG = obj.Controller.VisualizationModel.plotCoRetrievalHeatmap(
+                embeddings, labelMatrix, fullfile(tempdir(), 'heatmap.png'), labels);
+
+            % Step 4: hand off to view for rendering
+            obj.View.display(struct( ...
+                'Evaluation', results, ...
+                'TrendsPNG', trendsPNG, ...
+                'HeatmapPNG', heatPNG));
         end
     end
 end
