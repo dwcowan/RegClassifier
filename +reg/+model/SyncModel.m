@@ -9,12 +9,13 @@ classdef SyncModel < reg.mvc.BaseModel
             %   params = LOAD(obj, date) records the target snapshot date.
             %   Parameters
             %       date (char): target snapshot date in yyyymmdd format
-            %           (defaults to current date)
+            %           (must be provided explicitly)
             %   Returns
             %       params (struct): struct with field
             %           date - synchronization date
             if nargin < 2 || isempty(date)
-                date = datestr(now, 'yyyymmdd');
+                error("reg:model:NotImplemented", ...
+                    "date must be specified; default current date removed.");
             end
             params = struct('date', date);
         end
