@@ -2,43 +2,39 @@ classdef FineTuneController < reg.mvc.BaseController
     %FINETUNECONTROLLER Orchestrates encoder fine-tuning workflow.
 
     properties
-        PDFIngestModel
-        TextChunkModel
-        WeakLabelModel
-        FineTuneDataModel
-        EncoderFineTuneModel
+        TrainingModel
         EvaluationModel
     end
 
     methods
-        function obj = FineTuneController(pdfModel, chunkModel, weakModel, dataModel, encoderModel, evalModel, view)
+        function obj = FineTuneController(trainModel, evalModel, view)
             %FINETUNECONTROLLER Construct controller wiring models and view.
-            %   OBJ = FINETUNECONTROLLER(...) assembles components for the
-            %   fine-tuning workflow. Equivalent to
+            %   OBJ = FINETUNECONTROLLER(trainModel, evalModel, view)
+            %   assembles components for the fine-tuning workflow using the
+            %   unified TrainingModel. Equivalent to
             %   `reg_finetune_encoder_workflow` setup.
-            obj@reg.mvc.BaseController(pdfModel, view);
-            obj.PDFIngestModel = pdfModel;
-            obj.TextChunkModel = chunkModel;
-            obj.WeakLabelModel = weakModel;
-            obj.FineTuneDataModel = dataModel;
-            obj.EncoderFineTuneModel = encoderModel;
+            obj@reg.mvc.BaseController(trainModel, view);
+            obj.TrainingModel = trainModel;
             obj.EvaluationModel = evalModel;
         end
 
         function triplets = buildTriplets(obj)
-            %BUILDTRIPLETS Generate contrastive triplets via the data model.
+            %BUILDTRIPLETS Generate contrastive triplets via training model.
             %   TRIPLETS = BUILDTRIPLETS(obj) produces training triplets.
             %   Equivalent to `ft_build_contrastive_dataset`.
-            raw = obj.FineTuneDataModel.load();
-            triplets = obj.FineTuneDataModel.process(raw);
+
+            docs = obj.TrainingModel.ingest();
+            chunks = obj.TrainingModel.chunk(docs);
+            [weakLabels, bootLabels] = obj.TrainingModel.weakLabel(chunks); %#ok<NASGU>
+            raw = struct('Chunks', chunks, 'WeakLabels', weakLabels);
+            triplets = obj.TrainingModel.prepareDataset(raw);
         end
 
         function net = trainEncoder(obj, triplets) %#ok<INUSD>
             %TRAINENCODER Fine-tune encoder given triplets.
             %   NET = TRAINENCODER(obj, triplets) returns a trained model.
             %   Equivalent to `ft_train_encoder`.
-            raw = obj.EncoderFineTuneModel.load();
-            net = obj.EncoderFineTuneModel.process(raw);
+            net = obj.TrainingModel.fineTuneEncoder(triplets);
         end
 
         function metrics = evaluate(obj, net) %#ok<INUSD>
@@ -77,7 +73,8 @@ classdef FineTuneController < reg.mvc.BaseController
             %   and model persistence.
             %
             %   Preconditions
-            %       * Underlying models must supply chunks and weak labels
+            %       * TrainingModel provides ingestion, chunking and
+            %         labeling capabilities
             %       * Disk should be writable for model checkpoint
             %   Side Effects
             %       * Trained encoder saved to MAT file
@@ -88,13 +85,15 @@ classdef FineTuneController < reg.mvc.BaseController
             %       Step 2 ↔ `ft_train_encoder`
             %       Step 3 ↔ `ft_eval`
 
-            % Step 1: build contrastive triplets from corpus
-            %   Data model should validate that triplets cover all labels.
+            % Step 1: build contrastive triplets from corpus using
+            %   TrainingModel to ingest data, chunk text and generate
+            %   weak labels. The TrainingModel should validate that
+            %   triplets cover all labels.
             triplets = obj.buildTriplets();
 
             % Step 2: fine-tune encoder using triplets
-            %   Encoder model expected to handle empty or malformed triplets
-            %   by raising informative errors.
+            %   TrainingModel expected to handle empty or malformed
+            %   triplets by raising informative errors.
             net = obj.trainEncoder(triplets);
 
             % Step 3: evaluate fine-tuned encoder
