@@ -7,6 +7,7 @@ classdef TestModelStubs < matlab.unittest.TestCase
             'reg.model.PDFIngestModel',
             'reg.model.TextChunkModel',
             'reg.model.FeatureModel',
+            'reg.model.EmbeddingModel',
             'reg.model.ProjectionHeadModel',
             'reg.model.WeakLabelModel',
             'reg.model.ClassifierModel',

@@ -1,5 +1,7 @@
 classdef FeatureModel < reg.mvc.BaseModel
     %FEATUREMODEL Stub model generating feature representations.
+    %   Dense embedding generation has been split into
+    %   `reg.model.EmbeddingModel` and is no longer handled here.
     %
     % Input chunksTable schema (see TextChunkModel):
     %   chunk_id  (string) : chunk identifier
@@ -9,12 +11,11 @@ classdef FeatureModel < reg.mvc.BaseModel
     %   end_idx   (double) : ending token index
     %
     % Outputs returned by PROCESS:
-    %   features   (table) : columns
+    %   features (table) : columns
     %       - chunk_id (string) : reference to source chunk
     %       - doc_id   (string) : parent document identifier
     %       - tfidf    (double vector 1xV) : TF-IDF features
-    %   embeddings (double matrix N×D) : dense embedding vectors per chunk
-    %   vocab      (string array 1×V)  : vocabulary terms corresponding to tfidf
+    %   vocab    (string array 1×V)  : vocabulary terms corresponding to tfidf
 
     properties
         % Shared configuration reference
@@ -50,26 +51,26 @@ classdef FeatureModel < reg.mvc.BaseModel
             error("reg:model:NotImplemented", ...
                 "FeatureModel.load is not implemented.");
         end
-        function [features, embeddings, vocab] = process(~, chunksTable) %#ok<INUSD>
-            %PROCESS Generate features and embeddings.
-            %   [features, embeddings, vocab] = PROCESS(obj, chunksTable)
-            %   produces numerical representations.
+        function [features, vocab] = process(~, chunksTable) %#ok<INUSD>
+            %PROCESS Generate sparse feature representations.
+            %   [features, vocab] = PROCESS(obj, chunksTable) produces
+            %   TF-IDF or other sparse features.  Any dense embedding
+            %   computation should be handled by `reg.model.EmbeddingModel`.
             %   Parameters
-            %       chunksTable (table): Text segments to embed.
+            %       chunksTable (table): Text segments to featurize.
             %   Returns
             %       features (table): Derived feature table.
-            %       embeddings (double matrix): Embedding vectors.
-            %       vocab (string array): Vocabulary mapping.
+            %       vocab    (string array): Vocabulary mapping.
             %   Side Effects
             %       May update feature caches on disk.
             %   Legacy Reference
-            %       Equivalent to `precompute_embeddings`.
+            %       Equivalent to the feature extraction portion of
+            %       `precompute_embeddings`.
             %   Extension Point
-            %       Customize embedding models or feature extraction steps.
+            %       Customize feature extraction steps or vocab pruning.
             % Pseudocode:
             %   1. Tokenize text in chunksTable
-            %   2. Compute embeddings using configured model
-            %   3. Assemble features table and vocabulary
+            %   2. Compute sparse features and vocabulary
             error("reg:model:NotImplemented", ...
                 "FeatureModel.process is not implemented.");
         end

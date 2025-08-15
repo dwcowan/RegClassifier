@@ -6,6 +6,7 @@ classdef PipelineController < reg.mvc.BaseController
         PDFIngestModel
         TextChunkModel
         FeatureModel
+        EmbeddingModel
         ProjectionHeadModel
         WeakLabelModel
         ClassifierModel
@@ -16,7 +17,7 @@ classdef PipelineController < reg.mvc.BaseController
     end
 
     methods
-        function obj = PipelineController(cfgModel, pdfModel, chunkModel, featModel, projModel, weakModel, clsModel, searchModel, dbModel, logModel, reportModel, view)
+        function obj = PipelineController(cfgModel, pdfModel, chunkModel, featModel, embModel, projModel, weakModel, clsModel, searchModel, dbModel, logModel, reportModel, view)
             %PIPELINECONTROLLER Construct controller wiring the full pipeline.
             %   OBJ = PIPELINECONTROLLER(...) assembles all models and a view.
             %   Equivalent to setup in `reg_pipeline`.
@@ -25,6 +26,7 @@ classdef PipelineController < reg.mvc.BaseController
             obj.PDFIngestModel = pdfModel;
             obj.TextChunkModel = chunkModel;
             obj.FeatureModel = featModel;
+            obj.EmbeddingModel = embModel;
             obj.ProjectionHeadModel = projModel;
             obj.WeakLabelModel = weakModel;
             obj.ClassifierModel = clsModel;
@@ -49,7 +51,7 @@ classdef PipelineController < reg.mvc.BaseController
             %   Legacy mapping follows `reg_pipeline`:
             %       Step 2 ↔ `ingest_pdfs`
             %       Step 3 ↔ `chunk_text`
-            %       Step 4 ↔ `ta_features` + embedding helpers
+            %       Step 4 ↔ `ta_features`
             %       Step 5 ↔ `embed_with_head`
             %       Step 6 ↔ `weak_rules`
             %       Step 7 ↔ `train_multilabel`/`predict_multilabel`
@@ -85,25 +87,30 @@ classdef PipelineController < reg.mvc.BaseController
             chunksRaw = obj.TextChunkModel.load(docsT);
             chunksT = obj.TextChunkModel.process(chunksRaw);
 
-            % Step 4: Extract features and embeddings
-            %   FeatureModel expected to fall back (e.g., to fastText) if the
-            %   preferred embedding backend fails.
-            %   See reg.model.FeatureModel for feature matrix and embedding schema.
+            % Step 4: Extract features
+            %   FeatureModel expected to fall back (e.g., to alternate tokenizers)
+            %   if the preferred backend fails.
+            %   See reg.model.FeatureModel for feature matrix schema.
             featuresRaw = obj.FeatureModel.load(chunksT);
-            [features, embeddings, vocab] = obj.FeatureModel.process(featuresRaw); %#ok<NASGU>
+            [features, vocab] = obj.FeatureModel.process(featuresRaw);
 
-            % Step 5: Apply projection head to embeddings
+            % Step 5: Generate embeddings from features
+            %   Dense embedding computation is delegated to EmbeddingModel.
+            embedRaw = obj.EmbeddingModel.load(features);
+            [embeddings, ~] = obj.EmbeddingModel.process(embedRaw); %#ok<NASGU>
+
+            % Step 6: Apply projection head to embeddings
             %   Head model should validate dimensions of embeddings and warn
             %   if projection parameters are incompatible.
             projRaw = obj.ProjectionHeadModel.load(embeddings);
             projE = obj.ProjectionHeadModel.process(projRaw);
 
-            % Step 6: Generate weak labels
+            % Step 7: Generate weak labels
             %   WeakLabelModel enforces label schema and handles rule errors.
             weakRaw = obj.WeakLabelModel.load(projE);
             [Yweak, Yboot] = obj.WeakLabelModel.process(weakRaw); %#ok<NASGU>
 
-            % Step 7: Train classifiers and make predictions
+            % Step 8: Train classifiers and make predictions
             %   ClassifierModel should validate that Yweak is non-empty.
             %   See reg.model.ClassifierModel for prediction output schema.
             clsRaw = obj.ClassifierModel.load(Yweak);
@@ -113,12 +120,12 @@ classdef PipelineController < reg.mvc.BaseController
             logTrain = obj.LoggingModel.load(scores);
             obj.LoggingModel.process(logTrain);
 
-            % Step 8: Build search index
+            % Step 9: Build search index
             %   SearchIndexModel must ensure vocabulary and embeddings align.
             searchRaw = obj.SearchIndexModel.load(pred);
             searchIx = obj.SearchIndexModel.process(searchRaw); %#ok<NASGU>
 
-            % Step 9: Persist results to database
+            % Step 10: Persist results to database
             %   DatabaseModel should handle connection errors and rollbacks.
             %   Failure Modes
             %       * Missing `lbl_*`/`score_*` columns causing ALTER TABLE calls.
@@ -130,7 +137,7 @@ classdef PipelineController < reg.mvc.BaseController
             dbRaw = obj.DatabaseModel.load(searchIx);
             dbResult = obj.DatabaseModel.process(dbRaw);
 
-            % Step 10: Assemble report data and display
+            % Step 11: Assemble report data and display
             %   ReportModel verifies that metrics and predictions are present
             %   before rendering.
             reportRaw = obj.ReportModel.load(dbResult);
