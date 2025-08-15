@@ -1,8 +1,11 @@
 % Full contrastive fine-tuning workflow (MATLAB R2024a)
 C = config();
-reg.set_seeds(42);
-reg.print_active_knobs(C);
-if ~isfield(C,'knobs'), C.knobs = reg.load_knobs(); end
+% TODO: set random seeds for reproducibility
+% reg.set_seeds(42);
+% TODO: display active knobs once reg.print_active_knobs is implemented
+% reg.print_active_knobs(C);
+% TODO: load knob definitions into C.knobs
+% if ~isfield(C,'knobs'), C.knobs = reg.load_knobs(); end
 if isempty(gcp('nocreate')), parpool('threads'); end
 
 % 1) Prepare data

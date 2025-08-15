@@ -32,9 +32,9 @@ The project is optimised for a **single-user Windows 10 machine** with:
   - Projection head dim / epochs / LR
   - Fine-tuning loss / unfreeze layers / epochs
   - Chunk size / overlap
-- `+reg/load_knobs.m` — loads JSON
-- `+reg/print_active_knobs.m` — prints active config at run start  
-- `config.m` — reads knobs and applies overrides.
+- `+reg/load_knobs.m` — stub for loading knob JSON (see `docs/knobs_interface.md`)
+- `+reg/print_active_knobs.m` — stub for printing knob configuration
+- `config.m` — reads knobs and applies overrides (placeholders only).
 
 ### Testing & Validation
 We have a **comprehensive MATLAB test suite** covering:
@@ -176,8 +176,8 @@ table(results)
 ---
 ## Update 2025-08-10 22:41:01
 **First bundle improvements added:**
-- Seed control (`+reg/set_seeds.m`) and invoked in fine-tune workflow.
-- Knobs validator (`+reg/validate_knobs.m`) called at run start.
+- Seed control (`+reg/set_seeds.m`) stub invoked in fine-tune workflow.
+- Knobs validator (`+reg/validate_knobs.m`) stub called at run start.
 - Fine-tune early stopping on nDCG@10 with patience + min-delta; saves `checkpoints/ft_best.mat`.
 - Simple **hard-negative mining** between epochs using current encoder.
 - **Per-label metrics** helper (`+reg/eval_per_label.m`).

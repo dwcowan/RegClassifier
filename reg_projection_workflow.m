@@ -1,7 +1,9 @@
 % Train and evaluate a projection head to improve retrieval/clustering
 C = config();
-reg.print_active_knobs(C);
-if ~isfield(C,'knobs'), C.knobs = reg.load_knobs(); end
+% TODO: display active knobs once reg.print_active_knobs is implemented
+% reg.print_active_knobs(C);
+% TODO: load knob definitions into C.knobs
+% if ~isfield(C,'knobs'), C.knobs = reg.load_knobs(); end
 if isempty(gcp('nocreate')), parpool('threads'); end
 
 % Load or build chunks/features as in main pipeline
