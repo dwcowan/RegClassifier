@@ -109,105 +109,52 @@ classdef ConfigModel < reg.mvc.BaseModel
             end
         end
 
-        function K = loadKnobs(obj, varargin)
+        function K = loadKnobs(obj, varargin) %#ok<INUSD>
             %LOADKNOBS Load knob values from JSON and apply overrides.
-            %   K = LOADKNOBS(obj, jsonPath) reads knob settings from
-            %   `jsonPath` (default 'knobs.json') and stores them on the
-            %   model. Known fields override corresponding properties.
-            if ~isempty(varargin)
-                jsonPath = varargin{1};
-            else
-                jsonPath = "knobs.json";
-            end
-            try
-                K = reg.load_knobs(jsonPath);
-            catch ME
-                warning("reg:model:KnobsLoadFailed", ...
-                    "Knobs load failed: %s", ME.message);
-                K = struct();
-            end
-            obj.knobs = K;
-
-            % Apply knob overrides to properties when present
-            if isfield(K, 'BERT')
-                if isfield(K.BERT, 'MiniBatchSize')
-                    obj.bertMiniBatchSize = K.BERT.MiniBatchSize;
-                end
-                if isfield(K.BERT, 'MaxSeqLength')
-                    obj.bertMaxSeqLength = K.BERT.MaxSeqLength;
-                end
-            end
-            if isfield(K, 'Projection')
-                if isfield(K.Projection, 'ProjDim')
-                    obj.projDim = K.Projection.ProjDim;
-                end
-                if isfield(K.Projection, 'BatchSize')
-                    obj.projBatchSize = K.Projection.BatchSize;
-                end
-                if isfield(K.Projection, 'Epochs')
-                    obj.projEpochs = K.Projection.Epochs;
-                end
-                if isfield(K.Projection, 'LR')
-                    obj.projLR = K.Projection.LR;
-                end
-                if isfield(K.Projection, 'Margin')
-                    obj.projMargin = K.Projection.Margin;
-                end
-            end
-            if isfield(K, 'FineTune')
-                if isfield(K.FineTune, 'Loss')
-                    obj.fineTuneLoss = string(K.FineTune.Loss);
-                end
-                if isfield(K.FineTune, 'BatchSize')
-                    obj.fineTuneBatchSize = K.FineTune.BatchSize;
-                end
-                if isfield(K.FineTune, 'Epochs')
-                    obj.fineTuneEpochs = K.FineTune.Epochs;
-                end
-                if isfield(K.FineTune, 'MaxSeqLength')
-                    obj.fineTuneMaxSeqLength = K.FineTune.MaxSeqLength;
-                end
-                if isfield(K.FineTune, 'UnfreezeTopLayers')
-                    obj.fineTuneUnfreezeTopLayers = K.FineTune.UnfreezeTopLayers;
-                end
-                if isfield(K.FineTune, 'EncoderLR')
-                    obj.fineTuneEncoderLR = K.FineTune.EncoderLR;
-                end
-                if isfield(K.FineTune, 'HeadLR')
-                    obj.fineTuneHeadLR = K.FineTune.HeadLR;
-                end
-            end
-            if isfield(K, 'Chunk')
-                if isfield(K.Chunk, 'SizeTokens')
-                    obj.chunkSizeTokens = K.Chunk.SizeTokens;
-                end
-                if isfield(K.Chunk, 'Overlap')
-                    obj.chunkOverlap = K.Chunk.Overlap;
-                end
-            end
+            %   K = LOADKNOBS(obj, jsonPath) reads knob settings and stores
+            %   them on the model.
+            %   Legacy Reference
+            %       Equivalent to `reg.load_knobs`.
+            %   Pseudocode:
+            %       1. Read knob JSON file
+            %       2. Apply overrides to configuration properties
+            %       3. Return struct of knob values
+            error("reg:model:NotImplemented", ...
+                "ConfigModel.loadKnobs is not implemented.");
         end
 
-        function validateKnobs(obj)
+        function validateKnobs(obj) %#ok<MANU>
             %VALIDATEKNOBS Perform basic sanity checks on loaded knobs.
-            if ~isempty(obj.knobs)
-                reg.validate_knobs(obj.knobs);
-            end
+            %   Intended to error when knob values fall outside supported
+            %   ranges.
+            %   Legacy Reference
+            %       Equivalent to `reg.validate_knobs`.
+            error("reg:model:NotImplemented", ...
+                "ConfigModel.validateKnobs is not implemented.");
         end
 
-        function printActiveKnobs(obj)
+        function printActiveKnobs(obj) %#ok<MANU>
             %PRINTACTIVEKNOBS Pretty-print active knob configuration.
-            reg.print_active_knobs(struct('knobs', obj.knobs));
+            %   Legacy Reference
+            %       Equivalent to `reg.print_active_knobs`.
+            %   Pseudocode:
+            %       1. Format knob values into readable table
+            %       2. Display via fprintf or logging facility
+            error("reg:model:NotImplemented", ...
+                "ConfigModel.printActiveKnobs is not implemented.");
         end
 
-        function S = applySeeds(obj, varargin)
+        function S = applySeeds(obj, varargin) %#ok<INUSD,MANU>
             %APPLYSEEDS Set RNG seeds for reproducibility.
-            if ~isempty(varargin)
-                seed = varargin{1};
-            else
-                seed = [];
-            end
-            S = reg.set_seeds(seed);
-            obj.seeds = S;
+            %   S = APPLYSEEDS(obj, seed) returns the applied seed struct.
+            %   Legacy Reference
+            %       Equivalent to `reg.set_seeds`.
+            %   Pseudocode:
+            %       1. Initialise random number generators
+            %       2. Store seeds on obj.seeds
+            %       3. Return seed struct
+            error("reg:model:NotImplemented", ...
+                "ConfigModel.applySeeds is not implemented.");
         end
 
         function cfgStruct = load(~, varargin) %#ok<INUSD>

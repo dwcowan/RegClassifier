@@ -14,12 +14,18 @@ classdef DiffVersionsModel < reg.mvc.BaseModel
       params = struct('dirA', dirA, 'dirB', dirB, 'outDir', outDir);
     end
 
-    function result = process(~, params)
+    function result = process(~, params) %#ok<INUSD>
       %PROCESS Execute file-level diffing and return results.
-      %   result = PROCESS(obj, params) calls `reg.crr_diff_versions` with
-      %   the supplied parameters and returns the diff statistics.
-      result = reg.crr_diff_versions(params.dirA, params.dirB, ...
-        'OutDir', params.outDir);
+      %   RESULT = PROCESS(obj, params) should compare directory trees and
+      %   report line-level differences.
+      %   Legacy Reference
+      %       Equivalent to `reg.crr_diff_versions`.
+      %   Pseudocode:
+      %       1. Align files by relative path
+      %       2. Compute line-level diffs and statistics
+      %       3. Return struct with summary tables and patch file paths
+      error("reg:model:NotImplemented", ...
+        "DiffVersionsModel.process is not implemented.");
     end
   end
 end

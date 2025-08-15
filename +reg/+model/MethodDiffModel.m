@@ -16,13 +16,18 @@ classdef MethodDiffModel < reg.mvc.BaseModel
         'config', config);
     end
 
-    function result = process(~, params)
+    function result = process(~, params) %#ok<INUSD>
       %PROCESS Execute method diffing and return results.
-      %   RESULT = PROCESS(obj, params) delegates to `reg.diff_methods`
-      %   using the previously loaded parameters and returns the
-      %   comparison struct.
-      result = reg.diff_methods(params.queries, params.chunksT, ...
-        params.config);
+      %   RESULT = PROCESS(obj, params) should compare retrieval results
+      %   across multiple embedding methods.
+      %   Legacy Reference
+      %       Equivalent to `reg.diff_methods`.
+      %   Pseudocode:
+      %       1. Embed queries using baseline and alternative encoders
+      %       2. Retrieve Top-K results for each method
+      %       3. Return struct summarising differences
+      error("reg:model:NotImplemented", ...
+        "MethodDiffModel.process is not implemented.");
     end
   end
 end

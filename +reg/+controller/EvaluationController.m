@@ -14,54 +14,35 @@ classdef EvaluationController < handle
                 obj.VisualizationModel = vizModel;
             end
         end
-        function metrics = retrievalMetrics(~, embeddings, posSets, k)
+        function metrics = retrievalMetrics(~, embeddings, posSets, k) %#ok<INUSD>
             %RETRIEVALMETRICS Compute retrieval metrics at K.
-            %   METRICS = RETRIEVALMETRICS(embeddings, posSets, k) returns a
-            %   struct with RecallAtK, mAP and nDCG computed from the
-            %   provided embeddings and positive sets. K defaults to 10.
-            %   Equivalent to `eval_retrieval`.
-            if nargin < 4, k = 10; end
-            [recallAtK, mAP] = reg.eval_retrieval(embeddings, posSets, k);
-            ndcgAtK = reg.metrics_ndcg(embeddings*embeddings.', posSets, k);
-            metrics = struct('RecallAtK', recallAtK, 'mAP', mAP, 'nDCG', ndcgAtK);
+            %   METRICS = RETRIEVALMETRICS(embeddings, posSets, k) should
+            %   produce Recall@K, mAP and nDCG scores for a set of embeddings
+            %   and positive index sets.
+            %   Legacy Reference
+            %       Equivalent to `reg.eval_retrieval` and `reg.metrics_ndcg`.
+            %   Pseudocode:
+            %       1. For each query embedding compute similarity scores
+            %       2. Derive recall, mAP and nDCG at K
+            %       3. Return metrics struct
+            error("reg:controller:NotImplemented", ...
+                "EvaluationController.retrievalMetrics is not implemented.");
         end
 
-        function results = evaluateGoldPack(obj, goldDir, opts)
+        function results = evaluateGoldPack(obj, goldDir, opts) %#ok<INUSD>
             %EVALUATEGOLDPACK Run evaluation against a gold mini-pack.
-            %   RESULTS = EVALUATEGOLDPACK(goldDir) loads the gold artefacts,
-            %   embeds the chunks and computes retrieval metrics overall and
-            %   per label. Optional metrics can be toggled via name-value
-            %   options:
-            %       ComputePerLabel   (default true)
-            %       ComputeClustering (default false)
-            %   Equivalent to `reg_eval_gold`.
-            arguments
-                obj
-                goldDir string
-                opts.ComputePerLabel logical = true
-                opts.ComputeClustering logical = false
-            end
-            G = reg.load_gold(goldDir);
-            C = config(); C.labels = G.labels;
-            E = reg.precompute_embeddings(G.chunks.text, C);
-            posSets = cell(height(G.chunks),1);
-            for i = 1:height(G.chunks)
-                labs = G.Y(i,:);
-                pos = find(any(G.Y(:,labs),2)); pos(pos==i) = [];
-                posSets{i} = pos;
-            end
-            overall = obj.retrievalMetrics(E, posSets, 10);
-            if opts.ComputePerLabel
-                per = reg.eval_per_label(E, G.Y, 10);
-                perTbl = table(G.labels(:), per.RecallAtK, ...
-                    'VariableNames', {'Label','RecallAt10'});
-            else
-                perTbl = table();
-            end
-            results = struct('overall', overall, 'perLabel', perTbl);
-            if opts.ComputeClustering
-                results.clustering = reg.eval_clustering(E, G.Y);
-            end
+            %   RESULTS = EVALUATEGOLDPACK(goldDir) should load gold
+            %   artefacts, embed chunks and compute retrieval metrics overall
+            %   and per label.
+            %   Legacy Reference
+            %       Equivalent to `reg_eval_gold`.
+            %   Pseudocode:
+            %       1. Load gold chunks and labels from goldDir
+            %       2. Embed chunks and form positive sets
+            %       3. Compute retrieval metrics and optional clustering
+            %       4. Return struct with overall and per-label results
+            error("reg:controller:NotImplemented", ...
+                "EvaluationController.evaluateGoldPack is not implemented.");
         end
     end
 end

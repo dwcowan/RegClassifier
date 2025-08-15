@@ -15,12 +15,18 @@ classdef DiffArticlesModel < reg.mvc.BaseModel
       params = struct('dirA', dirA, 'dirB', dirB, 'outDir', outDir);
     end
 
-    function result = process(~, params)
+    function result = process(~, params) %#ok<INUSD>
       %PROCESS Execute article-aware diffing and return results.
-      %   result = PROCESS(obj, params) wraps `reg.crr_diff_articles` using
-      %   the previously loaded parameters.
-      result = reg.crr_diff_articles(params.dirA, params.dirB, ...
-        'OutDir', params.outDir);
+      %   RESULT = PROCESS(obj, params) should compare articles between
+      %   two directories and emit summary statistics.
+      %   Legacy Reference
+      %       Equivalent to `reg.crr_diff_articles`.
+      %   Pseudocode:
+      %       1. Align articles using index.csv files
+      %       2. Compute textual differences per article
+      %       3. Return struct with diff statistics and artefact paths
+      error("reg:model:NotImplemented", ...
+        "DiffArticlesModel.process is not implemented.");
     end
   end
 end
