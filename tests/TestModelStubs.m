@@ -19,6 +19,8 @@ classdef TestModelStubs < matlab.unittest.TestCase
             'reg.model.LoggingModel',
             'reg.model.GoldPackModel',
             'reg.model.VisualizationModel',
+            'reg.model.TrendPlotModel',
+            'reg.model.CoRetrievalHeatmapModel',
             'reg.model.ClusteringEvalModel',
             'reg.model.PerLabelEvalModel'
         };

@@ -11,28 +11,35 @@ classdef VisualizationModel < reg.mvc.BaseModel
 
         function pngPath = plotTrends(~, csvPath, pngPath) %#ok<INUSD>
             %PLOTTRENDS Generate trend plots from metrics history.
-            %   pngPath = PLOTTRENDS(obj, csvPath, pngPath) should read a
-            %   CSV of historical metrics and render a trend PNG.
-            %   Legacy Reference
-            %       Equivalent to `reg.plot_trends`.
-            %   Pseudocode:
-            %       1. Read metrics from csvPath
-            %       2. Plot trends and save to pngPath
-            %       3. Return pngPath
+            %   Inputs
+            %       csvPath - file path to a metrics CSV containing
+            %                 historical values.
+            %       pngPath - destination file path for the rendered PNG.
+            %   Output
+            %       pngPath - the path where the plot should be written.
+            %   Side Effects
+            %       Should read metric values from csvPath and write a trend
+            %       plot image to pngPath.
+
             error("reg:model:NotImplemented", ...
                 "VisualizationModel.plotTrends is not implemented.");
         end
 
         function pngPath = plotCoRetrievalHeatmap(~, embeddings, labelMatrix, pngPath, labels) %#ok<INUSD>
             %PLOTCORETRIEVALHEATMAP Create a heatmap of label co-retrieval.
-            %   pngPath = PLOTCORETRIEVALHEATMAP(obj, embeddings, labelMatrix,
-            %   pngPath, labels) should visualise co-retrieval frequencies.
-            %   Legacy Reference
-            %       Equivalent to `reg.plot_coretrieval_heatmap`.
-            %   Pseudocode:
-            %       1. Derive co-retrieval matrix from embeddings/labels
-            %       2. Plot heatmap ordered by label frequency
-            %       3. Save to pngPath and return path
+            %   Inputs
+            %       embeddings   - numeric matrix of embedding vectors.
+            %       labelMatrix  - logical or numeric matrix indicating label
+            %                      assignments for each embedding.
+            %       pngPath      - destination file path for the heatmap PNG.
+            %       labels       - (optional) cell array of label names used to
+            %                      annotate axes.
+            %   Output
+            %       pngPath      - the path where the heatmap should be saved.
+            %   Side Effects
+            %       Should compute co-retrieval frequencies from inputs and
+            %       persist a heatmap image to pngPath.
+
             error("reg:model:NotImplemented", ...
                 "VisualizationModel.plotCoRetrievalHeatmap is not implemented.");
         end
