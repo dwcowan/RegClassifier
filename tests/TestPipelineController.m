@@ -8,19 +8,12 @@ classdef TestPipelineController < matlab.unittest.TestCase
     methods(TestMethodSetup)
         function setup(tc)
             cfgModel = reg.model.ConfigModel();
-            pdfModel = reg.model.PDFIngestModel();
-            chunkModel = reg.model.TextChunkModel();
-            featModel = reg.model.FeatureModel();
-            embService = reg.service.EmbeddingService();
-            projModel = reg.model.ProjectionHeadModel();
-            weakModel = reg.model.WeakLabelModel();
-            clsModel = reg.model.ClassifierModel();
-            searchModel = reg.model.SearchIndexModel();
-            dbModel = reg.model.DatabaseModel();
+            ingestSvc = IngestStub();
+            embSvc = reg.service.EmbeddingService();
+            evalSvc = reg.service.EvaluationService();
             logModel = reg.model.LoggingModel();
-            reportModel = reg.model.ReportModel();
             view = reg.view.ReportView();
-            tc.Controller = reg.controller.PipelineController(cfgModel, pdfModel, chunkModel, featModel, embService, projModel, weakModel, clsModel, searchModel, dbModel, logModel, reportModel, view);
+            tc.Controller = reg.controller.PipelineController(cfgModel, ingestSvc, embSvc, evalSvc, logModel, view);
         end
     end
     
@@ -32,7 +25,15 @@ classdef TestPipelineController < matlab.unittest.TestCase
     
     methods(Test)
         function runPropagatesNotImplemented(tc)
-            tc.verifyError(@() tc.Controller.run(), 'reg:model:NotImplemented');
+            tc.verifyError(@() tc.Controller.run(), 'reg:service:NotImplemented');
+        end
+    end
+end
+
+classdef IngestStub < handle
+    methods
+        function out = ingest(~, ~)
+            out = reg.service.IngestionOutput([], [], []);
         end
     end
 end
