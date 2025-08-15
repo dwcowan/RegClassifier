@@ -30,5 +30,10 @@ classdef TestModelStubs < matlab.unittest.TestCase
             model = feval(ModelClass);
             tc.verifyError(@() model.process([]), 'reg:model:NotImplemented');
         end
+        function searchQueryNotImplemented(tc)
+            model = reg.model.SearchIndexModel();
+            tc.verifyError(@() model.query("test", 0.5, 10), ...
+                'reg:model:NotImplemented');
+        end
     end
 end

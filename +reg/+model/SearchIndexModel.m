@@ -58,5 +58,36 @@ classdef SearchIndexModel < reg.mvc.BaseModel
             error("reg:model:NotImplemented", ...
                 "SearchIndexModel.process is not implemented.");
         end
+
+        function results = query(~, queryString, alpha, topK) %#ok<INUSD>
+            %QUERY Retrieve ranked documents using hybrid search.
+            %   results = QUERY(obj, queryString, alpha, topK) blends lexical
+            %   TF-IDF scores with semantic embedding similarity similar to
+            %   `reg.hybrid_search`.
+            %   Parameters
+            %       queryString (string): Raw text query to search.
+            %       alpha (double): Weight for TF-IDF versus embedding score
+            %           where 1 favors lexical matching and 0 favors semantic
+            %           matching.
+            %       topK (double): Maximum number of results to return.
+            %   Returns
+            %       results (table): Struct or table of top hits with fields
+            %           such as `row` and `score` representing document index
+            %           and blended relevance score.
+            %   Side Effects
+            %       None.
+            %   Legacy Reference
+            %       Mirrors S.query within `reg.hybrid_search`.
+            %   Extension Point
+            %       Override to use alternative ranking or scoring logic.
+            %   Pseudocode:
+            %       1. Tokenize queryString and compute TF-IDF vector.
+            %       2. Embed queryString to obtain semantic vector.
+            %       3. Compute bm and em similarity scores.
+            %       4. Blend via: score = alpha*bm + (1-alpha)*em.
+            %       5. Return topK results sorted by score.
+            error("reg:model:NotImplemented", ...
+                "SearchIndexModel.query is not implemented.");
+        end
     end
 end
