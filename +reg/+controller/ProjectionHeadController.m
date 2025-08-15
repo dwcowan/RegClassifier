@@ -4,23 +4,21 @@ classdef ProjectionHeadController < reg.mvc.BaseController
     properties
         FeatureModel
         EmbeddingModel
-        FineTuneDataModel
-        ProjectionHeadModel
+        TrainingModel
         EvaluationModel
     end
 
     methods
-        function obj = ProjectionHeadController(featureModel, embeddingModel, dataModel, headModel, evalModel, view)
+        function obj = ProjectionHeadController(featureModel, embeddingModel, trainModel, evalModel, view)
             %PROJECTIONHEADCONTROLLER Construct controller wiring models.
-            %   OBJ = PROJECTIONHEADCONTROLLER(featureModel, dataModel,
-            %   headModel, evalModel, view) sets up the projection head
-            %   training workflow. Equivalent to `reg_projection_workflow`
-            %   setup.
+            %   OBJ = PROJECTIONHEADCONTROLLER(featureModel, embeddingModel,
+            %   trainModel, evalModel, view) sets up the projection head
+            %   training workflow using the unified TrainingModel. Equivalent
+            %   to `reg_projection_workflow` setup.
             obj@reg.mvc.BaseController(featureModel, view);
             obj.FeatureModel = featureModel;
             obj.EmbeddingModel = embeddingModel;
-            obj.FineTuneDataModel = dataModel;
-            obj.ProjectionHeadModel = headModel;
+            obj.TrainingModel = trainModel;
             obj.EvaluationModel = evalModel;
         end
 
@@ -32,8 +30,7 @@ classdef ProjectionHeadController < reg.mvc.BaseController
             %   Preconditions
             %       * FeatureModel supplies chunk text
             %       * EmbeddingModel computes dense embeddings
-            %       * FineTuneDataModel expects embeddings for triplet mining
-            %       * ProjectionHeadModel consumes triplets to learn weights
+            %       * TrainingModel builds triplets and trains projection head
             %   Side Effects
             %       * Projection head parameters may be persisted
             %       * Evaluation metrics displayed via view
@@ -55,13 +52,12 @@ classdef ProjectionHeadController < reg.mvc.BaseController
             %   handle tokenizer or embedding errors internally.
 
             % Step 3: construct contrastive triplets from embeddings
-            %   The data model should ensure non-empty triplets and balanced
+            %   TrainingModel should ensure non-empty triplets and balanced
             %   sampling.
-            tripletsRaw = obj.FineTuneDataModel.load(embeddings.Vectors);
-            triplets = obj.FineTuneDataModel.process(tripletsRaw);
+            triplets = obj.TrainingModel.prepareDataset(embeddings.Vectors);
 
             % Step 5: train projection head using triplets
-            %   Model should check dimensions and raise if triplets malformed.
+            %   TrainingModel should check dimensions and raise if triplets malformed.
             %   Potential Failure Modes
             %       * GPU out-of-memory during training batches.
             %       * Triplet indices outside embedding range.
@@ -70,8 +66,7 @@ classdef ProjectionHeadController < reg.mvc.BaseController
             %       * Catch errors and retry on CPU or with reduced batch size.
             %       * Validate triplet indices before invoking the model.
             %       * Expose learning-rate and margin safeguards.
-            headRaw = obj.ProjectionHeadModel.load(triplets);
-            projE = obj.ProjectionHeadModel.process(headRaw);
+            projE = obj.TrainingModel.trainProjectionHead(triplets);
 
             % Step 7: evaluate retrieval performance with projected vectors
             evalRaw = obj.EvaluationModel.load(projE);

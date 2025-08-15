@@ -3,16 +3,16 @@ classdef PipelineController < reg.mvc.BaseController
 
     properties
         ConfigModel
-        IngestionModel
+        TrainingModel
         EmbeddingModel
         EvaluationModel
         EmbeddingView
     end
 
     methods
-        function obj = PipelineController(cfgModel, ingestModel, embedModel, evalModel, view, embView)
+        function obj = PipelineController(cfgModel, trainModel, embedModel, evalModel, view, embView)
             %PIPELINECONTROLLER Construct controller wiring core models.
-            %   OBJ = PIPELINECONTROLLER(CFG, INGEST, EMBED, EVAL, VIEW, EMBVIEW)
+            %   OBJ = PIPELINECONTROLLER(CFG, TRAIN, EMBED, EVAL, VIEW, EMBVIEW)
             %   stores references to the provided models, a metrics view
             %   and an optional embedding view.
             if nargin < 5 || isempty(view)
@@ -23,7 +23,7 @@ classdef PipelineController < reg.mvc.BaseController
             end
             obj@reg.mvc.BaseController(cfgModel, view);
             obj.ConfigModel = cfgModel;
-            obj.IngestionModel = ingestModel;
+            obj.TrainingModel = trainModel;
             obj.EmbeddingModel = embedModel;
             obj.EvaluationModel = evalModel;
             obj.EmbeddingView = embView;
@@ -37,9 +37,8 @@ classdef PipelineController < reg.mvc.BaseController
             cfgRaw = obj.ConfigModel.load();
             cfg = obj.ConfigModel.process(cfgRaw);
 
-            % Step 2: ingest documents/features via model
-            ingestRaw = obj.IngestionModel.load(cfg);
-            ingestOut = obj.IngestionModel.process(ingestRaw);
+            % Step 2: ingest documents/features via training model
+            ingestOut = obj.TrainingModel.ingest(cfg);
 
             % Step 3: embed features
             embRaw = obj.EmbeddingModel.load(ingestOut.Features);
