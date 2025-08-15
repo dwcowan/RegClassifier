@@ -31,7 +31,7 @@ classdef IngestionModel < reg.mvc.BaseModel
         function out = process(obj, raw)
             %PROCESS Finalise features and optionally persist documents.
             [features, ~] = obj.FeatureModel.process(raw.FeatRaw);
-            out = reg.service.IngestionOutput(raw.Docs, raw.Chunks, features);
+            out = reg.model.IngestionOutput(raw.Docs, raw.Chunks, features);
             reg.model.Document.save(raw.Docs);
         end
     end
