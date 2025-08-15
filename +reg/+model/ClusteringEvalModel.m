@@ -2,18 +2,11 @@ classdef ClusteringEvalModel < reg.mvc.BaseModel
     %CLUSTERINGEVALMODEL Stub model evaluating embedding clusters.
 
     properties
-        % Shared configuration reference
-        cfg reg.model.ConfigModel = reg.model.ConfigModel();
     end
 
     methods
-        function obj = ClusteringEvalModel(cfg)
-            %CLUSTERINGEVALMODEL Construct clustering evaluation model.
-            %   OBJ = CLUSTERINGEVALMODEL(cfg) accesses fields such as
-            %   cfg.clusterK for the number of clusters.
-            if nargin > 0
-                obj.cfg = cfg;
-            end
+        function obj = ClusteringEvalModel(varargin)
+            %#ok<INUSD>
         end
 
         function raw = load(~, varargin) %#ok<INUSD>

@@ -18,25 +18,19 @@ classdef FeatureModel < reg.mvc.BaseModel
     %   vocab    (string array 1×V)  : vocabulary terms corresponding to tfidf
 
     properties
-        % Shared configuration reference
-        cfg reg.model.ConfigModel = reg.model.ConfigModel();
+        % Configuration is supplied via method inputs.
     end
 
     methods
-        function obj = FeatureModel(cfg)
-            %FEATUREMODEL Construct feature extraction model.
-            %   OBJ = FEATUREMODEL(cfg) uses parameters such as
-            %   cfg.bertMiniBatchSize when computing embeddings.
-            if nargin > 0
-                obj.cfg = cfg;
-            end
+        function obj = FeatureModel(varargin)
+            %#ok<INUSD>
         end
 
-        function chunksTable = load(~, varargin) %#ok<INUSD>
+        function chunksTable = load(~, cfg) %#ok<INUSD>
             %LOAD Retrieve text chunks for feature extraction.
-            %   chunksTable = LOAD(obj) returns a table of text segments.
+            %   chunksTable = LOAD(obj, cfg) returns a table of text segments.
             %   Parameters
-            %       varargin - Placeholder for future options (unused)
+            %       cfg - configuration struct with options
             %   Returns
             %       chunksTable (table): Text segments awaiting embedding.
             %   Side Effects

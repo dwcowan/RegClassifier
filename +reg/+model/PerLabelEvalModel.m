@@ -2,18 +2,11 @@ classdef PerLabelEvalModel < reg.mvc.BaseModel
     %PERLABELEVALMODEL Stub model computing recall per label.
 
     properties
-        % Shared configuration reference
-        cfg reg.model.ConfigModel = reg.model.ConfigModel();
     end
 
     methods
-        function obj = PerLabelEvalModel(cfg)
-            %PERLABELEVALMODEL Construct per-label evaluation model.
-            %   OBJ = PERLABELEVALMODEL(cfg) uses fields such as cfg.recallK
-            %   for the cutoff K.
-            if nargin > 0
-                obj.cfg = cfg;
-            end
+        function obj = PerLabelEvalModel(varargin)
+            %#ok<INUSD>
         end
 
         function raw = load(~, varargin) %#ok<INUSD>

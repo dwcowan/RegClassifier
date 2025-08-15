@@ -1,8 +1,8 @@
 classdef PipelineController < reg.mvc.BaseController
     %PIPELINECONTROLLER Orchestrates end-to-end pipeline flow.
-    
+
     properties
-        ConfigModel
+        ConfigService
         IngestionService
         EmbeddingService
         EvaluationService
@@ -11,7 +11,7 @@ classdef PipelineController < reg.mvc.BaseController
     end
 
     methods
-        function obj = PipelineController(cfgModel, ingestSvc, embedSvc, evalSvc, logModel, view, embView)
+        function obj = PipelineController(cfgSvc, ingestSvc, embedSvc, evalSvc, logModel, view, embView)
             %PIPELINECONTROLLER Construct controller wiring core services.
             %   OBJ = PIPELINECONTROLLER(CFG, INGEST, EMBED, EVAL, LOG, VIEW, EMBVIEW)
             %   stores references to the provided services, a metrics view
@@ -22,8 +22,8 @@ classdef PipelineController < reg.mvc.BaseController
             if nargin < 7 || isempty(embView)
                 embView = reg.view.EmbeddingView();
             end
-            obj@reg.mvc.BaseController(cfgModel, view);
-            obj.ConfigModel = cfgModel;
+            obj@reg.mvc.BaseController(cfgSvc, view);
+            obj.ConfigService = cfgSvc;
             obj.IngestionService = ingestSvc;
             obj.EmbeddingService = embedSvc;
             obj.EvaluationService = evalSvc;
@@ -36,8 +36,7 @@ classdef PipelineController < reg.mvc.BaseController
             %   Sequencing: Config -> Ingestion -> Embedding -> Evaluation.
 
             % Step 1: retrieve configuration
-            cfgRaw = obj.ConfigModel.load();
-            cfg = obj.ConfigModel.process(cfgRaw);
+            cfg = obj.ConfigService.getConfig();
 
             % Step 2: ingest documents/features via service
             ingestOut = obj.IngestionService.ingest(cfg);

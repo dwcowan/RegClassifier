@@ -7,18 +7,11 @@ classdef ClassifierModel < reg.mvc.BaseModel
     %   predLabels  (logical matrix N×K): final binary predictions
 
     properties
-        % Shared configuration reference
-        cfg reg.model.ConfigModel = reg.model.ConfigModel();
     end
 
     methods
-        function obj = ClassifierModel(cfg)
-            %CLASSIFIERMODEL Construct classifier model.
-            %   OBJ = CLASSIFIERMODEL(cfg) uses shared configuration
-            %   parameters, e.g. cfg.kfold or cfg.minRuleConf.
-            if nargin > 0
-                obj.cfg = cfg;
-            end
+        function obj = ClassifierModel(varargin)
+            %#ok<INUSD>
         end
 
         function trainingInputs = load(~, varargin) %#ok<INUSD>

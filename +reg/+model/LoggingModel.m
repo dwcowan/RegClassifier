@@ -2,18 +2,11 @@ classdef LoggingModel < reg.mvc.BaseModel
     %LOGGINGMODEL Stub model for persisting metrics.
 
     properties
-        % Shared configuration reference
-        cfg reg.model.ConfigModel = reg.model.ConfigModel();
     end
 
     methods
-        function obj = LoggingModel(cfg)
-            %LOGGINGMODEL Construct logging model.
-            %   OBJ = LOGGINGMODEL(cfg) uses settings such as cfg.reportTitle
-            %   or destination paths when recording metrics.
-            if nargin > 0
-                obj.cfg = cfg;
-            end
+        function obj = LoggingModel(varargin)
+            %#ok<INUSD>
         end
 
         function metricsStruct = load(~, varargin) %#ok<INUSD>

@@ -2,18 +2,11 @@ classdef SearchIndexModel < reg.mvc.BaseModel
     %SEARCHINDEXMODEL Stub model building retrieval index.
 
     properties
-        % Shared configuration reference
-        cfg reg.model.ConfigModel = reg.model.ConfigModel();
     end
 
     methods
-        function obj = SearchIndexModel(cfg)
-            %SEARCHINDEXMODEL Construct search index model.
-            %   OBJ = SEARCHINDEXMODEL(cfg) uses settings such as
-            %   cfg.gpuEnabled or cfg.projDim when creating indexes.
-            if nargin > 0
-                obj.cfg = cfg;
-            end
+        function obj = SearchIndexModel(varargin)
+            %#ok<INUSD>
         end
 
         function indexInputs = load(~, varargin) %#ok<INUSD>

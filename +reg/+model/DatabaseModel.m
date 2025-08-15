@@ -4,19 +4,11 @@ classdef DatabaseModel < reg.mvc.BaseModel
     properties
         % Database connection handle created in `load` (default: [])
         conn = [];
-
-        % Shared configuration reference
-        cfg reg.model.ConfigModel = reg.model.ConfigModel();
     end
 
     methods
-        function obj = DatabaseModel(cfg)
-            %DATABASEMODEL Construct database model.
-            %   OBJ = DATABASEMODEL(cfg) uses database settings from
-            %   cfg.db.* such as cfg.db.enable or cfg.db.sqlitePath.
-            if nargin > 0
-                obj.cfg = cfg;
-            end
+        function obj = DatabaseModel(varargin)
+            %#ok<INUSD>
         end
 
         function dbHandles = load(obj, varargin) %#ok<INUSD>
@@ -41,7 +33,7 @@ classdef DatabaseModel < reg.mvc.BaseModel
             %       * Ensure existing connections are cleaned before opening new ones.
             % Pseudocode:
             %   1. If obj.conn is open, close it
-            %   2. Create new connection using cfg.db parameters
+            %   2. Create new connection using configuration parameters
             %   3. Store handle in obj.conn and return struct
             % TODO: add connection validation and retry logic
             error("reg:model:NotImplemented", ...
