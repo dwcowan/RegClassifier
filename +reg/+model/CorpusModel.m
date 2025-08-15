@@ -81,47 +81,47 @@ classdef CorpusModel < reg.mvc.BaseModel
                 "CorpusModel.sync is not implemented.");
         end
 
-        function result = diffArticles(~, dirA, dirB, outDir)
-            %DIFFARTICLES Compare corpora by article number.
-            %   RESULT = DIFFARTICLES(obj, dirA, dirB, outDir) should align
+        function result = runArticles(~, dirA, dirB, outDir)
+            %RUNARTICLES Compare corpora by article number.
+            %   RESULT = RUNARTICLES(obj, dirA, dirB, outDir) should align
             %   documents by article identifiers and compute differences.
             %   Legacy Reference
             %       Equivalent to `reg.crr_diff_articles`.
             error("reg:model:NotImplemented", ...
-                "CorpusModel.diffArticles is not implemented.");
+                "CorpusModel.runArticles is not implemented.");
         end
 
-        function diff = diffVersions(~, dirA, dirB, outDir)
-            %DIFFVERSIONS Compute file-level diffs between directories.
-            %   DIFF = DIFFVERSIONS(obj, dirA, dirB, outDir) should compare
+        function diff = runVersions(~, dirA, dirB, outDir)
+            %RUNVERSIONS Compute file-level diffs between directories.
+            %   DIFF = RUNVERSIONS(obj, dirA, dirB, outDir) should compare
             %   file versions and report line-level changes.
             %   Legacy Reference
             %       Equivalent to `reg.crr_diff_versions`.
             error("reg:model:NotImplemented", ...
-                "CorpusModel.diffVersions is not implemented.");
+                "CorpusModel.runVersions is not implemented.");
         end
 
-        function report = generateReport(~, dirA, dirB, outDir)
-            %GENERATEREPORT Produce diff reports for two directories.
-            %   REPORT = GENERATEREPORT(obj, dirA, dirB, outDir) should
+        function report = runReport(~, dirA, dirB, outDir)
+            %RUNREPORT Produce diff reports for two directories.
+            %   REPORT = RUNREPORT(obj, dirA, dirB, outDir) should
             %   generate PDF and HTML artifacts summarising differences.
             %   Legacy Reference
             %       Equivalent to `reg_crr_diff_report` and
             %       `reg_crr_diff_report_html`.
             error("reg:model:NotImplemented", ...
-                "CorpusModel.generateReport is not implemented.");
+                "CorpusModel.runReport is not implemented.");
         end
 
-        function result = diffMethods(~, queries, chunksT, config)
-            %DIFFMETHODS Compare retrieval across encoder variants.
-            %   RESULT = DIFFMETHODS(obj, queries, chunksT, config) should
+        function result = runMethods(~, queries, chunksT, config)
+            %RUNMETHODS Compare retrieval across encoder variants.
+            %   RESULT = RUNMETHODS(obj, queries, chunksT, config) should
             %   evaluate alternative embedding methods on QUERY strings
             %   against CHUNKST table. CONFIG defaults to an empty struct.
             if nargin < 4
                 config = struct();
             end %#ok<NASGU>
             error("reg:model:NotImplemented", ...
-                "CorpusModel.diffMethods is not implemented.");
+                "CorpusModel.runMethods is not implemented.");
         end
     end
 end
