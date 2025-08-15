@@ -55,6 +55,14 @@ classdef ProjectionHeadController < reg.mvc.BaseController
 
             % Step 5: train projection head using triplets
             %   Model should check dimensions and raise if triplets malformed.
+            %   Potential Failure Modes
+            %       * GPU out-of-memory during training batches.
+            %       * Triplet indices outside embedding range.
+            %       * Diverging loss due to extreme hyper‑parameters.
+            %   Mitigation
+            %       * Catch errors and retry on CPU or with reduced batch size.
+            %       * Validate triplet indices before invoking the model.
+            %       * Expose learning-rate and margin safeguards.
             headRaw = obj.ProjectionHeadModel.load(triplets);
             projE = obj.ProjectionHeadModel.process(headRaw);
 
