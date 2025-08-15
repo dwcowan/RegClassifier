@@ -1,8 +1,9 @@
-classdef CorpusFetchModel < reg.mvc.BaseModel
-    %CORPUSFETCHMODEL Retrieve CRR corpora from public sources.
+classdef CorpusModel < reg.mvc.BaseModel
+    %CORPUSMODEL Manage CRR corpus retrieval and comparison.
     %   Unified model exposing helper methods for downloading articles from
-    %   the EBA Single Rulebook, the consolidated PDF from EUR-Lex and
-    %   orchestrating full corpus synchronisation.
+    %   the EBA Single Rulebook, the consolidated PDF from EUR-Lex,
+    %   orchestrating full corpus synchronisation and running diff
+    %   workflows.
 
     methods
         function params = load(~, date)
@@ -38,7 +39,7 @@ classdef CorpusFetchModel < reg.mvc.BaseModel
             %       2. Write HTML/plaintext files and index.csv
             %       3. Return table describing downloaded artefacts
             error("reg:model:NotImplemented", ...
-                "CorpusFetchModel.fetchEba is not implemented.");
+                "CorpusModel.fetchEba is not implemented.");
         end
 
         function T = fetchEbaParsed(~, varargin) %#ok<INUSD>
@@ -50,7 +51,7 @@ classdef CorpusFetchModel < reg.mvc.BaseModel
             %       2. Parse article numbers into `article_num`
             %       3. Return metadata table including `article_num`
             error("reg:model:NotImplemented", ...
-                "CorpusFetchModel.fetchEbaParsed is not implemented.");
+                "CorpusModel.fetchEbaParsed is not implemented.");
         end
 
         function pdfPath = fetchEurlex(~, varargin) %#ok<INUSD>
@@ -62,7 +63,7 @@ classdef CorpusFetchModel < reg.mvc.BaseModel
             %       2. Download PDF into data/raw
             %       3. Return absolute file path
             error("reg:model:NotImplemented", ...
-                "CorpusFetchModel.fetchEurlex is not implemented.");
+                "CorpusModel.fetchEurlex is not implemented.");
         end
 
         function out = sync(~, params) %#ok<INUSD>
@@ -77,7 +78,50 @@ classdef CorpusFetchModel < reg.mvc.BaseModel
             %       2. Download and unpack corpus
             %       3. Build index files and return paths
             error("reg:model:NotImplemented", ...
-                "CorpusFetchModel.sync is not implemented.");
+                "CorpusModel.sync is not implemented.");
+        end
+
+        function result = diffArticles(~, dirA, dirB, outDir)
+            %DIFFARTICLES Compare corpora by article number.
+            %   RESULT = DIFFARTICLES(obj, dirA, dirB, outDir) should align
+            %   documents by article identifiers and compute differences.
+            %   Legacy Reference
+            %       Equivalent to `reg.crr_diff_articles`.
+            error("reg:model:NotImplemented", ...
+                "CorpusModel.diffArticles is not implemented.");
+        end
+
+        function diff = diffVersions(~, dirA, dirB, outDir)
+            %DIFFVERSIONS Compute file-level diffs between directories.
+            %   DIFF = DIFFVERSIONS(obj, dirA, dirB, outDir) should compare
+            %   file versions and report line-level changes.
+            %   Legacy Reference
+            %       Equivalent to `reg.crr_diff_versions`.
+            error("reg:model:NotImplemented", ...
+                "CorpusModel.diffVersions is not implemented.");
+        end
+
+        function report = generateReport(~, dirA, dirB, outDir)
+            %GENERATEREPORT Produce diff reports for two directories.
+            %   REPORT = GENERATEREPORT(obj, dirA, dirB, outDir) should
+            %   generate PDF and HTML artifacts summarising differences.
+            %   Legacy Reference
+            %       Equivalent to `reg_crr_diff_report` and
+            %       `reg_crr_diff_report_html`.
+            error("reg:model:NotImplemented", ...
+                "CorpusModel.generateReport is not implemented.");
+        end
+
+        function result = diffMethods(~, queries, chunksT, config)
+            %DIFFMETHODS Compare retrieval across encoder variants.
+            %   RESULT = DIFFMETHODS(obj, queries, chunksT, config) should
+            %   evaluate alternative embedding methods on QUERY strings
+            %   against CHUNKST table. CONFIG defaults to an empty struct.
+            if nargin < 4
+                config = struct();
+            end %#ok<NASGU>
+            error("reg:model:NotImplemented", ...
+                "CorpusModel.diffMethods is not implemented.");
         end
     end
 end
