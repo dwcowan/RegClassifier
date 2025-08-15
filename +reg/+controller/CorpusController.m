@@ -89,8 +89,8 @@ classdef CorpusController < reg.mvc.BaseController
         function result = runArticles(obj, dirA, dirB, outDir)
             %RUNARTICLES Compare corpora by article number.
             %   RESULT = RUNARTICLES(obj, dirA, dirB, outDir) forwards to
-            %   the model's diffArticles implementation and displays results.
-            result = obj.Model.diffArticles(dirA, dirB, outDir);
+            %   the model's runArticles implementation and displays results.
+            result = obj.Model.runArticles(dirA, dirB, outDir);
             if ~isempty(obj.View)
                 obj.View.display(result);
             end
@@ -99,8 +99,8 @@ classdef CorpusController < reg.mvc.BaseController
         function result = runVersions(obj, dirA, dirB, outDir)
             %RUNVERSIONS Diff directories on a file-by-file basis.
             %   RESULT = RUNVERSIONS(obj, dirA, dirB, outDir) delegates to
-            %   the model's diffVersions method and displays results.
-            result = obj.Model.diffVersions(dirA, dirB, outDir);
+            %   the model's runVersions method and displays results.
+            result = obj.Model.runVersions(dirA, dirB, outDir);
             if ~isempty(obj.View)
                 obj.View.display(result);
             end
@@ -110,7 +110,7 @@ classdef CorpusController < reg.mvc.BaseController
             %RUNREPORT Produce diff reports for two directories.
             %   REPORT = RUNREPORT(obj, dirA, dirB, outDir) orchestrates
             %   generation of diff artefacts using the model.
-            report = obj.Model.generateReport(dirA, dirB, outDir);
+            report = obj.Model.runReport(dirA, dirB, outDir);
             if ~isempty(obj.View)
                 obj.View.display(report);
             end
@@ -124,7 +124,7 @@ classdef CorpusController < reg.mvc.BaseController
             if nargin < 4
                 config = struct();
             end
-            result = obj.Model.diffMethods(queries, chunksT, config);
+            result = obj.Model.runMethods(queries, chunksT, config);
             if ~isempty(obj.View)
                 obj.View.display(result);
             end
