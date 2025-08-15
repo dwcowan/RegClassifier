@@ -62,6 +62,12 @@ classdef ConfigModel < reg.mvc.BaseModel
             'dbname','reg_topics', 'user','user', 'pass','pass', ...
             'server','localhost', 'port',5432, ...
             'sqlitePath','./data/db/my_reg_topics.sqlite');
+
+        % Loaded knob configuration
+        knobs struct = struct();
+
+        % Seeds applied for reproducibility
+        seeds struct = struct();
     end
 
     methods
@@ -101,6 +107,107 @@ classdef ConfigModel < reg.mvc.BaseModel
                 error("reg:model:NoGPU", ...
                     "GPU support is not available in this environment.");
             end
+        end
+
+        function K = loadKnobs(obj, varargin)
+            %LOADKNOBS Load knob values from JSON and apply overrides.
+            %   K = LOADKNOBS(obj, jsonPath) reads knob settings from
+            %   `jsonPath` (default 'knobs.json') and stores them on the
+            %   model. Known fields override corresponding properties.
+            if ~isempty(varargin)
+                jsonPath = varargin{1};
+            else
+                jsonPath = "knobs.json";
+            end
+            try
+                K = reg.load_knobs(jsonPath);
+            catch ME
+                warning("reg:model:KnobsLoadFailed", ...
+                    "Knobs load failed: %s", ME.message);
+                K = struct();
+            end
+            obj.knobs = K;
+
+            % Apply knob overrides to properties when present
+            if isfield(K, 'BERT')
+                if isfield(K.BERT, 'MiniBatchSize')
+                    obj.bertMiniBatchSize = K.BERT.MiniBatchSize;
+                end
+                if isfield(K.BERT, 'MaxSeqLength')
+                    obj.bertMaxSeqLength = K.BERT.MaxSeqLength;
+                end
+            end
+            if isfield(K, 'Projection')
+                if isfield(K.Projection, 'ProjDim')
+                    obj.projDim = K.Projection.ProjDim;
+                end
+                if isfield(K.Projection, 'BatchSize')
+                    obj.projBatchSize = K.Projection.BatchSize;
+                end
+                if isfield(K.Projection, 'Epochs')
+                    obj.projEpochs = K.Projection.Epochs;
+                end
+                if isfield(K.Projection, 'LR')
+                    obj.projLR = K.Projection.LR;
+                end
+                if isfield(K.Projection, 'Margin')
+                    obj.projMargin = K.Projection.Margin;
+                end
+            end
+            if isfield(K, 'FineTune')
+                if isfield(K.FineTune, 'Loss')
+                    obj.fineTuneLoss = string(K.FineTune.Loss);
+                end
+                if isfield(K.FineTune, 'BatchSize')
+                    obj.fineTuneBatchSize = K.FineTune.BatchSize;
+                end
+                if isfield(K.FineTune, 'Epochs')
+                    obj.fineTuneEpochs = K.FineTune.Epochs;
+                end
+                if isfield(K.FineTune, 'MaxSeqLength')
+                    obj.fineTuneMaxSeqLength = K.FineTune.MaxSeqLength;
+                end
+                if isfield(K.FineTune, 'UnfreezeTopLayers')
+                    obj.fineTuneUnfreezeTopLayers = K.FineTune.UnfreezeTopLayers;
+                end
+                if isfield(K.FineTune, 'EncoderLR')
+                    obj.fineTuneEncoderLR = K.FineTune.EncoderLR;
+                end
+                if isfield(K.FineTune, 'HeadLR')
+                    obj.fineTuneHeadLR = K.FineTune.HeadLR;
+                end
+            end
+            if isfield(K, 'Chunk')
+                if isfield(K.Chunk, 'SizeTokens')
+                    obj.chunkSizeTokens = K.Chunk.SizeTokens;
+                end
+                if isfield(K.Chunk, 'Overlap')
+                    obj.chunkOverlap = K.Chunk.Overlap;
+                end
+            end
+        end
+
+        function validateKnobs(obj)
+            %VALIDATEKNOBS Perform basic sanity checks on loaded knobs.
+            if ~isempty(obj.knobs)
+                reg.validate_knobs(obj.knobs);
+            end
+        end
+
+        function printActiveKnobs(obj)
+            %PRINTACTIVEKNOBS Pretty-print active knob configuration.
+            reg.print_active_knobs(struct('knobs', obj.knobs));
+        end
+
+        function S = applySeeds(obj, varargin)
+            %APPLYSEEDS Set RNG seeds for reproducibility.
+            if ~isempty(varargin)
+                seed = varargin{1};
+            else
+                seed = [];
+            end
+            S = reg.set_seeds(seed);
+            obj.seeds = S;
         end
 
         function cfgStruct = load(~, varargin) %#ok<INUSD>
