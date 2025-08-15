@@ -28,7 +28,7 @@ classdef EmbeddingModel < reg.mvc.BaseModel
                 cfg = obj.ConfigModel.process(cfgRaw); %#ok<NASGU>
             end
             output = struct('Vectors', []);
-            reg.model.Embedding.save(output.Vectors);
+            reg.model.saveEmbeddings(output.Vectors);
             error("reg:model:NotImplemented", ...
                 "EmbeddingModel.process is not implemented.");
         end
