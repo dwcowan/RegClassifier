@@ -46,7 +46,7 @@ Note: identifiers appearing only in pseudocode examples are for algorithm illust
 | Development scripts | snake_case starting with a verb; file name matches script name | `generate_docs` |
 | Project helper scripts | lowerCamelCase; file name matches script name | `runPipeline` |
 | Class Methods | lowerCamelCase | `computeScore`, `updateModel` |
-| Classes | UpperCamelCase | `DocumentParser`, `EmbeddingService` |
+| Classes | UpperCamelCase | `DocumentParser`, `EmbeddingModel` |
 | Test Classes | lowerCamelCase prefixed with `test` | `testFeature` |
 | Interface Classes | UpperCamelCase prefixed with `I` | `ILogFormatter`, `IDataSource` |
 | Class properties | lowerCamelCase | `maxEpochs`, `learningRate` |
