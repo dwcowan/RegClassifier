@@ -14,16 +14,19 @@ classdef EvaluationService
             end
         end
 
-        function inputs = prepare(~, varargin) %#ok<INUSD>
-            %PREPARE Gather predictions and references for evaluation.
-            error("reg:service:NotImplemented", ...
-                "EvaluationService.prepare is not implemented.");
+        function input = prepare(~, pred, ref)
+            %PREPARE Package predictions and references for evaluation.
+            %   INPUT = PREPARE(PRED, REF) returns an EvaluationInput value
+            %   object which can later be handed to COMPUTE.
+            input = reg.service.EvaluationInput(pred, ref);
         end
 
-        function metrics = compute(~, inputs) %#ok<INUSD>
-            %COMPUTE Calculate evaluation metrics from INPUTS.
+        function result = compute(~, input) %#ok<INUSD>
+            %COMPUTE Calculate evaluation metrics from INPUT.
+            %#ok<NASGU>
             error("reg:service:NotImplemented", ...
                 "EvaluationService.compute is not implemented.");
+            % result = reg.service.EvaluationResult([]);
         end
     end
 end

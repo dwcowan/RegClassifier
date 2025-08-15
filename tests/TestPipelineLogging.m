@@ -9,20 +9,12 @@ classdef TestPipelineLogging < RegTestCase
     methods(TestMethodSetup)
         function setup(tc)
             cfgModel   = ConfigStub();
-            pdfModel   = PassThroughModel();
-            chunkModel = PassThroughModel();
-            featModel  = FeatureStub();
-            embModel   = EmbeddingStub();
-            projModel  = PassThroughModel();
-            weakModel  = PassThroughModel();
-            clsModel   = ClassifierStub();
-            searchModel = PassThroughModel();
-            dbModel    = PassThroughModel();
+            ingestSvc  = IngestStub();
+            embedSvc   = EmbedStub();
+            evalSvc    = EvalStub();
             tc.LogModel = LogSpyModel();
-            reportModel = PassThroughModel();
             view       = SpyView();
-            tc.Controller = reg.controller.PipelineController(cfgModel, pdfModel, chunkModel, featModel, embModel, projModel, weakModel, ...
-                clsModel, searchModel, dbModel, tc.LogModel, reportModel, view);
+            tc.Controller = reg.controller.PipelineController(cfgModel, ingestSvc, embedSvc, evalSvc, tc.LogModel, view);
         end
     end
 
@@ -55,53 +47,32 @@ classdef ConfigStub < handle
     end
 end
 
-classdef PassThroughModel < handle
+classdef IngestStub < handle
     methods
-        function out = load(~, data)
-            if nargin < 2, data = []; end
-            out = data;
-        end
-        function out = process(~, data)
-            out = data;
+        function out = ingest(~, ~)
+            out = reg.service.IngestionOutput([], [], []);
         end
     end
 end
 
-classdef FeatureStub < handle
+classdef EmbedStub < handle
     methods
-        function data = load(~, ~)
-            data = [];
+        function input = prepare(~, feats)
+            input = reg.service.EmbeddingInput(feats);
         end
-        function [features, vocab] = process(~, ~)
-            features = [];
-            vocab = [];
+        function out = embed(~, input)
+            out = reg.service.EmbeddingOutput(input.Features);
         end
     end
 end
 
-classdef EmbeddingStub < handle
+classdef EvalStub < handle
     methods
-        function data = load(~, in)
-            if nargin < 2, in = []; end
-            data = in;
+        function input = prepare(~, emb, ~)
+            input = reg.service.EvaluationInput(emb, []);
         end
-        function [embeddings, vocab] = process(~, data)
-            embeddings = data;
-            vocab = [];
-        end
-    end
-end
-
-classdef ClassifierStub < handle
-    methods
-        function data = load(~, ~)
-            data = [];
-        end
-        function [models, scores, thresholds, pred] = process(~, ~)
-            models = [];
-            scores = 42;
-            thresholds = [];
-            pred = [];
+        function result = compute(~, input) %#ok<INUSD>
+            result = reg.service.EvaluationResult(42);
         end
     end
 end
