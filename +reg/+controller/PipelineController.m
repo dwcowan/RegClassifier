@@ -11,11 +11,12 @@ classdef PipelineController < reg.mvc.BaseController
         ClassifierModel
         SearchIndexModel
         DatabaseModel
+        LoggingModel
         ReportModel
     end
-    
+
     methods
-        function obj = PipelineController(cfgModel, pdfModel, chunkModel, featModel, projModel, weakModel, clsModel, searchModel, dbModel, reportModel, view)
+        function obj = PipelineController(cfgModel, pdfModel, chunkModel, featModel, projModel, weakModel, clsModel, searchModel, dbModel, logModel, reportModel, view)
             %PIPELINECONTROLLER Construct controller wiring the full pipeline.
             %   OBJ = PIPELINECONTROLLER(...) assembles all models and a view.
             %   Equivalent to setup in `reg_pipeline`.
@@ -29,6 +30,7 @@ classdef PipelineController < reg.mvc.BaseController
             obj.ClassifierModel = clsModel;
             obj.SearchIndexModel = searchModel;
             obj.DatabaseModel = dbModel;
+            obj.LoggingModel = logModel;
             obj.ReportModel = reportModel;
         end
 
@@ -107,6 +109,10 @@ classdef PipelineController < reg.mvc.BaseController
             clsRaw = obj.ClassifierModel.load(Yweak);
             [models, scores, thresholds, pred] = obj.ClassifierModel.process(clsRaw); %#ok<NASGU>
 
+            % Log training metrics
+            logTrain = obj.LoggingModel.load(scores);
+            obj.LoggingModel.process(logTrain);
+
             % Step 8: Build search index
             %   SearchIndexModel must ensure vocabulary and embeddings align.
             searchRaw = obj.SearchIndexModel.load(pred);
@@ -129,6 +135,9 @@ classdef PipelineController < reg.mvc.BaseController
             %   before rendering.
             reportRaw = obj.ReportModel.load(dbResult);
             reportData = obj.ReportModel.process(reportRaw);
+            % Log evaluation/report metrics
+            logEval = obj.LoggingModel.load(reportData);
+            obj.LoggingModel.process(logEval);
             obj.View.display(reportData);
         end
     end

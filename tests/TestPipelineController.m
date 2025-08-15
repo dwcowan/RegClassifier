@@ -16,9 +16,10 @@ classdef TestPipelineController < matlab.unittest.TestCase
             clsModel = reg.model.ClassifierModel();
             searchModel = reg.model.SearchIndexModel();
             dbModel = reg.model.DatabaseModel();
+            logModel = reg.model.LoggingModel();
             reportModel = reg.model.ReportModel();
             view = reg.view.ReportView();
-            tc.Controller = reg.controller.PipelineController(cfgModel, pdfModel, chunkModel, featModel, projModel, weakModel, clsModel, searchModel, dbModel, reportModel, view);
+            tc.Controller = reg.controller.PipelineController(cfgModel, pdfModel, chunkModel, featModel, projModel, weakModel, clsModel, searchModel, dbModel, logModel, reportModel, view);
         end
     end
     
