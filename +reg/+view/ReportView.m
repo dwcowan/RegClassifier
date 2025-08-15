@@ -5,8 +5,8 @@ classdef ReportView < reg.mvc.BaseView
     %       * irbSubset     - subset of predictions flagged for IRB review
     %       * trendCharts   - chart objects or file paths showing metric trends
     %       * (optional) metric arrays or other artefacts to embed
-    %   Typical usage: PipelineController or EvalController assembles DATA
-    %   after running the pipeline and passes it to this view. A production
+    %   Typical usage: EvaluationController assembles DATA after running
+    %   its workflow and passes it to this view. A production
     %   implementation would format tables into HTML/PDF, persist IRB subsets
     %   to CSV for audit, and embed trend charts as images.
 
