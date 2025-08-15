@@ -16,9 +16,9 @@ classdef TestFineTuneController < RegTestCase
             weakModel    = StubModel("Yweak","Yboot");
             dataModel    = StubModel("triplets");
             encoderModel = StubModel("net");
-            evalModel    = StubModel(struct('Accuracy',0.42));
+            evalService  = StubService(struct('Accuracy',0.42));
             tc.View = SpyView();
-            tc.Controller = reg.controller.FineTuneController(pdfModel, chunkModel, weakModel, dataModel, encoderModel, evalModel, tc.View);
+            tc.Controller = reg.controller.FineTuneController(pdfModel, chunkModel, weakModel, dataModel, encoderModel, evalService, tc.View);
 
         end
     end
@@ -55,6 +55,23 @@ classdef StubModel < handle
         end
         function varargout = process(obj, ~)
             varargout = obj.ProcessOutputs;
+        end
+    end
+end
+
+classdef StubService < handle
+    properties
+        ComputeOutput
+    end
+    methods
+        function obj = StubService(out)
+            obj.ComputeOutput = out;
+        end
+        function data = prepare(~)
+            data = [];
+        end
+        function out = compute(obj, ~)
+            out = obj.ComputeOutput;
         end
     end
 end

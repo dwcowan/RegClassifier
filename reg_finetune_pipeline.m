@@ -6,9 +6,9 @@ function reg_finetune_pipeline()
     weakModel = reg.model.WeakLabelModel();
     dataModel = reg.model.FineTuneDataModel();
     encoderModel = reg.model.EncoderFineTuneModel();
-    evalModel = reg.model.EvaluationModel();
+    evalService = reg.service.EvaluationService();
     view = reg.view.MetricsView();
     controller = reg.controller.FineTuneController(pdfModel, chunkModel, weakModel, ...
-        dataModel, encoderModel, evalModel, view);
+        dataModel, encoderModel, evalService, view);
     controller.run();
 end
