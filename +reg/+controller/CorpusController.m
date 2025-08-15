@@ -56,6 +56,47 @@ classdef CorpusController < reg.mvc.BaseController
             end
         end
 
+        function documents = ingestPdfs(obj, cfg)
+            %INGESTPDFS Convert PDFs to a document table via the model.
+            %   documents = INGESTPDFS(obj, cfg) delegates to the model's
+            %   ingestPdfs method and displays the resulting table when a
+            %   view is configured.
+            documents = obj.Model.ingestPdfs(cfg);
+            if ~isempty(obj.View)
+                obj.View.display(documents);
+            end
+        end
+
+        function persistDocuments(obj, documents)
+            %PERSISTDOCUMENTS Persist document structs through the model.
+            %   PERSISTDOCUMENTS(obj, documents) forwards to the model and
+            %   displays the input documents when a view is present.
+            obj.Model.persistDocuments(documents);
+            if ~isempty(obj.View)
+                obj.View.display(documents);
+            end
+        end
+
+        function searchIndex = buildIndex(obj, indexInputs)
+            %BUILDINDEX Create or update the search index via the model.
+            %   searchIndex = BUILDINDEX(obj, indexInputs) calls the model's
+            %   buildIndex and forwards the result to the view if available.
+            searchIndex = obj.Model.buildIndex(indexInputs);
+            if ~isempty(obj.View)
+                obj.View.display(searchIndex);
+            end
+        end
+
+        function results = queryIndex(obj, queryString, alpha, topK)
+            %QUERYINDEX Retrieve ranked documents from the model's index.
+            %   results = QUERYINDEX(obj, queryString, alpha, topK) forwards
+            %   to the model and displays results when a view is configured.
+            results = obj.Model.queryIndex(queryString, alpha, topK);
+            if ~isempty(obj.View)
+                obj.View.display(results);
+            end
+        end
+
         function out = sync(obj, date)
             %SYNC Execute synchronisation for a given date.
             %   OUT = SYNC(obj, date) orchestrates corpus synchronisation.
