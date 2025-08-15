@@ -9,19 +9,32 @@ classdef VisualizationModel < reg.mvc.BaseModel
             %   symmetry with other models in the MVC framework.
         end
 
-        function pngPath = plotTrends(~, csvPath, pngPath)
+        function pngPath = plotTrends(~, csvPath, pngPath) %#ok<INUSD>
             %PLOTTRENDS Generate trend plots from metrics history.
-            %   pngPath = PLOTTRENDS(obj, csvPath, pngPath) wraps
-            %   reg.plot_trends.
-            pngPath = reg.plot_trends(csvPath, pngPath);
+            %   pngPath = PLOTTRENDS(obj, csvPath, pngPath) should read a
+            %   CSV of historical metrics and render a trend PNG.
+            %   Legacy Reference
+            %       Equivalent to `reg.plot_trends`.
+            %   Pseudocode:
+            %       1. Read metrics from csvPath
+            %       2. Plot trends and save to pngPath
+            %       3. Return pngPath
+            error("reg:model:NotImplemented", ...
+                "VisualizationModel.plotTrends is not implemented.");
         end
 
-        function pngPath = plotCoRetrievalHeatmap(~, embeddings, labelMatrix, pngPath, labels)
+        function pngPath = plotCoRetrievalHeatmap(~, embeddings, labelMatrix, pngPath, labels) %#ok<INUSD>
             %PLOTCORETRIEVALHEATMAP Create a heatmap of label co-retrieval.
             %   pngPath = PLOTCORETRIEVALHEATMAP(obj, embeddings, labelMatrix,
-            %   pngPath, labels) delegates to reg.plot_coretrieval_heatmap.
-            [M, order] = reg.label_coretrieval_matrix(embeddings, labelMatrix, 10);
-            pngPath = reg.plot_coretrieval_heatmap(M(order,order), string(labels(order)), pngPath);
+            %   pngPath, labels) should visualise co-retrieval frequencies.
+            %   Legacy Reference
+            %       Equivalent to `reg.plot_coretrieval_heatmap`.
+            %   Pseudocode:
+            %       1. Derive co-retrieval matrix from embeddings/labels
+            %       2. Plot heatmap ordered by label frequency
+            %       3. Save to pngPath and return path
+            error("reg:model:NotImplemented", ...
+                "VisualizationModel.plotCoRetrievalHeatmap is not implemented.");
         end
 
         function data = load(~, varargin) %#ok<INUSD>
