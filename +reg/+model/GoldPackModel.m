@@ -2,17 +2,17 @@ classdef GoldPackModel < reg.mvc.BaseModel
     %GOLDPACKMODEL Stub model providing labelled gold data.
 
     properties
-        % Configuration for gold data retrieval (default: struct())
-        config = struct();
+        % Shared configuration reference
+        cfg reg.model.ConfigModel = reg.model.ConfigModel();
     end
 
     methods
-        function obj = GoldPackModel(config)
+        function obj = GoldPackModel(cfg)
             %GOLDPACKMODEL Construct gold data model.
-            %   OBJ = GOLDPACKMODEL(config) stores retrieval settings.
-            %   Equivalent to initialization in `load_gold`.
+            %   OBJ = GOLDPACKMODEL(cfg) reads paths such as cfg.inputDir
+            %   when locating packaged gold datasets.
             if nargin > 0
-                obj.config = config;
+                obj.cfg = cfg;
             end
         end
 

@@ -2,18 +2,17 @@ classdef FeatureModel < reg.mvc.BaseModel
     %FEATUREMODEL Stub model generating feature representations.
 
     properties
-        % Feature extraction configuration (default: struct())
-        config = struct();
+        % Shared configuration reference
+        cfg reg.model.ConfigModel = reg.model.ConfigModel();
     end
 
     methods
-        function obj = FeatureModel(config)
+        function obj = FeatureModel(cfg)
             %FEATUREMODEL Construct feature extraction model.
-            %   OBJ = FEATUREMODEL(config) stores parameters for feature
-            %   generation. Equivalent to initialization in
-            %   `precompute_embeddings`.
+            %   OBJ = FEATUREMODEL(cfg) uses parameters such as
+            %   cfg.bertMiniBatchSize when computing embeddings.
             if nargin > 0
-                obj.config = config;
+                obj.cfg = cfg;
             end
         end
 

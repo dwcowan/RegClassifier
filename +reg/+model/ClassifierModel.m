@@ -2,17 +2,17 @@ classdef ClassifierModel < reg.mvc.BaseModel
     %CLASSIFIERMODEL Stub model training classifiers and predicting labels.
 
     properties
-        % Structure containing classifier configuration (default: struct())
-        config = struct();
+        % Shared configuration reference
+        cfg reg.model.ConfigModel = reg.model.ConfigModel();
     end
 
     methods
-        function obj = ClassifierModel(config)
+        function obj = ClassifierModel(cfg)
             %CLASSIFIERMODEL Construct classifier model.
-            %   OBJ = CLASSIFIERMODEL(config) sets classifier parameters.
-            %   Equivalent to initialization in `predict_multilabel`.
+            %   OBJ = CLASSIFIERMODEL(cfg) uses shared configuration
+            %   parameters, e.g. cfg.kfold or cfg.minRuleConf.
             if nargin > 0
-                obj.config = config;
+                obj.cfg = cfg;
             end
         end
 

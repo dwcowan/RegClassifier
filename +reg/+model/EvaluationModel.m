@@ -2,17 +2,17 @@ classdef EvaluationModel < reg.mvc.BaseModel
     %EVALUATIONMODEL Stub model computing evaluation metrics.
 
     properties
-        % Evaluation configuration (default: struct())
-        config = struct();
+        % Shared configuration reference
+        cfg reg.model.ConfigModel = reg.model.ConfigModel();
     end
 
     methods
-        function obj = EvaluationModel(config)
+        function obj = EvaluationModel(cfg)
             %EVALUATIONMODEL Construct evaluation model.
-            %   OBJ = EVALUATIONMODEL(config) stores evaluation options.
-            %   Equivalent to setup in `eval_retrieval`.
+            %   OBJ = EVALUATIONMODEL(cfg) provides access to evaluation
+            %   options held in cfg, such as cfg.labels.
             if nargin > 0
-                obj.config = config;
+                obj.cfg = cfg;
             end
         end
 

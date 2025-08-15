@@ -2,18 +2,17 @@ classdef PDFIngestModel < reg.mvc.BaseModel
     %PDFINGESTMODEL Stub model converting PDFs to document table.
 
     properties
-        % Directory containing the PDF files to ingest (default: "")
-        inputDir = "";
+        % Shared configuration reference
+        cfg reg.model.ConfigModel = reg.model.ConfigModel();
     end
 
     methods
-        function obj = PDFIngestModel(inputDir)
+        function obj = PDFIngestModel(cfg)
             %PDFINGESTMODEL Construct the ingest model.
-            %   OBJ = PDFINGESTMODEL(inputDir) creates a model pointing to the
-            %   directory containing PDF files. Equivalent to `ingest_pdfs`
-            %   initialization logic.
+            %   OBJ = PDFINGESTMODEL(cfg) consumes cfg.inputDir to locate
+            %   PDF files. Equivalent to `ingest_pdfs` initialization logic.
             if nargin > 0
-                obj.inputDir = inputDir;
+                obj.cfg = cfg;
             end
         end
 
@@ -36,10 +35,10 @@ classdef PDFIngestModel < reg.mvc.BaseModel
             %       * Filenames with special characters can break downstream
             %         parsing.
             %   Recommended Mitigation
-            %       * Validate inputDir and warn/raise when no PDFs found.
+            %       * Validate cfg.inputDir and warn/raise when no PDFs found.
             %       * Sanitize or normalize filenames before returning.
             % Pseudocode:
-            %   1. Scan inputDir for *.pdf files
+            %   1. Scan cfg.inputDir for *.pdf files
             %   2. Sort or filter list as needed
             %   3. Return pdfFiles
             % TODO: implement checks for empty results and path validation

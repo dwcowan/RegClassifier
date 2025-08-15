@@ -2,18 +2,17 @@ classdef FineTuneDataModel < reg.mvc.BaseModel
     %FINETUNEDATAMODEL Stub model building contrastive triplets.
 
     properties
-        % Settings for constructing fine-tuning data (default: struct())
-        config = struct();
+        % Shared configuration reference
+        cfg reg.model.ConfigModel = reg.model.ConfigModel();
     end
 
     methods
-        function obj = FineTuneDataModel(config)
+        function obj = FineTuneDataModel(cfg)
             %FINETUNEDATAMODEL Construct contrastive data model.
-            %   OBJ = FINETUNEDATAMODEL(config) stores settings for
-            %   generating training triplets. Equivalent to
-            %   `ft_build_contrastive_dataset` setup.
+            %   OBJ = FINETUNEDATAMODEL(cfg) utilises fields such as
+            %   cfg.fineTuneLoss and cfg.fineTuneBatchSize.
             if nargin > 0
-                obj.config = config;
+                obj.cfg = cfg;
             end
         end
 
