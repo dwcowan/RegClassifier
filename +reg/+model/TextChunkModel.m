@@ -1,5 +1,17 @@
 classdef TextChunkModel < reg.mvc.BaseModel
     %TEXTCHUNKMODEL Stub model splitting documents into chunks.
+    %
+    % Input documentsTable schema (see PDFIngestModel):
+    %   doc_id (string) : unique document identifier
+    %   text   (string) : full document text
+    %   meta   (struct) : file metadata
+    %
+    % Output chunksTable schema returned by PROCESS:
+    %   chunk_id  (string) : unique chunk identifier
+    %   doc_id    (string) : parent document identifier
+    %   text      (string) : chunk text content
+    %   start_idx (double) : starting token index in source doc
+    %   end_idx   (double) : ending token index in source doc
 
     properties
         % Shared configuration reference

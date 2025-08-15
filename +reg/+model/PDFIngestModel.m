@@ -1,5 +1,13 @@
 classdef PDFIngestModel < reg.mvc.BaseModel
     %PDFINGESTMODEL Stub model converting PDFs to document table.
+    %
+    % Expected documentsTable schema returned by PROCESS:
+    %   doc_id (string) : unique document identifier
+    %   text   (string) : full text extracted from each PDF
+    %   meta   (struct) : file metadata with fields
+    %       - path (string)    : absolute source path
+    %       - bytes (double)   : file size in bytes
+    %       - modified (double): datenum timestamp of last change
 
     properties
         % Shared configuration reference

@@ -1,5 +1,10 @@
 classdef ClassifierModel < reg.mvc.BaseModel
     %CLASSIFIERMODEL Stub model training classifiers and predicting labels.
+    %
+    % Prediction outputs returned by PROCESS:
+    %   scores      (double matrix N×K) : probabilities per chunk and label
+    %   thresholds  (double vector 1×K) : decision threshold per label
+    %   predLabels  (logical matrix N×K): final binary predictions
 
     properties
         % Shared configuration reference

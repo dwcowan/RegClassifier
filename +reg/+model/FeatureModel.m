@@ -1,5 +1,20 @@
 classdef FeatureModel < reg.mvc.BaseModel
     %FEATUREMODEL Stub model generating feature representations.
+    %
+    % Input chunksTable schema (see TextChunkModel):
+    %   chunk_id  (string) : chunk identifier
+    %   doc_id    (string) : parent document identifier
+    %   text      (string) : chunk text content
+    %   start_idx (double) : starting token index
+    %   end_idx   (double) : ending token index
+    %
+    % Outputs returned by PROCESS:
+    %   features   (table) : columns
+    %       - chunk_id (string) : reference to source chunk
+    %       - doc_id   (string) : parent document identifier
+    %       - tfidf    (double vector 1xV) : TF-IDF features
+    %   embeddings (double matrix N×D) : dense embedding vectors per chunk
+    %   vocab      (string array 1×V)  : vocabulary terms corresponding to tfidf
 
     properties
         % Shared configuration reference
