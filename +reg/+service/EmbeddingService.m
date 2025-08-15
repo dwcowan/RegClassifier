@@ -5,13 +5,21 @@ classdef EmbeddingService
 
     properties
         cfg reg.model.ConfigModel = reg.model.ConfigModel();
+        EmbeddingRepo reg.repository.EmbeddingRepository
+        SearchRepo reg.repository.SearchIndexRepository
     end
 
     methods
-        function obj = EmbeddingService(cfg)
-            %EMBEDDINGSERVICE Construct embedding service with config.
+        function obj = EmbeddingService(cfg, embeddingRepo, searchRepo)
+            %EMBEDDINGSERVICE Construct embedding service with dependencies.
             if nargin > 0
                 obj.cfg = cfg;
+            end
+            if nargin > 1
+                obj.EmbeddingRepo = embeddingRepo;
+            end
+            if nargin > 2
+                obj.SearchRepo = searchRepo;
             end
         end
 
@@ -22,14 +30,20 @@ classdef EmbeddingService
             input = reg.service.EmbeddingInput(features);
         end
 
-        function output = embed(~, input) %#ok<INUSD>
+        function output = embed(obj, input) %#ok<INUSD>
             %EMBED Produce dense vectors from INPUT.
             %   OUTPUT = EMBED(INPUT) should return an EmbeddingOutput
             %   containing an array of `reg.model.Embedding` instances.
             %#ok<NASGU>
+            output = reg.service.EmbeddingOutput([]);
+            if ~isempty(obj.EmbeddingRepo)
+                obj.EmbeddingRepo.save(output);
+            end
+            if ~isempty(obj.SearchRepo)
+                obj.SearchRepo.save(output);
+            end
             error("reg:service:NotImplemented", ...
                 "EmbeddingService.embed is not implemented.");
-            % output = reg.service.EmbeddingOutput([]);
         end
     end
 end
