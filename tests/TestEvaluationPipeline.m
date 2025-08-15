@@ -1,12 +1,76 @@
 classdef TestEvaluationPipeline < matlab.unittest.TestCase
-    %TESTEVALUATIONPIPELINE Ensure pipeline stub raises NotImplemented.
+    %TESTEVALUATIONPIPELINE Verify pipeline orchestrates controller and view.
 
-    methods (Test)
-        function runNotImplemented(tc)
-            view = reg.view.ReportView();
-            ctrl = reg.controller.EvaluationController();
+    methods(Test)
+        function runInvokesVisualization(tc)
+            % Set up stubbed controller, visualization model and view
+            viz  = StubVizModel();
+            ctrl = StubEvalController(viz);
+            view = SpyView();
+
+            % Execute pipeline
             pipe = reg.controller.EvaluationPipeline(ctrl, view);
-            tc.verifyError(@() pipe.run('gold'), 'reg:controller:NotImplemented');
+            pipe.run('goldDir', 'metrics.csv');
+
+            % Controller should evaluate gold pack
+            tc.verifyTrue(ctrl.EvalCalled);
+
+            % Visualization model should receive metrics CSV
+            tc.verifyEqual(viz.TrendsArgs{1}, 'metrics.csv');
+
+            % View should be handed paths to generated plots
+            tc.verifyEqual(view.DisplayedData.TrendsPNG, ...
+                fullfile(tempdir(), 'trends.png'));
+            tc.verifyEqual(view.DisplayedData.HeatmapPNG, ...
+                fullfile(tempdir(), 'heatmap.png'));
         end
     end
 end
+
+classdef StubEvalController < handle
+    properties
+        VisualizationModel
+        EvalCalled = false
+    end
+    methods
+        function obj = StubEvalController(viz)
+            obj.VisualizationModel = viz;
+        end
+        function results = evaluateGoldPack(obj, ~)
+            obj.EvalCalled = true;
+            results.embeddings = 1;
+            results.labelMatrix = 1;
+            results.labels = {'A'};
+        end
+    end
+end
+
+classdef StubVizModel < handle
+    properties
+        TrendsArgs
+        HeatArgs
+    end
+    methods
+        function path = plotTrends(obj, csvPath, pngPath)
+            obj.TrendsArgs = {csvPath, pngPath};
+            path = pngPath;
+        end
+        function path = plotCoRetrievalHeatmap(obj, embeddings, labelMatrix, pngPath, labels)
+            %#ok<INUSD>
+            obj.HeatArgs = {embeddings, labelMatrix, pngPath, labels};
+            path = pngPath;
+        end
+    end
+end
+
+classdef SpyView < handle
+    properties
+        DisplayedData
+    end
+    methods
+        function display(obj, data)
+            obj.DisplayedData = data;
+        end
+    end
+end
+
