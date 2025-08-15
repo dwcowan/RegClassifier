@@ -1,8 +1,8 @@
 classdef DiffView < reg.mvc.BaseView
     %DIFFVIEW Stub view for presenting diff results between corpora or methods.
     %   Expects DATA representing domain differences such as tables, structs
-    %   or file paths. Controllers like DiffArticlesController forward diff
-    %   results here for rendering or persistence.
+    %   or file paths. Controllers like DiffController forward diff results
+    %   here for rendering or persistence.
 
     properties
         DiffResult
