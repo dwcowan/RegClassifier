@@ -12,6 +12,7 @@ classdef TestPipelineLogging < RegTestCase
             pdfModel   = PassThroughModel();
             chunkModel = PassThroughModel();
             featModel  = FeatureStub();
+            embModel   = EmbeddingStub();
             projModel  = PassThroughModel();
             weakModel  = PassThroughModel();
             clsModel   = ClassifierStub();
@@ -20,7 +21,7 @@ classdef TestPipelineLogging < RegTestCase
             tc.LogModel = LogSpyModel();
             reportModel = PassThroughModel();
             view       = SpyView();
-            tc.Controller = reg.controller.PipelineController(cfgModel, pdfModel, chunkModel, featModel, projModel, weakModel, ...
+            tc.Controller = reg.controller.PipelineController(cfgModel, pdfModel, chunkModel, featModel, embModel, projModel, weakModel, ...
                 clsModel, searchModel, dbModel, tc.LogModel, reportModel, view);
         end
     end
@@ -71,9 +72,21 @@ classdef FeatureStub < handle
         function data = load(~, ~)
             data = [];
         end
-        function [features, embeddings, vocab] = process(~, ~)
+        function [features, vocab] = process(~, ~)
             features = [];
-            embeddings = [];
+            vocab = [];
+        end
+    end
+end
+
+classdef EmbeddingStub < handle
+    methods
+        function data = load(~, in)
+            if nargin < 2, in = []; end
+            data = in;
+        end
+        function [embeddings, vocab] = process(~, data)
+            embeddings = data;
             vocab = [];
         end
     end

@@ -25,7 +25,8 @@ interfaces, data flow, and orchestration.
 | `reg.model.ConfigModel` | Retrieve configuration parameters |
 | `reg.model.PDFIngestModel` | Convert PDFs into a document table |
 | `reg.model.TextChunkModel` | Split documents into token chunks |
-| `reg.model.FeatureModel` | Generate TF‑IDF, topics, and embeddings |
+| `reg.model.FeatureModel` | Generate TF‑IDF and topic features |
+| `reg.model.EmbeddingModel` | Compute dense text embeddings |
 | `reg.model.ProjectionHeadModel` | Apply optional projection head |
 | `reg.model.WeakLabelModel` | Produce weak and bootstrapped labels |
 | `reg.model.ClassifierModel` | Train models and produce predictions |

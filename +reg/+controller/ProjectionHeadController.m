@@ -3,13 +3,14 @@ classdef ProjectionHeadController < reg.mvc.BaseController
     
     properties
         FeatureModel
+        EmbeddingModel
         FineTuneDataModel
         ProjectionHeadModel
         EvaluationModel
     end
     
     methods
-        function obj = ProjectionHeadController(featureModel, dataModel, headModel, evalModel, view)
+        function obj = ProjectionHeadController(featureModel, embeddingModel, dataModel, headModel, evalModel, view)
             %PROJECTIONHEADCONTROLLER Construct controller wiring models.
             %   OBJ = PROJECTIONHEADCONTROLLER(featureModel, dataModel,
             %   headModel, evalModel, view) sets up the projection head
@@ -17,6 +18,7 @@ classdef ProjectionHeadController < reg.mvc.BaseController
             %   setup.
             obj@reg.mvc.BaseController(featureModel, view);
             obj.FeatureModel = featureModel;
+            obj.EmbeddingModel = embeddingModel;
             obj.FineTuneDataModel = dataModel;
             obj.ProjectionHeadModel = headModel;
             obj.EvaluationModel = evalModel;
@@ -29,6 +31,7 @@ classdef ProjectionHeadController < reg.mvc.BaseController
             %
             %   Preconditions
             %       * FeatureModel supplies chunk text
+            %       * EmbeddingModel computes dense embeddings
             %       * FineTuneDataModel expects embeddings for triplet mining
             %       * ProjectionHeadModel consumes triplets to learn weights
             %   Side Effects
@@ -41,11 +44,15 @@ classdef ProjectionHeadController < reg.mvc.BaseController
             %       Step 5 ↔ `train_projection_head`
             %       Step 7 ↔ `eval_retrieval`
 
-            % Step 1: load chunks and derive features/embeddings
+            % Step 1: load chunks and extract features
             chunks = obj.FeatureModel.load();
-            [features, embeddings, vocab] = obj.FeatureModel.process(chunks); %#ok<NASGU>
-            %   Expect FeatureModel to validate chunk schema and handle
-            %   tokenizer/embedding errors internally.
+            [features, vocab] = obj.FeatureModel.process(chunks); %#ok<NASGU>
+
+            % Step 1b: compute embeddings from features
+            embedRaw = obj.EmbeddingModel.load(features);
+            [embeddings, ~] = obj.EmbeddingModel.process(embedRaw); %#ok<NASGU>
+            %   Expect FeatureModel/EmbeddingModel to validate chunk schema and
+            %   handle tokenizer or embedding errors internally.
 
             % Step 3: construct contrastive triplets from embeddings
             %   The data model should ensure non-empty triplets and balanced
