@@ -4,27 +4,25 @@ classdef PipelineController < reg.mvc.BaseController
     properties
         ConfigModel
         TrainingModel
-        EmbeddingModel
         EvaluationModel
         EmbeddingView
     end
 
     methods
-        function obj = PipelineController(cfgModel, trainModel, embedModel, evalModel, view, embView)
+        function obj = PipelineController(cfgModel, trainModel, evalModel, view, embView)
             %PIPELINECONTROLLER Construct controller wiring core models.
-            %   OBJ = PIPELINECONTROLLER(CFG, TRAIN, EMBED, EVAL, VIEW, EMBVIEW)
+            %   OBJ = PIPELINECONTROLLER(CFG, TRAIN, EVAL, VIEW, EMBVIEW)
             %   stores references to the provided models, a metrics view
             %   and an optional embedding view.
-            if nargin < 5 || isempty(view)
+            if nargin < 4 || isempty(view)
                 view = reg.view.MetricsView();
             end
-            if nargin < 6 || isempty(embView)
+            if nargin < 5 || isempty(embView)
                 embView = reg.view.EmbeddingView();
             end
             obj@reg.mvc.BaseController(cfgModel, view);
             obj.ConfigModel = cfgModel;
             obj.TrainingModel = trainModel;
-            obj.EmbeddingModel = embedModel;
             obj.EvaluationModel = evalModel;
             obj.EmbeddingView = embView;
         end
@@ -37,12 +35,12 @@ classdef PipelineController < reg.mvc.BaseController
             cfgRaw = obj.ConfigModel.load();
             cfg = obj.ConfigModel.process(cfgRaw);
 
-            % Step 2: ingest documents/features via training model
+            % Step 2: ingest documents and chunk text via training model
             ingestOut = obj.TrainingModel.ingest(cfg);
 
-            % Step 3: embed features
-            embRaw = obj.EmbeddingModel.load(ingestOut.Features);
-            embOut = obj.EmbeddingModel.process(embRaw);
+            % Step 3: extract features and compute embeddings
+            [features, ~] = obj.TrainingModel.extractFeatures(ingestOut.Chunks);
+            embOut = obj.TrainingModel.computeEmbeddings(features);
             if ~isempty(obj.EmbeddingView)
                 obj.EmbeddingView.display(embOut);
             end

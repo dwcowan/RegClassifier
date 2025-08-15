@@ -2,22 +2,18 @@ classdef ProjectionHeadController < reg.mvc.BaseController
     %PROJECTIONHEADCONTROLLER Orchestrates projection head training workflow.
 
     properties
-        FeatureModel
-        EmbeddingModel
         TrainingModel
         EvaluationModel
     end
 
     methods
-        function obj = ProjectionHeadController(featureModel, embeddingModel, trainModel, evalModel, view)
+        function obj = ProjectionHeadController(trainModel, evalModel, view)
             %PROJECTIONHEADCONTROLLER Construct controller wiring models.
-            %   OBJ = PROJECTIONHEADCONTROLLER(featureModel, embeddingModel,
-            %   trainModel, evalModel, view) sets up the projection head
-            %   training workflow using the unified TrainingModel. Equivalent
-            %   to `reg_projection_workflow` setup.
-            obj@reg.mvc.BaseController(featureModel, view);
-            obj.FeatureModel = featureModel;
-            obj.EmbeddingModel = embeddingModel;
+            %   OBJ = PROJECTIONHEADCONTROLLER(trainModel, evalModel, view)
+            %   sets up the projection head training workflow using the
+            %   unified TrainingModel. Equivalent to
+            %   `reg_projection_workflow` setup.
+            obj@reg.mvc.BaseController(trainModel, view);
             obj.TrainingModel = trainModel;
             obj.EvaluationModel = evalModel;
         end
@@ -28,8 +24,7 @@ classdef ProjectionHeadController < reg.mvc.BaseController
             %   training and metric computation.
             %
             %   Preconditions
-            %       * FeatureModel supplies chunk text
-            %       * EmbeddingModel computes dense embeddings
+            %       * TrainingModel supplies chunks, features and embeddings
             %       * TrainingModel builds triplets and trains projection head
             %   Side Effects
             %       * Projection head parameters may be persisted
@@ -41,20 +36,16 @@ classdef ProjectionHeadController < reg.mvc.BaseController
             %       Step 5 ↔ `train_projection_head`
             %       Step 7 ↔ `eval_retrieval`
 
-            % Step 1: load chunks and extract features
-            chunks = obj.FeatureModel.load();
-            [features, vocab] = obj.FeatureModel.process(chunks); %#ok<NASGU>
-
-            % Step 1b: compute embeddings from features
-            embedRaw = obj.EmbeddingModel.load(features);
-            embeddings = obj.EmbeddingModel.process(embedRaw);
-            %   Expect FeatureModel/EmbeddingModel to validate chunk schema and
-            %   handle tokenizer or embedding errors internally.
+            % Step 1: extract features and compute embeddings
+            [features, ~] = obj.TrainingModel.extractFeatures();
+            embeddings = obj.TrainingModel.computeEmbeddings(features);
+            %   TrainingModel should validate chunk schema and handle
+            %   tokenizer or embedding errors internally.
 
             % Step 3: construct contrastive triplets from embeddings
             %   TrainingModel should ensure non-empty triplets and balanced
             %   sampling.
-            triplets = obj.TrainingModel.prepareDataset(embeddings.Vectors);
+            triplets = obj.TrainingModel.prepareDataset(embeddings);
 
             % Step 5: train projection head using triplets
             %   TrainingModel should check dimensions and raise if triplets malformed.
