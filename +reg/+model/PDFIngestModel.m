@@ -10,26 +10,20 @@ classdef PDFIngestModel < reg.mvc.BaseModel
     %       - modified (double): datenum timestamp of last change
 
     properties
-        % Shared configuration reference
-        cfg reg.model.ConfigModel = reg.model.ConfigModel();
+        % No configuration stored on the model; values are supplied by callers.
     end
 
     methods
-        function obj = PDFIngestModel(cfg)
-            %PDFINGESTMODEL Construct the ingest model.
-            %   OBJ = PDFINGESTMODEL(cfg) consumes cfg.inputDir to locate
-            %   PDF files. Equivalent to `ingest_pdfs` initialization logic.
-            if nargin > 0
-                obj.cfg = cfg;
-            end
+        function obj = PDFIngestModel(varargin)
+            %#ok<INUSD>
         end
 
-        function pdfFiles = load(~, varargin) %#ok<INUSD>
+        function pdfFiles = load(~, cfg) %#ok<INUSD>
             %LOAD Locate PDF files for ingestion.
-            %   pdfFiles = LOAD(obj) returns a list of file paths to be
+            %   pdfFiles = LOAD(obj, cfg) returns a list of file paths to be
             %   processed.
             %   Parameters
-            %       varargin - Placeholder for future options (unused)
+            %       cfg - Configuration struct with paths and options
             %   Returns
             %       pdfFiles (string array): Paths to PDF documents.
             %   Side Effects

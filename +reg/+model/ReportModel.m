@@ -5,18 +5,11 @@ classdef ReportModel < reg.mvc.BaseModel
     %   and topic summaries.
 
     properties
-        % Shared configuration reference
-        cfg reg.model.ConfigModel = reg.model.ConfigModel();
     end
 
     methods
-        function obj = ReportModel(cfg)
-            %REPORTMODEL Construct report generation model.
-            %   OBJ = REPORTMODEL(cfg) accesses values like cfg.reportTitle
-            %   when assembling output.
-            if nargin > 0
-                obj.cfg = cfg;
-            end
+        function obj = ReportModel(varargin)
+            %#ok<INUSD>
         end
 
         function reportInputs = load(~, varargin) %#ok<INUSD>

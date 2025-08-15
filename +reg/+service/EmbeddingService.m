@@ -4,16 +4,16 @@ classdef EmbeddingService
     %   EmbeddingModel.
 
     properties
-        cfg reg.model.ConfigModel = reg.model.ConfigModel();
+        ConfigService reg.service.ConfigService
         EmbeddingRepo reg.repository.EmbeddingRepository
         SearchRepo reg.repository.SearchIndexRepository
     end
 
     methods
-        function obj = EmbeddingService(cfg, embeddingRepo, searchRepo)
+        function obj = EmbeddingService(cfgSvc, embeddingRepo, searchRepo)
             %EMBEDDINGSERVICE Construct embedding service with dependencies.
             if nargin > 0
-                obj.cfg = cfg;
+                obj.ConfigService = cfgSvc;
             end
             if nargin > 1
                 obj.EmbeddingRepo = embeddingRepo;
@@ -35,6 +35,9 @@ classdef EmbeddingService
             %   OUTPUT = EMBED(INPUT) should return an EmbeddingOutput
             %   containing an array of `reg.model.Embedding` instances.
             %#ok<NASGU>
+            if ~isempty(obj.ConfigService)
+                cfg = obj.ConfigService.getConfig(); %#ok<NASGU>
+            end
             output = reg.service.EmbeddingOutput([]);
             if ~isempty(obj.EmbeddingRepo)
                 obj.EmbeddingRepo.save(output);

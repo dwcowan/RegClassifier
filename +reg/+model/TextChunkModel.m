@@ -14,25 +14,19 @@ classdef TextChunkModel < reg.mvc.BaseModel
     %   end_idx   (double) : ending token index in source doc
 
     properties
-        % Shared configuration reference
-        cfg reg.model.ConfigModel = reg.model.ConfigModel();
+        % No stored configuration; callers supply parameters directly.
     end
 
     methods
-        function obj = TextChunkModel(cfg)
-            %TEXTCHUNKMODEL Construct text chunking model.
-            %   OBJ = TEXTCHUNKMODEL(cfg) reads chunking parameters such as
-            %   cfg.chunkSizeTokens and cfg.chunkOverlap.
-            if nargin > 0
-                obj.cfg = cfg;
-            end
+        function obj = TextChunkModel(varargin)
+            %#ok<INUSD>
         end
 
-        function documentsTable = load(~, varargin) %#ok<INUSD>
+        function documentsTable = load(~, cfg) %#ok<INUSD>
             %LOAD Fetch documents for chunking.
-            %   documentsTable = LOAD(obj) retrieves documents to split.
+            %   documentsTable = LOAD(obj, cfg) retrieves documents to split.
             %   Parameters
-            %       varargin - Placeholder for future options (unused)
+            %       cfg - configuration struct controlling chunking
             %   Returns
             %       documentsTable (table): Input documents and metadata.
             %   Side Effects

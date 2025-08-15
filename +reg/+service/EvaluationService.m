@@ -3,14 +3,14 @@ classdef EvaluationService
     %   Centralizes logic previously in EvaluationModel.
 
     properties
-        cfg reg.model.ConfigModel = reg.model.ConfigModel();
+        ConfigService reg.service.ConfigService
     end
 
     methods
-        function obj = EvaluationService(cfg)
+        function obj = EvaluationService(cfgSvc)
             %EVALUATIONSERVICE Construct service with configuration.
             if nargin > 0
-                obj.cfg = cfg;
+                obj.ConfigService = cfgSvc;
             end
         end
 
@@ -21,9 +21,12 @@ classdef EvaluationService
             input = reg.service.EvaluationInput(pred, ref);
         end
 
-        function result = compute(~, input) %#ok<INUSD>
+        function result = compute(obj, input) %#ok<INUSD>
             %COMPUTE Calculate evaluation metrics from INPUT.
             %#ok<NASGU>
+            if ~isempty(obj.ConfigService)
+                cfg = obj.ConfigService.getConfig(); %#ok<NASGU>
+            end
             error("reg:service:NotImplemented", ...
                 "EvaluationService.compute is not implemented.");
             % result = reg.service.EvaluationResult([]);

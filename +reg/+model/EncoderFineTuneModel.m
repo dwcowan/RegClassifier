@@ -2,18 +2,11 @@ classdef EncoderFineTuneModel < reg.mvc.BaseModel
     %ENCODERFINETUNEMODEL Stub model for encoder fine-tuning.
 
     properties
-        % Shared configuration reference
-        cfg reg.model.ConfigModel = reg.model.ConfigModel();
     end
 
     methods
-        function obj = EncoderFineTuneModel(cfg)
-            %ENCODERFINETUNEMODEL Construct fine-tuning model.
-            %   OBJ = ENCODERFINETUNEMODEL(cfg) consumes parameters such as
-            %   cfg.fineTuneLoss or cfg.fineTuneBatchSize.
-            if nargin > 0
-                obj.cfg = cfg;
-            end
+        function obj = EncoderFineTuneModel(varargin)
+            %#ok<INUSD>
         end
 
         function trainingData = load(~, varargin) %#ok<INUSD>
