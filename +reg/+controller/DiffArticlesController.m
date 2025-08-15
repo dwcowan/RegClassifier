@@ -24,8 +24,7 @@ classdef DiffArticlesController < reg.mvc.BaseController
             %RUN Compare CRR corpora by article number.
             %   RESULT = RUN(obj, dirA, dirB, outDir) delegates to the
             %   model and forwards results to the view.
-            params = obj.Model.load(dirA, dirB, outDir);
-            result = obj.Model.process(params);
+            result = obj.Model.compare(dirA, dirB, outDir);
             if ~isempty(obj.View)
                 obj.View.display(result);
             end

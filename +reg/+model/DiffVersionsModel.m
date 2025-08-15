@@ -28,5 +28,14 @@ classdef DiffVersionsModel < reg.mvc.BaseModel
       error("reg:model:NotImplemented", ...
         "DiffVersionsModel.process is not implemented.");
     end
+
+    function diff = compare(obj, dirA, dirB, outDir)
+      %COMPARE Orchestrate file-level diffing between two directories.
+      %   diff = COMPARE(obj, dirA, dirB, outDir) prepares parameters and
+      %   delegates processing to compute differences. Caller must supply
+      %   OUTDIR.
+      params = obj.load(dirA, dirB, outDir);
+      diff = obj.process(params);
+    end
   end
 end
