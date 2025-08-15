@@ -41,7 +41,7 @@ convention defined in **this** document [Matlab Style Guide](Matlab_Style_Guide.
 | Entity | Convention | Example |
 |--------|------------|---------|
 | Functions & Methods | lowerCamelCase | `loadData`, `computeScore` |
-| Classes | UpperCamelCase | `DocumentParser`, `EmbeddingModel` |
+| Classes | UpperCamelCase | `DocumentParser`, `EmbeddingService` |
 | Class properties | lowerCamelCase | `maxEpochs`, `learningRate` |
 | Class constants | UPPER_CASE | `DEFAULT_TIMEOUT` |
 

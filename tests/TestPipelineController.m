@@ -11,7 +11,7 @@ classdef TestPipelineController < matlab.unittest.TestCase
             pdfModel = reg.model.PDFIngestModel();
             chunkModel = reg.model.TextChunkModel();
             featModel = reg.model.FeatureModel();
-            embModel = reg.model.EmbeddingModel();
+            embService = reg.service.EmbeddingService();
             projModel = reg.model.ProjectionHeadModel();
             weakModel = reg.model.WeakLabelModel();
             clsModel = reg.model.ClassifierModel();
@@ -20,7 +20,7 @@ classdef TestPipelineController < matlab.unittest.TestCase
             logModel = reg.model.LoggingModel();
             reportModel = reg.model.ReportModel();
             view = reg.view.ReportView();
-            tc.Controller = reg.controller.PipelineController(cfgModel, pdfModel, chunkModel, featModel, embModel, projModel, weakModel, clsModel, searchModel, dbModel, logModel, reportModel, view);
+            tc.Controller = reg.controller.PipelineController(cfgModel, pdfModel, chunkModel, featModel, embService, projModel, weakModel, clsModel, searchModel, dbModel, logModel, reportModel, view);
         end
     end
     

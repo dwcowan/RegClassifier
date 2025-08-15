@@ -9,11 +9,11 @@ classdef TestEvaluationController < RegTestCase
 
     methods(TestMethodSetup)
         function setup(tc)
-            evalModel   = StubModel();
-            logModel    = StubModel();
-            reportModel = StubModel(struct('OutputPath','report.pdf'));
+            evalService = StubService();
+            logModel    = StubService();
+            reportModel = StubService(struct('OutputPath','report.pdf'));
             tc.View = SpyView();
-            tc.Controller = reg.controller.EvalController(evalModel, logModel, reportModel, tc.View);
+            tc.Controller = reg.controller.EvalController(evalService, logModel, reportModel, tc.View);
         end
     end
 
@@ -32,19 +32,19 @@ classdef TestEvaluationController < RegTestCase
     end
 end
 
-classdef StubModel < handle
+classdef StubService < handle
     properties
         ProcessOutput
     end
     methods
-        function obj = StubModel(out)
+        function obj = StubService(out)
             if nargin < 1, out = []; end
             obj.ProcessOutput = out;
         end
-        function data = load(~)
+        function data = prepare(~)
             data = [];
         end
-        function out = process(obj, ~)
+        function out = compute(obj, ~)
             out = obj.ProcessOutput;
         end
     end

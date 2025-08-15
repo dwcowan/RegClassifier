@@ -2,7 +2,7 @@ classdef EvalController < reg.mvc.BaseController
     %EVALCONTROLLER Orchestrates evaluation and reporting workflow.
     
     properties
-        EvaluationModel
+        EvaluationService
         LoggingModel
         ReportModel
         ClusteringEvalModel = []
@@ -10,16 +10,16 @@ classdef EvalController < reg.mvc.BaseController
     end
 
     methods
-        function obj = EvalController(evalModel, logModel, reportModel, view, varargin)
+        function obj = EvalController(evalService, logModel, reportModel, view, varargin)
             %EVALCONTROLLER Construct evaluation controller.
-            %   OBJ = EVALCONTROLLER(evalModel, logModel, reportModel, view)
-            %   wires the models to a view. Equivalent to
+            %   OBJ = EVALCONTROLLER(evalService, logModel, reportModel, view)
+            %   wires the services to a view. Equivalent to
             %   `reg_eval_and_report` setup.
             %   Additional optional models:
             %       varargin{1} - clustering evaluation model
             %       varargin{2} - per-label evaluation model
-            obj@reg.mvc.BaseController(evalModel, view);
-            obj.EvaluationModel = evalModel;
+            obj@reg.mvc.BaseController([], view);
+            obj.EvaluationService = evalService;
             obj.LoggingModel = logModel;
             obj.ReportModel = reportModel;
             if numel(varargin) >= 1
@@ -36,7 +36,7 @@ classdef EvalController < reg.mvc.BaseController
             %   report rendering.
             %
             %   Preconditions
-            %       * EvaluationModel supplies predictions and gold labels
+            %       * EvaluationService supplies predictions and gold labels
             %       * LoggingModel has write access to metrics store
             %       * ReportModel expects a metrics struct
             %   Side Effects
@@ -51,8 +51,8 @@ classdef EvalController < reg.mvc.BaseController
             %       Step 3 ↔ report generation in `reg_eval_and_report`
 
             % Step 1: load evaluation inputs and compute metrics
-            evalRaw = obj.EvaluationModel.load();
-            metrics = obj.EvaluationModel.process(evalRaw);  % `eval_retrieval`
+            evalRaw = obj.EvaluationService.prepare();
+            metrics = obj.EvaluationService.compute(evalRaw);  % `eval_retrieval`
 
             % Optional: per-label evaluation
             if ~isempty(obj.PerLabelEvalModel)

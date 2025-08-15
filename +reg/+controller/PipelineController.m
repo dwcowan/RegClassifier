@@ -6,7 +6,7 @@ classdef PipelineController < reg.mvc.BaseController
         PDFIngestModel
         TextChunkModel
         FeatureModel
-        EmbeddingModel
+        EmbeddingService
         ProjectionHeadModel
         WeakLabelModel
         ClassifierModel
@@ -17,7 +17,7 @@ classdef PipelineController < reg.mvc.BaseController
     end
 
     methods
-        function obj = PipelineController(cfgModel, pdfModel, chunkModel, featModel, embModel, projModel, weakModel, clsModel, searchModel, dbModel, logModel, reportModel, view)
+        function obj = PipelineController(cfgModel, pdfModel, chunkModel, featModel, embService, projModel, weakModel, clsModel, searchModel, dbModel, logModel, reportModel, view)
             %PIPELINECONTROLLER Construct controller wiring the full pipeline.
             %   OBJ = PIPELINECONTROLLER(...) assembles all models and a view.
             %   Equivalent to setup in `reg_pipeline`.
@@ -26,7 +26,7 @@ classdef PipelineController < reg.mvc.BaseController
             obj.PDFIngestModel = pdfModel;
             obj.TextChunkModel = chunkModel;
             obj.FeatureModel = featModel;
-            obj.EmbeddingModel = embModel;
+            obj.EmbeddingService = embService;
             obj.ProjectionHeadModel = projModel;
             obj.WeakLabelModel = weakModel;
             obj.ClassifierModel = clsModel;
@@ -95,9 +95,9 @@ classdef PipelineController < reg.mvc.BaseController
             [features, vocab] = obj.FeatureModel.process(featuresRaw);
 
             % Step 5: Generate embeddings from features
-            %   Dense embedding computation is delegated to EmbeddingModel.
-            embedRaw = obj.EmbeddingModel.load(features);
-            [embeddings, ~] = obj.EmbeddingModel.process(embedRaw); %#ok<NASGU>
+            %   Dense embedding computation is delegated to EmbeddingService.
+            embedRaw = obj.EmbeddingService.prepare(features);
+            embeddings = obj.EmbeddingService.embed(embedRaw); %#ok<NASGU>
 
             % Step 6: Apply projection head to embeddings
             %   Head model should validate dimensions of embeddings and warn

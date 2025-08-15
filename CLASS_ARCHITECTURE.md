@@ -26,7 +26,10 @@ interfaces, data flow, and orchestration.
 | `reg.model.PDFIngestModel` | Convert PDFs into a document table |
 | `reg.model.TextChunkModel` | Split documents into token chunks |
 | `reg.model.FeatureModel` | Generate TF‑IDF and topic features |
-| `reg.model.EmbeddingModel` | Compute dense text embeddings |
+| `reg.model.Document` | Represent an ingested document |
+| `reg.model.Chunk` | Represent a document chunk |
+| `reg.model.Embedding` | Hold dense vector representations |
+| `reg.model.CorpusDiff` | Summarize differences between corpora |
 | `reg.model.ProjectionHeadModel` | Apply optional projection head |
 | `reg.model.WeakLabelModel` | Produce weak and bootstrapped labels |
 | `reg.model.ClassifierModel` | Train models and produce predictions |
@@ -35,9 +38,18 @@ interfaces, data flow, and orchestration.
 | `reg.model.ReportModel` | Assemble data for final reports |
 | `reg.model.FineTuneDataModel` | Build contrastive triplet datasets |
 | `reg.model.EncoderFineTuneModel` | Fine‑tune base encoder |
-| `reg.model.EvaluationModel` | Compute retrieval and classification metrics |
 | `reg.model.LoggingModel` | Save experiment metrics |
 | `reg.model.GoldPackModel` | Provide labelled gold data |
+
+---
+
+## Service Layer
+
+| Class | Purpose |
+|-------|---------|
+| `reg.service.DiffService` | Compute corpus-level differences |
+| `reg.service.EmbeddingService` | Generate dense embeddings |
+| `reg.service.EvaluationService` | Compute retrieval and classification metrics |
 
 ---
 
@@ -54,10 +66,10 @@ interfaces, data flow, and orchestration.
 
 | Class | Collaborators | Responsibility |
 |-------|---------------|---------------|
-| `reg.controller.PipelineController` | All pipeline models + `LoggingModel` + `ReportView` | Ingest → chunk → features → labels → classifier → index → DB → report |
-| `reg.controller.ProjectionHeadController` | Feature, fine‑tune data, projection head, evaluation models + `MetricsView` | Train and evaluate projection head |
-| `reg.controller.FineTuneController` | PDF ingest, chunk, weak label, fine‑tune data, encoder fine‑tune, evaluation models + `MetricsView` | Build contrastive set and fine‑tune encoder |
-| `reg.controller.EvalController` | Evaluation, logging, report models + `ReportView` | Evaluate embeddings and generate reports |
+| `reg.controller.PipelineController` | All pipeline models and services + `LoggingModel` + `ReportView` | Ingest → chunk → features → labels → classifier → index → DB → report |
+| `reg.controller.ProjectionHeadController` | Feature model, embedding service, fine‑tune data model, projection head model, evaluation service + `MetricsView` | Train and evaluate projection head |
+| `reg.controller.FineTuneController` | PDF ingest, chunk, weak label, fine‑tune data, encoder fine‑tune models, evaluation service + `MetricsView` | Build contrastive set and fine‑tune encoder |
+| `reg.controller.EvalController` | Evaluation service, logging model, report model + `ReportView` | Evaluate embeddings and generate reports |
 | `reg.controller.MethodsDiffController` | `MethodDiffModel` + `ReportView` | Compare Top‑K retrievals across encoder variants |
 
 ---

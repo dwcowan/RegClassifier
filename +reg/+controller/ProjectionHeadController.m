@@ -3,14 +3,14 @@ classdef ProjectionHeadController < reg.mvc.BaseController
     
     properties
         FeatureModel
-        EmbeddingModel
+        EmbeddingService
         FineTuneDataModel
         ProjectionHeadModel
-        EvaluationModel
+        EvaluationService
     end
     
     methods
-        function obj = ProjectionHeadController(featureModel, embeddingModel, dataModel, headModel, evalModel, view)
+        function obj = ProjectionHeadController(featureModel, embeddingService, dataModel, headModel, evalService, view)
             %PROJECTIONHEADCONTROLLER Construct controller wiring models.
             %   OBJ = PROJECTIONHEADCONTROLLER(featureModel, dataModel,
             %   headModel, evalModel, view) sets up the projection head
@@ -18,10 +18,10 @@ classdef ProjectionHeadController < reg.mvc.BaseController
             %   setup.
             obj@reg.mvc.BaseController(featureModel, view);
             obj.FeatureModel = featureModel;
-            obj.EmbeddingModel = embeddingModel;
+            obj.EmbeddingService = embeddingService;
             obj.FineTuneDataModel = dataModel;
             obj.ProjectionHeadModel = headModel;
-            obj.EvaluationModel = evalModel;
+            obj.EvaluationService = evalService;
         end
 
         function run(obj)
@@ -31,7 +31,7 @@ classdef ProjectionHeadController < reg.mvc.BaseController
             %
             %   Preconditions
             %       * FeatureModel supplies chunk text
-            %       * EmbeddingModel computes dense embeddings
+            %       * EmbeddingService computes dense embeddings
             %       * FineTuneDataModel expects embeddings for triplet mining
             %       * ProjectionHeadModel consumes triplets to learn weights
             %   Side Effects
@@ -49,9 +49,9 @@ classdef ProjectionHeadController < reg.mvc.BaseController
             [features, vocab] = obj.FeatureModel.process(chunks); %#ok<NASGU>
 
             % Step 1b: compute embeddings from features
-            embedRaw = obj.EmbeddingModel.load(features);
-            [embeddings, ~] = obj.EmbeddingModel.process(embedRaw); %#ok<NASGU>
-            %   Expect FeatureModel/EmbeddingModel to validate chunk schema and
+            embedRaw = obj.EmbeddingService.prepare(features);
+            embeddings = obj.EmbeddingService.embed(embedRaw); %#ok<NASGU>
+            %   Expect FeatureModel/EmbeddingService to validate chunk schema and
             %   handle tokenizer or embedding errors internally.
 
             % Step 3: construct contrastive triplets from embeddings
@@ -74,8 +74,8 @@ classdef ProjectionHeadController < reg.mvc.BaseController
             projE = obj.ProjectionHeadModel.process(headRaw);
 
             % Step 7: evaluate retrieval performance with projected vectors
-            evalRaw = obj.EvaluationModel.load(projE);
-            metrics = obj.EvaluationModel.process(evalRaw);
+            evalRaw = obj.EvaluationService.prepare(projE);
+            metrics = obj.EvaluationService.compute(evalRaw);
             obj.View.display(metrics);
         end
     end

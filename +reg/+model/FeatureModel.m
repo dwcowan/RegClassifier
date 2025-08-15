@@ -1,7 +1,7 @@
 classdef FeatureModel < reg.mvc.BaseModel
     %FEATUREMODEL Stub model generating feature representations.
     %   Dense embedding generation has been split into
-    %   `reg.model.EmbeddingModel` and is no longer handled here.
+    %   `reg.service.EmbeddingService` and is no longer handled here.
     %
     % Input chunksTable schema (see TextChunkModel):
     %   chunk_id  (string) : chunk identifier
@@ -55,7 +55,7 @@ classdef FeatureModel < reg.mvc.BaseModel
             %PROCESS Generate sparse feature representations.
             %   [features, vocab] = PROCESS(obj, chunksTable) produces
             %   TF-IDF or other sparse features.  Any dense embedding
-            %   computation should be handled by `reg.model.EmbeddingModel`.
+            %   computation should be handled by `reg.service.EmbeddingService`.
             %   Parameters
             %       chunksTable (table): Text segments to featurize.
             %   Returns
