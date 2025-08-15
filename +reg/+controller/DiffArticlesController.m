@@ -13,12 +13,13 @@ classdef DiffArticlesController < reg.mvc.BaseController
             %   OBJ = DIFFARTICLESCONTROLLER(service, view) wires a
             %   DiffService to a view. SERVICE defaults to
             %   `reg.service.DiffService()` and VIEW defaults to
-            %   `reg.view.ReportView()`.
+            %   `reg.view.DiffView()` which focuses purely on rendering
+            %   diff artefacts.
             if nargin < 1 || isempty(service)
                 service = reg.service.DiffService();
             end
             if nargin < 2 || isempty(view)
-                view = reg.view.ReportView();
+                view = reg.view.DiffView();
             end
             obj@reg.mvc.BaseController([], view);
             obj.DiffService = service;

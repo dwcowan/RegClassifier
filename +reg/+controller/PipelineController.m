@@ -7,19 +7,28 @@ classdef PipelineController < reg.mvc.BaseController
         EmbeddingService
         EvaluationService
         LoggingModel
+        EmbeddingView
     end
 
     methods
-        function obj = PipelineController(cfgModel, ingestSvc, embedSvc, evalSvc, logModel, view)
+        function obj = PipelineController(cfgModel, ingestSvc, embedSvc, evalSvc, logModel, view, embView)
             %PIPELINECONTROLLER Construct controller wiring core services.
-            %   OBJ = PIPELINECONTROLLER(CFG, INGEST, EMBED, EVAL, LOG, VIEW)
-            %   stores references to the provided services and view.
+            %   OBJ = PIPELINECONTROLLER(CFG, INGEST, EMBED, EVAL, LOG, VIEW, EMBVIEW)
+            %   stores references to the provided services, a metrics view
+            %   and an optional embedding view.
+            if nargin < 6 || isempty(view)
+                view = reg.view.MetricsView();
+            end
+            if nargin < 7 || isempty(embView)
+                embView = reg.view.EmbeddingView();
+            end
             obj@reg.mvc.BaseController(cfgModel, view);
             obj.ConfigModel = cfgModel;
             obj.IngestionService = ingestSvc;
             obj.EmbeddingService = embedSvc;
             obj.EvaluationService = evalSvc;
             obj.LoggingModel = logModel;
+            obj.EmbeddingView = embView;
         end
 
         function run(obj)
@@ -36,6 +45,9 @@ classdef PipelineController < reg.mvc.BaseController
             % Step 3: embed features
             embInput = obj.EmbeddingService.prepare(ingestOut.Features);
             embOut = obj.EmbeddingService.embed(embInput);
+            if ~isempty(obj.EmbeddingView)
+                obj.EmbeddingView.display(embOut);
+            end
 
             % Step 4: evaluate results
             evalInput = obj.EvaluationService.prepare(embOut, []);
@@ -44,7 +56,9 @@ classdef PipelineController < reg.mvc.BaseController
             % Log metrics and display via view
             logData = obj.LoggingModel.load(evalResult.Metrics);
             obj.LoggingModel.process(logData);
-            obj.View.display(evalResult.Metrics);
+            if ~isempty(obj.View)
+                obj.View.display(evalResult.Metrics);
+            end
         end
     end
 end

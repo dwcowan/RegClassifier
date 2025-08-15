@@ -6,10 +6,11 @@ classdef TestEvaluationPipeline < matlab.unittest.TestCase
             % Set up stubbed controller, visualization model and view
             viz  = StubVizModel();
             ctrl = StubEvalController(viz);
-            view = SpyView();
+            metricsView = SpyView();
+            plotView = SpyView();
 
             % Execute pipeline
-            pipe = reg.controller.EvaluationPipeline(ctrl, view);
+            pipe = reg.controller.EvaluationPipeline(ctrl, metricsView, plotView);
             pipe.run('goldDir', 'metrics.csv');
 
             % Controller should evaluate gold pack
@@ -18,11 +19,14 @@ classdef TestEvaluationPipeline < matlab.unittest.TestCase
             % Visualization model should receive metrics CSV
             tc.verifyEqual(viz.TrendsArgs{1}, 'metrics.csv');
 
-            % View should be handed paths to generated plots
-            tc.verifyEqual(view.DisplayedData.TrendsPNG, ...
+            % Plot view should be handed paths to generated plots
+            tc.verifyEqual(plotView.DisplayedData.TrendsPNG, ...
                 fullfile(tempdir(), 'trends.png'));
-            tc.verifyEqual(view.DisplayedData.HeatmapPNG, ...
+            tc.verifyEqual(plotView.DisplayedData.HeatmapPNG, ...
                 fullfile(tempdir(), 'heatmap.png'));
+
+            % Metrics view should receive evaluation results
+            tc.verifyTrue(isstruct(metricsView.DisplayedData));
         end
     end
 end

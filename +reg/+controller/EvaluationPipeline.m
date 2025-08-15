@@ -4,16 +4,23 @@ classdef EvaluationPipeline < handle
     properties
         Controller
         View
+        PlotView
     end
 
     methods
-        function obj = EvaluationPipeline(controller, view)
-            %EVALUATIONPIPELINE Construct pipeline with controller and view.
-            %   OBJ = EVALUATIONPIPELINE(controller, view) wraps an
-            %   EvaluationController and a view. Equivalent to setup in
-            %   `reg_eval_and_report`.
+        function obj = EvaluationPipeline(controller, view, plotView)
+            %EVALUATIONPIPELINE Construct pipeline with controller and views.
+            %   OBJ = EVALUATIONPIPELINE(controller, view, plotView) wraps an
+            %   EvaluationController, a metrics/report view and a plot view.
+            if nargin < 2 || isempty(view)
+                view = reg.view.ReportView();
+            end
+            if nargin < 3 || isempty(plotView)
+                plotView = reg.view.PlotView();
+            end
             obj.Controller = controller;
             obj.View = view;
+            obj.PlotView = plotView;
         end
 
         function run(obj, goldDir, metricsCSV)
@@ -28,6 +35,9 @@ classdef EvaluationPipeline < handle
 
             % Step 1: evaluate gold pack (legacy `reg_eval_gold`)
             results = obj.Controller.evaluateGoldPack(goldDir);
+            if ~isempty(obj.View)
+                obj.View.display(results);
+            end
 
             % Step 2: plot historical trends (legacy `plot_trends`)
             trendsPNG = obj.Controller.VisualizationModel.plotTrends(
@@ -46,11 +56,12 @@ classdef EvaluationPipeline < handle
             heatPNG = obj.Controller.VisualizationModel.plotCoRetrievalHeatmap(
                 embeddings, labelMatrix, fullfile(tempdir(), 'heatmap.png'), labels);
 
-            % Step 4: hand off to view for rendering
-            obj.View.display(struct( ...
-                'Evaluation', results, ...
-                'TrendsPNG', trendsPNG, ...
-                'HeatmapPNG', heatPNG));
+            % Step 4: hand off plots to plot view
+            if ~isempty(obj.PlotView)
+                obj.PlotView.display(struct( ...
+                    'TrendsPNG', trendsPNG, ...
+                    'HeatmapPNG', heatPNG));
+            end
         end
     end
 end
