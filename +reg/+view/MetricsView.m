@@ -30,5 +30,13 @@ classdef MetricsView < reg.mvc.BaseView
                 obj.OnDisplayCallback(data);
             end
         end
+
+        function log(~, metrics)
+            %LOG Simple logging helper for metrics structs.
+            %   LOG(~, METRICS) prints METRICS to the console. In a full
+            %   implementation this could persist to disk or external services.
+
+            disp(metrics);
+        end
     end
 end

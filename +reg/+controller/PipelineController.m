@@ -52,8 +52,8 @@ classdef PipelineController < reg.mvc.BaseController
             evalResult = obj.EvaluationModel.process(evalRaw);
 
             % Log metrics and display via view
-            reg.helpers.logMetrics(evalResult.Metrics);
             if ~isempty(obj.View)
+                obj.View.log(evalResult.Metrics);
                 obj.View.display(evalResult.Metrics);
             end
         end

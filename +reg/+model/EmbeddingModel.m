@@ -28,9 +28,18 @@ classdef EmbeddingModel < reg.mvc.BaseModel
                 cfg = obj.ConfigModel.process(cfgRaw); %#ok<NASGU>
             end
             output = struct('Vectors', []);
-            reg.model.saveEmbeddings(output.Vectors);
+            obj.saveEmbeddings(output.Vectors);
             error("reg:model:NotImplemented", ...
                 "EmbeddingModel.process is not implemented.");
+        end
+
+        function saveEmbeddings(~, embeddings) %#ok<INUSD>
+            %SAVEEMBEDDINGS Persist embedding vectors to storage.
+            %   SAVEEMBEDDINGS(obj, EMBEDDINGS) writes EMBEDDINGS to the
+            %   configured storage backend.
+
+            error("reg:model:NotImplemented", ...
+                "EmbeddingModel.saveEmbeddings is not implemented.");
         end
     end
 end
