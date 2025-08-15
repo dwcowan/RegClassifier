@@ -181,6 +181,7 @@ table(results)
 - Fine-tune early stopping on nDCG@10 with patience + min-delta; saves `checkpoints/ft_best.mat`.
 - Simple **hard-negative mining** between epochs using current encoder.
 - **Per-label metrics** helper (`+reg/eval_per_label.m`).
+- **Clustering metrics** helper (`+reg/eval_clustering.m`).
 - **Golden artifact test** (`tests/TestReportArtifact.m`) ensuring `reg_eval_report.pdf` exists and is non-trivial.
 
 ---

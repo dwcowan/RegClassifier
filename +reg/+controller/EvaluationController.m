@@ -17,11 +17,21 @@ classdef EvaluationController < handle
             metrics = struct('RecallAtK', recallAtK, 'mAP', mAP, 'nDCG', ndcgAtK);
         end
 
-        function results = evaluateGoldPack(obj, goldDir)
+        function results = evaluateGoldPack(obj, goldDir, opts)
             %EVALUATEGOLDPACK Run evaluation against a gold mini-pack.
             %   RESULTS = EVALUATEGOLDPACK(goldDir) loads the gold artefacts,
             %   embeds the chunks and computes retrieval metrics overall and
-            %   per label. Equivalent to `reg_eval_gold`.
+            %   per label. Optional metrics can be toggled via name-value
+            %   options:
+            %       ComputePerLabel   (default true)
+            %       ComputeClustering (default false)
+            %   Equivalent to `reg_eval_gold`.
+            arguments
+                obj
+                goldDir string
+                opts.ComputePerLabel logical = true
+                opts.ComputeClustering logical = false
+            end
             G = reg.load_gold(goldDir);
             C = config(); C.labels = G.labels;
             E = reg.precompute_embeddings(G.chunks.text, C);
@@ -32,10 +42,17 @@ classdef EvaluationController < handle
                 posSets{i} = pos;
             end
             overall = obj.retrievalMetrics(E, posSets, 10);
-            per = reg.eval_per_label(E, G.Y, 10);
-            perTbl = table(G.labels(:), per.RecallAtK, ...
-                'VariableNames', {'Label','RecallAt10'});
+            if opts.ComputePerLabel
+                per = reg.eval_per_label(E, G.Y, 10);
+                perTbl = table(G.labels(:), per.RecallAtK, ...
+                    'VariableNames', {'Label','RecallAt10'});
+            else
+                perTbl = table();
+            end
             results = struct('overall', overall, 'perLabel', perTbl);
+            if opts.ComputeClustering
+                results.clustering = reg.eval_clustering(E, G.Y);
+            end
         end
 
         function plotTrends(~, csvPath, pngPath)

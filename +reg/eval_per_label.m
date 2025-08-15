@@ -1,5 +1,11 @@
-function T = eval_per_label(E, Ylogical, K)
-%EVAL_PER_LABEL Per-label Recall@K using cosine similarity
+function [T, recall] = eval_per_label(E, Ylogical, K)
+%EVAL_PER_LABEL Per-label Recall@K using cosine similarity.
+%   T = EVAL_PER_LABEL(E, Ylogical, K) computes recall for each label and
+%   returns a table with columns:
+%       * LabelIdx  – numeric label index (1..L)
+%       * RecallAtK – per-label recall@K
+%       * Support   – number of query examples considered for that label
+%   [T, RECALL] = EVAL_PER_LABEL(...) also returns the raw recall vector.
 if nargin<3, K=10; end
 N = size(E,1); L = size(Ylogical,2);
 E = E ./ vecnorm(E, 2, 2); % normalize each row for cosine similarity
@@ -22,5 +28,6 @@ recall = zeros(L,1);
 for l=1:L
     if denom(l)>0, recall(l) = rec(l)/denom(l); else, recall(l)=NaN; end
 end
-T = table((1:L).', recall, 'VariableNames', {'LabelIdx','RecallAtK'});
+T = table((1:L).', recall, denom, ...
+    'VariableNames', {'LabelIdx','RecallAtK','Support'});
 end

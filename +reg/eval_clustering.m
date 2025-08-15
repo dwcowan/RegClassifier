@@ -1,6 +1,12 @@
 function S = eval_clustering(E, labelsLogical, Kclusters)
-%EVAL_CLUSTERING k-means clustering + purity and silhouette score (approx)
-% labelsLogical: [N x L] -> turn into single label by argmax for purity proxy
+%EVAL_CLUSTERING k-means clustering + purity and silhouette score (approx).
+%   S = EVAL_CLUSTERING(E, labelsLogical, Kclusters) clusters the embeddings
+%   and returns a struct with fields:
+%       * purity     – fraction of items whose majority cluster label matches
+%       * silhouette – mean cosine silhouette value
+%       * idx        – cluster assignment vector (N x 1)
+%   labelsLogical is an [N x L] logical label matrix; ties are resolved by
+%   argmax for the purity proxy.
 N = size(E,1);
 if nargin<3, Kclusters = max(2, round(sqrt(N/10))); end
 [idx, ~] = kmeans(E, Kclusters, 'MaxIter',200, 'Replicates',3, 'Distance','cosine');

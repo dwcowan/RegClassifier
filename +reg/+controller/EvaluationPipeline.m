@@ -34,7 +34,8 @@ classdef EvaluationPipeline < handle
 
             if nargin < 2, goldDir = 'gold'; end
 
-            % Step 1: evaluate gold pack and compute retrieval metrics
+            % Step 1: evaluate gold pack and compute retrieval metrics,
+            %   per-label recall and optional clustering quality.
             %   Controller should validate goldDir contents and report
             %   missing files.
             goldRes = obj.Controller.evaluateGoldPack(goldDir);
