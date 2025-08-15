@@ -1,17 +1,17 @@
 classdef FineTuneController < reg.mvc.BaseController
     %FINETUNECONTROLLER Orchestrates encoder fine-tuning workflow.
-    
+
     properties
         PDFIngestModel
         TextChunkModel
         WeakLabelModel
         FineTuneDataModel
         EncoderFineTuneModel
-        EvaluationService
+        EvaluationModel
     end
 
     methods
-        function obj = FineTuneController(pdfModel, chunkModel, weakModel, dataModel, encoderModel, evalService, view)
+        function obj = FineTuneController(pdfModel, chunkModel, weakModel, dataModel, encoderModel, evalModel, view)
             %FINETUNECONTROLLER Construct controller wiring models and view.
             %   OBJ = FINETUNECONTROLLER(...) assembles components for the
             %   fine-tuning workflow. Equivalent to
@@ -22,7 +22,7 @@ classdef FineTuneController < reg.mvc.BaseController
             obj.WeakLabelModel = weakModel;
             obj.FineTuneDataModel = dataModel;
             obj.EncoderFineTuneModel = encoderModel;
-            obj.EvaluationService = evalService;
+            obj.EvaluationModel = evalModel;
         end
 
         function triplets = buildTriplets(obj)
@@ -45,8 +45,8 @@ classdef FineTuneController < reg.mvc.BaseController
             %EVALUATE Compute evaluation metrics on fine-tuned encoder.
             %   METRICS = EVALUATE(obj, net) returns evaluation scores.
             %   Equivalent to `ft_eval`.
-            raw = obj.EvaluationService.prepare();
-            metrics = obj.EvaluationService.compute(raw);
+            raw = obj.EvaluationModel.load();
+            metrics = obj.EvaluationModel.process(raw);
         end
 
         function saveModel(~, net, varargin)
@@ -97,7 +97,7 @@ classdef FineTuneController < reg.mvc.BaseController
             net = obj.trainEncoder(triplets);
 
             % Step 3: evaluate fine-tuned encoder
-            %   Evaluation service verifies metric inputs and reports issues.
+            %   Evaluation model verifies metric inputs and reports issues.
             metrics = obj.evaluate(net);
 
             % Step 4: persist model checkpoint

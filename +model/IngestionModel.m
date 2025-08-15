@@ -1,9 +1,5 @@
-classdef IngestionService
-    %INGESTIONSERVICE Coordinate document ingestion and feature extraction.
-    %   Composes lower level models for PDF ingestion, text chunking and
-    %   feature computation. Exposes a single `ingest` method returning an
-    %   `reg.service.IngestionOutput` value object so that upstream
-    %   controllers do not depend on concrete model implementations.
+classdef IngestionModel < reg.mvc.BaseModel
+    %INGESTIONMODEL Coordinate document ingestion and feature extraction.
 
     properties
         PDFModel  reg.model.PDFIngestModel
@@ -13,7 +9,7 @@ classdef IngestionService
     end
 
     methods
-        function obj = IngestionService(pdfModel, chunkModel, featModel, docRepo)
+        function obj = IngestionModel(pdfModel, chunkModel, featModel, docRepo)
             if nargin > 0
                 obj.PDFModel = pdfModel;
                 obj.ChunkModel = chunkModel;
@@ -24,8 +20,8 @@ classdef IngestionService
             end
         end
 
-        function out = ingest(obj, cfg)
-            %INGEST Run ingestion workflow returning `IngestionOutput`.
+        function raw = load(obj, cfg)
+            %LOAD Run ingestion workflow returning intermediate results.
             files = obj.PDFModel.load(cfg);
             docsT = obj.PDFModel.process(files);
 
@@ -33,13 +29,16 @@ classdef IngestionService
             chunksT = obj.ChunkModel.process(chunksRaw);
 
             featRaw = obj.FeatureModel.load(chunksT);
-            [features, ~] = obj.FeatureModel.process(featRaw);
+            raw = struct('Docs', docsT, 'Chunks', chunksT, 'FeatRaw', featRaw);
+        end
 
-            out = reg.service.IngestionOutput(docsT, chunksT, features);
+        function out = process(obj, raw)
+            %PROCESS Finalise features and optionally persist documents.
+            [features, ~] = obj.FeatureModel.process(raw.FeatRaw);
+            out = reg.service.IngestionOutput(raw.Docs, raw.Chunks, features);
             if ~isempty(obj.DocumentRepo)
-                obj.DocumentRepo.save(docsT);
+                obj.DocumentRepo.save(raw.Docs);
             end
         end
     end
 end
-
