@@ -25,8 +25,7 @@ classdef DiffVersionsController < reg.mvc.BaseController
             %   RESULT = RUN(obj, dirA, dirB, outDir) orchestrates the model
             %   to align files by name, record line-level changes and write a
             %   CSV summary plus a patch file.
-            params = obj.Model.load(dirA, dirB, outDir);
-            result = obj.Model.process(params);
+            result = obj.Model.compare(dirA, dirB, outDir);
             if ~isempty(obj.View)
                 obj.View.display(result);
             end
