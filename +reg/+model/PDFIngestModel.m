@@ -78,5 +78,14 @@ classdef PDFIngestModel < reg.mvc.BaseModel
             error("reg:model:NotImplemented", ...
                 "PDFIngestModel.process is not implemented.");
         end
+
+        function persistDocuments(~, documents) %#ok<INUSD>
+            %PERSISTDOCUMENTS Persist document structs to storage.
+            %   PERSISTDOCUMENTS(obj, DOCUMENTS) writes DOCUMENTS to the
+            %   configured storage backend.
+
+            error("reg:model:NotImplemented", ...
+                "PDFIngestModel.persistDocuments is not implemented.");
+        end
     end
 end

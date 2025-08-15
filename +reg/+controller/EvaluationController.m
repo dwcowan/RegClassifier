@@ -10,16 +10,18 @@ classdef EvaluationController < reg.mvc.BaseController
         ReportModel
         PlotView
         VisualizationModel reg.model.VisualizationModel = reg.model.VisualizationModel();
+        MetricsView reg.view.MetricsView = reg.view.MetricsView();
     end
 
     methods
-        function obj = EvaluationController(evalModel, reportModel, view, vizModel, plotView)
+        function obj = EvaluationController(evalModel, reportModel, view, vizModel, plotView, metricsView)
             %EVALUATIONCONTROLLER Construct controller wiring models and views.
             %   evalModel     - model producing evaluation metrics
             %   reportModel   - model transforming metrics into report data
             %   view          - view displaying reportData (defaults to ReportView)
             %   vizModel      - model generating plots (optional)
             %   plotView      - view used for visualisations (optional)
+            %   metricsView   - view used for logging metrics (optional)
 
             if nargin < 3 || isempty(view)
                 view = reg.view.ReportView();
@@ -33,6 +35,9 @@ classdef EvaluationController < reg.mvc.BaseController
                 obj.PlotView = plotView;
             else
                 obj.PlotView = reg.view.PlotView();
+            end
+            if nargin >= 6 && ~isempty(metricsView)
+                obj.MetricsView = metricsView;
             end
         end
 
@@ -129,8 +134,8 @@ classdef EvaluationController < reg.mvc.BaseController
                 metrics.clustering = [];
             end
 
-            % Step 2: persist metrics using logging helper
-            reg.helpers.logMetrics(metrics);
+            % Step 2: persist metrics using metrics view
+            obj.MetricsView.log(metrics);
 
             % Return combined results including metrics for further reporting
             results = evalResult;
