@@ -1,4 +1,4 @@
-classdef EvaluationController < handle
+classdef EvaluationController < reg.mvc.BaseController
     %EVALUATIONCONTROLLER Provide utilities for evaluation and reporting.
     %   This controller bundles common evaluation routines used across the
     %   project such as retrieval metrics and gold-pack evaluation.
@@ -8,11 +8,21 @@ classdef EvaluationController < handle
     end
 
     methods
-        function obj = EvaluationController(vizModel)
-            %EVALUATIONCONTROLLER Construct controller with visualization model.
-            if nargin > 0
+        function obj = EvaluationController(model, view, vizModel)
+            %EVALUATIONCONTROLLER Construct controller wiring model and view.
+            obj@reg.mvc.BaseController(model, view);
+            if nargin >= 3 && ~isempty(vizModel)
                 obj.VisualizationModel = vizModel;
             end
+        end
+
+        function run(obj)
+            %RUN Execute evaluation workflow.
+            %   RUN(obj) loads data via the model, processes it and passes
+            %   the results to the associated view for presentation.
+            data = obj.Model.load();
+            results = obj.Model.process(data);
+            obj.View.display(results);
         end
         function metrics = retrievalMetrics(~, embeddings, posSets, k) %#ok<INUSD>
             %RETRIEVALMETRICS Compute retrieval metrics at K.
