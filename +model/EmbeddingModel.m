@@ -3,20 +3,12 @@ classdef EmbeddingModel < reg.mvc.BaseModel
 
     properties
         ConfigModel reg.model.ConfigModel
-        EmbeddingRepo reg.repository.EmbeddingRepository
-        SearchRepo reg.repository.SearchIndexRepository
     end
 
     methods
-        function obj = EmbeddingModel(cfgModel, embeddingRepo, searchRepo)
+        function obj = EmbeddingModel(cfgModel)
             if nargin > 0
                 obj.ConfigModel = cfgModel;
-            end
-            if nargin > 1
-                obj.EmbeddingRepo = embeddingRepo;
-            end
-            if nargin > 2
-                obj.SearchRepo = searchRepo;
             end
         end
 
@@ -32,12 +24,7 @@ classdef EmbeddingModel < reg.mvc.BaseModel
                 cfg = obj.ConfigModel.process(cfgRaw); %#ok<NASGU>
             end
             output = reg.service.EmbeddingOutput([]);
-            if ~isempty(obj.EmbeddingRepo)
-                obj.EmbeddingRepo.save(output);
-            end
-            if ~isempty(obj.SearchRepo)
-                obj.SearchRepo.save(output);
-            end
+            reg.model.Embedding.save(output.Vectors);
             error("reg:model:NotImplemented", ...
                 "EmbeddingModel.process is not implemented.");
         end
