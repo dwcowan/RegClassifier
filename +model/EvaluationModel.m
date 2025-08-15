@@ -22,7 +22,7 @@ classdef EvaluationModel < reg.mvc.BaseModel
             if numel(varargin) >= 2
                 ref = varargin{2};
             end
-            input = reg.service.EvaluationInput(pred, ref);
+            input = reg.model.EvaluationInput(pred, ref);
         end
 
         function result = process(obj, input) %#ok<INUSD>
@@ -31,7 +31,7 @@ classdef EvaluationModel < reg.mvc.BaseModel
                 cfgRaw = obj.ConfigModel.load();
                 cfg = obj.ConfigModel.process(cfgRaw); %#ok<NASGU>
             end
-            result = reg.service.EvaluationResult([]);
+            result = reg.model.EvaluationResult([]);
             error("reg:model:NotImplemented", ...
                 "EvaluationModel.process is not implemented.");
         end

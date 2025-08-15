@@ -3,16 +3,15 @@ classdef EvalController < reg.mvc.BaseController
 
     properties
         EvaluationModel
-        LoggingModel
         ReportModel
         ClusteringEvalModel = []
         PerLabelEvalModel = []
     end
 
     methods
-        function obj = EvalController(evalModel, logModel, reportModel, view, varargin)
+        function obj = EvalController(evalModel, reportModel, view, varargin)
             %EVALCONTROLLER Construct evaluation controller.
-            %   OBJ = EVALCONTROLLER(evalModel, logModel, reportModel, view)
+            %   OBJ = EVALCONTROLLER(evalModel, reportModel, view)
             %   wires the models to a view. Equivalent to
             %   `reg_eval_and_report` setup.
             %   Additional optional models:
@@ -20,7 +19,6 @@ classdef EvalController < reg.mvc.BaseController
             %       varargin{2} - per-label evaluation model
             obj@reg.mvc.BaseController([], view);
             obj.EvaluationModel = evalModel;
-            obj.LoggingModel = logModel;
             obj.ReportModel = reportModel;
             if numel(varargin) >= 1
                 obj.ClusteringEvalModel = varargin{1};
@@ -37,7 +35,6 @@ classdef EvalController < reg.mvc.BaseController
             %
             %   Preconditions
             %       * EvaluationModel supplies predictions and gold labels
-            %       * LoggingModel has write access to metrics store
             %       * ReportModel expects a metrics struct
             %   Side Effects
             %       * Metrics appended to history (e.g., CSV)
@@ -68,10 +65,8 @@ classdef EvalController < reg.mvc.BaseController
                 metrics.clustering = clusterMetrics;
             end
 
-            % Step 2: persist metrics using logging model
-            %   LoggingModel should validate schema and handle IO errors.
-            logRaw = obj.LoggingModel.load(metrics);
-            obj.LoggingModel.process(logRaw);  % `log_metrics`
+            % Step 2: persist metrics using logging helper
+            reg.helpers.logMetrics(metrics);
 
             % Step 3: assemble and render report from metrics
             %   ReportModel is expected to verify metric fields.

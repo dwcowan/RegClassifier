@@ -18,15 +18,14 @@ classdef SyncController < reg.mvc.BaseController
             obj@reg.mvc.BaseController(model, view);
         end
 
-        function out = run(obj, date) %#ok<INUSD>
+        function out = run(obj, date)
             %RUN Execute synchronization for a given date.
             %   OUT = RUN(obj, date) orchestrates corpus synchronization.
-            %   Steps:
-            %       1. Determine target date
-            %       2. Synchronize corpus for the date
-            %       3. Display summary via view
-            error("reg:controller:NotImplemented", ...
-                "SyncController.run is not implemented.");
+            params = obj.Model.load(date);
+            out = obj.Model.process(params);
+            if ~isempty(obj.View)
+                obj.View.display(out);
+            end
         end
     end
 end

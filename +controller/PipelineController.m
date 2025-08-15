@@ -6,20 +6,19 @@ classdef PipelineController < reg.mvc.BaseController
         IngestionModel
         EmbeddingModel
         EvaluationModel
-        LoggingModel
         EmbeddingView
     end
 
     methods
-        function obj = PipelineController(cfgModel, ingestModel, embedModel, evalModel, logModel, view, embView)
+        function obj = PipelineController(cfgModel, ingestModel, embedModel, evalModel, view, embView)
             %PIPELINECONTROLLER Construct controller wiring core models.
-            %   OBJ = PIPELINECONTROLLER(CFG, INGEST, EMBED, EVAL, LOG, VIEW, EMBVIEW)
+            %   OBJ = PIPELINECONTROLLER(CFG, INGEST, EMBED, EVAL, VIEW, EMBVIEW)
             %   stores references to the provided models, a metrics view
             %   and an optional embedding view.
-            if nargin < 6 || isempty(view)
+            if nargin < 5 || isempty(view)
                 view = reg.view.MetricsView();
             end
-            if nargin < 7 || isempty(embView)
+            if nargin < 6 || isempty(embView)
                 embView = reg.view.EmbeddingView();
             end
             obj@reg.mvc.BaseController(cfgModel, view);
@@ -27,7 +26,6 @@ classdef PipelineController < reg.mvc.BaseController
             obj.IngestionModel = ingestModel;
             obj.EmbeddingModel = embedModel;
             obj.EvaluationModel = evalModel;
-            obj.LoggingModel = logModel;
             obj.EmbeddingView = embView;
         end
 
@@ -55,8 +53,7 @@ classdef PipelineController < reg.mvc.BaseController
             evalResult = obj.EvaluationModel.process(evalRaw);
 
             % Log metrics and display via view
-            logData = obj.LoggingModel.load(evalResult.Metrics);
-            obj.LoggingModel.process(logData);
+            reg.helpers.logMetrics(evalResult.Metrics);
             if ~isempty(obj.View)
                 obj.View.display(evalResult.Metrics);
             end

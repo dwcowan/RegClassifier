@@ -1,6 +1,6 @@
 classdef EmbeddingView < reg.mvc.BaseView
     %EMBEDDINGVIEW Stub view for rendering embedding outputs.
-    %   Expects DATA as a numeric matrix or reg.service.EmbeddingOutput.
+    %   Expects DATA as a numeric matrix or reg.model.EmbeddingOutput.
     %   Rendering is limited to printing vector dimensions or persisting
     %   via callbacks; all computation remains within services.
 
@@ -20,7 +20,7 @@ classdef EmbeddingView < reg.mvc.BaseView
 
             obj.DisplayedEmbeddings = data;
             vecs = [];
-            if isa(data, 'reg.service.EmbeddingOutput')
+            if isa(data, 'reg.model.EmbeddingOutput')
                 vecs = data.Vectors;
             elseif isnumeric(data)
                 vecs = data;

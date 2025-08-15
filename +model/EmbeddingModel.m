@@ -14,7 +14,7 @@ classdef EmbeddingModel < reg.mvc.BaseModel
 
         function input = load(~, features)
             %LOAD Wrap raw FEATURES in an EmbeddingInput value object.
-            input = reg.service.EmbeddingInput(features);
+            input = reg.model.EmbeddingInput(features);
         end
 
         function output = process(obj, input) %#ok<INUSD>
@@ -23,7 +23,7 @@ classdef EmbeddingModel < reg.mvc.BaseModel
                 cfgRaw = obj.ConfigModel.load();
                 cfg = obj.ConfigModel.process(cfgRaw); %#ok<NASGU>
             end
-            output = reg.service.EmbeddingOutput([]);
+            output = reg.model.EmbeddingOutput([]);
             reg.model.Embedding.save(output.Vectors);
             error("reg:model:NotImplemented", ...
                 "EmbeddingModel.process is not implemented.");

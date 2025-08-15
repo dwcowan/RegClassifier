@@ -19,18 +19,16 @@ classdef DiffReportController < reg.mvc.BaseController
             obj@reg.mvc.BaseController(model, view);
         end
 
-        function report = run(obj, dirA, dirB, outDir) %#ok<INUSD>
+        function report = run(obj, dirA, dirB, outDir)
             %RUN Produce diff reports for two directories.
             %   REPORT = RUN(obj, dirA, dirB, outDir) orchestrates
             %   generation of PDF and HTML artifacts summarizing
             %   differences between corpora.
-            %   Steps:
-            %       1. Determine output directory
-            %       2. Generate PDF diff
-            %       3. Generate HTML diff
-            %       4. Assemble artifact paths and display via view
-            error("reg:controller:NotImplemented", ...
-                "DiffReportController.run is not implemented.");
+            params = obj.Model.load(dirA, dirB, outDir);
+            report = obj.Model.process(params);
+            if ~isempty(obj.View)
+                obj.View.display(report);
+            end
         end
     end
 end
