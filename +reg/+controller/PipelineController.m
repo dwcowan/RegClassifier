@@ -66,6 +66,7 @@ classdef PipelineController < reg.mvc.BaseController
             % Step 2: Ingest PDFs into documents table
             %   PDFIngestModel should verify file readability and handle OCR
             %   failures gracefully.
+            %   See reg.model.PDFIngestModel for documentsTable schema.
             %   Failure Modes
             %       * Input directory missing/empty resulting in dummy docs.
             %       * `extractFileText` errors or unusable OCR output.
@@ -78,12 +79,14 @@ classdef PipelineController < reg.mvc.BaseController
 
             % Step 3: Chunk documents into text segments
             %   Relies on tokens/overlap parameters from cfg.
+            %   See reg.model.TextChunkModel for chunksTable schema.
             chunksRaw = obj.TextChunkModel.load(docsT);
             chunksT = obj.TextChunkModel.process(chunksRaw);
 
             % Step 4: Extract features and embeddings
             %   FeatureModel expected to fall back (e.g., to fastText) if the
             %   preferred embedding backend fails.
+            %   See reg.model.FeatureModel for feature matrix and embedding schema.
             featuresRaw = obj.FeatureModel.load(chunksT);
             [features, embeddings, vocab] = obj.FeatureModel.process(featuresRaw); %#ok<NASGU>
 
@@ -100,6 +103,7 @@ classdef PipelineController < reg.mvc.BaseController
 
             % Step 7: Train classifiers and make predictions
             %   ClassifierModel should validate that Yweak is non-empty.
+            %   See reg.model.ClassifierModel for prediction output schema.
             clsRaw = obj.ClassifierModel.load(Yweak);
             [models, scores, thresholds, pred] = obj.ClassifierModel.process(clsRaw); %#ok<NASGU>
 
