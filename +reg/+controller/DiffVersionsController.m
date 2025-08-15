@@ -1,53 +1,34 @@
 classdef DiffVersionsController < reg.mvc.BaseController
     %DIFFVERSIONSCONTROLLER File-level diff of two CRR corpora.
-    %   Wraps `crr_diff_versions` and exposes a simple controller interface
-    %   for comparing two directories of plain text files.
-
-    properties
-        DiffFunction
-    end
+    %   Employs a `reg.model.DiffVersionsModel` to compare directories of
+    %   plain text files.
 
     methods
-        function obj = DiffVersionsController(view, diffFunc)
-            %DIFFVERSIONSCONTROLLER Construct controller with diff function.
-            %   OBJ = DIFFVERSIONSCONTROLLER(view, diffFunc) wires a view
-            %   and diff function. VIEW defaults to `reg.view.ReportView`
-            %   and DIFFFUNC defaults to `@reg.crr_diff_versions`.
-            if nargin < 1 || isempty(view)
+        function obj = DiffVersionsController(model, view)
+            %DIFFVERSIONSCONTROLLER Construct controller with model and view.
+            %   OBJ = DIFFVERSIONSCONTROLLER(model, view) wires a
+            %   DiffVersionsModel to a view. MODEL defaults to
+            %   `reg.model.DiffVersionsModel()` and VIEW defaults to
+            %   `reg.view.ReportView()`.
+            if nargin < 1 || isempty(model)
+                model = reg.model.DiffVersionsModel();
+            end
+            if nargin < 2 || isempty(view)
                 view = reg.view.ReportView();
             end
-            if nargin < 2 || isempty(diffFunc)
-                diffFunc = @reg.crr_diff_versions;
-            end
-            obj@reg.mvc.BaseController([], view);
-            obj.DiffFunction = diffFunc;
+            obj@reg.mvc.BaseController(model, view);
         end
 
         function result = run(obj, dirA, dirB, outDir)
             %RUN Diff directories on a file-by-file basis.
-            %   RESULT = RUN(obj, dirA, dirB, outDir) aligns plain text
-            %   files by name, records line-level changes and writes a CSV
-            %   summary plus a patch file.
-            %   Inputs
-            %       dirA, dirB (char/string): Directories containing `.txt`
-            %           files for comparison.
-            %       outDir (char/string): Optional output directory for
-            %           artefacts. Default runs/crr_diff.
-            %   Returns
-            %       result (struct): Counts of added, removed, changed and
-            %       same files plus the output directory.
-            %   Errors
-            %       * Propagates errors from the diff function such as
-            %         unreadable files.
-            %       * Directory creation failures raise exceptions.
-            if nargin < 4 || isempty(outDir)
-                outDir = fullfile('runs', 'crr_diff');
-            end
-            result = obj.DiffFunction(dirA, dirB, 'OutDir', outDir);
+            %   RESULT = RUN(obj, dirA, dirB, outDir) orchestrates the model
+            %   to align files by name, record line-level changes and write a
+            %   CSV summary plus a patch file.
+            params = obj.Model.load(dirA, dirB, outDir);
+            result = obj.Model.process(params);
             if ~isempty(obj.View)
                 obj.View.display(result);
             end
         end
     end
 end
-
