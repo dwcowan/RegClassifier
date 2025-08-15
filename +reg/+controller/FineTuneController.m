@@ -53,12 +53,21 @@ classdef FineTuneController < reg.mvc.BaseController
             %SAVEMODEL Persist fine-tuned encoder to disk.
             %   SAVEMODEL(obj, net, filename) saves the network to a MAT
             %   file. Equivalent to model saving in `ft_train_encoder`.
-            if ~isempty(varargin)
-                filename = varargin{1};
-            else
-                filename = "fine_tuned_encoder.mat";
-            end
-            save(filename, "net", "-v7.3");
+
+            error("NotImplemented: model checkpointing");
+
+            % Pseudocode for future implementation:
+            % checkpointDir = "./checkpoints";
+            % if ~exist(checkpointDir, "dir")
+            %     mkdir(checkpointDir);
+            % end
+            % if ~isempty(varargin)
+            %     fileName = varargin{1};
+            % else
+            %     fileName = "fine_tuned_encoder.mat";
+            % end
+            % checkpointPath = fullfile(checkpointDir, fileName);
+            % save(checkpointPath, "net", "-v7.3");
         end
 
         function run(obj)
