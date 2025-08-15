@@ -9,14 +9,18 @@ classdef IngestionService
         PDFModel  reg.model.PDFIngestModel
         ChunkModel reg.model.TextChunkModel
         FeatureModel reg.model.FeatureModel
+        DocumentRepo reg.repository.DocumentRepository
     end
 
     methods
-        function obj = IngestionService(pdfModel, chunkModel, featModel)
+        function obj = IngestionService(pdfModel, chunkModel, featModel, docRepo)
             if nargin > 0
                 obj.PDFModel = pdfModel;
                 obj.ChunkModel = chunkModel;
                 obj.FeatureModel = featModel;
+            end
+            if nargin > 3
+                obj.DocumentRepo = docRepo;
             end
         end
 
@@ -32,6 +36,9 @@ classdef IngestionService
             [features, ~] = obj.FeatureModel.process(featRaw);
 
             out = reg.service.IngestionOutput(docsT, chunksT, features);
+            if ~isempty(obj.DocumentRepo)
+                obj.DocumentRepo.save(docsT);
+            end
         end
     end
 end
