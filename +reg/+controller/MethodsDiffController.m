@@ -9,12 +9,12 @@ classdef MethodsDiffController < reg.mvc.BaseController
             %   OBJ = METHODSDIFFCONTROLLER(model, view) wires a
             %   MethodDiffModel to a view. MODEL defaults to
             %   `reg.model.MethodDiffModel()` and VIEW defaults to
-            %   `reg.view.ReportView()`.
+            %   `reg.view.DiffView()` for rendering retrieval differences.
             if nargin < 1 || isempty(model)
                 model = reg.model.MethodDiffModel();
             end
             if nargin < 2 || isempty(view)
-                view = reg.view.ReportView();
+                view = reg.view.DiffView();
             end
             obj@reg.mvc.BaseController(model, view);
         end

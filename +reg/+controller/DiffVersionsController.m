@@ -9,12 +9,13 @@ classdef DiffVersionsController < reg.mvc.BaseController
             %   OBJ = DIFFVERSIONSCONTROLLER(model, view) wires a
             %   DiffVersionsModel to a view. MODEL defaults to
             %   `reg.model.DiffVersionsModel()` and VIEW defaults to
-            %   `reg.view.ReportView()`.
+            %   `reg.view.DiffView()` which is responsible solely for
+            %   rendering diff results.
             if nargin < 1 || isempty(model)
                 model = reg.model.DiffVersionsModel();
             end
             if nargin < 2 || isempty(view)
-                view = reg.view.ReportView();
+                view = reg.view.DiffView();
             end
             obj@reg.mvc.BaseController(model, view);
         end
