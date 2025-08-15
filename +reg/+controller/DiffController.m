@@ -7,10 +7,10 @@ classdef DiffController < reg.mvc.BaseController
         function obj = DiffController(model, view)
             %DIFFCONTROLLER Construct controller wiring model and view.
             %   OBJ = DIFFCONTROLLER(MODEL, VIEW) sets up a diff model and
-            %   view. MODEL defaults to `reg.model.DiffVersionsModel()` and
+            %   view. MODEL defaults to `reg.model.DiffModel()` and
             %   VIEW defaults to `reg.view.DiffView()`.
             if nargin < 1 || isempty(model)
-                model = reg.model.DiffVersionsModel();
+                model = reg.model.DiffModel();
             end
             if nargin < 2 || isempty(view)
                 view = reg.view.DiffView();
@@ -41,8 +41,8 @@ classdef DiffController < reg.mvc.BaseController
         function result = runArticles(obj, dirA, dirB, outDir)
             %RUNARTICLES Compare corpora by article number.
             %   RESULT = RUNARTICLES(obj, dirA, dirB, outDir) forwards to
-            %   the model's compare implementation and displays results.
-            result = obj.Model.compare(dirA, dirB, outDir);
+            %   the model's diffArticles implementation and displays results.
+            result = obj.Model.diffArticles(dirA, dirB, outDir);
             if ~isempty(obj.View)
                 obj.View.display(result);
             end
@@ -51,8 +51,8 @@ classdef DiffController < reg.mvc.BaseController
         function result = runVersions(obj, dirA, dirB, outDir)
             %RUNVERSIONS Diff directories on a file-by-file basis.
             %   RESULT = RUNVERSIONS(obj, dirA, dirB, outDir) delegates to
-            %   the model's compare method and displays results.
-            result = obj.Model.compare(dirA, dirB, outDir);
+            %   the model's diffVersions method and displays results.
+            result = obj.Model.diffVersions(dirA, dirB, outDir);
             if ~isempty(obj.View)
                 obj.View.display(result);
             end
@@ -62,8 +62,7 @@ classdef DiffController < reg.mvc.BaseController
             %RUNREPORT Produce diff reports for two directories.
             %   REPORT = RUNREPORT(obj, dirA, dirB, outDir) orchestrates
             %   generation of diff artefacts using the model.
-            params = obj.Model.load(dirA, dirB, outDir);
-            report = obj.Model.process(params);
+            report = obj.Model.generateReport(dirA, dirB, outDir);
             if ~isempty(obj.View)
                 obj.View.display(report);
             end
@@ -77,8 +76,7 @@ classdef DiffController < reg.mvc.BaseController
             if nargin < 4
                 config = struct();
             end
-            params = obj.Model.load(queries, chunksT, config);
-            result = obj.Model.process(params);
+            result = obj.Model.diffMethods(queries, chunksT, config);
             if ~isempty(obj.View)
                 obj.View.display(result);
             end
