@@ -71,9 +71,21 @@ classdef SearchIndexModel < reg.mvc.BaseModel
             %           matching.
             %       topK (double): Maximum number of results to return.
             %   Returns
-            %       results (table): Struct or table of top hits with fields
-            %           such as `row` and `score` representing document index
-            %           and blended relevance score.
+            %       results (table): Top hits sorted by blended relevance with
+            %           the following schema:
+            %               * docId (double) - 1-based identifier of the
+            %                   matching document or chunk
+            %               * score (double) - blended relevance score where
+            %                   higher means more relevant
+            %               * rank (double) - 1-based rank position after
+            %                   sorting by score
+            %   Example
+            %       results =
+            %           docId    score    rank
+            %           _____    _____    ____
+            %             42     0.91      1
+            %              7     0.85      2
+            %             13     0.80      3
             %   Side Effects
             %       None.
             %   Legacy Reference
