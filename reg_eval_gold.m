@@ -1,7 +1,8 @@
 % Evaluate model quality on the gold mini-pack and write a PDF report
 import mlreportgen.report.*
 import mlreportgen.dom.*
-reg.set_seeds(42);
+% TODO: set random seeds for reproducibility
+% reg.set_seeds(42);
 G = reg.load_gold("gold");
 
 % Build embeddings (auto-uses fine_tuned_bert.mat or projection_head if present)

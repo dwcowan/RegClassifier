@@ -4,7 +4,7 @@ import mlreportgen.report.*
 import mlreportgen.dom.*
 
 C = config();
-reg.print_active_knobs(C);
+% TODO: display active knobs once reg.print_active_knobs is implemented
 if isempty(gcp('nocreate')), parpool('threads'); end
 
 % Data & labels

@@ -1,19 +1,19 @@
 {
-  "input_dir": "data/pdfs",
-  "embeddings_backend": "bert",
-  "fasttext": { "language": "en" },
-  "lda_topics": 12,
-  "min_rule_conf": 0.7,
-  "kfold": 5,
+  "input_dir": "",
+  "embeddings_backend": "",
+  "fasttext": { "language": "" },
+  "lda_topics": null,
+  "min_rule_conf": null,
+  "kfold": null,
   "db": {
     "enable": false,
-    "vendor": "postgres",
-    "dbname": "reg_topics",
-    "user": "user",
-    "pass": "pass",
-    "server": "localhost",
-    "port": 5432,
-    "sqlite_path": "data/db/my_reg_topics.sqlite"
+    "vendor": "",
+    "dbname": "",
+    "user": "",
+    "pass": "",
+    "server": "",
+    "port": 0,
+    "sqlite_path": ""
   },
-  "report_title": "Banking Regulation Topic Classifier — Snapshot"
+  "report_title": ""
 }

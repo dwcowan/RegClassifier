@@ -1,5 +1,5 @@
 C = config();
-reg.print_active_knobs(C);
+% TODO: display active knobs once reg.print_active_knobs is implemented
 if isempty(gcp('nocreate')), parpool('threads'); end
 
 % A) Ingest PDFs (with OCR fallback) → document table

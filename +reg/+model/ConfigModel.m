@@ -3,65 +3,65 @@ classdef ConfigModel < reg.mvc.BaseModel
 
     properties
         % Directory containing source PDF documents
-        inputDir string = "data/pdfs";
+        inputDir string = "";
 
         % Flag indicating whether GPU acceleration is allowed
-        gpuEnabled logical = true;
+        gpuEnabled logical = false;
 
         % === Chunking ===
         % Number of tokens per text chunk
-        chunkSizeTokens double = 300;
+        chunkSizeTokens double = 0;
         % Overlap in tokens between consecutive chunks
-        chunkOverlap double = 80;
+        chunkOverlap double = 0;
 
         % === BERT embedding ===
         % Mini-batch size for BERT embeddings
-        bertMiniBatchSize double = 96;
+        bertMiniBatchSize double = 0;
         % Maximum sequence length for BERT model inputs
-        bertMaxSeqLength double = 256;
+        bertMaxSeqLength double = 0;
 
         % === Projection head ===
         % Dimensionality of projected embeddings
-        projDim double = 384;
+        projDim double = 0;
         % Number of epochs to train the projection head
-        projEpochs double = 5;
+        projEpochs double = 0;
         % Training mini-batch size for projection head
-        projBatchSize double = 768;
+        projBatchSize double = 0;
         % Learning rate for projection head optimiser
-        projLR double = 1e-3;
+        projLR double = 0;
         % Margin used in triplet loss during projection training
-        projMargin double = 0.2;
+        projMargin double = 0;
 
         % === Encoder fine-tuning ===
         % Loss function for encoder fine-tuning
-        fineTuneLoss string = "triplet";
+        fineTuneLoss string = "";
         % Mini-batch size during encoder fine-tuning
-        fineTuneBatchSize double = 32;
+        fineTuneBatchSize double = 0;
         % Maximum sequence length for fine-tuning inputs
-        fineTuneMaxSeqLength double = 256;
+        fineTuneMaxSeqLength double = 0;
         % Number of top encoder layers to unfreeze
-        fineTuneUnfreezeTopLayers double = 4;
+        fineTuneUnfreezeTopLayers double = 0;
         % Epochs for encoder fine-tuning
-        fineTuneEpochs double = 4;
+        fineTuneEpochs double = 0;
         % Learning rate applied to encoder weights
-        fineTuneEncoderLR double = 1e-5;
+        fineTuneEncoderLR double = 0;
         % Learning rate applied to added head parameters
-        fineTuneHeadLR double = 1e-3;
+        fineTuneHeadLR double = 0;
 
         % === Miscellaneous ===
         % Minimum confidence to accept weak rule labels
-        minRuleConf double = 0.7;
+        minRuleConf double = 0;
         % Number of folds for cross-validation
-        kfold double = 5;
+        kfold double = 0;
         % Number of latent Dirichlet allocation topics
-        ldaTopics double = 12;
+        ldaTopics double = 0;
         % Title used in generated reports
-        reportTitle string = "Banking Regulation Topic Classifier — Snapshot";
+        reportTitle string = "";
         % Database connection settings
-        db struct = struct('enable', false, 'vendor','postgres', ...
-            'dbname','reg_topics', 'user','user', 'pass','pass', ...
-            'server','localhost', 'port',5432, ...
-            'sqlitePath','./data/db/my_reg_topics.sqlite');
+        db struct = struct('enable', false, 'vendor','', ...
+            'dbname','', 'user','', 'pass','', ...
+            'server','', 'port',0, ...
+            'sqlitePath','');
 
         % Loaded knob configuration
         knobs struct = struct();
