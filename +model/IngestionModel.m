@@ -5,18 +5,14 @@ classdef IngestionModel < reg.mvc.BaseModel
         PDFModel  reg.model.PDFIngestModel
         ChunkModel reg.model.TextChunkModel
         FeatureModel reg.model.FeatureModel
-        DocumentRepo reg.repository.DocumentRepository
     end
 
     methods
-        function obj = IngestionModel(pdfModel, chunkModel, featModel, docRepo)
+        function obj = IngestionModel(pdfModel, chunkModel, featModel)
             if nargin > 0
                 obj.PDFModel = pdfModel;
                 obj.ChunkModel = chunkModel;
                 obj.FeatureModel = featModel;
-            end
-            if nargin > 3
-                obj.DocumentRepo = docRepo;
             end
         end
 
@@ -36,9 +32,7 @@ classdef IngestionModel < reg.mvc.BaseModel
             %PROCESS Finalise features and optionally persist documents.
             [features, ~] = obj.FeatureModel.process(raw.FeatRaw);
             out = reg.service.IngestionOutput(raw.Docs, raw.Chunks, features);
-            if ~isempty(obj.DocumentRepo)
-                obj.DocumentRepo.save(raw.Docs);
-            end
+            reg.model.Document.save(raw.Docs);
         end
     end
 end
