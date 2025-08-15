@@ -62,6 +62,13 @@ classdef PipelineController < reg.mvc.BaseController
             % Step 2: Ingest PDFs into documents table
             %   PDFIngestModel should verify file readability and handle OCR
             %   failures gracefully.
+            %   Failure Modes
+            %       * Input directory missing/empty resulting in dummy docs.
+            %       * `extractFileText` errors or unusable OCR output.
+            %   Mitigation
+            %       * Warn or abort when no real documents found.
+            %       * Retry extraction with OCR and allow caller to supply
+            %         custom handlers for unreadable files.
             files = obj.PDFIngestModel.load(cfg);
             docsT = obj.PDFIngestModel.process(files);
 
@@ -99,6 +106,13 @@ classdef PipelineController < reg.mvc.BaseController
 
             % Step 9: Persist results to database
             %   DatabaseModel should handle connection errors and rollbacks.
+            %   Failure Modes
+            %       * Missing `lbl_*`/`score_*` columns causing ALTER TABLE calls.
+            %       * Connection drops mid-transaction or conflicting writes.
+            %   Mitigation
+            %       * Validate schema before bulk upsert and wrap writes in a
+            %         retryable transaction.
+            %       * Surface partial failures so upstream steps can retry.
             dbRaw = obj.DatabaseModel.load(searchIx);
             dbResult = obj.DatabaseModel.process(dbRaw);
 

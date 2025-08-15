@@ -31,10 +31,18 @@ classdef PDFIngestModel < reg.mvc.BaseModel
             %       Equivalent to `ingest_pdfs` file discovery.
             %   Extension Point
             %       Override to support remote storage or filtering.
+            %   Edge Cases
+            %       * Directory may not exist or be empty.
+            %       * Filenames with special characters can break downstream
+            %         parsing.
+            %   Recommended Mitigation
+            %       * Validate inputDir and warn/raise when no PDFs found.
+            %       * Sanitize or normalize filenames before returning.
             % Pseudocode:
             %   1. Scan inputDir for *.pdf files
             %   2. Sort or filter list as needed
             %   3. Return pdfFiles
+            % TODO: implement checks for empty results and path validation
             error("reg:model:NotImplemented", ...
                 "PDFIngestModel.load is not implemented.");
         end
@@ -52,10 +60,20 @@ classdef PDFIngestModel < reg.mvc.BaseModel
             %       Equivalent to `ingest_pdfs`.
             %   Extension Point
             %       Hook to inject custom parsers or metadata extraction.
+            %   Edge Cases
+            %       * `extractFileText` can throw and force an OCR fallback.
+            %       * OCR may still fail or produce very short text.
+            %       * When no PDFs are available a dummy document is returned.
+            %   Recommended Mitigation
+            %       * Wrap text extraction with retries and detailed logging.
+            %       * Allow caller to opt out of dummy document creation.
+            %       * Normalize whitespace and enforce minimum length before
+            %         accepting text.
             % Pseudocode:
             %   1. Loop over pdfFiles and extract text
             %   2. Assemble document metadata into table rows
             %   3. Return documentsTable
+            % TODO: implement OCR fallback and dummy-document safeguards
             error("reg:model:NotImplemented", ...
                 "PDFIngestModel.process is not implemented.");
         end

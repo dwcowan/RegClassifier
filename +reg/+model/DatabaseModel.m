@@ -33,10 +33,17 @@ classdef DatabaseModel < reg.mvc.BaseModel
             %       Equivalent to `ensure_db` connection setup.
             %   Extension Point
             %       Override to use different database drivers or pools.
+            %   Edge Cases
+            %       * Credentials may be invalid or server unreachable.
+            %       * Connection reuse can leak handles if not closed.
+            %   Recommended Mitigation
+            %       * Implement retry/backoff and surface meaningful errors.
+            %       * Ensure existing connections are cleaned before opening new ones.
             % Pseudocode:
             %   1. If obj.conn is open, close it
             %   2. Create new connection using dbConfig
             %   3. Store handle in obj.conn and return struct
+            % TODO: add connection validation and retry logic
             error("reg:model:NotImplemented", ...
                 "DatabaseModel.load is not implemented.");
         end
@@ -57,10 +64,21 @@ classdef DatabaseModel < reg.mvc.BaseModel
             %       Equivalent to `ensure_db` persistence.
             %   Extension Point
             %       Inject custom transaction handling or batching.
+            %   Edge Cases
+            %       * Target table may lack required `lbl_*`/`score_*` columns and
+            %         need ALTER TABLE statements similar to `upsert_chunks`.
+            %       * Concurrent writes can lead to conflicts or partial upserts.
+            %       * SQL errors may leave transactions open.
+            %   Recommended Mitigation
+            %       * Wrap writes in transactions with rollback on failure.
+            %       * Use parameterized queries to avoid injection and ensure
+            %         proper escaping.
+            %       * Provide idempotent retry logic for transient failures.
             % Pseudocode:
             %   1. Begin transaction on obj.conn
             %   2. Upsert rows from predictionTable into reg_chunks
             %   3. Commit or rollback transaction and close connection if done
+            % TODO: implement transactional upsert and conflict handling
             error("reg:model:NotImplemented", ...
                 "DatabaseModel.process is not implemented.");
         end
