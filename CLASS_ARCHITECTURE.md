@@ -57,6 +57,7 @@ interfaces, data flow, and orchestration.
 | `reg.controller.ProjectionHeadController` | Feature, fine‑tune data, projection head, evaluation models + `MetricsView` | Train and evaluate projection head |
 | `reg.controller.FineTuneController` | PDF ingest, chunk, weak label, fine‑tune data, encoder fine‑tune, evaluation models + `MetricsView` | Build contrastive set and fine‑tune encoder |
 | `reg.controller.EvalController` | Evaluation, logging, report models + `ReportView` | Evaluate embeddings and generate reports |
+| `reg.controller.MethodsDiffController` | `MethodDiffModel` + `ReportView` | Compare Top‑K retrievals across encoder variants |
 
 ---
 
