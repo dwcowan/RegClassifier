@@ -25,20 +25,20 @@ classdef VisualizationModel < reg.mvc.BaseModel
                 "VisualizationModel.plotTrends is not implemented.");
         end
 
-        function pngPath = plotCoRetrievalHeatmap(~, embeddings, labelMatrix, pngPath, labels) %#ok<INUSD>
-            %PLOTCORETRIEVALHEATMAP Create a heatmap of label co-retrieval.
+        function pngPath = plotCoRetrievalHeatmap(~, coMatrix, pngPath, labels) %#ok<INUSD>
+            %PLOTCORETRIEVALHEATMAP Render heatmap from co-retrieval matrix.
             %   Inputs
-            %       embeddings   - numeric matrix of embedding vectors.
-            %       labelMatrix  - logical or numeric matrix indicating label
-            %                      assignments for each embedding.
-            %       pngPath      - destination file path for the heatmap PNG.
-            %       labels       - (optional) cell array of label names used to
-            %                      annotate axes.
+            %       coMatrix - L x L numeric matrix of co-retrieval rates
+            %                  where rows typically sum to one.
+            %       pngPath  - destination file path for the heatmap PNG.
+            %       labels   - (optional) cell array of label names used to
+            %                  annotate the axes.
             %   Output
-            %       pngPath      - the path where the heatmap should be saved.
+            %       pngPath  - the path where the heatmap image should be
+            %                  saved.
             %   Side Effects
-            %       Should compute co-retrieval frequencies from inputs and
-            %       persist a heatmap image to pngPath.
+            %       Should visualise the supplied matrix as a heatmap and
+            %       persist it to ``pngPath``.
 
             error("reg:model:NotImplemented", ...
                 "VisualizationModel.plotCoRetrievalHeatmap is not implemented.");

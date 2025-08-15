@@ -8,21 +8,18 @@ classdef EvaluationController < reg.mvc.BaseController
     properties
         % Model computing evaluation metrics (stored in BaseController.Model)
         ReportModel
-        ClusteringEvalModel = []
-        PerLabelEvalModel = []
         PlotView
         VisualizationModel reg.model.VisualizationModel = reg.model.VisualizationModel();
     end
 
     methods
-        function obj = EvaluationController(evalModel, reportModel, view, vizModel, plotView, clusteringModel, perLabelModel)
+        function obj = EvaluationController(evalModel, reportModel, view, vizModel, plotView)
             %EVALUATIONCONTROLLER Construct controller wiring models and views.
             %   evalModel     - model producing evaluation metrics
             %   reportModel   - model transforming metrics into report data
             %   view          - view displaying reportData (defaults to ReportView)
             %   vizModel      - model generating plots (optional)
             %   plotView      - view used for visualisations (optional)
-            %   clusteringModel/perLabelModel - optional evaluation models
 
             if nargin < 3 || isempty(view)
                 view = reg.view.ReportView();
@@ -36,12 +33,6 @@ classdef EvaluationController < reg.mvc.BaseController
                 obj.PlotView = plotView;
             else
                 obj.PlotView = reg.view.PlotView();
-            end
-            if nargin >= 6 && ~isempty(clusteringModel)
-                obj.ClusteringEvalModel = clusteringModel;
-            end
-            if nargin >= 7 && ~isempty(perLabelModel)
-                obj.PerLabelEvalModel = perLabelModel;
             end
         end
 
@@ -66,16 +57,21 @@ classdef EvaluationController < reg.mvc.BaseController
             trendsPNG = obj.VisualizationModel.plotTrends(
                 metricsCSV, fullfile(tempdir(), 'trends.png'));
 
-            embeddings = [];
-            labelMatrix = [];
+            coMatrix = [];
             labels = [];
             if isstruct(results)
-                if isfield(results, 'embeddings'), embeddings = results.embeddings; end
-                if isfield(results, 'labelMatrix'), labelMatrix = results.labelMatrix; end
+                if isfield(results, 'embeddings') && isfield(results, 'labelMatrix')
+                    try
+                        [coMatrix, ~] = obj.Model.coRetrievalMatrix(
+                            results.embeddings, results.labelMatrix, 10);
+                    catch
+                        coMatrix = [];
+                    end
+                end
                 if isfield(results, 'labels'), labels = results.labels; end
             end
             heatPNG = obj.VisualizationModel.plotCoRetrievalHeatmap(
-                embeddings, labelMatrix, fullfile(tempdir(), 'heatmap.png'), labels);
+                coMatrix, fullfile(tempdir(), 'heatmap.png'), labels);
 
             % Step 4: hand off plots to plot view
             if ~isempty(obj.PlotView)
@@ -107,26 +103,30 @@ classdef EvaluationController < reg.mvc.BaseController
             %   ``Metrics`` field for downstream processing.
             %
             %   Legacy mapping:
-            %       Step 1 ↔ `eval_retrieval`
+            %       Step 1  ↔ `eval_retrieval`
             %       Step 1a ↔ `eval_per_label`
             %       Step 1b ↔ `eval_clustering`
-            %       Step 2 ↔ `log_metrics`
+            %       Step 2  ↔ `log_metrics`
 
             % Step 1: load evaluation inputs and compute core metrics
             evalRaw = obj.Model.load(goldDir);
             evalResult = obj.Model.process(evalRaw);
             metrics = evalResult.Metrics;
 
-            % Optional: per-label evaluation
-            if ~isempty(obj.PerLabelEvalModel)
-                plRaw = obj.PerLabelEvalModel.load(goldDir);
-                metrics.perLabel = obj.PerLabelEvalModel.process(plRaw);
+            % Per-label evaluation via consolidated model
+            try
+                metrics.perLabel = obj.Model.perLabelMetrics(
+                    evalResult.embeddings, evalResult.labelMatrix, 10);
+            catch
+                metrics.perLabel = [];
             end
 
-            % Optional: clustering evaluation
-            if ~isempty(obj.ClusteringEvalModel)
-                clRaw = obj.ClusteringEvalModel.load(goldDir);
-                metrics.clustering = obj.ClusteringEvalModel.process(clRaw);
+            % Clustering evaluation via consolidated model
+            try
+                metrics.clustering = obj.Model.clusteringMetrics(
+                    evalResult.embeddings, evalResult.labelMatrix, 10);
+            catch
+                metrics.clustering = [];
             end
 
             % Step 2: persist metrics using logging helper
