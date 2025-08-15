@@ -50,14 +50,14 @@ classdef ProjectionHeadController < reg.mvc.BaseController
 
             % Step 1b: compute embeddings from features
             embedRaw = obj.EmbeddingModel.load(features);
-            embeddings = obj.EmbeddingModel.process(embedRaw); %#ok<NASGU>
+            embeddings = obj.EmbeddingModel.process(embedRaw);
             %   Expect FeatureModel/EmbeddingModel to validate chunk schema and
             %   handle tokenizer or embedding errors internally.
 
             % Step 3: construct contrastive triplets from embeddings
             %   The data model should ensure non-empty triplets and balanced
             %   sampling.
-            tripletsRaw = obj.FineTuneDataModel.load(embeddings);
+            tripletsRaw = obj.FineTuneDataModel.load(embeddings.Vectors);
             triplets = obj.FineTuneDataModel.process(tripletsRaw);
 
             % Step 5: train projection head using triplets
@@ -75,8 +75,8 @@ classdef ProjectionHeadController < reg.mvc.BaseController
 
             % Step 7: evaluate retrieval performance with projected vectors
             evalRaw = obj.EvaluationModel.load(projE);
-            metrics = obj.EvaluationModel.process(evalRaw);
-            obj.View.display(metrics);
+            evalResult = obj.EvaluationModel.process(evalRaw);
+            obj.View.display(evalResult.Metrics);
         end
     end
 end

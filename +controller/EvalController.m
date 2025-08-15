@@ -49,7 +49,8 @@ classdef EvalController < reg.mvc.BaseController
 
             % Step 1: load evaluation inputs and compute metrics
             evalRaw = obj.EvaluationModel.load();
-            metrics = obj.EvaluationModel.process(evalRaw);  % `eval_retrieval`
+            evalResult = obj.EvaluationModel.process(evalRaw);  % `eval_retrieval`
+            metrics = evalResult.Metrics;
 
             % Optional: per-label evaluation
             if ~isempty(obj.PerLabelEvalModel)

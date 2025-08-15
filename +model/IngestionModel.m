@@ -30,8 +30,13 @@ classdef IngestionModel < reg.mvc.BaseModel
 
         function out = process(obj, raw)
             %PROCESS Finalise features and optionally persist documents.
+            %   OUT = PROCESS(obj, RAW) returns a struct with fields
+            %   ``Documents``, ``Chunks`` and ``Features`` holding the
+            %   processed artifacts.
             [features, ~] = obj.FeatureModel.process(raw.FeatRaw);
-            out = reg.model.IngestionOutput(raw.Docs, raw.Chunks, features);
+            out = struct('Documents', raw.Docs, ...
+                        'Chunks', raw.Chunks, ...
+                        'Features', features);
             reg.model.Document.save(raw.Docs);
         end
     end

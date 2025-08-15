@@ -14,6 +14,9 @@ classdef EvaluationModel < reg.mvc.BaseModel
 
         function input = load(~, varargin)
             %LOAD Package predictions and references for evaluation.
+            %   INPUT = LOAD(~, PRED, REF) returns a struct with fields
+            %   ``Predictions`` and ``References`` capturing the supplied
+            %   arrays.
             pred = [];
             ref = [];
             if numel(varargin) >= 1
@@ -22,16 +25,18 @@ classdef EvaluationModel < reg.mvc.BaseModel
             if numel(varargin) >= 2
                 ref = varargin{2};
             end
-            input = reg.model.EvaluationInput(pred, ref);
+            input = struct('Predictions', pred, 'References', ref);
         end
 
         function result = process(obj, input) %#ok<INUSD>
             %PROCESS Calculate evaluation metrics from INPUT.
+            %   RESULT = PROCESS(obj, INPUT) returns a struct containing a
+            %   ``Metrics`` field with evaluation scores.
             if ~isempty(obj.ConfigModel)
                 cfgRaw = obj.ConfigModel.load();
                 cfg = obj.ConfigModel.process(cfgRaw); %#ok<NASGU>
             end
-            result = reg.model.EvaluationResult([]);
+            result = struct('Metrics', []);
             error("reg:model:NotImplemented", ...
                 "EvaluationModel.process is not implemented.");
         end

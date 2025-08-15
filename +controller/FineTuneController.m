@@ -46,7 +46,8 @@ classdef FineTuneController < reg.mvc.BaseController
             %   METRICS = EVALUATE(obj, net) returns evaluation scores.
             %   Equivalent to `ft_eval`.
             raw = obj.EvaluationModel.load();
-            metrics = obj.EvaluationModel.process(raw);
+            result = obj.EvaluationModel.process(raw);
+            metrics = result.Metrics;
         end
 
         function saveModel(~, net, varargin)
