@@ -1,5 +1,10 @@
 function S = hybrid_search(Xtfidf, E, vocab)
-%HYBRID_SEARCH Prepare structures and provide a query function
+%HYBRID_SEARCH Prepare structures and provide a query function.
+%   The returned struct S exposes a query(q, alpha) function. Calling QUERY
+%   yields a table with columns:
+%       docId (double) - 1-based identifier of the matching document
+%       score (double) - blended relevance score
+%       rank (double) - 1-based rank position
 E = single(E);
 E = E ./ max(1e-9, vecnorm(E,2,2));
 S = struct('Xtfidf', Xtfidf, 'E', E, 'vocab', {vocab});
@@ -34,5 +39,6 @@ bm = (S.Xtfidf * qtfidf') ./ max(1e-9, norm(qtfidf));
 em = single(S.E * qe');
 score = alpha*bm + (1-alpha)*em;
 [sv, idx] = maxk(score, 20);
-out = table(idx, sv, 'VariableNames', {'row','score'});
+rank = (1:numel(idx))';
+out = table(idx, sv, rank, 'VariableNames', {'docId','score','rank'});
 end
