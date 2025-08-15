@@ -7,9 +7,10 @@ classdef DiffVersionsModel < reg.mvc.BaseModel
     function params = load(~, dirA, dirB, outDir)
       %LOAD Prepare parameters for file-level diffing.
       %   params = LOAD(obj, dirA, dirB, outDir) records the directories to
-      %   compare and the output directory. outDir defaults to runs/crr_diff.
+      %   compare and the output directory. Caller must supply outDir.
       if nargin < 4 || isempty(outDir)
-        outDir = fullfile('runs', 'crr_diff');
+        error("reg:model:NotImplemented", ...
+          "outDir must be specified; no default directory is provided.");
       end
       params = struct('dirA', dirA, 'dirB', dirB, 'outDir', outDir);
     end

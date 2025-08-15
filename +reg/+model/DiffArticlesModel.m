@@ -8,9 +8,10 @@ classdef DiffArticlesModel < reg.mvc.BaseModel
       %LOAD Prepare parameters for article-level diffing.
       %   params = LOAD(obj, dirA, dirB, outDir) stores the directories to
       %   compare and selects an output directory for diff artefacts.
-      %   When omitted, outDir defaults to runs/crr_diff_articles.
+      %   outDir must be specified by the caller; no default is provided.
       if nargin < 4 || isempty(outDir)
-        outDir = fullfile('runs', 'crr_diff_articles');
+        error("reg:model:NotImplemented", ...
+          "outDir must be specified; no default directory is provided.");
       end
       params = struct('dirA', dirA, 'dirB', dirB, 'outDir', outDir);
     end
