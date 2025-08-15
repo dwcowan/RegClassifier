@@ -37,7 +37,7 @@ classdef IngestionModel < reg.mvc.BaseModel
             out = struct('Documents', raw.Docs, ...
                         'Chunks', raw.Chunks, ...
                         'Features', features);
-            reg.model.Document.save(raw.Docs);
+            reg.model.saveDocuments(raw.Docs);
         end
     end
 end
