@@ -17,7 +17,8 @@ classdef TestModelStubs < matlab.unittest.TestCase
             'reg.model.EncoderFineTuneModel',
             'reg.model.EvaluationModel',
             'reg.model.LoggingModel',
-            'reg.model.GoldPackModel'
+            'reg.model.GoldPackModel',
+            'reg.model.VisualizationModel'
         };
     end
     

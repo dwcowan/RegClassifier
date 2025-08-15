@@ -1,10 +1,19 @@
 classdef EvaluationController < handle
     %EVALUATIONCONTROLLER Provide utilities for evaluation and reporting.
     %   This controller bundles common evaluation routines used across the
-    %   project such as retrieval metrics, gold-pack evaluation, trend
-    %   plotting and co-retrieval heatmap generation.
+    %   project such as retrieval metrics and gold-pack evaluation.
+
+    properties
+        VisualizationModel reg.model.VisualizationModel = reg.model.VisualizationModel();
+    end
 
     methods
+        function obj = EvaluationController(vizModel)
+            %EVALUATIONCONTROLLER Construct controller with visualization model.
+            if nargin > 0
+                obj.VisualizationModel = vizModel;
+            end
+        end
         function metrics = retrievalMetrics(~, embeddings, posSets, k)
             %RETRIEVALMETRICS Compute retrieval metrics at K.
             %   METRICS = RETRIEVALMETRICS(embeddings, posSets, k) returns a
@@ -53,19 +62,6 @@ classdef EvaluationController < handle
             if opts.ComputeClustering
                 results.clustering = reg.eval_clustering(E, G.Y);
             end
-        end
-
-        function plotTrends(~, csvPath, pngPath)
-            %PLOTTRENDS Generate trend plots from a metrics CSV history.
-            %   Equivalent to `plot_trends`.
-            reg.plot_trends(csvPath, pngPath);
-        end
-
-        function plotCoRetrievalHeatmap(~, embeddings, labelMatrix, pngPath, labels)
-            %PLOTCORETRIEVALHEATMAP Create a heatmap of label co-retrieval.
-            %   Equivalent to `plot_coretrieval_heatmap`.
-            [M, order] = reg.label_coretrieval_matrix(embeddings, labelMatrix, 10);
-            reg.plot_coretrieval_heatmap(M(order,order), string(labels(order)), pngPath);
         end
     end
 end

@@ -46,7 +46,7 @@ classdef EvaluationPipeline < handle
             trendsPNG = '';
             if nargin >= 3 && ~isempty(metricsCSV) && isfile(metricsCSV)
                 trendsPNG = fullfile(tempdir, 'trends.png');
-                obj.Controller.plotTrends(metricsCSV, trendsPNG);
+                obj.Controller.VisualizationModel.plotTrends(metricsCSV, trendsPNG);
             end
 
             % Step 3: generate co-retrieval heatmap using gold embeddings
@@ -55,7 +55,7 @@ classdef EvaluationPipeline < handle
             C = config(); C.labels = G.labels;
             E = reg.precompute_embeddings(G.chunks.text, C);
             heatPNG = fullfile(tempdir, 'coretrieval_heatmap.png');
-            obj.Controller.plotCoRetrievalHeatmap(E, G.Y, heatPNG, G.labels);
+            obj.Controller.VisualizationModel.plotCoRetrievalHeatmap(E, G.Y, heatPNG, G.labels);
 
             % Step 4: assemble report struct and forward to view
             irbSubset = goldRes.perLabel;  % placeholder for IRB-specific slice
