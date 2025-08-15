@@ -85,28 +85,24 @@ classdef ConfigModel < reg.mvc.BaseModel
             end
         end
 
-        function validatePaths(obj)
+        function validatePaths(obj) %#ok<MANU>
             %VALIDATEPATHS Ensure required file system paths exist.
-            %   VALIDATEPATHS(obj) throws when mandatory paths are missing.
-            if ~isfolder(obj.inputDir)
-                error("reg:model:InvalidPath", ...
-                    "Input directory not found: %s", obj.inputDir);
-            end
+            %   Intended to error when mandatory paths are missing.
+            %   Pseudocode:
+            %       1. Check existence of obj.inputDir
+            %       2. Raise error if path is absent
+            error("reg:model:NotImplemented", ...
+                "ConfigModel.validatePaths is not implemented.");
         end
 
-        function validateGPUAvailability(obj)
+        function validateGPUAvailability(obj) %#ok<MANU>
             %VALIDATEGPUAVAILABILITY Confirm GPU can be used when requested.
-            %   VALIDATEGPUAVAILABILITY(obj) errors if gpuEnabled is true
-            %   but no GPU device is present.
-            if obj.gpuEnabled && exist('gpuDeviceCount','file') == 2
-                if gpuDeviceCount == 0
-                    error("reg:model:NoGPU", ...
-                        "Configuration requests GPU but none available.");
-                end
-            elseif obj.gpuEnabled
-                error("reg:model:NoGPU", ...
-                    "GPU support is not available in this environment.");
-            end
+            %   Intended to verify GPU availability when gpuEnabled is true.
+            %   Pseudocode:
+            %       1. If obj.gpuEnabled, ensure GPU device exists
+            %       2. Raise error if none found
+            error("reg:model:NotImplemented", ...
+                "ConfigModel.validateGPUAvailability is not implemented.");
         end
 
         function K = loadKnobs(obj, varargin) %#ok<INUSD>
