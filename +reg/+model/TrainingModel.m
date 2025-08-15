@@ -54,6 +54,39 @@ classdef TrainingModel < reg.mvc.BaseModel
                 "TrainingModel.weakLabel is not implemented.");
         end
 
+        function [features, vocab] = extractFeatures(~, chunks) %#ok<INUSD>
+            %EXTRACTFEATURES Generate sparse feature representations.
+            %   [FEATURES, VOCAB] = EXTRACTFEATURES(obj, CHUNKS) produces
+            %   TF-IDF or other sparse features for each chunk, replacing
+            %   the responsibilities of ``FeatureModel``.
+            %   Parameters
+            %       chunks (table): Text segments to featurize
+            %   Returns
+            %       features (table): Derived feature table
+            %       vocab    (string array): Vocabulary terms
+            %   Note
+            %       CHUNKS is optional and may be loaded internally.
+            if nargin < 2
+                chunks = []; %#ok<NASGU>
+            end
+            error("reg:model:NotImplemented", ...
+                "TrainingModel.extractFeatures is not implemented.");
+        end
+
+        function embeddings = computeEmbeddings(~, features) %#ok<INUSD>
+            %COMPUTEEMBEDDINGS Produce dense embeddings from feature data.
+            %   EMBEDDINGS = COMPUTEEMBEDDINGS(obj, FEATURES) returns
+            %   embedding vectors derived from FEATURES. Consolidates
+            %   functionality of the former ``EmbeddingModel`` including any
+            %   configuration handling and persistence.
+            %   Parameters
+            %       features (table or struct): Input feature data
+            %   Returns
+            %       embeddings (struct): Struct containing embedding matrix
+            error("reg:model:NotImplemented", ...
+                "TrainingModel.computeEmbeddings is not implemented.");
+        end
+
         function triplets = prepareDataset(~, rawData) %#ok<INUSD>
             %PREPAREDATASET Build contrastive triplets for training.
             %   TRIPLETS = PREPAREDATASET(obj, RAWDATA) constructs anchor-
@@ -91,6 +124,22 @@ classdef TrainingModel < reg.mvc.BaseModel
             %       projected (double matrix): Projected embeddings
             error("reg:model:NotImplemented", ...
                 "TrainingModel.trainProjectionHead is not implemented.");
+        end
+
+        function [models, scores, thresholds, predLabels] = trainClassifier(~, trainingInputs) %#ok<INUSD>
+            %TRAINCLASSIFIER Train downstream classifiers and predict labels.
+            %   [MODELS, SCORES, THRESHOLDS, PREDLABELS] = TRAINCLASSIFIER(obj,
+            %   TRAININGINPUTS) fits classifier models and generates
+            %   predictions, subsuming the former ``ClassifierModel``.
+            %   Parameters
+            %       trainingInputs (struct): Features and labels for training
+            %   Returns
+            %       models (cell array): Trained classifier models
+            %       scores (double matrix): Prediction scores per label
+            %       thresholds (double vector): Decision thresholds
+            %       predLabels (logical matrix): Final label decisions
+            error("reg:model:NotImplemented", ...
+                "TrainingModel.trainClassifier is not implemented.");
         end
     end
 end
