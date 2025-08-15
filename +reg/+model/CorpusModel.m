@@ -81,6 +81,79 @@ classdef CorpusModel < reg.mvc.BaseModel
                 "CorpusModel.sync is not implemented.");
         end
 
+        function documents = ingestPdfs(~, cfg) %#ok<INUSD>
+            %INGESTPDFS Convert PDFs to a document table.
+            %   DOCUMENTS = INGESTPDFS(obj, cfg) scans cfg.inputDir for PDF
+            %   files, extracts text and assembles a table describing each
+            %   document.
+            %   Parameters
+            %       cfg - Configuration struct with paths and options
+            %   Returns
+            %       documents (table): Parsed document metadata and text with
+            %           schema
+            %               doc_id (string) : unique identifier
+            %               text   (string) : extracted full text
+            %               meta   (struct) : file metadata including path,
+            %                   bytes and modified timestamp
+            %   Legacy Reference
+            %       Equivalent to the responsibilities of
+            %       `PDFIngestModel.load` and `PDFIngestModel.process`.
+            %   Pseudocode:
+            %       1. Locate PDF files under cfg.inputDir
+            %       2. Extract text for each file
+            %       3. Assemble table of documents
+            error("reg:model:NotImplemented", ...
+                "CorpusModel.ingestPdfs is not implemented.");
+        end
+
+        function persistDocuments(~, documents) %#ok<INUSD>
+            %PERSISTDOCUMENTS Persist document structs to storage.
+            %   PERSISTDOCUMENTS(obj, DOCUMENTS) writes DOCUMENTS to the
+            %   configured storage backend.
+
+            error("reg:model:NotImplemented", ...
+                "CorpusModel.persistDocuments is not implemented.");
+        end
+
+        function searchIndex = buildIndex(~, indexInputs) %#ok<INUSD>
+            %BUILDINDEX Build or update the search index.
+            %   SEARCHINDEX = BUILDINDEX(obj, indexInputs) creates an index
+            %   from documents and embeddings supplied in indexInputs.
+            %   Parameters
+            %       indexInputs (struct): Data required to build the index.
+            %   Returns
+            %       searchIndex (struct): Handle or identifier for the index.
+            %   Legacy Reference
+            %       Mirrors the behaviour of `SearchIndexModel.process`.
+            %   Pseudocode:
+            %       1. Initialise search backend
+            %       2. Upsert documents and embeddings
+            %       3. Return index identifier
+            error("reg:model:NotImplemented", ...
+                "CorpusModel.buildIndex is not implemented.");
+        end
+
+        function results = queryIndex(~, queryString, alpha, topK) %#ok<INUSD>
+            %QUERYINDEX Retrieve ranked documents using hybrid search.
+            %   RESULTS = QUERYINDEX(obj, queryString, alpha, topK) blends
+            %   lexical and semantic scores similar to `reg.hybrid_search`.
+            %   Parameters
+            %       queryString (string): Raw text query to search.
+            %       alpha (double): Weight for TF-IDF vs embedding score.
+            %       topK (double): Maximum number of results to return.
+            %   Returns
+            %       results (table): Top hits sorted by blended relevance with
+            %           columns docId, score and rank.
+            %   Legacy Reference
+            %       Mirrors the behaviour of `SearchIndexModel.query`.
+            %   Pseudocode:
+            %       1. Embed and tokenise queryString
+            %       2. Compute lexical and embedding similarity
+            %       3. Blend scores and return topK results
+            error("reg:model:NotImplemented", ...
+                "CorpusModel.queryIndex is not implemented.");
+        end
+
         function result = runArticles(~, dirA, dirB, outDir)
             %RUNARTICLES Compare corpora by article number.
             %   RESULT = RUNARTICLES(obj, dirA, dirB, outDir) should align
