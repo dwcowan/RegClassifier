@@ -1,4 +1,5 @@
-% Evaluate baseline vs projection head vs fine-tuned encoder and generate a PDF report
+% Evaluate baseline vs projection head vs fine-tuned encoder and generate a PDF
+% report including per-label recall and clustering quality metrics.
 import mlreportgen.report.*
 import mlreportgen.dom.*
 

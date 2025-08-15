@@ -78,8 +78,8 @@ This guide outlines a clean-room rebuild of the MATLAB-based regulatory topic cl
 - **Goal:** Quantify performance and produce human-readable reports.
 - **Depends on:** Baseline/Projection/Fine-Tuned models.
 - **Implementation:**
-  - `reg.eval_retrieval` and `reg.eval_per_label` for metrics.
-  - `reg_eval_and_report.m` generates `reg_eval_report.pdf` and trends.
+  - `reg.eval_retrieval`, `reg.eval_per_label`, and `reg.eval_clustering` for metrics.
+  - `reg_eval_and_report.m` generates `reg_eval_report.pdf`, trends, and clustering summaries.
   - Gold mini-pack support via `reg.load_gold` and `reg_eval_gold.m`.
 - **Testing:** `tests/TestMetricsExpectedJSON.m`, `tests/TestGoldMetrics.m`, `tests/TestReportArtifact.m`.
 - **Output:** Metrics CSVs, PDF/HTML reports, gold evaluation results.

@@ -1,10 +1,15 @@
 function metrics = ft_eval(chunksT, Ylogical, netFT, varargin)
-%FT_EVAL Evaluate retrieval & clustering with a fine-tuned encoder
-% NV: 'K'(10)
+%FT_EVAL Evaluate retrieval & clustering with a fine-tuned encoder.
+%   METRICS = FT_EVAL(chunksT, Ylogical, netFT) embeds the chunks and
+%   computes retrieval metrics. Optional name-value pairs:
+%       'K'                (default 10)   - Retrieval depth
+%       'ComputeClustering'(default true) - Also compute clustering metrics
 p = inputParser;
 addParameter(p,'K',10);
+addParameter(p,'ComputeClustering',true);
 parse(p,varargin{:});
 K = p.Results.K;
+doClust = p.Results.ComputeClustering;
 
 % Embed all chunks
 E = ft_embed_all(chunksT.text, netFT);
@@ -20,8 +25,14 @@ for i = 1:N
 end
 
 [recallK, mAP] = reg.eval_retrieval(E, posSets, K);
-S = reg.eval_clustering(E, Ylogical);
-metrics = struct('recallAtK', recallK, 'mAP', mAP, 'purity', S.purity, 'silhouette', S.silhouette);
+if doClust
+    S = reg.eval_clustering(E, Ylogical);
+    purity = S.purity; silhouette = S.silhouette;
+else
+    purity = NaN; silhouette = NaN;
+end
+metrics = struct('recallAtK', recallK, 'mAP', mAP, ...
+                 'purity', purity, 'silhouette', silhouette);
 end
 
 function E = ft_embed_all(textStr, netFT)
