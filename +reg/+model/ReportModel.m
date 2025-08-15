@@ -1,5 +1,8 @@
 classdef ReportModel < reg.mvc.BaseModel
     %REPORTMODEL Stub model assembling report data.
+    %   Expects controllers to supply chunks, classifier scores, an LDA model
+    %   and vocabulary so downstream views can render coverage, review queues
+    %   and topic summaries.
 
     properties
         % Shared configuration reference
@@ -23,7 +26,13 @@ classdef ReportModel < reg.mvc.BaseModel
             %   Parameters
             %       varargin - Placeholder for future options (unused)
             %   Returns
-            %       reportInputs (struct): Aggregated metrics and context.
+            %       reportInputs (struct): Aggregated metrics and context with
+            %           fields prepared by controllers:
+            %           chunks   - table containing chunk_id and text
+            %           scores   - numeric matrix of classifier scores
+            %           mdlLDA   - topic model for background analysis
+            %           vocab    - token vocabulary associated with mdlLDA
+            %           labels   - label names corresponding to score columns
             %   Side Effects
             %       None.
             %   Legacy Reference
@@ -31,9 +40,10 @@ classdef ReportModel < reg.mvc.BaseModel
             %   Extension Point
             %       Override to incorporate custom metrics sources.
             % Pseudocode:
-            %   1. Load evaluation metrics and metadata
-            %   2. Package into reportInputs struct
-            %   3. Return reportInputs
+            %   1. Load chunk metadata and classifier scores
+            %   2. Load or fit LDA model along with vocabulary
+            %   3. Package above into reportInputs struct
+            %   4. Return reportInputs
             error("reg:model:NotImplemented", ...
                 "ReportModel.load is not implemented.");
         end
@@ -42,9 +52,14 @@ classdef ReportModel < reg.mvc.BaseModel
             %   reportData = PROCESS(obj, reportInputs) returns a struct ready
             %   for rendering.
             %   Parameters
-            %       reportInputs (struct): Metrics and context for report.
+            %       reportInputs (struct): Metrics and context for report with
+            %           fields described in LOAD.
             %   Returns
-            %       reportData (struct): Data prepared for templating or export.
+            %       reportData (struct): Data prepared for templating or export
+            %           with fields
+            %               coverageTable - table summarising label coverage
+            %               lowConfidence - queue of chunk snippets needing review
+            %               ldaTopics     - cell array of topic term lists
             %   Side Effects
             %       May write auxiliary files such as charts.
             %   Legacy Reference
@@ -52,9 +67,19 @@ classdef ReportModel < reg.mvc.BaseModel
             %   Extension Point
             %       Hook to inject custom formatting or sections.
             % Pseudocode:
-            %   1. Merge metrics and metadata into reportData
-            %   2. Compute summary statistics
-            %   3. Return reportData
+            %   % Coverage table derived from scores
+            %   1. pred = scores > threshold
+            %   2. coverage = mean(pred, 1)
+            %   3. coverageTable = table(labels', coverage')
+            %   % Low-confidence queue derived from chunks and scores
+            %   4. margin = max(scores,[],2) - min(scores,[],2)
+            %   5. idx = argsort(margin)
+            %   6. lowConfidence = snippets(chunks(idx(1:N)))
+            %   % LDA topic summaries derived from mdlLDA and vocab
+            %   7. for each topic k
+            %          topIdx = topk(mdlLDA.TopicWordProbabilities(k,:),10)
+            %          ldaTopics{k} = vocab(topIdx)
+            %   8. Return reportData struct with above fields
             error("reg:model:NotImplemented", ...
                 "ReportModel.process is not implemented.");
         end
