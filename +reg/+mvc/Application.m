@@ -11,6 +11,8 @@ classdef Application < handle
     % - Database Toolbox
     % - Parallel Computing Toolbox
     % - MATLAB Report Generator
+    % - Image Processing toolbox
+    % - MATLAB Test
     % - Computer Vision Toolbox
 
     properties
