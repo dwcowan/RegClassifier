@@ -2,17 +2,17 @@ classdef WeakLabelModel < reg.mvc.BaseModel
     %WEAKLABELMODEL Stub model generating weak supervision labels.
 
     properties
-        % Configuration for weak labeling (default: struct())
-        config = struct();
+        % Shared configuration reference
+        cfg reg.model.ConfigModel = reg.model.ConfigModel();
     end
 
     methods
-        function obj = WeakLabelModel(config)
+        function obj = WeakLabelModel(cfg)
             %WEAKLABELMODEL Construct weak labeling model.
-            %   OBJ = WEAKLABELMODEL(config) stores rules configuration.
-            %   Equivalent to initialization in `weak_rules`.
+            %   OBJ = WEAKLABELMODEL(cfg) uses configuration fields like
+            %   cfg.minRuleConf when applying heuristics.
             if nargin > 0
-                obj.config = config;
+                obj.cfg = cfg;
             end
         end
 

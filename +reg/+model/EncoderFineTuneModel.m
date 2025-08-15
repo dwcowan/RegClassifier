@@ -2,18 +2,17 @@ classdef EncoderFineTuneModel < reg.mvc.BaseModel
     %ENCODERFINETUNEMODEL Stub model for encoder fine-tuning.
 
     properties
-        % Fine-tuning configuration (default: struct())
-        config = struct();
+        % Shared configuration reference
+        cfg reg.model.ConfigModel = reg.model.ConfigModel();
     end
 
     methods
-        function obj = EncoderFineTuneModel(config)
+        function obj = EncoderFineTuneModel(cfg)
             %ENCODERFINETUNEMODEL Construct fine-tuning model.
-            %   OBJ = ENCODERFINETUNEMODEL(config) sets parameters for
-            %   encoder training. Equivalent to initialization in
-            %   `ft_train_encoder`.
+            %   OBJ = ENCODERFINETUNEMODEL(cfg) consumes parameters such as
+            %   cfg.fineTuneLoss or cfg.fineTuneBatchSize.
             if nargin > 0
-                obj.config = config;
+                obj.cfg = cfg;
             end
         end
 

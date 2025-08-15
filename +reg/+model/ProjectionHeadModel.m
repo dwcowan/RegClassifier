@@ -2,18 +2,17 @@ classdef ProjectionHeadModel < reg.mvc.BaseModel
     %PROJECTIONHEADMODEL Stub model applying projection head to embeddings.
 
     properties
-        % Configuration for projection head (default: struct())
-        config = struct();
+        % Shared configuration reference
+        cfg reg.model.ConfigModel = reg.model.ConfigModel();
     end
 
     methods
-        function obj = ProjectionHeadModel(config)
+        function obj = ProjectionHeadModel(cfg)
             %PROJECTIONHEADMODEL Construct projection head model.
-            %   OBJ = PROJECTIONHEADMODEL(config) sets projection head
-            %   parameters. Equivalent to initialization in
-            %   `train_projection_head`.
+            %   OBJ = PROJECTIONHEADMODEL(cfg) uses parameters such as
+            %   cfg.projDim or cfg.gpuEnabled when training projection heads.
             if nargin > 0
-                obj.config = config;
+                obj.cfg = cfg;
             end
         end
 

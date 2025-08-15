@@ -2,18 +2,17 @@ classdef TextChunkModel < reg.mvc.BaseModel
     %TEXTCHUNKMODEL Stub model splitting documents into chunks.
 
     properties
-        % Number of tokens per chunk (default: 0)
-        chunkSizeTokens = 0;
+        % Shared configuration reference
+        cfg reg.model.ConfigModel = reg.model.ConfigModel();
     end
 
     methods
-        function obj = TextChunkModel(chunkSizeTokens)
+        function obj = TextChunkModel(cfg)
             %TEXTCHUNKMODEL Construct text chunking model.
-            %   OBJ = TEXTCHUNKMODEL(chunkSizeTokens) defines the token
-            %   size for each chunk. Equivalent to configuration in
-            %   `chunk_text`.
+            %   OBJ = TEXTCHUNKMODEL(cfg) reads chunking parameters such as
+            %   cfg.chunkSizeTokens and cfg.chunkOverlap.
             if nargin > 0
-                obj.chunkSizeTokens = chunkSizeTokens;
+                obj.cfg = cfg;
             end
         end
 
@@ -52,7 +51,7 @@ classdef TextChunkModel < reg.mvc.BaseModel
             %       Customize chunk boundaries or overlapping logic.
             % Pseudocode:
             %   1. Tokenize each document
-            %   2. Break tokens into chunkSizeTokens segments
+            %   2. Break tokens into cfg.chunkSizeTokens segments
             %   3. Assemble chunksTable with metadata
             error("reg:model:NotImplemented", ...
                 "TextChunkModel.process is not implemented.");

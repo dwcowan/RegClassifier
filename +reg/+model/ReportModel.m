@@ -2,17 +2,17 @@ classdef ReportModel < reg.mvc.BaseModel
     %REPORTMODEL Stub model assembling report data.
 
     properties
-        % Report generation configuration (default: struct())
-        config = struct();
+        % Shared configuration reference
+        cfg reg.model.ConfigModel = reg.model.ConfigModel();
     end
 
     methods
-        function obj = ReportModel(config)
+        function obj = ReportModel(cfg)
             %REPORTMODEL Construct report generation model.
-            %   OBJ = REPORTMODEL(config) stores reporting parameters.
-            %   Equivalent to initialization in `generate_reg_report`.
+            %   OBJ = REPORTMODEL(cfg) accesses values like cfg.reportTitle
+            %   when assembling output.
             if nargin > 0
-                obj.config = config;
+                obj.cfg = cfg;
             end
         end
 
