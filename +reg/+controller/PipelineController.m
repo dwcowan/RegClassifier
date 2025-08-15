@@ -56,6 +56,10 @@ classdef PipelineController < reg.mvc.BaseController
             %       Step 10 ↔ `generate_reg_report`
 
             % Step 1: Retrieve configuration
+            obj.ConfigModel.applySeeds();
+            obj.ConfigModel.loadKnobs();
+            obj.ConfigModel.validateKnobs();
+            obj.ConfigModel.printActiveKnobs();
             cfgRaw = obj.ConfigModel.load();
             cfg = obj.ConfigModel.process(cfgRaw);
 
