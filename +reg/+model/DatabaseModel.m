@@ -52,6 +52,12 @@ classdef DatabaseModel < reg.mvc.BaseModel
             %   scores using `reg.upsert_chunks` so that rows in the
             %   `reg_chunks` table are inserted or updated with `lbl_*` and
             %   `score_*` columns for each label.
+            %   Mandatory Columns
+            %       chunkId       - Unique chunk identifier.
+            %       lbl_<label>   - Predicted label for each class.
+            %       score_<label> - Associated score for each class.
+            %   Extra label columns should be detected dynamically by scanning
+            %   for `lbl_*`/`score_*` pairs so new labels require no code changes.
             %   Parameters
             %       predictionTable (table): Predictions to persist.
             %   Returns
@@ -80,6 +86,18 @@ classdef DatabaseModel < reg.mvc.BaseModel
             %   1. Begin transaction on obj.conn
             %   2. Upsert rows from predictionTable into reg_chunks
             %   3. Commit or rollback transaction and close connection if done
+            %
+            % % Placeholder assertions for mandatory columns prior to upsert
+            % % labels = ["positive","negative"]; % TODO: detect dynamically
+            % % requiredCols = ["chunkId", "lbl_" + labels, "score_" + labels];
+            % % assert(all(ismember(requiredCols, ...
+            % %     predictionTable.Properties.VariableNames)), ...
+            % %     "Prediction table missing required columns.");
+            % %
+            % % To handle additional label columns, detect all `lbl_*` variables
+            % % and ensure matching `score_*` fields exist. This allows new
+            % % labels without modifying this method.
+            %
             % TODO: implement transactional upsert and conflict handling
             error("reg:model:NotImplemented", ...
                 "DatabaseModel.process is not implemented.");
