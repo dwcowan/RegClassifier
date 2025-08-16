@@ -203,17 +203,28 @@ classdef PipelineModel < reg.mvc.BaseModel
                 out.Thresholds double
                 out.PredLabels double
             end
-            chunksTbl = obj.TrainingModel.chunk(documentsTbl);
-            [featuresTbl, ~] = obj.TrainingModel.extractFeatures(chunksTbl);
-            embeddingsMat = obj.TrainingModel.computeEmbeddings(featuresTbl);
-            trainingInputs = struct('Embeddings', embeddingsMat);
-            [modelsCell, scoresMat, thresholdsVec, predLabelsMat] = ...
-                obj.TrainingModel.trainClassifier(trainingInputs);
-            out = struct('DocumentsTbl', documentsTbl, ...
-                'ChunksTbl', chunksTbl, 'FeaturesTbl', featuresTbl, ...
-                'Embeddings', embeddingsMat, 'Models', {modelsCell}, ...
-                'Scores', scoresMat, 'Thresholds', thresholdsVec, ...
-                'PredLabels', predLabelsMat);
+            % Step 1: chunk documents into smaller passages
+            % chunksTbl = <chunking implementation>;
+
+            % Step 2: extract features from chunks
+            % featuresTbl = <feature extraction implementation>;
+
+            % Step 3: compute embeddings from features
+            % embeddingsMat = <embedding computation implementation>;
+
+            % Step 4: train classifier on embeddings
+            % [modelsCell, scoresMat, thresholdsVec, predLabelsMat] = ...
+            %     <classifier training implementation>;
+
+            % Step 5: package training outputs into struct
+            % out = struct('DocumentsTbl', documentsTbl, ...
+            %     'ChunksTbl', chunksTbl, 'FeaturesTbl', featuresTbl, ...
+            %     'Embeddings', embeddingsMat, 'Models', {modelsCell}, ...
+            %     'Scores', scoresMat, 'Thresholds', thresholdsVec, ...
+            %     'PredLabels', predLabelsMat);
+
+            error("reg:model:NotImplemented", ...
+                "PipelineModel.runTraining is not implemented.");
         end
 
         function out = runFineTune(obj, cfg)
