@@ -20,8 +20,7 @@ classdef VisualizationModel < reg.mvc.BaseModel
             %       metrics - struct containing training history with fields:
             %                 ``epochs``, ``accuracy`` and ``loss``.
             %   Output
-            %       fig     - handle to the created figure.  No files are
-            %                 written by this stub implementation.
+            %       fig     - handle to the created figure.
 
             arguments
                 ~
@@ -30,12 +29,19 @@ classdef VisualizationModel < reg.mvc.BaseModel
                 metrics.accuracy (:,1) double
                 metrics.loss (:,1) double
             end
+            arguments (Output)
+                fig matlab.ui.Figure
+            end
 
-            fig = figure("Visible", "off");
-            plot(metrics.epochs, [metrics.accuracy(:), metrics.loss(:)]);
-            legend("Accuracy", "Loss");
-            xlabel("Epoch");
-            ylabel("Metric value");
+            % Pseudocode/Validation:
+            %   fig = figure("Visible", "off");
+            %   plot(metrics.epochs, [metrics.accuracy(:), metrics.loss(:)]);
+            %   legend("Accuracy", "Loss");
+            %   xlabel("Epoch");
+            %   ylabel("Metric value");
+            % Rendering logic should be handled in the view.
+            error("reg:model:NotImplemented", ...
+                "VisualizationModel.plotTrends is not implemented.");
         end
 
         function data = plotTrendsData(~, metrics) %#ok<INUSD>
