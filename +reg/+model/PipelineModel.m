@@ -72,6 +72,10 @@ classdef PipelineModel < reg.mvc.BaseModel
 
         function out = runTraining(obj, cfg)
             %RUNTRAINING Execute training sub-pipeline.
+            if nargin < 2 || isempty(cfg)
+                cfgRaw = obj.ConfigModel.load();
+                cfg = obj.ConfigModel.process(cfgRaw);
+            end
             ingestOut = obj.TrainingModel.ingest(cfg);
             [features, ~] = obj.TrainingModel.extractFeatures(ingestOut.Chunks);
             embeddings = obj.TrainingModel.computeEmbeddings(features);
@@ -86,6 +90,10 @@ classdef PipelineModel < reg.mvc.BaseModel
 
         function out = runFineTune(obj, cfg)
             %RUNFINETUNE Execute encoder fine-tuning workflow.
+            if nargin < 2 || isempty(cfg)
+                cfgRaw = obj.ConfigModel.load();
+                cfg = obj.ConfigModel.process(cfgRaw);
+            end
             docs = obj.TrainingModel.ingest(cfg);
             chunks = obj.TrainingModel.chunk(docs);
             [weakLabels, bootLabels] = obj.TrainingModel.weakLabel(chunks);
