@@ -29,6 +29,9 @@ classdef PipelineModel < reg.mvc.BaseModel
                 trainModel reg.model.TrainingModel = reg.model.TrainingModel()
                 evalModel reg.model.EvaluationModel = reg.model.EvaluationModel()
             end
+            arguments (Output)
+                obj (1,1) reg.model.PipelineModel
+            end
             obj.ConfigModel = cfgModel;
             obj.CorpusModel = corpusModel;
             obj.TrainingModel = trainModel;
@@ -40,11 +43,18 @@ classdef PipelineModel < reg.mvc.BaseModel
             %   RESULT = RUN(obj) coordinates configuration loading,
             %   corpus ingestion, feature/embedding extraction, classifier
             %   training, fine-tuning and evaluation input collation.
-            %   RESULT is a struct with fields ``SearchIndex``, ``Training``
-            %   and ``EvaluationInputs``.
+            %   RESULT is a struct with fields ``SearchIndex`` (struct with
+            %   docId and embedding), ``Training`` (see RUNTRAINING output)
+            %   and ``EvaluationInputs`` (struct with embeddings and labels).
 
             arguments
                 obj
+            end
+            arguments (Output)
+                result struct
+                result.SearchIndex struct
+                result.Training struct
+                result.EvaluationInputs struct
             end
 
             % Step 1: configuration
@@ -85,11 +95,17 @@ classdef PipelineModel < reg.mvc.BaseModel
             %EVALUATIONINPUTS Collate embeddings and labels for evaluation.
             %   OUT = EVALUATIONINPUTS(trainOut) extracts the appropriate
             %   embeddings and optional label matrix from TRAINOUT in
-            %   preparation for the EvaluationController. The returned
-            %   struct OUT contains fields ``Embeddings`` and ``Labels``.
+            %   preparation for the EvaluationController. OUT is a struct
+            %   with fields ``Embeddings`` (double matrix) and ``Labels``
+            %   (double matrix, possibly empty).
             arguments
                 ~
                 trainOut struct
+            end
+            arguments (Output)
+                out struct
+                out.Embeddings double
+                out.Labels double
             end
             evalEmbeddings = trainOut.Embeddings;
             if isfield(trainOut, 'ProjectedEmbeddings')
@@ -115,10 +131,16 @@ classdef PipelineModel < reg.mvc.BaseModel
             %   Returns
             %       documentsTbl (table): ingested documents
             %       searchIndexStruct (struct): fields ``docId`` (string) and
-            %           ``embedding`` as produced by CorpusModel.buildIndex.
+            %           ``embedding`` (double matrix).
             arguments
                 obj
                 cfg (1,1) struct
+            end
+            arguments (Output)
+                documentsTbl table
+                searchIndexStruct struct
+                searchIndexStruct.docId string
+                searchIndexStruct.embedding double
             end
             documentsTbl = obj.CorpusModel.ingestPdfs(cfg);
             obj.CorpusModel.persistDocuments(documentsTbl);
@@ -132,12 +154,16 @@ classdef PipelineModel < reg.mvc.BaseModel
             %EXAMPLESEARCH Run a sample query against the search index.
             %   RESULTS = EXAMPLESEARCH(obj, queryString, alpha, topK)
             %   delegates to CorpusModel.queryIndex. Default parameters are
-            %   provided for debugging convenience.
+            %   provided for debugging convenience. RESULTS is a table with
+            %   columns ``docId``, ``score`` and ``rank``.
             arguments
                 obj
                 queryString (1,1) string = "pipeline query"
                 alpha (1,1) double = 0.5
                 topK (1,1) double = 5
+            end
+            arguments (Output)
+                results table
             end
             results = obj.CorpusModel.queryIndex(queryString, alpha, topK);
         end
@@ -150,11 +176,27 @@ classdef PipelineModel < reg.mvc.BaseModel
             %   configuration struct as returned by ConfigModel.process.
             %   DOCUMENTSTBL should typically be the same table produced
             %   during indexing via ``ingestCorpus`` so ingestion only
-            %   occurs once for both indexing and training.
+            %   occurs once for both indexing and training. OUT is a struct
+            %   with fields ``DocumentsTbl`` (table), ``ChunksTbl`` (table),
+            %   ``FeaturesTbl`` (table), ``Embeddings`` (double matrix),
+            %   ``Models`` (cell), ``Scores`` (double matrix),
+            %   ``Thresholds`` (double vector) and ``PredLabels`` (double
+            %   matrix).
             arguments
                 obj
                 cfg (1,1) struct
                 documentsTbl table
+            end
+            arguments (Output)
+                out struct
+                out.DocumentsTbl table
+                out.ChunksTbl table
+                out.FeaturesTbl table
+                out.Embeddings double
+                out.Models cell
+                out.Scores double
+                out.Thresholds double
+                out.PredLabels double
             end
             chunksTbl = obj.TrainingModel.chunk(documentsTbl);
             [featuresTbl, ~] = obj.TrainingModel.extractFeatures(chunksTbl);
@@ -174,10 +216,17 @@ classdef PipelineModel < reg.mvc.BaseModel
             %   OUT = RUNFINETUNE(OBJ, CFG) performs encoder fine-tuning
             %   using the supplied configuration CFG. CFG must be a fully
             %   processed configuration struct as returned by
-            %   ConfigModel.process.
+            %   ConfigModel.process. OUT is a struct with fields
+            %   ``TripletsTbl`` (table) and ``Network`` (struct placeholder
+            %   for encoder).
             arguments
                 obj
                 cfg (1,1) struct
+            end
+            arguments (Output)
+                out struct
+                out.TripletsTbl table
+                out.Network struct
             end
             documentsTbl = obj.TrainingModel.ingest(cfg);
             chunksTbl = obj.TrainingModel.chunk(documentsTbl);
@@ -193,11 +242,15 @@ classdef PipelineModel < reg.mvc.BaseModel
             %RUNPROJECTIONHEAD Train projection head on embeddings.
             %   PROJECTED = RUNPROJECTIONHEAD(obj, EMBEDDINGS) builds
             %   contrastive triplets and delegates training to
-            %   TrainingModel.trainProjectionHead.
+            %   TrainingModel.trainProjectionHead. PROJECTED is a double
+            %   matrix of projected embeddings.
 
             arguments
                 obj
                 embeddings double
+            end
+            arguments (Output)
+                projected double
             end
 
             tripletsTbl = obj.TrainingModel.prepareDataset(struct('Embeddings', embeddings));
