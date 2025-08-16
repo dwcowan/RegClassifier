@@ -12,16 +12,22 @@ classdef DiffView < reg.mvc.BaseView
     end
 
     methods
-        function display(obj, data)
-            %DISPLAY Store diff data for inspection.
-            %   DISPLAY(obj, DATA) retains diff structures for verification.
-            %   In a production setting this method might pretty-print
-            %   summaries or write patch files to disk.
+        function display(~, data) %#ok<INUSD>
+            %DISPLAY Present diff data.
+            %   DISPLAY(~, DATA) would render differences between corpora
+            %   or methods, for example by printing tables or writing patch
+            %   files to disk.
 
-            obj.DiffResult = data;
-            if ~isempty(obj.OnDisplayCallback)
-                obj.OnDisplayCallback(data);
+            arguments
+                ~
+                data struct
             end
+
+            % Pseudocode:
+            %   iterate over diff entries in ``data``
+            %   render each difference to the desired medium
+            error("reg:view:NotImplemented", ...
+                "DiffView.display is not implemented.");
         end
     end
 end
