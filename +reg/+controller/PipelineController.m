@@ -12,11 +12,12 @@ classdef PipelineController < reg.mvc.BaseController
         function obj = PipelineController(pipelineModel, view)
             %PIPELINECONTROLLER Construct controller wiring pipeline model.
             arguments
+                obj (1,1) reg.controller.PipelineController
                 pipelineModel reg.model.PipelineModel
                 view reg.view.MetricsView = reg.view.MetricsView()
             end
             arguments (Output)
-                obj reg.controller.PipelineController
+                obj (1,1) reg.controller.PipelineController
             end
             %{
             % Pseudocode:
@@ -35,7 +36,7 @@ classdef PipelineController < reg.mvc.BaseController
             %   configuration CFG and displays any outputs using the
             %   controller view.
             arguments
-                obj
+                obj (1,1) reg.controller.PipelineController
                 cfg (1,1) struct
             end
             arguments (Output)
@@ -59,7 +60,7 @@ classdef PipelineController < reg.mvc.BaseController
             %   projection head training to the PipelineModel and displays
             %   the resulting embeddings using the controller view.
             arguments
-                obj
+                obj (1,1) reg.controller.PipelineController
                 embeddings double
             end
             arguments (Output)
@@ -80,7 +81,7 @@ classdef PipelineController < reg.mvc.BaseController
         function run(obj)
             %RUN Execute the full pipeline end-to-end.
             arguments
-                obj
+                obj (1,1) reg.controller.PipelineController
             end
             %{
             % Pseudocode:
@@ -108,7 +109,7 @@ classdef PipelineController < reg.mvc.BaseController
             %   configuration CFG and pre-ingested DOCUMENTSTBL, then
             %   displays the results using the controller view.
             arguments
-                obj
+                obj (1,1) reg.controller.PipelineController
                 cfg (1,1) struct
                 documentsTbl table
             end
