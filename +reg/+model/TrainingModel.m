@@ -57,8 +57,14 @@ classdef TrainingModel < reg.mvc.BaseModel
     end
 
     methods
-        function obj = TrainingModel(varargin) %#ok<INUSD>
+        function obj = TrainingModel(cfg)
             %TRAININGMODEL Construct a unified training model.
+            arguments
+                cfg (1,1) struct = struct()
+            end
+            %   Pseudocode:
+            %       initialise model properties from cfg fields
+            error("reg:model:NotImplemented", "TrainingModel constructor is not implemented.");
         end
 
         function documentsTbl = ingest(obj, cfg)
