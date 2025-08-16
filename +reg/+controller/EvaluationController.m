@@ -84,7 +84,7 @@ classdef EvaluationController < reg.mvc.BaseController
 
             % Step 3: create diagnostic plots
             metricsStruct = results.Metrics;
-            validateMetrics(metricsStruct);
+            obj.Model.validateMetrics(metricsStruct);
             trendsFig = obj.VisualizationModel.plotTrends(metricsStruct);
 
             coMatrix = [];
@@ -115,14 +115,6 @@ classdef EvaluationController < reg.mvc.BaseController
                 metrics = results.Metrics;
             else
                 metrics = [];
-            end
-            function validateMetrics(m)
-                arguments
-                    m struct
-                    m.epochs (:,1) double
-                    m.accuracy (:,1) double
-                    m.loss (:,1) double
-                end
             end
         end
         function metrics = retrievalMetrics(~, embeddings, posSets, k) %#ok<INUSD>

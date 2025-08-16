@@ -112,6 +112,32 @@ classdef EvaluationModel < reg.mvc.BaseModel
             result = struct('Metrics', metrics);
         end
 
+        function validateMetrics(~, m) %#ok<INUSD>
+            %VALIDATEMETRICS Validate metrics structure produced by evaluation.
+            %   VALIDATEMETRICS(~, M) checks the supplied metrics struct for
+            %   expected fields and basic schema.  This placeholder outlines
+            %   the intended validation logic without implementing it.
+            %
+            %   Expected fields in ``m``:
+            %       - ``epochs``   (:,1 double) epoch indices
+            %       - ``accuracy`` (:,1 double) accuracy per epoch
+            %       - ``loss``     (:,1 double) loss values per epoch
+            arguments
+                ~
+                m struct
+                m.epochs (:,1) double
+                m.accuracy (:,1) double
+                m.loss (:,1) double
+            end
+            % Pseudocode/validation stub:
+            %   assert(numel(m.accuracy) == numel(m.loss));
+            %   if isfield(m, 'epochs')
+            %       assert(numel(m.epochs) == numel(m.accuracy));
+            %   end
+            error("reg:model:NotImplemented", ...
+                "EvaluationModel.validateMetrics is not implemented.");
+        end
+
         function perLabel = perLabelMetrics(~, embeddings, labelsLogical, k) %#ok<INUSD>
             %PERLABELMETRICS Compute per-label Recall@K.
             %   perLabel = PERLABELMETRICS(embeddings, labelsLogical, k)
