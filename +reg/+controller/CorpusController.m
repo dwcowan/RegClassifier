@@ -103,38 +103,38 @@ classdef CorpusController < reg.mvc.BaseController
                 "CorpusController.ingestPdfs is not implemented.");
         end
 
-        function persistDocuments(obj, documents)
+        function persistDocuments(obj, documentsTbl)
             %PERSISTDOCUMENTS Persist document table through the model.
-            %   PERSISTDOCUMENTS(obj, documents) forwards to the model and
-            %   displays the input documents when a view is present.
+            %   PERSISTDOCUMENTS(obj, documentsTbl) forwards to the model and
+            %   displays the input documentsTbl when a view is present.
             arguments
                 obj
-                documents table
+                documentsTbl table
             end
             arguments (Output)
             end
             % PSEUDOCODE:
-            % - delegate persistence of documents to obj.Model.persistDocuments
-            % - if a view exists, call obj.View.display with documents
+            % - delegate persistence of documentsTbl to obj.Model.persistDocuments
+            % - if a view exists, call obj.View.display with documentsTbl
             error("reg:controller:NotImplemented", ...
                 "CorpusController.persistDocuments is not implemented.");
         end
 
-        function searchIndex = buildIndex(obj, indexInputs)
+        function searchIndex = buildIndex(obj, indexInputsStruct)
             %BUILDINDEX Create or update the search index via the model.
-            %   searchIndex = BUILDINDEX(obj, indexInputs) calls the model's
+            %   searchIndex = BUILDINDEX(obj, indexInputsStruct) calls the model's
             %   buildIndex and forwards the result to the view if available.
             arguments
                 obj
-                indexInputs struct
-                indexInputs.documentsTbl table
-                indexInputs.embeddingsMat double
+                indexInputsStruct struct
+                indexInputsStruct.documentsTbl table
+                indexInputsStruct.embeddingsMat double
             end
             arguments (Output)
                 searchIndex struct
             end
             % PSEUDOCODE:
-            % - build or update index by invoking obj.Model.buildIndex(indexInputs)
+            % - build or update index by invoking obj.Model.buildIndex(indexInputsStruct)
             % - if obj.View is set, display searchIndex via the view
             error("reg:controller:NotImplemented", ...
                 "CorpusController.buildIndex is not implemented.");

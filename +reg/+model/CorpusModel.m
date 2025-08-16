@@ -244,7 +244,8 @@ classdef CorpusModel < reg.mvc.BaseModel
                 "reg:model:SizeMismatch", ...
                 "embeddingsMat rows must equal number of documents.");
             % Pseudocode:
-            %   1. Combine docId values with embeddingsMat
+            %   1. Combine indexInputsStruct.documentsTbl.docId with ...
+            %      indexInputsStruct.embeddingsMat
             %   2. Return searchIndexStruct representing the index
 
             error("reg:model:NotImplemented", ...
