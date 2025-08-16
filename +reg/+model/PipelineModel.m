@@ -121,16 +121,18 @@ classdef PipelineModel < reg.mvc.BaseModel
             %   using the supplied configuration CFG. CFG must be a fully
             %   processed configuration struct as returned by
             %   ConfigModel.process.
-            ingestOut = obj.TrainingModel.ingest(cfg);
-            [features, ~] = obj.TrainingModel.extractFeatures(ingestOut.Chunks);
-            embeddings = obj.TrainingModel.computeEmbeddings(features);
-            trainingInputs = struct('Embeddings', embeddings);
-            [models, scores, thresholds, predLabels] = ...
+            documentsTbl = obj.TrainingModel.ingest(cfg);
+            chunksTbl = obj.TrainingModel.chunk(documentsTbl);
+            [featuresTbl, ~] = obj.TrainingModel.extractFeatures(chunksTbl);
+            embeddingsMat = obj.TrainingModel.computeEmbeddings(featuresTbl);
+            trainingInputs = struct('Embeddings', embeddingsMat);
+            [modelsCell, scoresMat, thresholdsVec, predLabelsMat] = ...
                 obj.TrainingModel.trainClassifier(trainingInputs);
-            out = struct('Ingest', ingestOut, 'Features', features, ...
-                'Embeddings', embeddings, 'Models', {models}, ...
-                'Scores', scores, 'Thresholds', thresholds, ...
-                'PredLabels', predLabels);
+            out = struct('DocumentsTbl', documentsTbl, ...
+                'ChunksTbl', chunksTbl, 'FeaturesTbl', featuresTbl, ...
+                'Embeddings', embeddingsMat, 'Models', {modelsCell}, ...
+                'Scores', scoresMat, 'Thresholds', thresholdsVec, ...
+                'PredLabels', predLabelsMat);
         end
 
         function out = runFineTune(obj, cfg)
@@ -139,14 +141,14 @@ classdef PipelineModel < reg.mvc.BaseModel
             %   using the supplied configuration CFG. CFG must be a fully
             %   processed configuration struct as returned by
             %   ConfigModel.process.
-            docs = obj.TrainingModel.ingest(cfg);
-            chunks = obj.TrainingModel.chunk(docs);
-            [weakLabels, bootLabels] = obj.TrainingModel.weakLabel(chunks);
-            raw = struct('Chunks', chunks, 'WeakLabels', weakLabels, ...
-                'BootLabels', bootLabels);
-            triplets = obj.TrainingModel.prepareDataset(raw);
-            net = obj.TrainingModel.fineTuneEncoder(triplets);
-            out = struct('Triplets', triplets, 'Network', net);
+            documentsTbl = obj.TrainingModel.ingest(cfg);
+            chunksTbl = obj.TrainingModel.chunk(documentsTbl);
+            [weakLabelsMat, bootLabelsMat] = obj.TrainingModel.weakLabel(chunksTbl);
+            rawStruct = struct('Chunks', chunksTbl, 'WeakLabels', weakLabelsMat, ...
+                'BootLabels', bootLabelsMat);
+            tripletsTbl = obj.TrainingModel.prepareDataset(rawStruct);
+            net = obj.TrainingModel.fineTuneEncoder(tripletsTbl);
+            out = struct('TripletsTbl', tripletsTbl, 'Network', net);
         end
 
         function projected = runProjectionHead(obj, embeddings)
@@ -155,8 +157,8 @@ classdef PipelineModel < reg.mvc.BaseModel
             %   contrastive triplets and delegates training to
             %   TrainingModel.trainProjectionHead.
 
-            triplets = obj.TrainingModel.prepareDataset(embeddings);
-            projected = obj.TrainingModel.trainProjectionHead(triplets);
+            tripletsTbl = obj.TrainingModel.prepareDataset(struct('Embeddings', embeddings));
+            projected = obj.TrainingModel.trainProjectionHead(tripletsTbl);
         end
     end
 end
