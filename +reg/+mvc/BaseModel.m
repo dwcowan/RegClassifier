@@ -7,25 +7,41 @@ classdef BaseModel < handle
     %   artefacts.
 
     methods
-        function data = load(obj, varargin) %#ok<INUSD>
+        function data = load(obj, varargin)
             %LOAD Retrieve raw application data.
             %   DATA = LOAD(obj) should collect information from files,
             %   databases or external services. Implementations may accept
             %   optional parameters via VARARGIN to specialise data
             %   acquisition. The returned DATA is then forwarded to
             %   `process` for transformation.
-            error('reg:mvc:NotImplemented', ...
-                'Models must override load to gather raw data.');
+            arguments
+                obj
+            end
+            arguments (Repeating)
+                varargin
+            end
+            arguments (Output)
+                data
+            end
+            error("reg:mvc:NotImplemented", ...
+                "Models must override load to gather raw data.");
         end
 
-        function result = process(obj, data) %#ok<INUSD>
+        function result = process(obj, data)
             %PROCESS Convert raw data into domain specific results.
             %   RESULT = PROCESS(obj, DATA) receives the output of `load`
             %   and transforms it into the form expected by controllers and
             %   views. For example, in `reg_pipeline` a model may load text
             %   chunks and process them into embeddings.
-            error('reg:mvc:NotImplemented', ...
-                'Models must override process to transform data.');
+            arguments
+                obj
+                data
+            end
+            arguments (Output)
+                result
+            end
+            error("reg:mvc:NotImplemented", ...
+                "Models must override process to transform data.");
         end
     end
 end

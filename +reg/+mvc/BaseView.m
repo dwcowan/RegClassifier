@@ -6,12 +6,16 @@ classdef BaseView < handle
     %   visualisations for inspection.
 
     methods
-        function display(obj, data) %#ok<INUSD>
+        function display(obj, data)
             %DISPLAY Render processed results to an audience.
             %   DISPLAY(obj, DATA) should present DATA to a user or external
             %   system. Implementations may generate plots, print to the
             %   command window or persist artefacts. Subclasses decide what
             %   DATA represents.
+            arguments
+                obj
+                data struct
+            end
             error('reg:mvc:NotImplemented', ...
                 'Views must override display to present results.');
         end
