@@ -57,25 +57,23 @@ classdef PipelineController < reg.mvc.BaseController
             arguments
                 obj
             end
+            %{
+            % Pseudocode:
+            %
+            % result = obj.PipelineModel.run();
+            % if metrics should be computed
+            %     metrics = evaluate result via EvaluationController
+            %     if obj.View is available
+            %         obj.View.log(metrics);
+            %         obj.View.display(metrics);
+            %     end
+            % elseif obj.View is available
+            %     obj.View.display(result);
+            % end
+            %}
 
-            result = obj.PipelineModel.run();
-
-            metrics = [];
-            if isfield(result, "EvaluationInputs")
-                evalController = reg.controller.EvaluationController(
-                    obj.PipelineModel.EvaluationModel, reg.model.ReportModel());
-                evalInputs = result.EvaluationInputs;
-                metrics = evalController.run(
-                    evalInputs.Embeddings, evalInputs.Labels);
-                result.Metrics = metrics;
-            end
-
-            if ~isempty(obj.View) && ~isempty(metrics)
-                obj.View.log(metrics);
-                obj.View.display(metrics);
-            elseif ~isempty(obj.View)
-                obj.View.display(result);
-            end
+            error("reg:controller:NotImplemented", ...
+                "PipelineController.run is not implemented.");
         end
 
         function runTraining(obj, cfg, documentsTbl)
