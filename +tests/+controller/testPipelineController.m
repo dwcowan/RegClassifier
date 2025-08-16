@@ -38,6 +38,20 @@ classdef testPipelineController < matlab.unittest.TestCase
         end
     end
 
+    methods (Test, TestTags={'Doc'})
+        function structFieldDocs(testCase)
+            docFine = help('reg.controller.PipelineController/runFineTune');
+            testCase.verifyNotEmpty(strfind(docFine, 'TripletsTbl'), 'TripletsTbl missing');
+            testCase.verifyNotEmpty(strfind(docFine, 'Network'), 'Network missing');
+
+            docTrain = help('reg.controller.PipelineController/runTraining');
+            fields = ["DocumentsTbl","ChunksTbl","FeaturesTbl","Embeddings","Models","Scores","Thresholds","PredLabels"];
+            for f = fields
+                testCase.verifyNotEmpty(strfind(docTrain, f), "Field " + f + " missing");
+            end
+        end
+    end
+
     methods (Test, TestTags={'Regression'})
         function baselineStub(testCase)
             data = tests.fixtures.baseline_load('example.json'); %#ok<NASGU>
