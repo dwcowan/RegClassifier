@@ -148,34 +148,17 @@ classdef CorpusModel < reg.mvc.BaseModel
                 "reg:model:MissingInputDir", ...
                 "cfg.inputDir must be an existing folder.");
 
-            pdfInfo = dir(fullfile(cfg.inputDir, "*.pdf"));
-            numFiles = numel(pdfInfo);
-            docId = strings(numFiles, 1);
-            text = strings(numFiles, 1);
-            metaStruct = repmat(struct( ...
-                "filePath", string.empty, ...
-                "bytes", 0, ...
-                "modified", datetime.empty), numFiles, 1);
-            for i = 1:numFiles
-                filePath = fullfile(pdfInfo(i).folder, pdfInfo(i).name);
-                docId(i) = erase(string(pdfInfo(i).name), ".pdf");
-                try
-                    text(i) = string(fileread(filePath));
-                catch
-                    text(i) = "";
-                end
-                metaStruct(i) = struct( ...
-                    "filePath", string(filePath), ...
-                    "bytes", pdfInfo(i).bytes, ...
-                    "modified", datetime(pdfInfo(i).datenum, ...
-                    "ConvertFrom", "datenum"));
-            end
-            documentsTbl = table(docId, text, metaStruct, ...
-                'VariableNames', {'docId', 'text', 'meta'});
+            % Pseudocode:
+            %   1. Scan cfg.inputDir recursively to locate PDF files
+            %   2. For each PDF, read extracted text and gather metadata
+            %   3. Construct documentsTbl with variables docId, text, meta
+
             % documentsTbl schema:
             %   docId (string): unique identifier of document
             %   text (string): extracted PDF text
             %   meta (struct): metadata with fields filePath, bytes, modified
+            error("reg:model:NotImplemented", ...
+                "CorpusModel.ingestPdfs is not implemented.");
         end
 
         function statusStruct = persistDocuments(~, documentsTbl)
