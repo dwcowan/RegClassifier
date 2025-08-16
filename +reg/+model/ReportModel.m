@@ -15,8 +15,24 @@ classdef ReportModel < reg.mvc.BaseModel
     end
 
     methods
-        function obj = ReportModel(varargin)
-            %#ok<INUSD>
+        function obj = ReportModel(args)
+            %REPORTMODEL Construct report model with overrides.
+            %   OBJ = REPORTMODEL(args) accepts a struct of fields to override
+            %   default property values.
+            arguments
+                args (1,1) struct = struct()
+            end
+            arguments (Output)
+                obj reg.model.ReportModel
+            end
+            %   Pseudocode:
+            %       inputs:  args struct containing property overrides
+            %       steps:   for each field in args
+            %                    if isprop(obj, field)
+            %                        assign obj.(field) = args.(field)
+            %       output:  obj with overridden properties
+            error("reg:model:NotImplemented", ...
+                "ReportModel constructor is not implemented.");
         end
 
         function reportInputs = load(~, varargin) %#ok<INUSD>
