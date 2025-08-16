@@ -10,16 +10,23 @@ classdef CorpusModel < reg.mvc.BaseModel
             %LOAD Prepare parameters for synchronisation.
             %   params = LOAD(obj, date) records the target snapshot date.
             %   Parameters
-            %       date (char): target snapshot date in yyyymmdd format
+            %       date (string): target snapshot date in yyyymmdd format
             %           (must be provided explicitly)
             %   Returns
             %       params (struct): struct with field
             %           date - synchronisation date
-            if nargin < 2 || isempty(date)
-                error("reg:model:NotImplemented", ...
-                    "date must be specified; default current date removed.");
+            arguments
+                ~
+                date (1,1) string
             end
-            params = struct('date', date);
+            arguments (Output)
+                params (1,1) struct
+                params.date (1,1) string
+            end
+            % Pseudocode:
+            %   1. Validate input date format
+            %   2. Populate params.date with the provided date
+            error("reg:model:NotImplemented","CorpusModel.load is not implemented.");
         end
 
         function out = process(obj, params)
