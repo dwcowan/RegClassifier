@@ -50,13 +50,25 @@ classdef PipelineModel < reg.mvc.BaseModel
             % Step 3: training workflow (features, embeddings, classifier)
             trainOut = obj.runTraining(cfg);
 
-            % Step 4: fine-tuning workflow
-            ftOut = obj.runFineTune(cfg); %#ok<NASGU>
+            % Step 4: optional fine-tuning workflow
+            if isfield(cfg, 'fineTuneEpochs') && cfg.fineTuneEpochs > 0
+                trainOut.FineTune = obj.runFineTune(cfg);
+            end
 
-            % Step 5: evaluation via controller
+            % Step 5: optional projection head workflow
+            if isfield(cfg, 'projEpochs') && cfg.projEpochs > 0
+                trainOut.ProjectedEmbeddings = obj.runProjectionHead(
+                    trainOut.Embeddings);
+            end
+
+            % Step 6: evaluation via controller
+            evalEmbeddings = trainOut.Embeddings;
+            if isfield(trainOut, 'ProjectedEmbeddings')
+                evalEmbeddings = trainOut.ProjectedEmbeddings;
+            end
             evalController = reg.controller.EvaluationController(
                 obj.EvaluationModel, reg.model.ReportModel());
-            metrics = evalController.run(trainOut.Embeddings, []);
+            metrics = evalController.run(evalEmbeddings, []);
 
             result = struct('Documents', docs, ...
                 'Training', trainOut, ...
@@ -103,6 +115,16 @@ classdef PipelineModel < reg.mvc.BaseModel
             triplets = obj.TrainingModel.prepareDataset(raw);
             net = obj.TrainingModel.fineTuneEncoder(triplets);
             out = struct('Triplets', triplets, 'Network', net);
+        end
+
+        function projected = runProjectionHead(obj, embeddings)
+            %RUNPROJECTIONHEAD Train projection head on embeddings.
+            %   PROJECTED = RUNPROJECTIONHEAD(obj, EMBEDDINGS) builds
+            %   contrastive triplets and delegates training to
+            %   TrainingModel.trainProjectionHead.
+
+            triplets = obj.TrainingModel.prepareDataset(embeddings);
+            projected = obj.TrainingModel.trainProjectionHead(triplets);
         end
     end
 end
