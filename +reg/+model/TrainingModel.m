@@ -67,16 +67,15 @@ classdef TrainingModel < reg.mvc.BaseModel
             %   by configuration struct CFG.
             arguments
                 obj (1,1) reg.model.TrainingModel
-                cfg (1,1) struct
+                cfg (1,1) struct % cfg.inputDir (string)
             end
-            %   Data contract:
-            %       cfg.inputDir (string): directory containing PDFs
+            arguments (Output)
+                documentsTbl table % [docId (string), text (string)]
+            end
             %   Pseudocode:
             %       1. verify required cfg fields exist
-            %       2. read files into table [docId (string), text (string)]
-            %       3. assign table to obj.documentsTbl
-            obj.documentsTbl = table(); % placeholder
-            documentsTbl = obj.documentsTbl;
+            %       2. read files into table and assign to obj.documentsTbl
+            error("NotImplemented");
         end
 
         function chunksTbl = chunk(obj, documentsTbl)
@@ -85,18 +84,16 @@ classdef TrainingModel < reg.mvc.BaseModel
             %   into smaller text pieces.
             arguments
                 obj (1,1) reg.model.TrainingModel
-                documentsTbl table
+                documentsTbl table % [docId (string), text (string)]
             end
-            %   Data contract:
-            %       documentsTbl.docId (string), documentsTbl.text (string)
-            %       chunksTbl.chunkId (double), chunksTbl.docId (string), ...
-            %           chunksTbl.text (string)
+            arguments (Output)
+                chunksTbl table % [chunkId (double), docId (string), text (string)]
+            end
             %   Pseudocode:
             %       1. validate required columns exist
             %       2. tokenise and split text
-            %       3. store result in obj.chunksTbl
-            obj.chunksTbl = table(); % placeholder
-            chunksTbl = obj.chunksTbl;
+            %       3. assign table to obj.chunksTbl
+            error("NotImplemented");
         end
 
         function [weakLabelsMat, bootLabelsMat] = weakLabel(obj, chunksTbl)
@@ -105,20 +102,17 @@ classdef TrainingModel < reg.mvc.BaseModel
             %   produces rule-based label scores.
             arguments
                 obj (1,1) reg.model.TrainingModel
-                chunksTbl table
+                chunksTbl table % [chunkId (double), text (string)]
             end
-            %   Data contract:
-            %       chunksTbl.chunkId (double), chunksTbl.text (string)
-            %       weakLabelsMat (nChunk x nRule double)
-            %       bootLabelsMat (nChunk x nRule double)
+            arguments (Output)
+                weakLabelsMat double % nChunk x nRule
+                bootLabelsMat double % nChunk x nRule
+            end
             %   Pseudocode:
             %       1. ensure chunksTbl is non-empty
             %       2. apply rule set and bootstrap
-            %       3. store matrices in properties
-            obj.weakLabelsMat = zeros(height(chunksTbl), 0);
-            obj.bootLabelsMat = zeros(height(chunksTbl), 0);
-            weakLabelsMat = obj.weakLabelsMat;
-            bootLabelsMat = obj.bootLabelsMat;
+            %       3. assign matrices to properties
+            error("NotImplemented");
         end
 
         function [featuresTbl, vocab] = extractFeatures(obj, chunksTbl)
@@ -127,21 +121,17 @@ classdef TrainingModel < reg.mvc.BaseModel
             %   derives sparse vectors for each text chunk.
             arguments
                 obj (1,1) reg.model.TrainingModel
-                chunksTbl table
+                chunksTbl table % [chunkId (double), text (string)]
             end
-            %   Data contract:
-            %       featuresTbl variables:
-            %           chunkId (double)
-            %           tfidfVec (1xV double)
-            %       vocab (1xV string)
+            arguments (Output)
+                featuresTbl table % [chunkId (double), tfidfVec (1xV double)]
+                vocab string % 1xV vocabulary terms
+            end
             %   Pseudocode:
             %       1. validate chunk table
             %       2. compute tf-idf and vocabulary
-            %       3. store results in properties
-            obj.featuresTbl = table();
-            obj.vocab = strings(0,1);
-            featuresTbl = obj.featuresTbl;
-            vocab = obj.vocab;
+            %       3. assign results to properties
+            error("NotImplemented");
         end
 
         function embeddingsMat = computeEmbeddings(obj, featuresTbl)
@@ -150,17 +140,16 @@ classdef TrainingModel < reg.mvc.BaseModel
             %   an embedding matrix.
             arguments
                 obj (1,1) reg.model.TrainingModel
-                featuresTbl table
+                featuresTbl table % tfidfVec (1xV double)
             end
-            %   Data contract:
-            %       featuresTbl.tfidfVec (1xV double)
-            %       embeddingsMat (nChunk x d double)
+            arguments (Output)
+                embeddingsMat double % nChunk x d
+            end
             %   Pseudocode:
             %       1. validate feature vectors
             %       2. run encoder network
-            %       3. store embeddings in obj.embeddingsMat
-            obj.embeddingsMat = zeros(height(featuresTbl), 0);
-            embeddingsMat = obj.embeddingsMat;
+            %       3. assign embeddings to property
+            error("NotImplemented");
         end
 
         function tripletsTbl = prepareDataset(obj, rawDataStruct)
@@ -169,18 +158,16 @@ classdef TrainingModel < reg.mvc.BaseModel
             %   anchor-positive-negative triplets.
             arguments
                 obj (1,1) reg.model.TrainingModel
-                rawDataStruct (1,1) struct
+                rawDataStruct (1,1) struct % Chunks, WeakLabels, BootLabels, Embeddings
             end
-            %   Data contract:
-            %       For fine-tuning: fields Chunks, WeakLabels, BootLabels
-            %       For projection head: field Embeddings
-            %       tripletsTbl.anchorIdx, posIdx, negIdx (double)
+            arguments (Output)
+                tripletsTbl table % [anchorIdx, posIdx, negIdx]
+            end
             %   Pseudocode:
             %       1. validate required fields per workflow
             %       2. sample or build triplets
-            %       3. assign to obj.tripletsTbl
-            obj.tripletsTbl = table();
-            tripletsTbl = obj.tripletsTbl;
+            %       3. assign table to property
+            error("NotImplemented");
         end
 
         function net = fineTuneEncoder(obj, tripletsTbl)
@@ -189,17 +176,16 @@ classdef TrainingModel < reg.mvc.BaseModel
             %   using provided triplets.
             arguments
                 obj (1,1) reg.model.TrainingModel
-                tripletsTbl table
+                tripletsTbl table % [anchorIdx, posIdx, negIdx]
             end
-            %   Data contract:
-            %       tripletsTbl.anchorIdx, posIdx, negIdx (double)
-            %       net (dlnetwork or struct)
+            arguments (Output)
+                net % dlnetwork or struct
+            end
             %   Pseudocode:
             %       1. configure training options
             %       2. iterate over triplets and update weights
-            %       3. store network in obj.encoderNet
-            obj.encoderNet = struct(); % placeholder
-            net = obj.encoderNet;
+            %       3. assign network to property
+            error("NotImplemented");
         end
 
         function projectedMat = trainProjectionHead(obj, tripletsTbl)
@@ -208,17 +194,16 @@ classdef TrainingModel < reg.mvc.BaseModel
             %   head parameters and returns projected embeddings.
             arguments
                 obj (1,1) reg.model.TrainingModel
-                tripletsTbl table
+                tripletsTbl table % [anchorIdx, posIdx, negIdx]
             end
-            %   Data contract:
-            %       tripletsTbl.anchorIdx, posIdx, negIdx (double)
-            %       projectedMat (nSample x projDim double)
+            arguments (Output)
+                projectedMat double % nSample x projDim
+            end
             %   Pseudocode:
             %       1. validate triplets
             %       2. optimise projection head
-            %       3. store projections in obj.projectedMat
-            obj.projectedMat = zeros(height(tripletsTbl), 0);
-            projectedMat = obj.projectedMat;
+            %       3. assign projections to property
+            error("NotImplemented");
         end
 
         function [modelsCell, scoresMat, thresholdsVec, predLabelsMat] = trainClassifier(obj, trainingInputs)
@@ -227,27 +212,20 @@ classdef TrainingModel < reg.mvc.BaseModel
             %   TRAINCLASSIFIER(obj, TRAININGINPUTS) fits classifier models.
             arguments
                 obj (1,1) reg.model.TrainingModel
-                trainingInputs (1,1) struct
+                trainingInputs (1,1) struct % Embeddings (nSample x d double)
             end
-            %   Data contract:
-            %       trainingInputs.Embeddings (nSample x d double)
-            %       modelsCell {1 x nLabel}
-            %       scoresMat (nSample x nLabel double)
-            %       thresholdsVec (1 x nLabel double)
-            %       predLabelsMat (nSample x nLabel logical)
+            arguments (Output)
+                modelsCell cell % 1 x nLabel models
+                scoresMat double % nSample x nLabel
+                thresholdsVec (1,:) double % 1 x nLabel thresholds
+                predLabelsMat logical % nSample x nLabel
+            end
             %   Pseudocode:
             %       1. ensure embeddings present
             %       2. cross-validate and fit classifiers
             %       3. compute thresholds and labels
-            %       4. store outputs in properties
-            obj.classifierModels = {};
-            obj.scoresMat = zeros(0,0);
-            obj.thresholdsVec = zeros(1,0);
-            obj.predLabelsMat = false(0,0);
-            modelsCell = obj.classifierModels;
-            scoresMat = obj.scoresMat;
-            thresholdsVec = obj.thresholdsVec;
-            predLabelsMat = obj.predLabelsMat;
+            %       4. assign outputs to properties
+            error("NotImplemented");
         end
     end
 end
