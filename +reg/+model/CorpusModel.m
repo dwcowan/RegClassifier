@@ -81,56 +81,131 @@ classdef CorpusModel < reg.mvc.BaseModel
                 "CorpusModel.sync is not implemented.");
         end
 
-        function documents = ingestPdfs(~, cfg) %#ok<INUSD>
+        function documentsTbl = ingestPdfs(~, cfg)
             %INGESTPDFS Convert PDFs to a document table.
-            %   DOCUMENTS = INGESTPDFS(obj, cfg) scans cfg.inputDir for PDF
-            %   files, extracts text and assembles a table describing each
-            %   document.
+            %   DOCUMENTSTBL = INGESTPDFS(obj, cfg) scans cfg.inputDir for
+            %   PDF files, extracts text and assembles a table describing
+            %   each document.
             %   Parameters
-            %       cfg - Configuration struct with paths and options
+            %       cfg (struct) with fields:
+            %           inputDir (string): directory containing source PDFs
             %   Returns
-            %       documents (table): Parsed document metadata and text with
-            %           schema
-            %               doc_id (string) : unique identifier
-            %               text   (string) : extracted full text
-            %               meta   (struct) : file metadata including path,
-            %                   bytes and modified timestamp
+            %       documentsTbl (table): parsed document data with variables
+            %           docId (string) : unique identifier
+            %           text  (string) : extracted full text
+            %           meta  (struct) : file metadata including
+            %               filePath (string), bytes (double) and
+            %               modified (datetime)
             %   Legacy Reference
             %       Equivalent to the responsibilities of
             %       `PDFIngestModel.load` and `PDFIngestModel.process`.
-            %   Pseudocode:
-            %       1. Locate PDF files under cfg.inputDir
-            %       2. Extract text for each file
-            %       3. Assemble table of documents
-            error("reg:model:NotImplemented", ...
-                "CorpusModel.ingestPdfs is not implemented.");
+            arguments
+                ~
+                cfg struct
+                cfg.inputDir (1,1) string
+            end
+            assert(isfolder(cfg.inputDir), ...
+                "reg:model:MissingInputDir", ...
+                "cfg.inputDir must be an existing folder.");
+
+            pdfInfo = dir(fullfile(cfg.inputDir, "*.pdf"));
+            numFiles = numel(pdfInfo);
+            docId = strings(numFiles, 1);
+            text = strings(numFiles, 1);
+            metaStruct = repmat(struct( ...
+                "filePath", string.empty, ...
+                "bytes", 0, ...
+                "modified", datetime.empty), numFiles, 1);
+            for i = 1:numFiles
+                filePath = fullfile(pdfInfo(i).folder, pdfInfo(i).name);
+                docId(i) = erase(string(pdfInfo(i).name), ".pdf");
+                try
+                    text(i) = string(fileread(filePath));
+                catch
+                    text(i) = "";
+                end
+                metaStruct(i) = struct( ...
+                    "filePath", string(filePath), ...
+                    "bytes", pdfInfo(i).bytes, ...
+                    "modified", datetime(pdfInfo(i).datenum, ...
+                    "ConvertFrom", "datenum"));
+            end
+            documentsTbl = table(docId, text, metaStruct, ...
+                'VariableNames', {'docId', 'text', 'meta'});
+            % documentsTbl schema:
+            %   docId (string): unique identifier of document
+            %   text (string): extracted PDF text
+            %   meta (struct): metadata with fields filePath, bytes, modified
         end
 
-        function persistDocuments(~, documents) %#ok<INUSD>
-            %PERSISTDOCUMENTS Persist document structs to storage.
-            %   PERSISTDOCUMENTS(obj, DOCUMENTS) writes DOCUMENTS to the
-            %   configured storage backend.
-
-            error("reg:model:NotImplemented", ...
-                "CorpusModel.persistDocuments is not implemented.");
-        end
-
-        function searchIndex = buildIndex(~, indexInputs) %#ok<INUSD>
-            %BUILDINDEX Build or update the search index.
-            %   SEARCHINDEX = BUILDINDEX(obj, indexInputs) creates an index
-            %   from documents and embeddings supplied in indexInputs.
+        function statusStruct = persistDocuments(~, documentsTbl)
+            %PERSISTDOCUMENTS Persist document table to storage.
+            %   STATUSSTRUCT = PERSISTDOCUMENTS(obj, documentsTbl) writes
+            %   documentsTbl to the configured storage backend.
             %   Parameters
-            %       indexInputs (struct): Data required to build the index.
+            %       documentsTbl (table): must contain variables
+            %           docId (string)
+            %           text  (string)
+            %           meta  (struct) with fields filePath, bytes, modified
             %   Returns
-            %       searchIndex (struct): Handle or identifier for the index.
+            %       statusStruct (struct): summary with fields
+            %           numDocuments (double): number of documents persisted
+            %           docIds (string): identifiers of persisted documents
+            arguments
+                ~
+                documentsTbl table
+            end
+            requiredVars = ["docId", "text", "meta"];
+            assert(all(ismember(requiredVars, ...
+                documentsTbl.Properties.VariableNames)), ...
+                "reg:model:InvalidDocumentTbl", ...
+                "documentsTbl must contain docId, text and meta variables.");
+            statusStruct = struct( ...
+                "numDocuments", height(documentsTbl), ...
+                "docIds", documentsTbl.docId);
+            % statusStruct schema:
+            %   numDocuments (double): number of documents persisted
+            %   docIds (string): identifiers of persisted documents
+        end
+
+        function searchIndexStruct = buildIndex(~, indexInputsStruct)
+            %BUILDINDEX Build or update the search index.
+            %   SEARCHINDEXSTRUCT = BUILDINDEX(obj, indexInputsStruct)
+            %   creates an index from documents and embeddings supplied in
+            %   indexInputsStruct.
+            %   Parameters
+            %       indexInputsStruct (struct) with fields:
+            %           documentsTbl (table): variables docId, text
+            %           embeddingsMat (double): N-by-D embedding matrix
+            %   Returns
+            %       searchIndexStruct (struct): index representation with
+            %           fields
+            %               docId (string)   : document identifiers
+            %               embedding (double): corresponding embeddings
             %   Legacy Reference
             %       Mirrors the behaviour of `SearchIndexModel.process`.
-            %   Pseudocode:
-            %       1. Initialise search backend
-            %       2. Upsert documents and embeddings
-            %       3. Return index identifier
-            error("reg:model:NotImplemented", ...
-                "CorpusModel.buildIndex is not implemented.");
+            arguments
+                ~
+                indexInputsStruct struct
+                indexInputsStruct.documentsTbl table
+                indexInputsStruct.embeddingsMat double
+            end
+            documentsTbl = indexInputsStruct.documentsTbl;
+            requiredVars = ["docId", "text"];
+            assert(all(ismember(requiredVars, ...
+                documentsTbl.Properties.VariableNames)), ...
+                "reg:model:InvalidDocumentTbl", ...
+                "documentsTbl must contain docId and text variables.");
+            assert(size(indexInputsStruct.embeddingsMat, 1) == ...
+                height(documentsTbl), ...
+                "reg:model:SizeMismatch", ...
+                "embeddingsMat rows must equal number of documents.");
+            searchIndexStruct = struct( ...
+                "docId", documentsTbl.docId, ...
+                "embedding", indexInputsStruct.embeddingsMat);
+            % searchIndexStruct schema:
+            %   docId (string): document identifier
+            %   embedding (double [1xD]): embedding vector for document
         end
 
         function results = queryIndex(~, queryString, alpha, topK) %#ok<INUSD>
