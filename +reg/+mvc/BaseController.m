@@ -22,10 +22,21 @@ classdef BaseController < handle
             %   VIEW  = reg.view.SomeView();
             %   CTLR  = reg.controller.SomeController(MODEL, VIEW);
             %   CTLR.run();  % see `reg_pipeline` for a full example
-            if nargin > 0
-                obj.Model = model;
-                obj.View = view;
+
+            arguments (Output)
+                obj (1,1) reg.mvc.BaseController
             end
+            arguments
+                model (1,1) reg.mvc.BaseModel
+                view (1,1) reg.mvc.BaseView
+            end
+
+            % Expected wiring pseudocode:
+            %   obj.Model <- model;
+            %   obj.View <- view;
+
+            error('reg:mvc:NotImplemented', ...
+                'BaseController constructor must wire model and view.');
         end
 
         function run(obj) %#ok<MANU>

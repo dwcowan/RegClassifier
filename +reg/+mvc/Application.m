@@ -26,11 +26,23 @@ classdef Application < handle
             %APPLICATION Construct the application container.
             %   OBJ = APPLICATION(MODEL, VIEW, CONTROLLER) simply stores the
             %   provided components for later execution.
-            if nargin > 0
-                obj.Model = model;
-                obj.View = view;
-                obj.Controller = controller;
+
+            arguments (Output)
+                obj (1,1) reg.mvc.Application
             end
+            arguments
+                model (1,1) reg.mvc.BaseModel
+                view (1,1) reg.mvc.BaseView
+                controller (1,1) reg.mvc.BaseController
+            end
+
+            % Expected wiring pseudocode:
+            %   obj.Model <- model;
+            %   obj.View <- view;
+            %   obj.Controller <- controller;
+
+            error('reg:mvc:NotImplemented', ...
+                'Application constructor must wire model, view and controller.');
         end
 
         function start(obj)
