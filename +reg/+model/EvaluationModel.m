@@ -14,24 +14,26 @@ classdef EvaluationModel < reg.mvc.BaseModel
             end
         end
 
-        function input = load(~, varargin)
+        function input = load(~, predictions, references)
             %LOAD Package predictions and references for evaluation.
-            %   INPUT = LOAD(~, PRED, REF) returns a struct with fields
-            %   ``Predictions`` and ``References`` capturing the supplied
-            %   arrays.
+            %   INPUT = LOAD(~, PREDICTIONS, REFERENCES) is expected to
+            %   produce a struct ``INPUT`` with fields ``Predictions`` and
+            %   ``References`` capturing the supplied arrays.
             arguments
                 ~
-                varargin (1,:) cell
+                predictions = []
+                references  = []
             end
-            pred = [];
-            ref = [];
-            if numel(varargin) >= 1
-                pred = varargin{1};
+            arguments (Output)
+                input struct
+                input.Predictions
+                input.References
             end
-            if numel(varargin) >= 2
-                ref = varargin{2};
-            end
-            input = struct('Predictions', pred, 'References', ref);
+            % Pseudocode describing packaging of predictions and references
+            %   input.Predictions = predictions;
+            %   input.References  = references;
+            error("reg:model:NotImplemented", ...
+                "EvaluationModel.load is not implemented.");
         end
 
         function result = process(obj, input) %#ok<INUSD>
