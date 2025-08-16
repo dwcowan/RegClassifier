@@ -25,5 +25,21 @@ classdef PipelineController < reg.mvc.BaseController
                 obj.View.display(result);
             end
         end
+
+        function runTraining(obj)
+            %RUNTRAINING Execute only the training workflow.
+            result = obj.PipelineModel.runTraining();
+            if ~isempty(obj.View)
+                obj.View.display(result);
+            end
+        end
+
+        function runFineTune(obj)
+            %RUNFINETUNE Execute only the fine-tuning workflow.
+            result = obj.PipelineModel.runFineTune();
+            if ~isempty(obj.View)
+                obj.View.display(result);
+            end
+        end
     end
 end
