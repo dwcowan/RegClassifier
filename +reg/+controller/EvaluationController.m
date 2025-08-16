@@ -111,26 +111,14 @@ classdef EvaluationController < reg.mvc.BaseController
 
         function results = evaluateLabelledData(obj, embeddings, labelMatrix, opts) %#ok<INUSD>
             %EVALUATELABELLEDDATA Run evaluation on runtime-labelled data.
-            %   RESULTS = EVALUATELABELLEDDATA(EMBEDDINGS, LABELMATRIX) ingests
-            %   label information via ``RuntimeLabelModel`` and computes metrics.
-            %   The returned ``results`` struct merges evaluation outputs with a
-            %   ``Metrics`` field whose schema mirrors ``EvaluationModel.process``:
-            %       - results.Metrics.accuracy   (:,1 double)
-            %       - results.Metrics.loss       (:,1 double)
-            %       - results.Metrics.perLabel   (table with ``LabelIdx``,
-            %                                     ``RecallAtK`` and ``Support``)
-            %       - results.Metrics.clustering (struct with ``purity``,
-            %                                     ``silhouette`` and ``idx``)
-            %       - results.Metrics.epochs     (:,1 double) optional
-            %   Additional bookkeeping fields may also be present for plotting.
-            %
+            %   Placeholder illustrating the intended evaluation workflow.
             %   Evaluation Flow (pseudocode):
-            %       rlm   = reg.model.RuntimeLabelModel();
-            %       cfg   = rlm.load(labelMatrix);
-            %       lbls  = rlm.process(cfg);
-            %       raw   = obj.Model.load(embeddings, lbls);
-            %       eval  = obj.Model.process(raw);
-            %       metrics = eval.Metrics;
+            %       rlm  = reg.model.RuntimeLabelModel();
+            %       cfg  = rlm.load(labelMatrix);
+            %       lbls = rlm.process(cfg);
+            %       raw  = obj.Model.load(embeddings, lbls);
+            %       eval = obj.Model.process(raw);
+            %       results = eval;
             arguments
                 obj
                 embeddings double
@@ -138,44 +126,8 @@ classdef EvaluationController < reg.mvc.BaseController
                 opts struct = struct()
             end
 
-            % Step 1: load evaluation inputs and compute core metrics
-            evalRaw = obj.Model.load(embeddings, labelMatrix);
-            evalResult = obj.Model.process(evalRaw);
-            metrics = evalResult.Metrics;
-            % Pseudocode/validation stub:
-            %   assert(isfield(metrics, 'accuracy') && iscolumn(metrics.accuracy));
-            %   assert(isfield(metrics, 'loss') && iscolumn(metrics.loss));
-            %   assert(isfield(metrics, 'perLabel') && istable(metrics.perLabel));
-            %   assert(isfield(metrics, 'clustering') && isstruct(metrics.clustering));
-            %   if isfield(metrics, 'epochs')
-            %       assert(iscolumn(metrics.epochs));
-            %       assert(numel(metrics.epochs) == numel(metrics.accuracy));
-            %   end
-
-            % Per-label evaluation via consolidated model
-            try
-                metrics.perLabel = obj.Model.perLabelMetrics(
-                    embeddings, labelMatrix, 10);
-            catch
-                metrics.perLabel = [];
-            end
-
-            % Clustering evaluation via consolidated model
-            try
-                metrics.clustering = obj.Model.clusteringMetrics(
-                    embeddings, labelMatrix, 10);
-            catch
-                metrics.clustering = [];
-            end
-
-            % Step 2: persist metrics using metrics view
-            obj.MetricsView.log(metrics);
-
-            % Return combined results including metrics for further reporting
-            results = evalResult;
-            results.Metrics = metrics;
-            results.embeddings = embeddings;
-            results.labelMatrix = labelMatrix;
+            error("reg:controller:NotImplemented", ...
+                "EvaluationController.evaluateLabelledData is not implemented.");
         end
     end
 end
