@@ -30,20 +30,44 @@ classdef PipelineController < reg.mvc.BaseController
             net = obj.PipelineModel.TrainingModel.fineTuneEncoder(triplets);
         end
 
-        function projE = runProjectionHead(obj, embeddings)
+        function projected = runProjectionHead(obj, embeddings)
             %RUNPROJECTIONHEAD Train projection head on embeddings.
-            %   PROJE = RUNPROJECTIONHEAD(obj, EMBEDDINGS) builds contrastive
+            %   PROJECTED = RUNPROJECTIONHEAD(obj, EMBEDDINGS) builds contrastive
             %   triplets and delegates training to
             %   TrainingModel.trainProjectionHead.
 
             triplets = obj.PipelineModel.TrainingModel.prepareDataset(embeddings);
-            projE = obj.PipelineModel.TrainingModel.trainProjectionHead(triplets);
+            projected = obj.PipelineModel.TrainingModel.trainProjectionHead(triplets);
         end
 
         function run(obj)
-            %RUN Execute the full pipeline through the PipelineModel.
+            %RUN Execute the full pipeline end-to-end.
 
-            result = obj.PipelineModel.run();
+            cfgRaw = obj.PipelineModel.ConfigModel.load();
+            cfg = obj.PipelineModel.ConfigModel.process(cfgRaw);
+
+            docs = obj.PipelineModel.ingestCorpus(cfg);
+            trainOut = obj.PipelineModel.runTraining(cfg);
+
+            if isfield(cfg, 'fineTuneEpochs') && cfg.fineTuneEpochs > 0
+                trainOut.FineTune = obj.runFineTune(cfg);
+            end
+
+            if isfield(cfg, 'projEpochs') && cfg.projEpochs > 0
+                trainOut.ProjectedEmbeddings = obj.runProjectionHead(trainOut.Embeddings);
+            end
+
+            evalEmbeddings = trainOut.Embeddings;
+            if isfield(trainOut, 'ProjectedEmbeddings')
+                evalEmbeddings = trainOut.ProjectedEmbeddings;
+            end
+
+            evalController = reg.controller.EvaluationController( ...
+                obj.PipelineModel.EvaluationModel, reg.model.ReportModel());
+            metrics = evalController.run(evalEmbeddings, []);
+
+            result = struct('Documents', docs, 'Training', trainOut, ...
+                'Metrics', metrics);
 
             if ~isempty(obj.View) && isfield(result, "Metrics")
                 obj.View.log(result.Metrics);
@@ -56,14 +80,6 @@ classdef PipelineController < reg.mvc.BaseController
         function runTraining(obj)
             %RUNTRAINING Execute only the training workflow.
             result = obj.PipelineModel.runTraining();
-            if ~isempty(obj.View)
-                obj.View.display(result);
-            end
-        end
-
-        function runFineTune(obj)
-            %RUNFINETUNE Execute only the fine-tuning workflow.
-            result = obj.PipelineModel.runFineTune();
             if ~isempty(obj.View)
                 obj.View.display(result);
             end
