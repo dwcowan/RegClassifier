@@ -34,22 +34,27 @@ classdef EvaluationController < reg.mvc.BaseController
             %   plotView      - view used for visualisations (optional)
             %   metricsView   - view used for logging metrics (optional)
 
-            if nargin < 3 || isempty(view)
-                view = reg.view.ReportView();
+            arguments
+                evalModel
+                reportModel
+                view = reg.view.ReportView()
+                vizModel = reg.model.VisualizationModel()
+                plotView = reg.view.PlotView()
+                metricsView = reg.view.MetricsView()
             end
-            obj@reg.mvc.BaseController(evalModel, view);
-            obj.ReportModel = reportModel;
-            if nargin >= 4 && ~isempty(vizModel)
-                obj.VisualizationModel = vizModel;
+            arguments (Output)
+                obj reg.controller.EvaluationController
             end
-            if nargin >= 5 && ~isempty(plotView)
-                obj.PlotView = plotView;
-            else
-                obj.PlotView = reg.view.PlotView();
-            end
-            if nargin >= 6 && ~isempty(metricsView)
-                obj.MetricsView = metricsView;
-            end
+
+            % Pseudocode wiring for models and views
+            %   obj@reg.mvc.BaseController(evalModel, view);
+            %   obj.ReportModel = reportModel;
+            %   obj.VisualizationModel = vizModel;
+            %   obj.PlotView = plotView;
+            %   obj.MetricsView = metricsView;
+
+            error("reg:controller:NotImplemented", ...
+                "EvaluationController constructor is not implemented.");
         end
 
         function metrics = run(obj, embeddings, labelMatrix)
