@@ -12,6 +12,14 @@ classdef VisualizationModel < reg.mvc.BaseModel
             %VISUALIZATIONMODEL Construct visualization model.
             %   Currently accepts no configuration but is defined for
             %   symmetry with other models in the MVC framework.
+            arguments
+                varargin (1,:) cell
+            end
+            arguments (Output)
+                obj reg.model.VisualizationModel
+            end
+            error("reg:model:NotImplemented", ...
+                "VisualizationModel constructor is not implemented.");
         end
 
         function fig = plotTrends(~, metrics)
@@ -53,6 +61,12 @@ classdef VisualizationModel < reg.mvc.BaseModel
             arguments
                 ~
                 metrics struct
+            end
+            arguments (Output)
+                data struct
+                data.epochs (:,1) double
+                data.accuracy (:,1) double
+                data.loss (:,1) double
             end
 
             % Pseudocode:
