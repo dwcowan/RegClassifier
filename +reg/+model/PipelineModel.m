@@ -244,14 +244,28 @@ classdef PipelineModel < reg.mvc.BaseModel
                 out.TripletsTbl table
                 out.Network struct
             end
-            documentsTbl = obj.TrainingModel.ingest(cfg);
-            chunksTbl = obj.TrainingModel.chunk(documentsTbl);
-            [weakLabelsMat, bootLabelsMat] = obj.TrainingModel.weakLabel(chunksTbl);
-            rawStruct = struct('Chunks', chunksTbl, 'WeakLabels', weakLabelsMat, ...
-                'BootLabels', bootLabelsMat);
-            tripletsTbl = obj.TrainingModel.prepareDataset(rawStruct);
-            net = obj.TrainingModel.fineTuneEncoder(tripletsTbl);
-            out = struct('TripletsTbl', tripletsTbl, 'Network', net);
+            % Step 1: ingest documents according to configuration
+            % documentsTbl = obj.TrainingModel.ingest(cfg);
+
+            % Step 2: chunk documents into passages
+            % chunksTbl = obj.TrainingModel.chunk(documentsTbl);
+
+            % Step 3: generate weak labels for each chunk
+            % [weakLabelsMat, bootLabelsMat] = obj.TrainingModel.weakLabel(chunksTbl);
+
+            % Step 4: prepare triplet dataset for contrastive learning
+            % tripletsTbl = obj.TrainingModel.prepareDataset(struct( ...
+            %     'Chunks', chunksTbl, 'WeakLabels', weakLabelsMat, ...
+            %     'BootLabels', bootLabelsMat));
+
+            % Step 5: fine-tune encoder network using triplets
+            % net = obj.TrainingModel.fineTuneEncoder(tripletsTbl);
+
+            % Step 6: package triplets and network into output struct
+            % out = struct('TripletsTbl', tripletsTbl, 'Network', net);
+
+            error("reg:model:NotImplemented", ...
+                "PipelineModel.runFineTune is not implemented.");
         end
 
         function projected = runProjectionHead(obj, embeddings)
