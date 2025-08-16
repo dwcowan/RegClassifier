@@ -9,9 +9,17 @@ classdef EvaluationModel < reg.mvc.BaseModel
 
     methods
         function obj = EvaluationModel(cfgModel)
-            if nargin > 0
-                obj.ConfigModel = cfgModel;
+            arguments
+                cfgModel reg.model.ConfigModel = reg.model.ConfigModel()
             end
+            arguments (Output)
+                obj reg.model.EvaluationModel
+            end
+            % Pseudocode for constructor:
+            %   obj.ConfigModel = cfgModel;
+            %   perform additional setup tasks as required
+            error("reg:model:NotImplemented", ...
+                "EvaluationModel constructor is not implemented.");
         end
 
         function input = load(~, predictions, references)
@@ -21,13 +29,13 @@ classdef EvaluationModel < reg.mvc.BaseModel
             %   ``References`` capturing the supplied arrays.
             arguments
                 ~
-                predictions = []
-                references  = []
+                predictions double = []
+                references  double = []
             end
             arguments (Output)
                 input struct
-                input.Predictions
-                input.References
+                input.Predictions double
+                input.References double
             end
             % Pseudocode describing packaging of predictions and references
             %   input.Predictions = predictions;
