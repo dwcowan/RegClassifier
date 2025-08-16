@@ -183,12 +183,12 @@ classdef CorpusModel < reg.mvc.BaseModel
                 documentsTbl.Properties.VariableNames)), ...
                 "reg:model:InvalidDocumentTbl", ...
                 "documentsTbl must contain docId, text and meta variables.");
-            statusStruct = struct( ...
-                "numDocuments", height(documentsTbl), ...
-                "docIds", documentsTbl.docId);
-            % statusStruct schema:
-            %   numDocuments (double): number of documents persisted
-            %   docIds (string): identifiers of persisted documents
+            % Pseudocode:
+            %   1. Persist documentsTbl to storage backend
+            %   2. Populate statusStruct summary of persisted documents
+
+            error("reg:model:NotImplemented", ...
+                "CorpusModel.persistDocuments is not implemented.");
         end
 
         function searchIndexStruct = buildIndex(~, indexInputsStruct)
@@ -223,12 +223,12 @@ classdef CorpusModel < reg.mvc.BaseModel
                 height(documentsTbl), ...
                 "reg:model:SizeMismatch", ...
                 "embeddingsMat rows must equal number of documents.");
-            searchIndexStruct = struct( ...
-                "docId", documentsTbl.docId, ...
-                "embedding", indexInputsStruct.embeddingsMat);
-            % searchIndexStruct schema:
-            %   docId (string): document identifier
-            %   embedding (double [1xD]): embedding vector for document
+            % Pseudocode:
+            %   1. Combine docId values with embeddingsMat
+            %   2. Return searchIndexStruct representing the index
+
+            error("reg:model:NotImplemented", ...
+                "CorpusModel.buildIndex is not implemented.");
         end
 
         function results = queryIndex(~, queryString, alpha, topK) %#ok<INUSD>
