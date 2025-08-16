@@ -36,8 +36,16 @@ classdef EvaluationModel < reg.mvc.BaseModel
 
         function result = process(obj, input) %#ok<INUSD>
             %PROCESS Calculate evaluation metrics from INPUT.
-            %   RESULT = PROCESS(obj, INPUT) returns a struct containing a
-            %   ``Metrics`` field with evaluation scores.
+            %   RESULT = PROCESS(obj, INPUT) returns a struct with a
+            %   ``Metrics`` field summarising evaluation outcomes.  The
+            %   ``Metrics`` struct is expected to contain:
+            %     - ``accuracy``   (:,1 double) accuracy per epoch
+            %     - ``loss``       (:,1 double) loss values per epoch
+            %     - ``perLabel``   (table) per-label Recall@K scores
+            %     - ``clustering`` (struct) clustering diagnostics such as
+            %                       ``purity``, ``silhouette`` and ``idx``
+            %   Additional fields (e.g. ``epochs``) may be supplied for
+            %   plotting or bookkeeping purposes.
             arguments
                 obj
                 input (1,1) struct
@@ -47,6 +55,13 @@ classdef EvaluationModel < reg.mvc.BaseModel
                 cfg = obj.ConfigModel.process(cfgRaw); %#ok<NASGU>
             end
             result = struct('Metrics', []);
+            % Pseudocode/validation stub:
+            %   m = result.Metrics;
+            %   assert(isfield(m, 'accuracy') && iscolumn(m.accuracy));
+            %   assert(isfield(m, 'loss') && iscolumn(m.loss));
+            %   assert(isfield(m, 'perLabel'));
+            %   assert(isfield(m, 'clustering'));
+            %   assert(numel(m.accuracy) == numel(m.loss));
             error("reg:model:NotImplemented", ...
                 "EvaluationModel.process is not implemented.");
         end

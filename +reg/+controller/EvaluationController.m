@@ -141,10 +141,16 @@ classdef EvaluationController < reg.mvc.BaseController
         function results = evaluateGoldPack(obj, embeddings, labelMatrix, opts) %#ok<INUSD>
             %EVALUATEGOLDPACK Run evaluation and assemble metrics.
             %   RESULTS = EVALUATEGOLDPACK(EMBEDDINGS, LABELMATRIX) evaluates
-            %   supplied in-memory data, computes metrics (overall, per-label
-            %   and clustering) and logs them.  The returned struct combines
-            %   evaluation outputs and a ``Metrics`` field for downstream
-            %   processing.
+            %   supplied in-memory data, computes metrics and logs them.  The
+            %   returned ``results`` struct merges evaluation outputs with a
+            %   ``Metrics`` field whose schema mirrors ``EvaluationModel.process``:
+            %       results.Metrics.accuracy   (:,1 double)
+            %       results.Metrics.loss       (:,1 double)
+            %       results.Metrics.perLabel   (table)
+            %       results.Metrics.clustering (struct with ``purity``,
+            %                                   ``silhouette`` and ``idx``)
+            %   Additional bookkeeping fields (e.g. ``epochs``) may also be
+            %   present for plotting.
             %
             %   Legacy mapping:
             %       Step 1  ↔ `eval_retrieval`
@@ -162,6 +168,11 @@ classdef EvaluationController < reg.mvc.BaseController
             evalRaw = obj.Model.load(embeddings, labelMatrix);
             evalResult = obj.Model.process(evalRaw);
             metrics = evalResult.Metrics;
+            % Pseudocode/validation stub:
+            %   assert(isfield(metrics, 'accuracy'));
+            %   assert(isfield(metrics, 'loss'));
+            %   assert(isfield(metrics, 'perLabel'));
+            %   assert(isfield(metrics, 'clustering'));
 
             % Per-label evaluation via consolidated model
             try
