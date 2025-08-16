@@ -56,8 +56,9 @@ classdef DatabaseModel < reg.mvc.BaseModel
             %       chunkId       - Unique chunk identifier.
             %       lbl_<label>   - Predicted label for each class.
             %       score_<label> - Associated score for each class.
-            %   Extra label columns should be detected dynamically by scanning
-            %   for `lbl_*`/`score_*` pairs so new labels require no code changes.
+            %   Extra label columns should be detected dynamically (e.g., scan
+            %   for `lbl_*`/`score_*` pairs) so new labels require no code
+            %   changes.
             %   Parameters
             %       predictionTable (table): Predictions to persist.
             %   Returns
@@ -88,15 +89,18 @@ classdef DatabaseModel < reg.mvc.BaseModel
             %   3. Commit or rollback transaction and close connection if done
             %
             % % Placeholder assertions for mandatory columns prior to upsert
-            % % labels = ["positive","negative"]; % TODO: detect dynamically
-            % % requiredCols = ["chunkId", "lbl_" + labels, "score_" + labels];
-            % % assert(all(ismember(requiredCols, ...
+            % % lblVars  = startsWith(predictionTable.Properties.VariableNames,
+            % %                      "lbl_");
+            % % labels   = erase(predictionTable.Properties.VariableNames(lblVars),
+            % %                      "lbl_");
+            % % required = ["chunkId", "lbl_" + labels, "score_" + labels];
+            % % assert(all(ismember(required,
             % %     predictionTable.Properties.VariableNames)), ...
             % %     "Prediction table missing required columns.");
             % %
-            % % To handle additional label columns, detect all `lbl_*` variables
-            % % and ensure matching `score_*` fields exist. This allows new
-            % % labels without modifying this method.
+            % % Detecting labels dynamically as above ensures new `lbl_*` fields
+            % % automatically trigger checks for corresponding `score_*`
+            % % columns before upserting.
             %
             % TODO: implement transactional upsert and conflict handling
             error("reg:model:NotImplemented", ...
