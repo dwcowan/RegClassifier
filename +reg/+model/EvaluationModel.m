@@ -55,63 +55,25 @@ classdef EvaluationModel < reg.mvc.BaseModel
                 obj
                 input (1,1) struct
             end
-            if ~isempty(obj.ConfigModel)
-                cfgRaw = obj.ConfigModel.load();
-                cfg = obj.ConfigModel.process(cfgRaw); %#ok<NASGU>
+            arguments (Output)
+                result struct
+                result.Metrics struct
+                result.Metrics.accuracy (:,1) double
+                result.Metrics.loss (:,1) double
+                result.Metrics.perLabel table
+                result.Metrics.clustering struct
+                result.Metrics.epochs (:,1) double
             end
 
-            % Basic input validation.  Predictions and references, when
-            % supplied, must align in length to allow meaningful metrics.
-            if ~isempty(input.Predictions) && ~isempty(input.References)
-                assert(numel(input.Predictions) == numel(input.References), ...
-                    'reg:model:InvalidInput', ...
-                    '"Predictions" and "References" must have matching lengths.');
-            end
+            % The evaluation workflow is expected to:
+            %   1. Optionally load and process configuration settings.
+            %   2. Validate prediction and reference inputs for consistency.
+            %   3. Compute metrics such as accuracy, loss, per-label Recall@K
+            %      and clustering diagnostics.
+            %   4. Package computed metrics into RESULT.Metrics.
 
-            % Minimal metrics structure; actual evaluation logic is yet to
-            % be implemented.  Default fields are provided so downstream
-            % components can rely on a consistent schema.
-            metrics = struct( ...
-                'accuracy', double.empty(0,1), ...
-                'loss',     double.empty(0,1), ...
-                'perLabel', table('Size',[0,3], ...
-                    'VariableTypes', {'double','double','double'}, ...
-                    'VariableNames', {'LabelIdx','RecallAtK','Support'}), ...
-                'clustering', struct('purity', [], 'silhouette', [], 'idx', []) ...
-            );
-
-            % Validate required fields and basic schema expectations
-            assert(iscolumn(metrics.accuracy), ...
-                'reg:model:InvalidMetrics', '"accuracy" must be a column vector.');
-            assert(iscolumn(metrics.loss), ...
-                'reg:model:InvalidMetrics', '"loss" must be a column vector.');
-            assert(numel(metrics.accuracy) == numel(metrics.loss), ...
-                'reg:model:InvalidMetrics', ...
-                '"accuracy" and "loss" must have matching lengths.');
-
-            assert(istable(metrics.perLabel), ...
-                'reg:model:InvalidMetrics', '"perLabel" must be a table.');
-            reqPL = {'LabelIdx','RecallAtK','Support'};
-            assert(all(ismember(reqPL, metrics.perLabel.Properties.VariableNames)), ...
-                'reg:model:InvalidMetrics', ...
-                '"perLabel" must contain variables %s.', strjoin(reqPL, ', '));
-
-            assert(isstruct(metrics.clustering), ...
-                'reg:model:InvalidMetrics', '"clustering" must be a struct.');
-            reqClust = {'purity','silhouette','idx'};
-            assert(all(isfield(metrics.clustering, reqClust)), ...
-                'reg:model:InvalidMetrics', ...
-                '"clustering" struct must contain fields %s.', strjoin(reqClust, ', '));
-
-            if isfield(metrics, 'epochs')
-                assert(iscolumn(metrics.epochs), ...
-                    'reg:model:InvalidMetrics', '"epochs" must be a column vector.');
-                assert(numel(metrics.epochs) == numel(metrics.accuracy), ...
-                    'reg:model:InvalidMetrics', ...
-                    '"epochs" must match length of "accuracy".');
-            end
-
-            result = struct('Metrics', metrics);
+            error("reg:model:NotImplemented", ...
+                "EvaluationModel.process is not implemented.");
         end
 
         function validateMetrics(~, m) %#ok<INUSD>
