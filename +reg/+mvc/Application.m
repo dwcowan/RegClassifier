@@ -16,16 +16,18 @@ classdef Application < handle
     % - Computer Vision Toolbox
 
     properties
-        Model
-        View
-        Controller
+        Model (1,1) reg.mvc.BaseModel
+        View (1,1) reg.mvc.BaseView
+        Controller (1,1) reg.mvc.BaseController
     end
 
     methods
         function obj = Application(model, view, controller)
             %APPLICATION Construct the application container.
-            %   OBJ = APPLICATION(MODEL, VIEW, CONTROLLER) simply stores the
-            %   provided components for later execution.
+            %   OBJ = APPLICATION(MODEL, VIEW, CONTROLLER) stores the provided
+            %   components for later execution. MODEL, VIEW and CONTROLLER are
+            %   enforced to be reg.mvc.BaseModel, reg.mvc.BaseView and
+            %   reg.mvc.BaseController respectively.
 
             arguments (Output)
                 obj (1,1) reg.mvc.Application
