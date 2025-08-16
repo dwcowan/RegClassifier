@@ -1,0 +1,9 @@
+{
+    "schema_version": 1,
+    "files": {
+        "example.json": {
+            "sha256": "d7e8fbb7f263b3e2a0c9c7ffa50e0f9c0da0eb4c19a1e0f5afbd6f2b028d0b7c",
+            "generator": "tests.fixtures.gen.generateExample"
+        }
+    }
+}
