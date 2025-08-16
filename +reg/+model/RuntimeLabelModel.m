@@ -18,13 +18,21 @@ classdef RuntimeLabelModel < reg.mvc.BaseModel
             %           source - normalised reference to label data
             %   Pseudocode:
             %       1. Resolve `source` into a standard form
-            %       2. Perform lightweight existence checks
+            %       2. Validate the resolved reference
             %       3. Return configuration for `process`
-            arguments
+            arguments (Input)
                 ~
-                source {mustBeTextScalarOrStruct}
+                source
             end
-            cfg = struct('source', source);
+            arguments (Output)
+                cfg (1,1) struct
+                cfg.source
+            end
+            % Pseudocode:
+            %   1. Resolve and normalise `source`
+            %   2. Verify existence or validity
+            error("reg:model:NotImplemented", ...
+                "RuntimeLabelModel.load is not implemented.");
         end
 
         function labelTbl = process(~, cfg) %#ok<INUSD>
@@ -60,11 +68,11 @@ classdef RuntimeLabelModel < reg.mvc.BaseModel
     end
 end
 
-function mustBeTextScalarOrStruct(value)
+function mustBeTextScalarOrStruct(~)
 %MUSTBETEXTSCALARORSTRUCT Validate text or struct input.
-%   Accepts string/char vectors or structs; throws error otherwise.
-    if ~(ischar(value) || isstring(value) || isstruct(value))
-        error("reg:model:InvalidSource", ...
-            "Source must be text or struct.");
-    end
+%   Pseudocode:
+%       1. Check if value is text scalar or struct
+%       2. If not, raise an error
+    error("reg:model:NotImplemented", ...
+        "mustBeTextScalarOrStruct is not implemented.");
 end
