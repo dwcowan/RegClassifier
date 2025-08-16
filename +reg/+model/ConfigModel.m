@@ -1,5 +1,10 @@
 classdef ConfigModel < reg.mvc.BaseModel
     %CONFIGMODEL Centralised configuration shared across models.
+    %   Configuration schema highlights:
+    %       inputDir (string): source document directory
+    %       gpuEnabled (logical): flag enabling GPU acceleration
+    %       knobs (struct): tuning parameters for chunking, embeddings,
+    %           projection head, fine-tuning and misc settings
 
     properties
         % Directory containing source PDF documents
@@ -87,55 +92,74 @@ classdef ConfigModel < reg.mvc.BaseModel
 
         function validatePaths(obj) %#ok<MANU>
             %VALIDATEPATHS Ensure required file system paths exist.
-            %   Intended to error when mandatory paths are missing.
+            %   Role in pipeline: pre-flight check before any file I/O.
+            arguments
+                obj (1,1) reg.model.ConfigModel
+            end
             %   Pseudocode:
-            %       1. Check existence of obj.inputDir
-            %       2. Raise error if path is absent
+            %       inputs:  obj with configured inputDir
+            %       steps:   verify isfolder(obj.inputDir)
+            %       output:  none (error on failure)
             error("reg:model:NotImplemented", ...
                 "ConfigModel.validatePaths is not implemented.");
         end
 
         function validateGPUAvailability(obj) %#ok<MANU>
             %VALIDATEGPUAVAILABILITY Confirm GPU can be used when requested.
-            %   Intended to verify GPU availability when gpuEnabled is true.
+            %   Role in pipeline: guard compute stage requiring GPU.
+            arguments
+                obj (1,1) reg.model.ConfigModel
+            end
             %   Pseudocode:
-            %       1. If obj.gpuEnabled, ensure GPU device exists
-            %       2. Raise error if none found
+            %       inputs:  obj.gpuEnabled
+            %       checks:  if obj.gpuEnabled && ~gpuDeviceAvailable, error
+            %       output:  none (error on failure)
             error("reg:model:NotImplemented", ...
                 "ConfigModel.validateGPUAvailability is not implemented.");
         end
 
-        function K = loadKnobs(obj, varargin) %#ok<INUSD>
+        function K = loadKnobs(obj, jsonPath)
             %LOADKNOBS Load knob values from JSON and apply overrides.
-            %   K = LOADKNOBS(obj, jsonPath) reads knob settings and stores
-            %   them on the model.
-            %   Legacy Reference
-            %       Equivalent to `reg.load_knobs`.
+            %   Role in pipeline: ingest tuning knobs before training.
+            arguments
+                obj (1,1) reg.model.ConfigModel
+                jsonPath (1,1) string = ""
+            end
+            arguments (Output)
+                K (1,1) struct
+            end
             %   Pseudocode:
-            %       1. Read knob JSON file
-            %       2. Apply overrides to configuration properties
-            %       3. Return struct of knob values
+            %       inputs:  jsonPath pointing to knob file
+            %       steps:   read file -> decode JSON -> store in obj.knobs
+            %       output:  struct of knob values
             error("reg:model:NotImplemented", ...
                 "ConfigModel.loadKnobs is not implemented.");
         end
 
         function validateKnobs(obj) %#ok<MANU>
             %VALIDATEKNOBS Perform basic sanity checks on loaded knobs.
-            %   Intended to error when knob values fall outside supported
-            %   ranges.
-            %   Legacy Reference
-            %       Equivalent to `reg.validate_knobs`.
+            %   Role in pipeline: ensure tuning ranges before training.
+            arguments
+                obj (1,1) reg.model.ConfigModel
+            end
+            %   Pseudocode:
+            %       inputs:  obj.knobs struct
+            %       checks:  verify required fields and allowable ranges
+            %       output:  none (error on failure)
             error("reg:model:NotImplemented", ...
                 "ConfigModel.validateKnobs is not implemented.");
         end
 
         function printActiveKnobs(obj) %#ok<MANU>
             %PRINTACTIVEKNOBS Pretty-print active knob configuration.
-            %   Legacy Reference
-            %       Equivalent to `reg.print_active_knobs`.
+            %   Role in pipeline: diagnostic summary for operators.
+            arguments
+                obj (1,1) reg.model.ConfigModel
+            end
             %   Pseudocode:
-            %       1. Format knob values into readable table
-            %       2. Display via fprintf or logging facility
+            %       inputs:  obj.knobs struct
+            %       steps:   convert to table/string -> display
+            %       output:  none
             error("reg:model:NotImplemented", ...
                 "ConfigModel.printActiveKnobs is not implemented.");
         end
@@ -153,19 +177,39 @@ classdef ConfigModel < reg.mvc.BaseModel
                 "ConfigModel.applySeeds is not implemented.");
         end
 
-        function cfgStruct = load(~, varargin) %#ok<INUSD>
+        function cfgStruct = load(obj, cfgPath)
             %LOAD Retrieve configuration from source.
-            %   cfgStruct = LOAD(obj) reads knob settings.
-            %   This stub retains legacy semantics of `load_knobs` and
-            %   should be overridden by concrete implementations.
+            %   Role in pipeline: entry point for acquiring raw settings.
+            arguments
+                obj (1,1) reg.model.ConfigModel
+                cfgPath (1,1) string = ""
+            end
+            arguments (Output)
+                cfgStruct (1,1) struct
+            end
+            %   Pseudocode:
+            %       inputs:  cfgPath to config file (optional)
+            %       steps:   read file -> decode to struct
+            %       output:  cfgStruct with raw configuration values
             error("reg:model:NotImplemented", ...
                 "ConfigModel.load is not implemented.");
         end
 
-        function validatedCfg = process(~, cfgStruct) %#ok<INUSD>
+        function validatedCfg = process(obj, cfgStruct)
             %PROCESS Validate configuration values.
-            %   validatedCfg = PROCESS(obj, cfgStruct) performs sanity checks.
-            %   Override in subclasses to apply custom validation logic.
+            %   Role in pipeline: normalise and check configuration before use.
+            arguments
+                obj (1,1) reg.model.ConfigModel
+                cfgStruct (1,1) struct
+            end
+            arguments (Output)
+                validatedCfg (1,1) struct
+            end
+            %   Pseudocode:
+            %       inputs:  cfgStruct from load
+            %       steps:   merge with defaults -> validatePaths ->
+            %                validateGPUAvailability -> validateKnobs
+            %       output:  validatedCfg ready for downstream models
             error("reg:model:NotImplemented", ...
                 "ConfigModel.process is not implemented.");
         end
