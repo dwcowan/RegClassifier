@@ -35,15 +35,15 @@ classdef Application < handle
 
         function start(obj)
             %START Kick off the application workflow.
-            %   Delegates to CONTROLLER.RUN which is expected to coordinate
-            %   calls between MODEL and VIEW. Ensure the following MATLAB
-            %   toolboxes are installed prior to execution:
-            %   Text Analytics Toolbox, Deep Learning Toolbox, Statistics and
-            %   Machine Learning Toolbox, Database Toolbox, Parallel Computing
-            %   Toolbox, MATLAB Report Generator, Computer Vision Toolbox.
-            %   Dependency checks are not implemented here.
-
-            obj.Controller.run();
+            %   Preconditions: MODEL, VIEW and CONTROLLER must already be
+            %   constructed, and CONTROLLER should reference the supplied
+            %   MODEL and VIEW instances (e.g. CONTROLLER.Model = MODEL).
+            %   Pseudocode illustrating the expected control flow:
+            %       % controller <- obj.Controller
+            %       % controller.run()  % orchestrates Model.load, Model.process
+            %       %                   % and View.display
+            error('reg:mvc:NotImplemented', ...
+                'Application.start is not implemented.');
         end
     end
 end
