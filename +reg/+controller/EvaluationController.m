@@ -85,7 +85,7 @@ classdef EvaluationController < reg.mvc.BaseController
             % Step 3: create diagnostic plots
             metricsStruct = results.Metrics;
             obj.Model.validateMetrics(metricsStruct);
-            trendsFig = obj.VisualizationModel.plotTrends(metricsStruct);
+            trendsData = obj.VisualizationModel.plotTrendsData(metricsStruct);
 
             coMatrix = [];
             labels = [];
@@ -105,8 +105,8 @@ classdef EvaluationController < reg.mvc.BaseController
 
             % Step 4: hand off plots to plot view
             if ~isempty(obj.PlotView)
+                obj.PlotView.plotTrends(trendsData);
                 obj.PlotView.display(struct(
-                    'TrendsFigure', trendsFig, ...
                     'HeatmapPNG', heatPNG));
             end
 

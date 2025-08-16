@@ -38,6 +38,26 @@ classdef VisualizationModel < reg.mvc.BaseModel
             ylabel("Metric value");
         end
 
+        function data = plotTrendsData(~, metrics) %#ok<INUSD>
+            %PLOTTRENDSDATA Prepare training trend data for plotting.
+            %   DATA = PLOTTRENDSDATA(METRICS) should extract the ``epochs``,
+            %   ``accuracy`` and ``loss`` fields from the supplied ``metrics``
+            %   struct and return them in a new struct suitable for plotting.
+
+            arguments
+                ~
+                metrics struct
+            end
+
+            % Pseudocode:
+            %   assert(all(isfield(metrics, {"epochs", "accuracy", "loss"})))
+            %   data.epochs = metrics.epochs;
+            %   data.accuracy = metrics.accuracy;
+            %   data.loss = metrics.loss;
+            error("reg:model:NotImplemented", ...
+                "VisualizationModel.plotTrendsData is not implemented.");
+        end
+
         function pngPath = plotCoRetrievalHeatmap(obj, coMatrix, pngPath, labels) %#ok<INUSD>
             %PLOTCORETRIEVALHEATMAP Render heatmap from co-retrieval matrix.
             %   Inputs
