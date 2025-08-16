@@ -1,5 +1,7 @@
 classdef GoldPackModel < reg.mvc.BaseModel
-    %GOLDPACKMODEL Stub model providing labelled gold data.
+    %GOLDPACKMODEL Regression test fixture providing labelled gold data.
+    %   This class loads deterministic labelled data solely for regression
+    %   tests and is not intended for production evaluation.
 
     properties
         % GoldTable (table): labelled reference data with variables
@@ -10,13 +12,14 @@ classdef GoldPackModel < reg.mvc.BaseModel
     end
 
     methods
-        function obj = GoldPackModel(varargin)
-            %#ok<INUSD>
+        function obj = GoldPackModel(varargin) %#ok<INUSD>
         end
 
         function goldDataStruct = load(~, varargin) %#ok<INUSD>
-            %LOAD Retrieve gold labelled data.
-            %   goldDataStruct = LOAD(obj) reads pre-packaged gold datasets.
+            %LOAD Retrieve known labelled data for regression tests.
+            %   goldDataStruct = LOAD(obj) reads pre-packaged gold datasets
+            %   used for regression testing only and not for production
+            %   evaluation.
             %   Parameters
             %       varargin - Placeholder for future options (unused)
             %   Returns
@@ -39,9 +42,9 @@ classdef GoldPackModel < reg.mvc.BaseModel
                 "GoldPackModel.load is not implemented.");
         end
         function goldTable = process(obj, goldDataStruct) %#ok<INUSD>
-            %PROCESS Return processed gold data.
+            %PROCESS Return processed gold data for regression tests.
             %   goldTable = PROCESS(obj, goldDataStruct) outputs structured
-            %   gold artefacts.
+            %   gold artefacts for verifying the regression pipeline.
             %   Parameters
             %       goldDataStruct (struct): Raw gold dataset.
             %   Returns
