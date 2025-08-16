@@ -75,7 +75,7 @@ classdef TrainingModel < reg.mvc.BaseModel
             %   Pseudocode:
             %       1. verify required cfg fields exist
             %       2. read files into table and assign to obj.documentsTbl
-            error("NotImplemented");
+            error("reg:model:NotImplemented", "TrainingModel.ingest is not implemented.");
         end
 
         function chunksTbl = chunk(obj, documentsTbl)
@@ -93,7 +93,7 @@ classdef TrainingModel < reg.mvc.BaseModel
             %       1. validate required columns exist
             %       2. tokenise and split text
             %       3. assign table to obj.chunksTbl
-            error("NotImplemented");
+            error("reg:model:NotImplemented", "TrainingModel.chunk is not implemented.");
         end
 
         function [weakLabelsMat, bootLabelsMat] = weakLabel(obj, chunksTbl)
@@ -112,7 +112,7 @@ classdef TrainingModel < reg.mvc.BaseModel
             %       1. ensure chunksTbl is non-empty
             %       2. apply rule set and bootstrap
             %       3. assign matrices to properties
-            error("NotImplemented");
+            error("reg:model:NotImplemented", "TrainingModel.weakLabel is not implemented.");
         end
 
         function [featuresTbl, vocab] = extractFeatures(obj, chunksTbl)
@@ -131,7 +131,7 @@ classdef TrainingModel < reg.mvc.BaseModel
             %       1. validate chunk table
             %       2. compute tf-idf and vocabulary
             %       3. assign results to properties
-            error("NotImplemented");
+            error("reg:model:NotImplemented", "TrainingModel.extractFeatures is not implemented.");
         end
 
         function embeddingsMat = computeEmbeddings(obj, featuresTbl)
@@ -149,7 +149,7 @@ classdef TrainingModel < reg.mvc.BaseModel
             %       1. validate feature vectors
             %       2. run encoder network
             %       3. assign embeddings to property
-            error("NotImplemented");
+            error("reg:model:NotImplemented", "TrainingModel.computeEmbeddings is not implemented.");
         end
 
         function tripletsTbl = prepareDataset(obj, rawDataStruct)
@@ -167,7 +167,7 @@ classdef TrainingModel < reg.mvc.BaseModel
             %       1. validate required fields per workflow
             %       2. sample or build triplets
             %       3. assign table to property
-            error("NotImplemented");
+            error("reg:model:NotImplemented", "TrainingModel.prepareDataset is not implemented.");
         end
 
         function net = fineTuneEncoder(obj, tripletsTbl)
@@ -179,13 +179,13 @@ classdef TrainingModel < reg.mvc.BaseModel
                 tripletsTbl table % [anchorIdx, posIdx, negIdx]
             end
             arguments (Output)
-                net % dlnetwork or struct
+                net (1,1) struct % dlnetwork or struct
             end
             %   Pseudocode:
             %       1. configure training options
             %       2. iterate over triplets and update weights
             %       3. assign network to property
-            error("NotImplemented");
+            error("reg:model:NotImplemented", "TrainingModel.fineTuneEncoder is not implemented.");
         end
 
         function projectedMat = trainProjectionHead(obj, tripletsTbl)
@@ -203,7 +203,7 @@ classdef TrainingModel < reg.mvc.BaseModel
             %       1. validate triplets
             %       2. optimise projection head
             %       3. assign projections to property
-            error("NotImplemented");
+            error("reg:model:NotImplemented", "TrainingModel.trainProjectionHead is not implemented.");
         end
 
         function [modelsCell, scoresMat, thresholdsVec, predLabelsMat] = trainClassifier(obj, trainingInputs)
@@ -225,7 +225,7 @@ classdef TrainingModel < reg.mvc.BaseModel
             %       2. cross-validate and fit classifiers
             %       3. compute thresholds and labels
             %       4. assign outputs to properties
-            error("NotImplemented");
+            error("reg:model:NotImplemented", "TrainingModel.trainClassifier is not implemented.");
         end
     end
 end
