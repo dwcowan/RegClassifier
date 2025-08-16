@@ -29,11 +29,19 @@ classdef PipelineController < reg.mvc.BaseController
                 obj
                 cfg (1,1) struct
             end
-
-            result = obj.PipelineModel.runFineTune(cfg);
-            if ~isempty(obj.View)
-                obj.View.display(result);
+            arguments (Output)
+                result (1,1) struct
             end
+            %{
+            % Pseudocode:
+            %
+            % result = obj.PipelineModel.runFineTune(cfg);
+            % if obj.View is available
+            %     obj.View.display(result);
+            % end
+            %}
+            error("reg:controller:NotImplemented", ...
+                "PipelineController.runFineTune is not implemented.");
         end
 
         function projected = runProjectionHead(obj, embeddings)
@@ -45,11 +53,19 @@ classdef PipelineController < reg.mvc.BaseController
                 obj
                 embeddings double
             end
-
-            projected = obj.PipelineModel.runProjectionHead(embeddings);
-            if ~isempty(obj.View)
-                obj.View.display(projected);
+            arguments (Output)
+                projected double
             end
+            %{
+            % Pseudocode:
+            %
+            % projected = obj.PipelineModel.runProjectionHead(embeddings);
+            % if obj.View is available
+            %     obj.View.display(projected);
+            % end
+            %}
+            error("reg:controller:NotImplemented", ...
+                "PipelineController.runProjectionHead is not implemented.");
         end
 
         function run(obj)
@@ -76,7 +92,7 @@ classdef PipelineController < reg.mvc.BaseController
                 "PipelineController.run is not implemented.");
         end
 
-        function runTraining(obj, cfg, documentsTbl)
+        function result = runTraining(obj, cfg, documentsTbl)
             %RUNTRAINING Execute only the training workflow.
             %   RUNTRAINING(OBJ, CFG, DOCUMENTSTBL) delegates the workflow
             %   to the PipelineModel using the supplied processed
@@ -87,10 +103,19 @@ classdef PipelineController < reg.mvc.BaseController
                 cfg (1,1) struct
                 documentsTbl table
             end
-            result = obj.PipelineModel.runTraining(cfg, documentsTbl);
-            if ~isempty(obj.View)
-                obj.View.display(result);
+            arguments (Output)
+                result (1,1) struct
             end
+            %{
+            % Pseudocode:
+            %
+            % result = obj.PipelineModel.runTraining(cfg, documentsTbl);
+            % if obj.View is available
+            %     obj.View.display(result);
+            % end
+            %}
+            error("reg:controller:NotImplemented", ...
+                "PipelineController.runTraining is not implemented.");
         end
     end
 end
