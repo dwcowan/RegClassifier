@@ -23,7 +23,9 @@ classdef GoldPackModel < reg.mvc.BaseModel
             %   Parameters
             %       varargin - Placeholder for future options (unused)
             %   Returns
-            %       goldDataStruct (struct): Loaded gold data.
+            %       goldDataStruct (struct): Loaded gold data with fields
+            %           chunkId (double) - unique chunk identifier
+            %           label   (string) - associated label name
             %   Side Effects
             %       None.
             %   Legacy Reference
@@ -48,7 +50,9 @@ classdef GoldPackModel < reg.mvc.BaseModel
             %   Parameters
             %       goldDataStruct (struct): Raw gold dataset.
             %   Returns
-            %       goldTable (table): Prepared gold references.
+            %       goldTable (table): Prepared gold references with columns
+            %           chunkId (double) - unique chunk identifier
+            %           label   (string) - associated label name
             %   Side Effects
             %       None.
             %   Legacy Reference
@@ -60,9 +64,12 @@ classdef GoldPackModel < reg.mvc.BaseModel
                 goldDataStruct (1,1) struct
             end
             % Pseudocode:
-            %   1. Normalize fields in goldDataStruct
-            %   2. Convert to table format
-            %   3. Store in obj.GoldTable and return
+            %   1. Validate required fields: chunkId, label.
+            %   2. Normalize chunkId to double, label to string.
+            %   3. Remove entries with missing chunkId.
+            %   4. Deduplicate on chunkId, keeping the latest occurrence.
+            %   5. Convert the struct to a table with [chunkId, label].
+            %   6. Store in obj.GoldTable and return
             error("reg:model:NotImplemented", ...
                 "GoldPackModel.process is not implemented.");
         end
