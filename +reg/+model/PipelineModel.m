@@ -53,13 +53,14 @@ classdef PipelineModel < reg.mvc.BaseModel
             % Step 4: fine-tuning workflow
             ftOut = obj.runFineTune(cfg); %#ok<NASGU>
 
-            % Step 5: evaluation
-            evalRaw = obj.EvaluationModel.load(trainOut.Embeddings, []);
-            evalResult = obj.EvaluationModel.process(evalRaw);
+            % Step 5: evaluation via controller
+            evalController = reg.controller.EvaluationController(
+                obj.EvaluationModel, reg.model.ReportModel());
+            metrics = evalController.run(trainOut.Embeddings, []);
 
             result = struct('Documents', docs, ...
                 'Training', trainOut, ...
-                'Metrics', evalResult.Metrics);
+                'Metrics', metrics);
         end
 
         function docs = ingestCorpus(obj, cfg)
