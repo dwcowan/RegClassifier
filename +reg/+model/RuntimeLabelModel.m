@@ -20,9 +20,9 @@ classdef RuntimeLabelModel < reg.mvc.BaseModel
             %       1. Resolve `source` into a standard form
             %       2. Validate the resolved reference
             %       3. Return configuration for `process`
-            arguments (Input)
+            arguments
                 ~
-                source
+                source (1,1) {mustBeTextScalarOrStruct}
             end
             arguments (Output)
                 cfg (1,1) struct
@@ -61,6 +61,9 @@ classdef RuntimeLabelModel < reg.mvc.BaseModel
                 cfg (1,1) struct
                 cfg.source
             end
+            arguments (Output)
+                labelTbl table
+            end
             % Placeholder; actual implementation pending
             error("reg:model:NotImplemented", ...
                 "RuntimeLabelModel.process is not implemented.");
@@ -68,11 +71,14 @@ classdef RuntimeLabelModel < reg.mvc.BaseModel
     end
 end
 
-function mustBeTextScalarOrStruct(~)
+function mustBeTextScalarOrStruct(value)
 %MUSTBETEXTSCALARORSTRUCT Validate text or struct input.
 %   Pseudocode:
 %       1. Check if value is text scalar or struct
 %       2. If not, raise an error
+    arguments
+        value (1,1) {mustBeA(value, ["string", "struct"])}
+    end
     error("reg:model:NotImplemented", ...
         "mustBeTextScalarOrStruct is not implemented.");
 end
