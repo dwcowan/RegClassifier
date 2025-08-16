@@ -167,7 +167,10 @@ classdef PipelineModel < reg.mvc.BaseModel
             arguments (Output)
                 results table
             end
-            results = obj.CorpusModel.queryIndex(queryString, alpha, topK);
+            % Pseudocode: delegate query to search index
+            % results = obj.CorpusModel.queryIndex(queryString, alpha, topK);
+            error("reg:model:NotImplemented", ...
+                "PipelineModel.exampleSearch is not implemented.");
         end
 
         function out = runTraining(obj, cfg, documentsTbl)
