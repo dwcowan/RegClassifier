@@ -33,7 +33,20 @@ classdef CorpusModel < reg.mvc.BaseModel
             %PROCESS Synchronise local corpus from upstream sources.
             %   out = PROCESS(obj, params) delegates to `sync` and returns
             %   its output.
-            out = obj.sync(params);
+            arguments
+                obj
+                params (1,1) struct
+                params.date (1,1) string
+            end
+            arguments (Output)
+                out (1,1) struct
+                out.eba_dir (1,1) string
+                out.eba_index (1,1) string
+            end
+            % Pseudocode:
+            %   1. Delegate to sync(params) and return result
+            error("reg:model:NotImplemented", ...
+                "CorpusModel.process is not implemented.");
         end
 
         function T = fetchEba(~, varargin) %#ok<INUSD>
