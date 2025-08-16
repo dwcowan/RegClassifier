@@ -50,8 +50,10 @@ classdef EvaluationController < reg.mvc.BaseController
             %   of the legacy ``EvalController.run`` and
             %   ``EvaluationPipeline.run``.
 
-            if nargin < 3
-                labelMatrix = [];
+            arguments
+                obj
+                embeddings double
+                labelMatrix double = []
             end
 
             % Step 1: evaluate gold pack and compute metrics
@@ -65,8 +67,9 @@ classdef EvaluationController < reg.mvc.BaseController
             end
 
             % Step 3: create diagnostic plots
-            trendsPNG = obj.VisualizationModel.plotTrends(
-                results.Metrics, fullfile(tempdir(), 'trends.png'));
+            metricsStruct = results.Metrics;
+            validateMetrics(metricsStruct);
+            trendsFig = obj.VisualizationModel.plotTrends(metricsStruct);
 
             coMatrix = [];
             labels = [];
@@ -87,7 +90,7 @@ classdef EvaluationController < reg.mvc.BaseController
             % Step 4: hand off plots to plot view
             if ~isempty(obj.PlotView)
                 obj.PlotView.display(struct(
-                    'TrendsPNG', trendsPNG, ...
+                    'TrendsFigure', trendsFig, ...
                     'HeatmapPNG', heatPNG));
             end
 
@@ -96,6 +99,14 @@ classdef EvaluationController < reg.mvc.BaseController
                 metrics = results.Metrics;
             else
                 metrics = [];
+            end
+            function validateMetrics(m)
+                arguments
+                    m struct
+                    m.epochs (:,1) double
+                    m.accuracy (:,1) double
+                    m.loss (:,1) double
+                end
             end
         end
         function metrics = retrievalMetrics(~, embeddings, posSets, k) %#ok<INUSD>
