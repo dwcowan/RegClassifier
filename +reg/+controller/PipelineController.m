@@ -15,8 +15,17 @@ classdef PipelineController < reg.mvc.BaseController
                 pipelineModel reg.model.PipelineModel
                 view reg.view.MetricsView = reg.view.MetricsView()
             end
-            obj@reg.mvc.BaseController(pipelineModel, view);
-            obj.PipelineModel = pipelineModel;
+            arguments (Output)
+                obj reg.controller.PipelineController
+            end
+            %{
+            % Pseudocode:
+            %
+            % obj@reg.mvc.BaseController(pipelineModel, view);
+            % obj.PipelineModel = pipelineModel;
+            %}
+            error("reg:controller:NotImplemented", ...
+                "PipelineController constructor is not implemented.");
         end
 
         function result = runFineTune(obj, cfg)
