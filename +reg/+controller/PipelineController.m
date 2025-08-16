@@ -43,31 +43,7 @@ classdef PipelineController < reg.mvc.BaseController
         function run(obj)
             %RUN Execute the full pipeline end-to-end.
 
-            cfgRaw = obj.PipelineModel.ConfigModel.load();
-            cfg = obj.PipelineModel.ConfigModel.process(cfgRaw);
-
-            docs = obj.PipelineModel.ingestCorpus(cfg);
-            trainOut = obj.PipelineModel.runTraining(cfg);
-
-            if isfield(cfg, 'fineTuneEpochs') && cfg.fineTuneEpochs > 0
-                trainOut.FineTune = obj.runFineTune(cfg);
-            end
-
-            if isfield(cfg, 'projEpochs') && cfg.projEpochs > 0
-                trainOut.ProjectedEmbeddings = obj.runProjectionHead(trainOut.Embeddings);
-            end
-
-            evalEmbeddings = trainOut.Embeddings;
-            if isfield(trainOut, 'ProjectedEmbeddings')
-                evalEmbeddings = trainOut.ProjectedEmbeddings;
-            end
-
-            evalController = reg.controller.EvaluationController( ...
-                obj.PipelineModel.EvaluationModel, reg.model.ReportModel());
-            metrics = evalController.run(evalEmbeddings, []);
-
-            result = struct('Documents', docs, 'Training', trainOut, ...
-                'Metrics', metrics);
+            result = obj.PipelineModel.run();
 
             if ~isempty(obj.View) && isfield(result, "Metrics")
                 obj.View.log(result.Metrics);
