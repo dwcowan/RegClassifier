@@ -3,7 +3,8 @@ classdef EvaluationController < reg.mvc.BaseController
     %   Combines the responsibilities of the former EvalController and
     %   EvaluationPipeline into a single controller.  It wires evaluation
     %   and report models to views and provides helpers to produce
-    %   diagnostic plots.
+    %   diagnostic plots. Designed to ingest runtime-labelled data via
+    %   ``RuntimeLabelModel``.
 
     properties
         % ReportModel (reg.model.ReportModel): transforms metrics into
@@ -66,8 +67,13 @@ classdef EvaluationController < reg.mvc.BaseController
                 labelMatrix double = []
             end
 
-            % Step 1: evaluate gold pack and compute metrics
-            results = obj.evaluateGoldPack(embeddings, labelMatrix);
+            % Step 1: ingest runtime labels and evaluate labelled data
+            %   Using RuntimeLabelModel (pseudocode):
+            %       rlm = reg.model.RuntimeLabelModel();
+            %       cfg = rlm.load(labelMatrix);
+            %       lbls = rlm.process(cfg);
+            %       results = obj.evaluateLabelledData(embeddings, lbls);
+            results = obj.evaluateLabelledData(embeddings, labelMatrix);
 
             % Step 2: generate report from metrics and display
             repRaw = obj.ReportModel.load(results.Metrics);
@@ -138,11 +144,11 @@ classdef EvaluationController < reg.mvc.BaseController
                 "EvaluationController.retrievalMetrics is not implemented.");
         end
 
-        function results = evaluateGoldPack(obj, embeddings, labelMatrix, opts) %#ok<INUSD>
-            %EVALUATEGOLDPACK Run evaluation and assemble metrics.
-            %   RESULTS = EVALUATEGOLDPACK(EMBEDDINGS, LABELMATRIX) evaluates
-            %   supplied in-memory data, computes metrics and logs them.  The
-            %   returned ``results`` struct merges evaluation outputs with a
+        function results = evaluateLabelledData(obj, embeddings, labelMatrix, opts) %#ok<INUSD>
+            %EVALUATELABELLEDDATA Run evaluation on runtime-labelled data.
+            %   RESULTS = EVALUATELABELLEDDATA(EMBEDDINGS, LABELMATRIX) ingests
+            %   label information via ``RuntimeLabelModel`` and computes metrics.
+            %   The returned ``results`` struct merges evaluation outputs with a
             %   ``Metrics`` field whose schema mirrors ``EvaluationModel.process``:
             %       results.Metrics.accuracy   (:,1 double)
             %       results.Metrics.loss       (:,1 double)
@@ -152,11 +158,13 @@ classdef EvaluationController < reg.mvc.BaseController
             %   Additional bookkeeping fields (e.g. ``epochs``) may also be
             %   present for plotting.
             %
-            %   Legacy mapping:
-            %       Step 1  ↔ `eval_retrieval`
-            %       Step 1a ↔ `eval_per_label`
-            %       Step 1b ↔ `eval_clustering`
-            %       Step 2  ↔ `log_metrics`
+            %   Evaluation Flow (pseudocode):
+            %       rlm   = reg.model.RuntimeLabelModel();
+            %       cfg   = rlm.load(labelMatrix);
+            %       lbls  = rlm.process(cfg);
+            %       raw   = obj.Model.load(embeddings, lbls);
+            %       eval  = obj.Model.process(raw);
+            %       metrics = eval.Metrics;
             arguments
                 obj
                 embeddings double
