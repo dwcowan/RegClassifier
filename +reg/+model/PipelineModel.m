@@ -38,14 +38,15 @@ classdef PipelineModel < reg.mvc.BaseModel
             %RUN Execute the end-to-end pipeline.
             %   RESULT = RUN(obj) coordinates configuration loading,
             %   corpus ingestion, feature/embedding extraction, classifier
-            %   training, fine-tuning and evaluation.
+            %   training, fine-tuning and evaluation. RESULT is a struct
+            %   with fields ``SearchIndex``, ``Training`` and ``Metrics``.
 
             % Step 1: configuration
             cfgRaw = obj.ConfigModel.load();
             cfg = obj.ConfigModel.process(cfgRaw);
 
-            % Step 2: corpus ingestion
-            docs = obj.ingestCorpus(cfg);
+            % Step 2: corpus ingestion and index build
+            searchIndexStruct = obj.ingestCorpus(cfg);
 
             % Step 3: training workflow (features, embeddings, classifier)
             trainOut = obj.runTraining(cfg);
@@ -74,16 +75,27 @@ classdef PipelineModel < reg.mvc.BaseModel
                 obj.EvaluationModel, reg.model.ReportModel());
             metrics = evalController.run(evalEmbeddings, labels);
 
-            result = struct('Documents', docs, ...
+            result = struct('SearchIndex', searchIndexStruct, ...
                 'Training', trainOut, ...
                 'Metrics', metrics);
         end
 
-        function docs = ingestCorpus(obj, cfg)
+        function searchIndexStruct = ingestCorpus(obj, cfg)
             %INGESTCORPUS Ingest PDFs, persist them and build the index.
-            docs = obj.CorpusModel.ingestPdfs(cfg);
-            obj.CorpusModel.persistDocuments(docs);
-            obj.CorpusModel.buildIndex(docs);
+            %   searchIndexStruct = INGESTCORPUS(obj, cfg) reads PDFs into a
+            %   document table, persists the table and prepares an index
+            %   input struct containing an embedding matrix placeholder.
+            %   The struct is forwarded to CorpusModel.buildIndex and the
+            %   resulting search index structure is returned.
+            %   Returns
+            %       searchIndexStruct (struct): fields ``docId`` and
+            %           ``embedding`` as produced by CorpusModel.buildIndex.
+            documentsTbl = obj.CorpusModel.ingestPdfs(cfg);
+            obj.CorpusModel.persistDocuments(documentsTbl);
+            indexInputsStruct = struct( ...
+                'documentsTbl', documentsTbl, ...
+                'embeddingsMat', zeros(height(documentsTbl), 0));
+            searchIndexStruct = obj.CorpusModel.buildIndex(indexInputsStruct);
         end
 
         function results = exampleSearch(obj, queryString, alpha, topK)
