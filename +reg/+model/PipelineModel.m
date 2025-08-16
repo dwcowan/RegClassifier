@@ -39,8 +39,9 @@ classdef PipelineModel < reg.mvc.BaseModel
             %RUN Execute the end-to-end pipeline.
             %   RESULT = RUN(obj) coordinates configuration loading,
             %   corpus ingestion, feature/embedding extraction, classifier
-            %   training, fine-tuning and evaluation. RESULT is a struct
-            %   with fields ``SearchIndex``, ``Training`` and ``Metrics``.
+            %   training, fine-tuning and evaluation input collation.
+            %   RESULT is a struct with fields ``SearchIndex``, ``Training``
+            %   and ``EvaluationInputs``.
 
             arguments
                 obj
@@ -72,7 +73,24 @@ classdef PipelineModel < reg.mvc.BaseModel
                     trainOut.Embeddings);
             end
 
-            % Step 6: evaluation via controller
+            % Step 6: collate evaluation inputs for upstream controller
+            evalInputs = obj.evaluationInputs(trainOut);
+
+            result = struct('SearchIndex', searchIndexStruct, ...
+                'Training', trainOut, ...
+                'EvaluationInputs', evalInputs);
+        end
+
+        function out = evaluationInputs(~, trainOut)
+            %EVALUATIONINPUTS Collate embeddings and labels for evaluation.
+            %   OUT = EVALUATIONINPUTS(trainOut) extracts the appropriate
+            %   embeddings and optional label matrix from TRAINOUT in
+            %   preparation for the EvaluationController. The returned
+            %   struct OUT contains fields ``Embeddings`` and ``Labels``.
+            arguments
+                ~
+                trainOut struct
+            end
             evalEmbeddings = trainOut.Embeddings;
             if isfield(trainOut, 'ProjectedEmbeddings')
                 evalEmbeddings = trainOut.ProjectedEmbeddings;
@@ -81,13 +99,7 @@ classdef PipelineModel < reg.mvc.BaseModel
             if isfield(trainOut, 'PredLabels')
                 labels = trainOut.PredLabels;
             end
-            evalController = reg.controller.EvaluationController(
-                obj.EvaluationModel, reg.model.ReportModel());
-            metrics = evalController.run(evalEmbeddings, labels);
-
-            result = struct('SearchIndex', searchIndexStruct, ...
-                'Training', trainOut, ...
-                'Metrics', metrics);
+            out = struct('Embeddings', evalEmbeddings, 'Labels', labels);
         end
 
         function [documentsTbl, searchIndexStruct] = ingestCorpus(obj, cfg)
