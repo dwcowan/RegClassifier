@@ -4,9 +4,9 @@ classdef MetricsView < reg.mvc.BaseView
     %       * overall  - struct of aggregate scores (RecallAtK, mAP, etc.)
     %       * perLabel - table of metrics per label or class
     %       * history  - optional arrays of metric values over time
-    %   Controllers such as ProjectionHeadController or FineTuneController
-    %   pass this view the metrics struct. A full implementation might log
-    %   these values, plot progress charts or render HTML tables.
+    %   Controllers such as PipelineController pass this view the metrics
+    %   struct. A full implementation might log these values, plot progress
+    %   charts or render HTML tables.
 
     properties
         DisplayedMetrics
