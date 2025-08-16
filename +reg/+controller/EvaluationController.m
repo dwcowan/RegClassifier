@@ -150,13 +150,14 @@ classdef EvaluationController < reg.mvc.BaseController
             %   label information via ``RuntimeLabelModel`` and computes metrics.
             %   The returned ``results`` struct merges evaluation outputs with a
             %   ``Metrics`` field whose schema mirrors ``EvaluationModel.process``:
-            %       results.Metrics.accuracy   (:,1 double)
-            %       results.Metrics.loss       (:,1 double)
-            %       results.Metrics.perLabel   (table)
-            %       results.Metrics.clustering (struct with ``purity``,
-            %                                   ``silhouette`` and ``idx``)
-            %   Additional bookkeeping fields (e.g. ``epochs``) may also be
-            %   present for plotting.
+            %       - results.Metrics.accuracy   (:,1 double)
+            %       - results.Metrics.loss       (:,1 double)
+            %       - results.Metrics.perLabel   (table with ``LabelIdx``,
+            %                                     ``RecallAtK`` and ``Support``)
+            %       - results.Metrics.clustering (struct with ``purity``,
+            %                                     ``silhouette`` and ``idx``)
+            %       - results.Metrics.epochs     (:,1 double) optional
+            %   Additional bookkeeping fields may also be present for plotting.
             %
             %   Evaluation Flow (pseudocode):
             %       rlm   = reg.model.RuntimeLabelModel();
@@ -177,10 +178,14 @@ classdef EvaluationController < reg.mvc.BaseController
             evalResult = obj.Model.process(evalRaw);
             metrics = evalResult.Metrics;
             % Pseudocode/validation stub:
-            %   assert(isfield(metrics, 'accuracy'));
-            %   assert(isfield(metrics, 'loss'));
-            %   assert(isfield(metrics, 'perLabel'));
-            %   assert(isfield(metrics, 'clustering'));
+            %   assert(isfield(metrics, 'accuracy') && iscolumn(metrics.accuracy));
+            %   assert(isfield(metrics, 'loss') && iscolumn(metrics.loss));
+            %   assert(isfield(metrics, 'perLabel') && istable(metrics.perLabel));
+            %   assert(isfield(metrics, 'clustering') && isstruct(metrics.clustering));
+            %   if isfield(metrics, 'epochs')
+            %       assert(iscolumn(metrics.epochs));
+            %       assert(numel(metrics.epochs) == numel(metrics.accuracy));
+            %   end
 
             % Per-label evaluation via consolidated model
             try

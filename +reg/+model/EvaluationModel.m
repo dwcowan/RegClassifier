@@ -37,15 +37,18 @@ classdef EvaluationModel < reg.mvc.BaseModel
         function result = process(obj, input) %#ok<INUSD>
             %PROCESS Calculate evaluation metrics from INPUT.
             %   RESULT = PROCESS(obj, INPUT) returns a struct with a
-            %   ``Metrics`` field summarising evaluation outcomes.  The
-            %   ``Metrics`` struct is expected to contain:
+            %   ``Metrics`` field summarising evaluation outcomes. The
+            %   ``Metrics`` struct should provide at minimum:
             %     - ``accuracy``   (:,1 double) accuracy per epoch
             %     - ``loss``       (:,1 double) loss values per epoch
-            %     - ``perLabel``   (table) per-label Recall@K scores
-            %     - ``clustering`` (struct) clustering diagnostics such as
+            %     - ``perLabel``   (table) per-label Recall@K with
+            %                       columns ``LabelIdx``, ``RecallAtK``
+            %                       and ``Support``
+            %     - ``clustering`` (struct) diagnostics with fields
             %                       ``purity``, ``silhouette`` and ``idx``
-            %   Additional fields (e.g. ``epochs``) may be supplied for
-            %   plotting or bookkeeping purposes.
+            %     - ``epochs``     (:,1 double) optional epoch indices
+            %   Additional fields may be supplied for plotting or
+            %   bookkeeping purposes.
             arguments
                 obj
                 input (1,1) struct
@@ -59,9 +62,13 @@ classdef EvaluationModel < reg.mvc.BaseModel
             %   m = result.Metrics;
             %   assert(isfield(m, 'accuracy') && iscolumn(m.accuracy));
             %   assert(isfield(m, 'loss') && iscolumn(m.loss));
-            %   assert(isfield(m, 'perLabel'));
-            %   assert(isfield(m, 'clustering'));
+            %   assert(isfield(m, 'perLabel') && istable(m.perLabel));
+            %   assert(isfield(m, 'clustering') && isstruct(m.clustering));
             %   assert(numel(m.accuracy) == numel(m.loss));
+            %   if isfield(m, 'epochs')
+            %       assert(iscolumn(m.epochs));
+            %       assert(numel(m.epochs) == numel(m.accuracy));
+            %   end
             error("reg:model:NotImplemented", ...
                 "EvaluationModel.process is not implemented.");
         end
