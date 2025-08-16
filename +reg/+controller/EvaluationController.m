@@ -41,16 +41,21 @@ classdef EvaluationController < reg.mvc.BaseController
             end
         end
 
-        function metrics = run(obj, goldDir, metricsCSV)
+        function metrics = run(obj, embeddings, labelMatrix)
             %RUN Execute end-to-end evaluation workflow.
-            %   METRICS = RUN(obj, goldDir, metricsCSV) evaluates the contents
-            %   of ``goldDir``, generates reports and diagnostic plots and
-            %   returns the computed metrics.  This method subsumes the
-            %   responsibilities of the legacy ``EvalController.run`` and
+            %   METRICS = RUN(obj, EMBEDDINGS, LABELMATRIX) evaluates the
+            %   supplied ``embeddings`` and optional ``labelMatrix``,
+            %   generates reports and diagnostic plots and returns the
+            %   computed metrics.  This method subsumes the responsibilities
+            %   of the legacy ``EvalController.run`` and
             %   ``EvaluationPipeline.run``.
 
+            if nargin < 3
+                labelMatrix = [];
+            end
+
             % Step 1: evaluate gold pack and compute metrics
-            results = obj.evaluateGoldPack(goldDir);
+            results = obj.evaluateGoldPack(embeddings, labelMatrix);
 
             % Step 2: generate report from metrics and display
             repRaw = obj.ReportModel.load(results.Metrics);
@@ -61,7 +66,7 @@ classdef EvaluationController < reg.mvc.BaseController
 
             % Step 3: create diagnostic plots
             trendsPNG = obj.VisualizationModel.plotTrends(
-                metricsCSV, fullfile(tempdir(), 'trends.png'));
+                results.Metrics, fullfile(tempdir(), 'trends.png'));
 
             coMatrix = [];
             labels = [];
@@ -108,12 +113,13 @@ classdef EvaluationController < reg.mvc.BaseController
                 "EvaluationController.retrievalMetrics is not implemented.");
         end
 
-        function results = evaluateGoldPack(obj, goldDir, opts) %#ok<INUSD>
+        function results = evaluateGoldPack(obj, embeddings, labelMatrix, opts) %#ok<INUSD>
             %EVALUATEGOLDPACK Run evaluation and assemble metrics.
-            %   RESULTS = EVALUATEGOLDPACK(goldDir) loads evaluation inputs,
-            %   computes metrics (overall, per-label and clustering) and logs
-            %   them.  The returned struct combines evaluation outputs and a
-            %   ``Metrics`` field for downstream processing.
+            %   RESULTS = EVALUATEGOLDPACK(EMBEDDINGS, LABELMATRIX) evaluates
+            %   supplied in-memory data, computes metrics (overall, per-label
+            %   and clustering) and logs them.  The returned struct combines
+            %   evaluation outputs and a ``Metrics`` field for downstream
+            %   processing.
             %
             %   Legacy mapping:
             %       Step 1  ↔ `eval_retrieval`
@@ -121,15 +127,19 @@ classdef EvaluationController < reg.mvc.BaseController
             %       Step 1b ↔ `eval_clustering`
             %       Step 2  ↔ `log_metrics`
 
+            if nargin < 3
+                labelMatrix = [];
+            end
+
             % Step 1: load evaluation inputs and compute core metrics
-            evalRaw = obj.Model.load(goldDir);
+            evalRaw = obj.Model.load(embeddings, labelMatrix);
             evalResult = obj.Model.process(evalRaw);
             metrics = evalResult.Metrics;
 
             % Per-label evaluation via consolidated model
             try
                 metrics.perLabel = obj.Model.perLabelMetrics(
-                    evalResult.embeddings, evalResult.labelMatrix, 10);
+                    embeddings, labelMatrix, 10);
             catch
                 metrics.perLabel = [];
             end
@@ -137,7 +147,7 @@ classdef EvaluationController < reg.mvc.BaseController
             % Clustering evaluation via consolidated model
             try
                 metrics.clustering = obj.Model.clusteringMetrics(
-                    evalResult.embeddings, evalResult.labelMatrix, 10);
+                    embeddings, labelMatrix, 10);
             catch
                 metrics.clustering = [];
             end
@@ -148,6 +158,8 @@ classdef EvaluationController < reg.mvc.BaseController
             % Return combined results including metrics for further reporting
             results = evalResult;
             results.Metrics = metrics;
+            results.embeddings = embeddings;
+            results.labelMatrix = labelMatrix;
         end
     end
 end
