@@ -60,9 +60,19 @@ classdef PipelineController < reg.mvc.BaseController
 
             result = obj.PipelineModel.run();
 
-            if ~isempty(obj.View) && isfield(result, "Metrics")
-                obj.View.log(result.Metrics);
-                obj.View.display(result.Metrics);
+            metrics = [];
+            if isfield(result, "EvaluationInputs")
+                evalController = reg.controller.EvaluationController(
+                    obj.PipelineModel.EvaluationModel, reg.model.ReportModel());
+                evalInputs = result.EvaluationInputs;
+                metrics = evalController.run(
+                    evalInputs.Embeddings, evalInputs.Labels);
+                result.Metrics = metrics;
+            end
+
+            if ~isempty(obj.View) && ~isempty(metrics)
+                obj.View.log(metrics);
+                obj.View.display(metrics);
             elseif ~isempty(obj.View)
                 obj.View.display(result);
             end
