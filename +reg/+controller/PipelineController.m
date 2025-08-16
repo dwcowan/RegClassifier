@@ -18,8 +18,9 @@ classdef PipelineController < reg.mvc.BaseController
         function result = runFineTune(obj, cfg)
             %RUNFINETUNE Execute encoder fine-tuning workflow.
             %   RESULT = RUNFINETUNE(obj, CFG) delegates the fine-tuning
-            %   process to the PipelineModel and displays any outputs using
-            %   the controller view.
+            %   process to the PipelineModel using the supplied processed
+            %   configuration CFG and displays any outputs using the
+            %   controller view.
 
             result = obj.PipelineModel.runFineTune(cfg);
             if ~isempty(obj.View)
@@ -52,9 +53,12 @@ classdef PipelineController < reg.mvc.BaseController
             end
         end
 
-        function runTraining(obj)
+        function runTraining(obj, cfg)
             %RUNTRAINING Execute only the training workflow.
-            result = obj.PipelineModel.runTraining();
+            %   RUNTRAINING(OBJ, CFG) delegates the workflow to the
+            %   PipelineModel using the supplied processed configuration
+            %   CFG and displays the results using the controller view.
+            result = obj.PipelineModel.runTraining(cfg);
             if ~isempty(obj.View)
                 obj.View.display(result);
             end
