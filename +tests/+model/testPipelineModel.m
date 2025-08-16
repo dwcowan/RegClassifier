@@ -38,6 +38,28 @@ classdef testPipelineModel < matlab.unittest.TestCase
         end
     end
 
+    methods (Test, TestTags={'Doc'})
+        function structFieldDocs(testCase)
+            docRun = help('reg.model.PipelineModel/run');
+            runFields = ["SearchIndex","Training","EvaluationInputs"];
+            for f = runFields
+                testCase.verifyNotEmpty(strfind(docRun, f), "Field " + f + " missing");
+            end
+
+            docTrain = help('reg.model.PipelineModel/runTraining');
+            trainFields = ["DocumentsTbl","ChunksTbl","FeaturesTbl","Embeddings","Models","Scores","Thresholds","PredLabels"];
+            for f = trainFields
+                testCase.verifyNotEmpty(strfind(docTrain, f), "Field " + f + " missing");
+            end
+
+            docFine = help('reg.model.PipelineModel/runFineTune');
+            fineFields = ["TripletsTbl","Network"];
+            for f = fineFields
+                testCase.verifyNotEmpty(strfind(docFine, f), "Field " + f + " missing");
+            end
+        end
+    end
+
     methods (Test, TestTags={'Regression'})
         function baselineStub(testCase)
             data = tests.fixtures.baseline_load('example.json'); %#ok<NASGU>

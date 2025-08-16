@@ -34,7 +34,9 @@ classdef PipelineController < reg.mvc.BaseController
             %   RESULT = RUNFINETUNE(obj, CFG) delegates the fine-tuning
             %   process to the PipelineModel using the supplied processed
             %   configuration CFG and displays any outputs using the
-            %   controller view.
+            %   controller view. RESULT is a struct with fields:
+            %       TripletsTbl table [n x ?]  - dataset of contrastive triplets
+            %       Network     struct [1 x 1] - placeholder encoder network
             arguments
                 obj (1,1) reg.controller.PipelineController
                 cfg (1,1) struct
@@ -104,10 +106,19 @@ classdef PipelineController < reg.mvc.BaseController
 
         function result = runTraining(obj, cfg, documentsTbl)
             %RUNTRAINING Execute only the training workflow.
-            %   RUNTRAINING(OBJ, CFG, DOCUMENTSTBL) delegates the workflow
-            %   to the PipelineModel using the supplied processed
+            %   RESULT = RUNTRAINING(OBJ, CFG, DOCUMENTSTBL) delegates the
+            %   workflow to the PipelineModel using the supplied processed
             %   configuration CFG and pre-ingested DOCUMENTSTBL, then
-            %   displays the results using the controller view.
+            %   displays the results using the controller view. RESULT is a
+            %   struct with fields:
+            %       DocumentsTbl table [n x ?]   - original documents
+            %       ChunksTbl    table [c x ?]   - document chunks
+            %       FeaturesTbl  table [c x ?]   - extracted features
+            %       Embeddings   double [c x d] - embedding matrix
+            %       Models       cell   [1 x m] - trained model objects
+            %       Scores       double [c x m] - classifier scores
+            %       Thresholds   double [1 x m] - decision thresholds
+            %       PredLabels   double [c x m] - predicted labels
             arguments
                 obj (1,1) reg.controller.PipelineController
                 cfg (1,1) struct

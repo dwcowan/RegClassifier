@@ -44,9 +44,10 @@ classdef PipelineModel < reg.mvc.BaseModel
             %   RESULT = RUN(obj) coordinates configuration loading,
             %   corpus ingestion, feature/embedding extraction, classifier
             %   training, fine-tuning and evaluation input collation.
-            %   RESULT is a struct with fields ``SearchIndex`` (struct with
-            %   docId and embedding), ``Training`` (see RUNTRAINING output)
-            %   and ``EvaluationInputs`` (struct with embeddings and labels).
+            %   RESULT is a struct with fields:
+            %       SearchIndex      struct [1 x 1] - fields ``docId`` string [n x 1], ``embedding`` double [n x d]
+            %       Training         struct [1 x 1] - see RUNTRAINING output
+            %       EvaluationInputs struct [1 x 1] - fields ``Embeddings`` double [m x d], ``Labels`` double [m x k]
 
             arguments
                 obj (1,1) reg.model.PipelineModel
@@ -183,11 +184,15 @@ classdef PipelineModel < reg.mvc.BaseModel
             %   DOCUMENTSTBL should typically be the same table produced
             %   during indexing via ``ingestCorpus`` so ingestion only
             %   occurs once for both indexing and training. OUT is a struct
-            %   with fields ``DocumentsTbl`` (table), ``ChunksTbl`` (table),
-            %   ``FeaturesTbl`` (table), ``Embeddings`` (double matrix),
-            %   ``Models`` (cell), ``Scores`` (double matrix),
-            %   ``Thresholds`` (double vector) and ``PredLabels`` (double
-            %   matrix).
+            %   with fields:
+            %       DocumentsTbl table [n x ?]   - ingested documents
+            %       ChunksTbl    table [c x ?]   - document chunks
+            %       FeaturesTbl  table [c x ?]   - extracted features
+            %       Embeddings   double [c x d] - embedding matrix
+            %       Models       cell   [1 x m] - trained model objects
+            %       Scores       double [c x m] - classifier scores
+            %       Thresholds   double [1 x m] - decision thresholds
+            %       PredLabels   double [c x m] - predicted labels
             arguments
                 obj (1,1) reg.model.PipelineModel
                 cfg (1,1) struct
@@ -233,9 +238,9 @@ classdef PipelineModel < reg.mvc.BaseModel
             %   OUT = RUNFINETUNE(OBJ, CFG) performs encoder fine-tuning
             %   using the supplied configuration CFG. CFG must be a fully
             %   processed configuration struct as returned by
-            %   ConfigModel.process. OUT is a struct with fields
-            %   ``TripletsTbl`` (table) and ``Network`` (struct placeholder
-            %   for encoder).
+            %   ConfigModel.process. OUT is a struct with fields:
+            %       TripletsTbl table [n x ?]   - triplet dataset
+            %       Network     struct [1 x 1] - placeholder encoder model
             arguments
                 obj (1,1) reg.model.PipelineModel
                 cfg (1,1) struct
