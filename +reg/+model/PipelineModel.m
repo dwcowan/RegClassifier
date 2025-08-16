@@ -137,12 +137,19 @@ classdef PipelineModel < reg.mvc.BaseModel
                 searchIndexStruct.docId string
                 searchIndexStruct.embedding double
             end
-            documentsTbl = obj.CorpusModel.ingestPdfs(cfg);
-            obj.CorpusModel.persistDocuments(documentsTbl);
-            indexInputsStruct = struct( ...
-                'documentsTbl', documentsTbl, ...
-                'embeddingsMat', zeros(height(documentsTbl), 0));
-            searchIndexStruct = obj.CorpusModel.buildIndex(indexInputsStruct);
+            % Step 1: ingest PDF documents into a table
+            % documentsTbl = CorpusModel.ingestPdfs(cfg);
+
+            % Step 2: persist the ingested documents
+            % CorpusModel.persistDocuments(documentsTbl);
+
+            % Step 3: build a search index structure from documents
+            % indexInputsStruct = struct('documentsTbl', documentsTbl, ...
+            %     'embeddingsMat', zeros(height(documentsTbl), 0));
+            % searchIndexStruct = CorpusModel.buildIndex(indexInputsStruct);
+
+            error("reg:model:NotImplemented", ...
+                "PipelineModel.ingestCorpus is not implemented.");
         end
 
         function results = exampleSearch(obj, queryString, alpha, topK)
