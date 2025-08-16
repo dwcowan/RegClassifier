@@ -16,27 +16,38 @@ classdef MetricsView < reg.mvc.BaseView
     end
 
     methods
-        function display(obj, data)
-            %DISPLAY Store metrics for verification.
-            %   DISPLAY(obj, DATA) captures metric structures for later
-            %   inspection. In a production view:
-            %       * overall scores could be printed or persisted to CSV
-            %       * perLabel tables might be turned into bar charts
-            %       * history arrays would feed trend plots
-            %   If OnDisplayCallback is set, it is invoked with DATA.
+        function display(~, data) %#ok<INUSD>
+            %DISPLAY Present metrics for verification.
+            %   DISPLAY(~, DATA) would format metrics into tables, charts or
+            %   logs for further analysis.
 
-            obj.DisplayedMetrics = data;
-            if ~isempty(obj.OnDisplayCallback)
-                obj.OnDisplayCallback(data);
+            arguments
+                ~
+                data struct
             end
+
+            % Pseudocode:
+            %   extract overall, perLabel and history sections from DATA
+            %   render each section using appropriate visualisation
+            error("reg:view:NotImplemented", ...
+                "MetricsView.display is not implemented.");
         end
 
-        function log(~, metrics)
-            %LOG Simple logging helper for metrics structs.
-            %   LOG(~, METRICS) prints METRICS to the console. In a full
-            %   implementation this could persist to disk or external services.
+        function log(~, metrics) %#ok<INUSD>
+            %LOG Present metrics through a logging mechanism.
+            %   LOG(~, METRICS) would persist metrics to a log file or
+            %   external monitoring service.
 
-            disp(metrics);
+            arguments
+                ~
+                metrics struct
+            end
+
+            % Pseudocode:
+            %   convert METRICS struct to textual representation
+            %   append text to log output
+            error("reg:view:NotImplemented", ...
+                "MetricsView.log is not implemented.");
         end
     end
 end

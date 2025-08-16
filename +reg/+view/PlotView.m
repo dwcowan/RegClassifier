@@ -10,25 +10,21 @@ classdef PlotView < reg.mvc.BaseView
     end
 
     methods
-        function display(obj, data)
-            %DISPLAY Store plot references and optionally print paths.
-            %   DISPLAY(obj, DATA) captures plot artefacts for verification.
-            %   A real implementation might embed images into reports or
-            %   open figures interactively.
+        function display(~, data) %#ok<INUSD>
+            %DISPLAY Present plot artefacts.
+            %   DISPLAY(~, DATA) would embed plots into reports or open
+            %   figures for inspection.
 
-            obj.DisplayedPlots = data;
-            if isstruct(data)
-                fns = fieldnames(data);
-                for i = 1:numel(fns)
-                    val = data.(fns{i});
-                    if ischar(val) || isstring(val)
-                        fprintf('Plot saved to %s\n', string(val));
-                    end
-                end
+            arguments
+                ~
+                data struct
             end
-            if ~isempty(obj.OnDisplayCallback)
-                obj.OnDisplayCallback(data);
-            end
+
+            % Pseudocode:
+            %   loop over fields in DATA referencing plot artefacts
+            %   render or save each plot as required
+            error("reg:view:NotImplemented", ...
+                "PlotView.display is not implemented.");
         end
 
         function plotTrends(~, data) %#ok<INUSD>

@@ -12,25 +12,22 @@ classdef EmbeddingView < reg.mvc.BaseView
     end
 
     methods
-        function display(obj, data)
-            %DISPLAY Store embedding data for inspection.
-            %   DISPLAY(obj, DATA) retains embedding vectors and reports
-            %   their dimensions. In production this might serialise
-            %   embeddings or send them to a visualiser.
+        function display(~, data) %#ok<INUSD>
+            %DISPLAY Present embedding data.
+            %   DISPLAY(~, DATA) would report vector dimensions or forward
+            %   embeddings to downstream visualisation tools.
 
-            obj.DisplayedEmbeddings = data;
-            vecs = [];
-            if isstruct(data) && isfield(data, 'Vectors')
-                vecs = data.Vectors;
-            elseif isnumeric(data)
-                vecs = data;
+            arguments
+                ~
+                data {mustBeA(data,{"double","struct"})}
             end
-            if ~isempty(vecs)
-                fprintf('Embeddings: %d-by-%d matrix\n', size(vecs,1), size(vecs,2));
-            end
-            if ~isempty(obj.OnDisplayCallback)
-                obj.OnDisplayCallback(data);
-            end
+
+            % Pseudocode:
+            %   if struct, extract embedding vectors
+            %   else treat DATA as a numeric matrix of vectors
+            %   render or summarise vector information
+            error("reg:view:NotImplemented", ...
+                "EmbeddingView.display is not implemented.");
         end
     end
 end

@@ -22,30 +22,22 @@ classdef ReportView < reg.mvc.BaseView
     end
 
     methods
-        function display(obj, data)
-            %DISPLAY Store report data for verification and expose key sections.
-            %   DISPLAY(obj, DATA) retains summary tables, IRB subsets and
-            %   trend charts for inspection. In a real view:
-            %       * summaryTables would be rendered to HTML/Markdown
-            %       * irbSubset could be written to a CSV for manual review
-            %       * trendCharts might be saved as PNG and embedded
-            %   Additional metric arrays would be handled similarly.
-            %   If PostRenderCallback is defined it is invoked with DATA.
+        function display(~, data) %#ok<INUSD>
+            %DISPLAY Present report data for rendering.
+            %   DISPLAY(~, DATA) would format summary tables, IRB subsets and
+            %   trend charts into a comprehensive evaluation report.
 
-            obj.DisplayedData = data;
-            if isstruct(data) && isfield(data, 'summaryTables')
-                obj.SummaryTables = data.summaryTables;
-            end
-            if isstruct(data) && isfield(data, 'irbSubset')
-                obj.IRBSubset = data.irbSubset;
-            end
-            if isstruct(data) && isfield(data, 'trendCharts')
-                obj.TrendCharts = data.trendCharts;
+            arguments
+                ~
+                data struct
             end
 
-            if ~isempty(obj.PostRenderCallback)
-                obj.PostRenderCallback(data);
-            end
+            % Pseudocode:
+            %   render DATA.summaryTables into HTML or Markdown
+            %   export DATA.irbSubset for review
+            %   embed DATA.trendCharts into the report
+            error("reg:view:NotImplemented", ...
+                "ReportView.display is not implemented.");
         end
     end
 end
