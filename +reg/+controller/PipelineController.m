@@ -2,14 +2,18 @@ classdef PipelineController < reg.mvc.BaseController
     %PIPELINECONTROLLER Orchestrates end-to-end pipeline flow.
 
     properties
-        PipelineModel
+        % PipelineModel (reg.model.PipelineModel): coordinates lower level
+        %   models.  Expected to expose methods ``run``, ``runFineTune``,
+        %   ``runProjectionHead`` and ``runTraining`` returning structs.
+        PipelineModel reg.model.PipelineModel
     end
 
     methods
         function obj = PipelineController(pipelineModel, view)
             %PIPELINECONTROLLER Construct controller wiring pipeline model.
-            if nargin < 2 || isempty(view)
-                view = reg.view.MetricsView();
+            arguments
+                pipelineModel reg.model.PipelineModel
+                view reg.view.MetricsView = reg.view.MetricsView()
             end
             obj@reg.mvc.BaseController(pipelineModel, view);
             obj.PipelineModel = pipelineModel;
@@ -21,6 +25,10 @@ classdef PipelineController < reg.mvc.BaseController
             %   process to the PipelineModel using the supplied processed
             %   configuration CFG and displays any outputs using the
             %   controller view.
+            arguments
+                obj
+                cfg (1,1) struct
+            end
 
             result = obj.PipelineModel.runFineTune(cfg);
             if ~isempty(obj.View)
@@ -33,6 +41,10 @@ classdef PipelineController < reg.mvc.BaseController
             %   PROJECTED = RUNPROJECTIONHEAD(obj, EMBEDDINGS) delegates
             %   projection head training to the PipelineModel and displays
             %   the resulting embeddings using the controller view.
+            arguments
+                obj
+                embeddings double
+            end
 
             projected = obj.PipelineModel.runProjectionHead(embeddings);
             if ~isempty(obj.View)
@@ -42,6 +54,9 @@ classdef PipelineController < reg.mvc.BaseController
 
         function run(obj)
             %RUN Execute the full pipeline end-to-end.
+            arguments
+                obj
+            end
 
             result = obj.PipelineModel.run();
 
@@ -58,6 +73,10 @@ classdef PipelineController < reg.mvc.BaseController
             %   RUNTRAINING(OBJ, CFG) delegates the workflow to the
             %   PipelineModel using the supplied processed configuration
             %   CFG and displays the results using the controller view.
+            arguments
+                obj
+                cfg (1,1) struct
+            end
             result = obj.PipelineModel.runTraining(cfg);
             if ~isempty(obj.View)
                 obj.View.display(result);

@@ -2,6 +2,11 @@ classdef VisualizationModel < reg.mvc.BaseModel
     %VISUALIZATIONMODEL Stub model for generating evaluation plots.
     %   Provides helpers to render trend lines and co-retrieval heatmaps.
 
+    properties
+        % LastPlotPath (string): destination of most recently saved plot
+        LastPlotPath string = ""
+    end
+
     methods
         function obj = VisualizationModel(varargin) %#ok<INUSD>
             %VISUALIZATIONMODEL Construct visualization model.
@@ -33,7 +38,7 @@ classdef VisualizationModel < reg.mvc.BaseModel
             ylabel("Metric value");
         end
 
-        function pngPath = plotCoRetrievalHeatmap(~, coMatrix, pngPath, labels) %#ok<INUSD>
+        function pngPath = plotCoRetrievalHeatmap(obj, coMatrix, pngPath, labels) %#ok<INUSD>
             %PLOTCORETRIEVALHEATMAP Render heatmap from co-retrieval matrix.
             %   Inputs
             %       coMatrix - L x L numeric matrix of co-retrieval rates
@@ -47,19 +52,37 @@ classdef VisualizationModel < reg.mvc.BaseModel
             %   Side Effects
             %       Should visualise the supplied matrix as a heatmap and
             %       persist it to ``pngPath``.
-
+            arguments
+                obj
+                coMatrix double
+                pngPath (1,1) string
+                labels cell = {}
+            end
+            % Pseudocode/Validation:
+            %   assert(size(coMatrix,1)==size(coMatrix,2))
+            %   heatmap(coMatrix)
+            %   saveas(fig, pngPath)
+            %   obj.LastPlotPath = pngPath
             error("reg:model:NotImplemented", ...
                 "VisualizationModel.plotCoRetrievalHeatmap is not implemented.");
         end
 
         function data = load(~, varargin) %#ok<INUSD>
             %LOAD Stub for interface completeness.
+            arguments
+                ~
+                varargin (1,:) cell
+            end
             error("reg:model:NotImplemented", ...
                 "VisualizationModel.load is not implemented.");
         end
 
         function result = process(~, data) %#ok<INUSD>
             %PROCESS Stub for interface completeness.
+            arguments
+                ~
+                data struct
+            end
             error("reg:model:NotImplemented", ...
                 "VisualizationModel.process is not implemented.");
         end

@@ -2,6 +2,8 @@ classdef EvaluationModel < reg.mvc.BaseModel
     %EVALUATIONMODEL Compute evaluation metrics for model outputs.
 
     properties
+        % ConfigModel: provides configuration validation hooks used during
+        %   processing.  Optional; if empty defaults are assumed.
         ConfigModel reg.model.ConfigModel
     end
 
@@ -17,6 +19,10 @@ classdef EvaluationModel < reg.mvc.BaseModel
             %   INPUT = LOAD(~, PRED, REF) returns a struct with fields
             %   ``Predictions`` and ``References`` capturing the supplied
             %   arrays.
+            arguments
+                ~
+                varargin (1,:) cell
+            end
             pred = [];
             ref = [];
             if numel(varargin) >= 1
@@ -32,6 +38,10 @@ classdef EvaluationModel < reg.mvc.BaseModel
             %PROCESS Calculate evaluation metrics from INPUT.
             %   RESULT = PROCESS(obj, INPUT) returns a struct containing a
             %   ``Metrics`` field with evaluation scores.
+            arguments
+                obj
+                input (1,1) struct
+            end
             if ~isempty(obj.ConfigModel)
                 cfgRaw = obj.ConfigModel.load();
                 cfg = obj.ConfigModel.process(cfgRaw); %#ok<NASGU>
@@ -52,6 +62,13 @@ classdef EvaluationModel < reg.mvc.BaseModel
             %   ``LabelIdx``, ``RecallAtK`` and ``Support``.
             %
             %   This method replaces the former PerLabelEvalModel.process.
+            arguments
+                ~
+                embeddings double
+                labelsLogical logical
+                k (1,1) double
+            end
+            % Pseudocode: validate size(labelsLogical,1) == size(embeddings,1)
             error("reg:model:NotImplemented", ...
                 "EvaluationModel.perLabelMetrics is not implemented.");
         end
@@ -67,6 +84,12 @@ classdef EvaluationModel < reg.mvc.BaseModel
             %   assignments.
             %
             %   This method consolidates the former ClusteringEvalModel.
+            arguments
+                ~
+                embeddings double
+                labelsLogical logical
+                k (1,1) double
+            end
             error("reg:model:NotImplemented", ...
                 "EvaluationModel.clusteringMetrics is not implemented.");
         end
@@ -81,6 +104,12 @@ classdef EvaluationModel < reg.mvc.BaseModel
             %   captures the column permutation applied to labels.
             %
             %   This method supersedes the CoRetrievalMatrixModel.
+            arguments
+                ~
+                embeddings double
+                labelMatrix double
+                k (1,1) double
+            end
             error("reg:model:NotImplemented", ...
                 "EvaluationModel.coRetrievalMatrix is not implemented.");
         end

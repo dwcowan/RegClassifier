@@ -38,6 +38,10 @@ classdef CorpusModel < reg.mvc.BaseModel
             %       1. Issue HTTP requests for CRR articles
             %       2. Write HTML/plaintext files and index.csv
             %       3. Return table describing downloaded artefacts
+            arguments
+                ~
+                varargin (1,:) cell
+            end
             error("reg:model:NotImplemented", ...
                 "CorpusModel.fetchEba is not implemented.");
         end
@@ -50,6 +54,10 @@ classdef CorpusModel < reg.mvc.BaseModel
             %       1. Fetch articles as in fetchEba
             %       2. Parse article numbers into `article_num`
             %       3. Return metadata table including `article_num`
+            arguments
+                ~
+                varargin (1,:) cell
+            end
             error("reg:model:NotImplemented", ...
                 "CorpusModel.fetchEbaParsed is not implemented.");
         end
@@ -62,6 +70,10 @@ classdef CorpusModel < reg.mvc.BaseModel
             %       1. Build download URL from consolidation code
             %       2. Download PDF into data/raw
             %       3. Return absolute file path
+            arguments
+                ~
+                varargin (1,:) cell
+            end
             error("reg:model:NotImplemented", ...
                 "CorpusModel.fetchEurlex is not implemented.");
         end
@@ -77,6 +89,11 @@ classdef CorpusModel < reg.mvc.BaseModel
             %       1. Resolve remote resources for params.date
             %       2. Download and unpack corpus
             %       3. Build index files and return paths
+            arguments
+                ~
+                params (1,1) struct
+                params.date (1,1) string
+            end
             error("reg:model:NotImplemented", ...
                 "CorpusModel.sync is not implemented.");
         end
@@ -225,6 +242,12 @@ classdef CorpusModel < reg.mvc.BaseModel
             %       1. Embed and tokenise queryString
             %       2. Compute lexical and embedding similarity
             %       3. Blend scores and return topK results
+            arguments
+                ~
+                queryString (1,1) string
+                alpha (1,1) double
+                topK (1,1) double
+            end
             error("reg:model:NotImplemented", ...
                 "CorpusModel.queryIndex is not implemented.");
         end
@@ -235,6 +258,12 @@ classdef CorpusModel < reg.mvc.BaseModel
             %   documents by article identifiers and compute differences.
             %   Legacy Reference
             %       Equivalent to `reg.crr_diff_articles`.
+            arguments
+                ~
+                dirA (1,1) string
+                dirB (1,1) string
+                outDir (1,1) string
+            end
             error("reg:model:NotImplemented", ...
                 "CorpusModel.runArticles is not implemented.");
         end
@@ -245,6 +274,12 @@ classdef CorpusModel < reg.mvc.BaseModel
             %   file versions and report line-level changes.
             %   Legacy Reference
             %       Equivalent to `reg.crr_diff_versions`.
+            arguments
+                ~
+                dirA (1,1) string
+                dirB (1,1) string
+                outDir (1,1) string
+            end
             error("reg:model:NotImplemented", ...
                 "CorpusModel.runVersions is not implemented.");
         end
@@ -256,6 +291,12 @@ classdef CorpusModel < reg.mvc.BaseModel
             %   Legacy Reference
             %       Equivalent to `reg_crr_diff_report` and
             %       `reg_crr_diff_report_html`.
+            arguments
+                ~
+                dirA (1,1) string
+                dirB (1,1) string
+                outDir (1,1) string
+            end
             error("reg:model:NotImplemented", ...
                 "CorpusModel.runReport is not implemented.");
         end
@@ -265,9 +306,12 @@ classdef CorpusModel < reg.mvc.BaseModel
             %   RESULT = RUNMETHODS(obj, queries, chunksT, config) should
             %   evaluate alternative embedding methods on QUERY strings
             %   against CHUNKST table. CONFIG defaults to an empty struct.
-            if nargin < 4
-                config = struct();
-            end %#ok<NASGU>
+            arguments
+                ~
+                queries (:,1) string
+                chunksT table
+                config struct = struct()
+            end
             error("reg:model:NotImplemented", ...
                 "CorpusModel.runMethods is not implemented.");
         end
