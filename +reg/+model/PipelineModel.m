@@ -56,8 +56,9 @@ classdef PipelineModel < reg.mvc.BaseModel
             [documentsTbl, searchIndexStruct] = obj.ingestCorpus(cfg);
 
             % Step 3: training workflow (features, embeddings, classifier)
-            %   Avoid re-ingestion by supplying the pre-built documents
-            %   table from Step 2.
+            %   Avoid re-ingestion by supplying the documents table returned
+            %   from Step 2 so indexing and training share a single ingestion
+            %   pass.
             trainOut = obj.runTraining(cfg, documentsTbl);
 
             % Step 4: optional fine-tuning workflow
@@ -135,8 +136,9 @@ classdef PipelineModel < reg.mvc.BaseModel
             %   training workflow using the supplied configuration CFG and
             %   pre-ingested DOCUMENTSTBL. CFG must be a fully processed
             %   configuration struct as returned by ConfigModel.process.
-            %   DOCUMENTSTBL should typically be the same table returned by
-            %   ``ingestCorpus`` so ingestion happens only once.
+            %   DOCUMENTSTBL should typically be the same table produced
+            %   during indexing via ``ingestCorpus`` so ingestion only
+            %   occurs once for both indexing and training.
             arguments
                 obj
                 cfg (1,1) struct
