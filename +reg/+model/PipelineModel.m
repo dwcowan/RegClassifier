@@ -57,38 +57,34 @@ classdef PipelineModel < reg.mvc.BaseModel
                 result.EvaluationInputs struct
             end
 
-            % Step 1: configuration
-            cfgRaw = obj.ConfigModel.load();
-            cfg = obj.ConfigModel.process(cfgRaw);
+            % Step 1: load and process configuration
+            % cfgRaw = ConfigModel.load();
+            % cfg = ConfigModel.process(cfgRaw);
 
-            % Step 2: corpus ingestion and index build
-            %   Ingest PDFs once and reuse the resulting table for both
-            %   search index construction and downstream training.
-            [documentsTbl, searchIndexStruct] = obj.ingestCorpus(cfg);
+            % Step 2: ingest corpus and build search index
+            % [documentsTbl, searchIndexStruct] = ingestCorpus(cfg);
 
-            % Step 3: training workflow (features, embeddings, classifier)
-            %   Avoid re-ingestion by supplying the documents table returned
-            %   from Step 2 so indexing and training share a single ingestion
-            %   pass.
-            trainOut = obj.runTraining(cfg, documentsTbl);
+            % Step 3: train models using the documents table
+            % trainOut = runTraining(cfg, documentsTbl);
 
-            % Step 4: optional fine-tuning workflow
-            if isfield(cfg, 'fineTuneEpochs') && cfg.fineTuneEpochs > 0
-                trainOut.FineTune = obj.runFineTune(cfg);
-            end
+            % Step 4: optionally fine-tune model
+            % if cfg.fineTuneEpochs > 0
+            %     trainOut.FineTune = runFineTune(cfg);
+            % end
 
-            % Step 5: optional projection head workflow
-            if isfield(cfg, 'projEpochs') && cfg.projEpochs > 0
-                trainOut.ProjectedEmbeddings = obj.runProjectionHead(
-                    trainOut.Embeddings);
-            end
+            % Step 5: optionally project embeddings
+            % if cfg.projEpochs > 0
+            %     trainOut.ProjectedEmbeddings = runProjectionHead( ...
+            %         trainOut.Embeddings);
+            % end
 
-            % Step 6: collate evaluation inputs for upstream controller
-            evalInputs = obj.evaluationInputs(trainOut);
+            % Step 6: prepare evaluation inputs
+            % evalInputs = evaluationInputs(trainOut);
+            % result = struct('SearchIndex', searchIndexStruct, ...
+            %     'Training', trainOut, ...
+            %     'EvaluationInputs', evalInputs);
 
-            result = struct('SearchIndex', searchIndexStruct, ...
-                'Training', trainOut, ...
-                'EvaluationInputs', evalInputs);
+            error("reg:model:NotImplemented","PipelineModel.run is not implemented.");
         end
 
         function out = evaluationInputs(~, trainOut)
