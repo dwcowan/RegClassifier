@@ -66,56 +66,29 @@ classdef EvaluationController < reg.mvc.BaseController
                 embeddings double
                 labelMatrix double = []
             end
+            % Step 1: ingest runtime labels
+            %   rlm   = reg.model.RuntimeLabelModel();
+            %   cfg   = rlm.load(labelMatrix);
+            %   lbls  = rlm.process(cfg);
 
-            % Step 1: ingest runtime labels and evaluate labelled data
-            %   Using RuntimeLabelModel (pseudocode):
-            %       rlm = reg.model.RuntimeLabelModel();
-            %       cfg = rlm.load(labelMatrix);
-            %       lbls = rlm.process(cfg);
-            %       results = obj.evaluateLabelledData(embeddings, lbls);
-            results = obj.evaluateLabelledData(embeddings, labelMatrix);
+            % Step 2: call evaluation model to compute metrics
+            %   raw   = obj.Model.load(embeddings, lbls);
+            %   eval  = obj.Model.process(raw);
+            %   metrics = eval.Metrics;
 
-            % Step 2: generate report from metrics and display
-            repRaw = obj.ReportModel.load(results.Metrics);
-            reportData = obj.ReportModel.process(repRaw);
-            if ~isempty(obj.View)
-                obj.View.display(reportData);
-            end
+            % Step 3: generate reports and diagnostic plots
+            %   rep   = obj.ReportModel.process(obj.ReportModel.load(metrics));
+            %   trends = obj.VisualizationModel.plotTrendsData(metrics);
+            %   heatmap = obj.VisualizationModel.plotCoRetrievalHeatmap(...);
 
-            % Step 3: create diagnostic plots
-            metricsStruct = results.Metrics;
-            obj.Model.validateMetrics(metricsStruct);
-            trendsData = obj.VisualizationModel.plotTrendsData(metricsStruct);
+            % Step 4: forward artefacts to views
+            %   obj.View.display(rep);
+            %   obj.PlotView.plotTrends(trends);
+            %   obj.PlotView.display(struct('HeatmapPNG', heatmap));
 
-            coMatrix = [];
-            labels = [];
-            if isstruct(results)
-                if isfield(results, 'embeddings') && isfield(results, 'labelMatrix')
-                    try
-                        [coMatrix, ~] = obj.Model.coRetrievalMatrix(
-                            results.embeddings, results.labelMatrix, 10);
-                    catch
-                        coMatrix = [];
-                    end
-                end
-                if isfield(results, 'labels'), labels = results.labels; end
-            end
-            heatPNG = obj.VisualizationModel.plotCoRetrievalHeatmap(
-                coMatrix, fullfile(tempdir(), 'heatmap.png'), labels);
-
-            % Step 4: hand off plots to plot view
-            if ~isempty(obj.PlotView)
-                obj.PlotView.plotTrends(trendsData);
-                obj.PlotView.display(struct(
-                    'HeatmapPNG', heatPNG));
-            end
-
-            % Return metrics for upstream consumers
-            if isstruct(results) && isfield(results, 'Metrics')
-                metrics = results.Metrics;
-            else
-                metrics = [];
-            end
+            % Placeholder implementation
+            error("reg:controller:NotImplemented", ...
+                "EvaluationController.run is not implemented.");
         end
         function metrics = retrievalMetrics(~, embeddings, posSets, k) %#ok<INUSD>
             %RETRIEVALMETRICS Compute retrieval metrics at K.
