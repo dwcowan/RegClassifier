@@ -10,14 +10,10 @@ classdef CorpusController < reg.mvc.BaseController
             %CORPUSCONTROLLER Construct controller wiring model and view.
             %   OBJ = CORPUSCONTROLLER(model, view) creates a controller
             %   backed by a `reg.model.CorpusModel` and a view for
-            %   displaying results. MODEL defaults to
-            %   `reg.model.CorpusModel()` and VIEW defaults to
-            %   `reg.view.DiffView()`.
-            if nargin < 1 || isempty(model)
-                model = reg.model.CorpusModel();
-            end
-            if nargin < 2 || isempty(view)
-                view = reg.view.DiffView();
+            %   displaying results.
+            arguments
+                model reg.model.CorpusModel = reg.model.CorpusModel()
+                view reg.view.DiffView = reg.view.DiffView()
             end
             obj@reg.mvc.BaseController(model, view);
         end
@@ -27,6 +23,10 @@ classdef CorpusController < reg.mvc.BaseController
             %   T = FETCHEBA(obj, Name, Value, ...) invokes the underlying
             %   model to retrieve HTML/plaintext articles. The metadata
             %   table T mirrors the output of `fetch_crr_eba`.
+            arguments
+                obj
+                varargin (1,:) cell
+            end
             T = obj.Model.fetchEba(varargin{:});
             if ~isempty(obj.View)
                 obj.View.display(T);
@@ -39,6 +39,10 @@ classdef CorpusController < reg.mvc.BaseController
             %   articles and augments metadata with a parsed `article_num`
             %   column. The table is forwarded to the configured view when
             %   present.
+            arguments
+                obj
+                varargin (1,:) cell
+            end
             T = obj.Model.fetchEbaParsed(varargin{:});
             if ~isempty(obj.View)
                 obj.View.display(T);
@@ -50,6 +54,10 @@ classdef CorpusController < reg.mvc.BaseController
             %   pdfPath = FETCHEURLEX(obj, Name, Value, ...) downloads the
             %   consolidated regulation PDF and returns the file path. The
             %   path is forwarded to the view if one is configured.
+            arguments
+                obj
+                varargin (1,:) cell
+            end
             pdfPath = obj.Model.fetchEurlex(varargin{:});
             if ~isempty(obj.View)
                 obj.View.display(pdfPath);
@@ -58,9 +66,14 @@ classdef CorpusController < reg.mvc.BaseController
 
         function documents = ingestPdfs(obj, cfg)
             %INGESTPDFS Convert PDFs to a document table via the model.
-            %   documents = INGESTPDFS(obj, cfg) delegates to the model's
+            %   DOCUMENTS = INGESTPDFS(obj, cfg) delegates to the model's
             %   ingestPdfs method and displays the resulting table when a
             %   view is configured.
+            arguments
+                obj
+                cfg struct
+                cfg.inputDir (1,1) string
+            end
             documents = obj.Model.ingestPdfs(cfg);
             if ~isempty(obj.View)
                 obj.View.display(documents);
@@ -68,9 +81,13 @@ classdef CorpusController < reg.mvc.BaseController
         end
 
         function persistDocuments(obj, documents)
-            %PERSISTDOCUMENTS Persist document structs through the model.
+            %PERSISTDOCUMENTS Persist document table through the model.
             %   PERSISTDOCUMENTS(obj, documents) forwards to the model and
             %   displays the input documents when a view is present.
+            arguments
+                obj
+                documents table
+            end
             obj.Model.persistDocuments(documents);
             if ~isempty(obj.View)
                 obj.View.display(documents);
@@ -81,6 +98,12 @@ classdef CorpusController < reg.mvc.BaseController
             %BUILDINDEX Create or update the search index via the model.
             %   searchIndex = BUILDINDEX(obj, indexInputs) calls the model's
             %   buildIndex and forwards the result to the view if available.
+            arguments
+                obj
+                indexInputs struct
+                indexInputs.documentsTbl table
+                indexInputs.embeddingsMat double
+            end
             searchIndex = obj.Model.buildIndex(indexInputs);
             if ~isempty(obj.View)
                 obj.View.display(searchIndex);
@@ -89,8 +112,14 @@ classdef CorpusController < reg.mvc.BaseController
 
         function results = queryIndex(obj, queryString, alpha, topK)
             %QUERYINDEX Retrieve ranked documents from the model's index.
-            %   results = QUERYINDEX(obj, queryString, alpha, topK) forwards
+            %   RESULTS = QUERYINDEX(obj, queryString, alpha, topK) forwards
             %   to the model and displays results when a view is configured.
+            arguments
+                obj
+                queryString (1,1) string
+                alpha (1,1) double
+                topK (1,1) double
+            end
             results = obj.Model.queryIndex(queryString, alpha, topK);
             if ~isempty(obj.View)
                 obj.View.display(results);
@@ -100,6 +129,10 @@ classdef CorpusController < reg.mvc.BaseController
         function out = sync(obj, date)
             %SYNC Execute synchronisation for a given date.
             %   OUT = SYNC(obj, date) orchestrates corpus synchronisation.
+            arguments
+                obj
+                date (1,1) string
+            end
             params = obj.Model.load(date);
             out = obj.Model.process(params);
             if ~isempty(obj.View)
@@ -112,6 +145,11 @@ classdef CorpusController < reg.mvc.BaseController
             %   RESULT = RUN(obj, MODE, ...) delegates to a specialised
             %   method according to MODE. Supported modes are 'articles',
             %   'versions', 'report' and 'methods'.
+            arguments
+                obj
+                mode (1,1) string
+                varargin (1,:) cell
+            end
             switch lower(mode)
                 case 'articles'
                     result = obj.runArticles(varargin{:});
@@ -131,6 +169,12 @@ classdef CorpusController < reg.mvc.BaseController
             %RUNARTICLES Compare corpora by article number.
             %   RESULT = RUNARTICLES(obj, dirA, dirB, outDir) forwards to
             %   the model's runArticles implementation and displays results.
+            arguments
+                obj
+                dirA (1,1) string
+                dirB (1,1) string
+                outDir (1,1) string
+            end
             result = obj.Model.runArticles(dirA, dirB, outDir);
             if ~isempty(obj.View)
                 obj.View.display(result);
@@ -141,6 +185,12 @@ classdef CorpusController < reg.mvc.BaseController
             %RUNVERSIONS Diff directories on a file-by-file basis.
             %   RESULT = RUNVERSIONS(obj, dirA, dirB, outDir) delegates to
             %   the model's runVersions method and displays results.
+            arguments
+                obj
+                dirA (1,1) string
+                dirB (1,1) string
+                outDir (1,1) string
+            end
             result = obj.Model.runVersions(dirA, dirB, outDir);
             if ~isempty(obj.View)
                 obj.View.display(result);
@@ -151,6 +201,12 @@ classdef CorpusController < reg.mvc.BaseController
             %RUNREPORT Produce diff reports for two directories.
             %   REPORT = RUNREPORT(obj, dirA, dirB, outDir) orchestrates
             %   generation of diff artefacts using the model.
+            arguments
+                obj
+                dirA (1,1) string
+                dirB (1,1) string
+                outDir (1,1) string
+            end
             report = obj.Model.runReport(dirA, dirB, outDir);
             if ~isempty(obj.View)
                 obj.View.display(report);
@@ -162,8 +218,11 @@ classdef CorpusController < reg.mvc.BaseController
             %   RESULT = RUNMETHODS(obj, queries, chunksT, config) delegates
             %   to the model to compute method diffs. CONFIG defaults to an
             %   empty struct.
-            if nargin < 4
-                config = struct();
+            arguments
+                obj
+                queries (:,1) string
+                chunksT table
+                config struct = struct()
             end
             result = obj.Model.runMethods(queries, chunksT, config);
             if ~isempty(obj.View)

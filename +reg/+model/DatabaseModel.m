@@ -3,6 +3,8 @@ classdef DatabaseModel < reg.mvc.BaseModel
 
     properties
         % Database connection handle created in `load` (default: [])
+        %   Should be a database connection object compatible with Database
+        %   Toolbox or a struct providing minimal fields `close` and `exec`.
         conn = [];
     end
 
@@ -31,6 +33,10 @@ classdef DatabaseModel < reg.mvc.BaseModel
             %   Recommended Mitigation
             %       * Implement retry/backoff and surface meaningful errors.
             %       * Ensure existing connections are cleaned before opening new ones.
+            arguments
+                obj
+                varargin (1,:) cell
+            end
             % Pseudocode:
             %   1. If obj.conn is open, close it
             %   2. Create new connection using configuration parameters
@@ -66,6 +72,10 @@ classdef DatabaseModel < reg.mvc.BaseModel
             %       * Use parameterized queries to avoid injection and ensure
             %         proper escaping.
             %       * Provide idempotent retry logic for transient failures.
+            arguments
+                obj
+                predictionTable table
+            end
             % Pseudocode:
             %   1. Begin transaction on obj.conn
             %   2. Upsert rows from predictionTable into reg_chunks

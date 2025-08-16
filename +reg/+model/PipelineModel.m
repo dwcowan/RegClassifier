@@ -7,26 +7,27 @@ classdef PipelineModel < reg.mvc.BaseModel
     %   EvaluationModel.
 
     properties
-        ConfigModel
-        TrainingModel
-        CorpusModel
-        EvaluationModel
+        % ConfigModel: supplies configuration defaults and validation
+        ConfigModel reg.model.ConfigModel
+
+        % TrainingModel: handles ingestion, chunking and classifier training
+        TrainingModel reg.model.TrainingModel
+
+        % CorpusModel: provides corpus ingestion and search indexing
+        CorpusModel reg.model.CorpusModel
+
+        % EvaluationModel: computes evaluation metrics
+        EvaluationModel reg.model.EvaluationModel
     end
 
     methods
         function obj = PipelineModel(cfgModel, corpusModel, trainModel, evalModel)
             %PIPELINEMODEL Construct pipeline model wiring core models.
-            if nargin < 1 || isempty(cfgModel)
-                cfgModel = reg.model.ConfigModel();
-            end
-            if nargin < 2 || isempty(corpusModel)
-                corpusModel = reg.model.CorpusModel();
-            end
-            if nargin < 3 || isempty(trainModel)
-                trainModel = reg.model.TrainingModel();
-            end
-            if nargin < 4 || isempty(evalModel)
-                evalModel = reg.model.EvaluationModel();
+            arguments
+                cfgModel reg.model.ConfigModel = reg.model.ConfigModel()
+                corpusModel reg.model.CorpusModel = reg.model.CorpusModel()
+                trainModel reg.model.TrainingModel = reg.model.TrainingModel()
+                evalModel reg.model.EvaluationModel = reg.model.EvaluationModel()
             end
             obj.ConfigModel = cfgModel;
             obj.CorpusModel = corpusModel;
@@ -40,6 +41,10 @@ classdef PipelineModel < reg.mvc.BaseModel
             %   corpus ingestion, feature/embedding extraction, classifier
             %   training, fine-tuning and evaluation. RESULT is a struct
             %   with fields ``SearchIndex``, ``Training`` and ``Metrics``.
+
+            arguments
+                obj
+            end
 
             % Step 1: configuration
             cfgRaw = obj.ConfigModel.load();
@@ -90,6 +95,10 @@ classdef PipelineModel < reg.mvc.BaseModel
             %   Returns
             %       searchIndexStruct (struct): fields ``docId`` and
             %           ``embedding`` as produced by CorpusModel.buildIndex.
+            arguments
+                obj
+                cfg (1,1) struct
+            end
             documentsTbl = obj.CorpusModel.ingestPdfs(cfg);
             obj.CorpusModel.persistDocuments(documentsTbl);
             indexInputsStruct = struct( ...
@@ -103,14 +112,11 @@ classdef PipelineModel < reg.mvc.BaseModel
             %   RESULTS = EXAMPLESEARCH(obj, queryString, alpha, topK)
             %   delegates to CorpusModel.queryIndex. Default parameters are
             %   provided for debugging convenience.
-            if nargin < 2
-                queryString = "pipeline query";
-            end
-            if nargin < 3
-                alpha = 0.5;
-            end
-            if nargin < 4
-                topK = 5;
+            arguments
+                obj
+                queryString (1,1) string = "pipeline query"
+                alpha (1,1) double = 0.5
+                topK (1,1) double = 5
             end
             results = obj.CorpusModel.queryIndex(queryString, alpha, topK);
         end
@@ -121,6 +127,10 @@ classdef PipelineModel < reg.mvc.BaseModel
             %   using the supplied configuration CFG. CFG must be a fully
             %   processed configuration struct as returned by
             %   ConfigModel.process.
+            arguments
+                obj
+                cfg (1,1) struct
+            end
             documentsTbl = obj.TrainingModel.ingest(cfg);
             chunksTbl = obj.TrainingModel.chunk(documentsTbl);
             [featuresTbl, ~] = obj.TrainingModel.extractFeatures(chunksTbl);
@@ -141,6 +151,10 @@ classdef PipelineModel < reg.mvc.BaseModel
             %   using the supplied configuration CFG. CFG must be a fully
             %   processed configuration struct as returned by
             %   ConfigModel.process.
+            arguments
+                obj
+                cfg (1,1) struct
+            end
             documentsTbl = obj.TrainingModel.ingest(cfg);
             chunksTbl = obj.TrainingModel.chunk(documentsTbl);
             [weakLabelsMat, bootLabelsMat] = obj.TrainingModel.weakLabel(chunksTbl);
@@ -156,6 +170,11 @@ classdef PipelineModel < reg.mvc.BaseModel
             %   PROJECTED = RUNPROJECTIONHEAD(obj, EMBEDDINGS) builds
             %   contrastive triplets and delegates training to
             %   TrainingModel.trainProjectionHead.
+
+            arguments
+                obj
+                embeddings double
+            end
 
             tripletsTbl = obj.TrainingModel.prepareDataset(struct('Embeddings', embeddings));
             projected = obj.TrainingModel.trainProjectionHead(tripletsTbl);

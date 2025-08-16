@@ -6,10 +6,20 @@ classdef EvaluationController < reg.mvc.BaseController
     %   diagnostic plots.
 
     properties
-        % Model computing evaluation metrics (stored in BaseController.Model)
-        ReportModel
-        PlotView
+        % ReportModel (reg.model.ReportModel): transforms metrics into
+        %   report-ready structures.  Fields produced should align with
+        %   ReportModel.load/process contracts (chunks, scores, labels).
+        ReportModel reg.model.ReportModel
+
+        % PlotView (reg.view.PlotView): handles visual artefact display.
+        PlotView reg.view.PlotView
+
+        % VisualizationModel: generates diagnostic figures such as trends
+        %   and co-retrieval heatmaps.
         VisualizationModel reg.model.VisualizationModel = reg.model.VisualizationModel();
+
+        % MetricsView: logs scalar metrics; expected to support ``log`` and
+        %   ``display`` methods accepting structs.
         MetricsView reg.view.MetricsView = reg.view.MetricsView();
     end
 
@@ -114,12 +124,16 @@ classdef EvaluationController < reg.mvc.BaseController
             %   METRICS = RETRIEVALMETRICS(embeddings, posSets, k) should
             %   produce Recall@K, mAP and nDCG scores for a set of embeddings
             %   and positive index sets.
+            arguments
+                ~
+                embeddings double
+                posSets cell
+                k (1,1) double
+            end
             %   Legacy Reference
             %       Equivalent to `reg.eval_retrieval` and `reg.metrics_ndcg`.
-            %   Pseudocode:
-            %       1. For each query embedding compute similarity scores
-            %       2. Derive recall, mAP and nDCG at K
-            %       3. Return metrics struct
+            %   Pseudocode/Validation stub:
+            %       assert(size(embeddings,1) == numel(posSets))
             error("reg:controller:NotImplemented", ...
                 "EvaluationController.retrievalMetrics is not implemented.");
         end
@@ -137,9 +151,11 @@ classdef EvaluationController < reg.mvc.BaseController
             %       Step 1a ↔ `eval_per_label`
             %       Step 1b ↔ `eval_clustering`
             %       Step 2  ↔ `log_metrics`
-
-            if nargin < 3
-                labelMatrix = [];
+            arguments
+                obj
+                embeddings double
+                labelMatrix double = []
+                opts struct = struct()
             end
 
             % Step 1: load evaluation inputs and compute core metrics

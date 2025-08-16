@@ -5,6 +5,13 @@ classdef ReportModel < reg.mvc.BaseModel
     %   and topic summaries.
 
     properties
+        % ReportInputs (struct): expected fields
+        %   chunks   (table) : chunk metadata with variables chunkId, text
+        %   scores   (double): N-by-L classifier score matrix
+        %   mdlLDA   (struct): topic model handle
+        %   vocab    (string): 1-by-V vocabulary terms
+        %   labels   (string): 1-by-L label names
+        ReportInputs struct = struct();
     end
 
     methods
@@ -32,6 +39,10 @@ classdef ReportModel < reg.mvc.BaseModel
             %       Equivalent to `generate_reg_report` data loading.
             %   Extension Point
             %       Override to incorporate custom metrics sources.
+            arguments
+                ~
+                varargin (1,:) cell
+            end
             % Pseudocode:
             %   1. Load chunk metadata and classifier scores
             %   2. Load or fit LDA model along with vocabulary
@@ -40,7 +51,7 @@ classdef ReportModel < reg.mvc.BaseModel
             error("reg:model:NotImplemented", ...
                 "ReportModel.load is not implemented.");
         end
-        function reportData = process(~, reportInputs) %#ok<INUSD>
+        function reportData = process(obj, reportInputs) %#ok<INUSD>
             %PROCESS Assemble report data structure.
             %   reportData = PROCESS(obj, reportInputs) returns a struct ready
             %   for rendering.
@@ -59,6 +70,10 @@ classdef ReportModel < reg.mvc.BaseModel
             %       Equivalent to `generate_reg_report`.
             %   Extension Point
             %       Hook to inject custom formatting or sections.
+            arguments
+                obj
+                reportInputs (1,1) struct
+            end
             % Pseudocode:
             %   % Coverage table derived from scores
             %   1. pred = scores > threshold
@@ -72,7 +87,8 @@ classdef ReportModel < reg.mvc.BaseModel
             %   7. for each topic k
             %          topIdx = topk(mdlLDA.TopicWordProbabilities(k,:),10)
             %          ldaTopics{k} = vocab(topIdx)
-            %   8. Return reportData struct with above fields
+            %   8. Store reportInputs in obj.ReportInputs and
+            %          return reportData struct
             error("reg:model:NotImplemented", ...
                 "ReportModel.process is not implemented.");
         end

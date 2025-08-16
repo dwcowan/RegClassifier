@@ -2,6 +2,11 @@ classdef GoldPackModel < reg.mvc.BaseModel
     %GOLDPACKMODEL Stub model providing labelled gold data.
 
     properties
+        % GoldTable (table): labelled reference data with variables
+        %   chunkId (double) - unique chunk identifier
+        %   label (string)   - associated label name
+        %   This placeholder is populated in `process`.
+        GoldTable table = table();
     end
 
     methods
@@ -22,6 +27,10 @@ classdef GoldPackModel < reg.mvc.BaseModel
             %       Equivalent to `load_gold`.
             %   Extension Point
             %       Override to retrieve from external repositories.
+            arguments
+                ~
+                varargin (1,:) cell
+            end
             % Pseudocode:
             %   1. Read gold dataset files from disk
             %   2. Parse into goldDataStruct
@@ -29,7 +38,7 @@ classdef GoldPackModel < reg.mvc.BaseModel
             error("reg:model:NotImplemented", ...
                 "GoldPackModel.load is not implemented.");
         end
-        function goldTable = process(~, goldDataStruct) %#ok<INUSD>
+        function goldTable = process(obj, goldDataStruct) %#ok<INUSD>
             %PROCESS Return processed gold data.
             %   goldTable = PROCESS(obj, goldDataStruct) outputs structured
             %   gold artefacts.
@@ -43,10 +52,14 @@ classdef GoldPackModel < reg.mvc.BaseModel
             %       Equivalent to `load_gold` post-processing.
             %   Extension Point
             %       Customize schema or filtering of gold data.
+            arguments
+                obj
+                goldDataStruct (1,1) struct
+            end
             % Pseudocode:
             %   1. Normalize fields in goldDataStruct
             %   2. Convert to table format
-            %   3. Return goldTable
+            %   3. Store in obj.GoldTable and return
             error("reg:model:NotImplemented", ...
                 "GoldPackModel.process is not implemented.");
         end
