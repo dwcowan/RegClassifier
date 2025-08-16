@@ -32,10 +32,11 @@ classdef PipelineModel < reg.mvc.BaseModel
             arguments (Output)
                 obj (1,1) reg.model.PipelineModel
             end
-            obj.ConfigModel = cfgModel;
-            obj.CorpusModel = corpusModel;
-            obj.TrainingModel = trainModel;
-            obj.EvaluationModel = evalModel;
+            % Dependencies are injected via constructor arguments:
+            %   ConfigModel, CorpusModel, TrainingModel and EvaluationModel.
+
+            error("reg:model:NotImplemented", ...
+                "PipelineModel constructor is not implemented.");
         end
 
         function result = run(obj)
