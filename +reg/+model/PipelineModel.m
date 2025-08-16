@@ -101,7 +101,7 @@ classdef PipelineModel < reg.mvc.BaseModel
             %   ingestion pass.
             %   Returns
             %       documentsTbl (table): ingested documents
-            %       searchIndexStruct (struct): fields ``docId`` and
+            %       searchIndexStruct (struct): fields ``docId`` (string) and
             %           ``embedding`` as produced by CorpusModel.buildIndex.
             arguments
                 obj
