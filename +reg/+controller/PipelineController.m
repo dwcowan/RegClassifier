@@ -15,29 +15,28 @@ classdef PipelineController < reg.mvc.BaseController
             obj.PipelineModel = pipelineModel;
         end
 
-        function net = runFineTune(obj, cfg)
+        function result = runFineTune(obj, cfg)
             %RUNFINETUNE Execute encoder fine-tuning workflow.
-            %   NET = RUNFINETUNE(obj, CFG) constructs triplets using the
-            %   TrainingModel and delegates encoder fine-tuning to
-            %   TrainingModel.fineTuneEncoder.
+            %   RESULT = RUNFINETUNE(obj, CFG) delegates the fine-tuning
+            %   process to the PipelineModel and displays any outputs using
+            %   the controller view.
 
-            docs = obj.PipelineModel.TrainingModel.ingest(cfg);
-            chunks = obj.PipelineModel.TrainingModel.chunk(docs);
-            [weakLabels, bootLabels] = obj.PipelineModel.TrainingModel.weakLabel(chunks); %#ok<NASGU>
-            raw = struct('Chunks', chunks, 'WeakLabels', weakLabels, ...
-                'BootLabels', bootLabels);
-            triplets = obj.PipelineModel.TrainingModel.prepareDataset(raw);
-            net = obj.PipelineModel.TrainingModel.fineTuneEncoder(triplets);
+            result = obj.PipelineModel.runFineTune(cfg);
+            if ~isempty(obj.View)
+                obj.View.display(result);
+            end
         end
 
         function projected = runProjectionHead(obj, embeddings)
             %RUNPROJECTIONHEAD Train projection head on embeddings.
-            %   PROJECTED = RUNPROJECTIONHEAD(obj, EMBEDDINGS) builds contrastive
-            %   triplets and delegates training to
-            %   TrainingModel.trainProjectionHead.
+            %   PROJECTED = RUNPROJECTIONHEAD(obj, EMBEDDINGS) delegates
+            %   projection head training to the PipelineModel and displays
+            %   the resulting embeddings using the controller view.
 
-            triplets = obj.PipelineModel.TrainingModel.prepareDataset(embeddings);
-            projected = obj.PipelineModel.TrainingModel.trainProjectionHead(triplets);
+            projected = obj.PipelineModel.runProjectionHead(embeddings);
+            if ~isempty(obj.View)
+                obj.View.display(projected);
+            end
         end
 
         function run(obj)
