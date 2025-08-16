@@ -7,12 +7,14 @@ classdef TrainingModel < reg.mvc.BaseModel
 
     properties
         % documentsTbl (table): nDoc x vars with columns
-        %   docId (string) - unique identifier
-        %   text  (string) - raw document text
+        %   docId (string)  : unique identifier
+        %   text  (string)  : raw document text
         documentsTbl table = table();
 
         % chunksTbl (table): nChunk x vars with columns
-        %   chunkId (double), docId (string), text (string)
+        %   chunkId (double)
+        %   docId  (string)
+        %   text   (string)
         chunksTbl table = table();
 
         % weakLabelsMat (double): nChunk x nRule rule confidences
@@ -71,7 +73,7 @@ classdef TrainingModel < reg.mvc.BaseModel
             %       cfg.inputDir (string): directory containing PDFs
             %   Pseudocode:
             %       1. verify required cfg fields exist
-            %       2. read files into table [docId (string), text]
+            %       2. read files into table [docId (string), text (string)]
             %       3. assign table to obj.documentsTbl
             obj.documentsTbl = table(); % placeholder
             documentsTbl = obj.documentsTbl;
@@ -87,7 +89,8 @@ classdef TrainingModel < reg.mvc.BaseModel
             end
             %   Data contract:
             %       documentsTbl.docId (string), documentsTbl.text (string)
-            %       chunksTbl.chunkId (double), docId (string), text (string)
+            %       chunksTbl.chunkId (double), chunksTbl.docId (string), ...
+            %           chunksTbl.text (string)
             %   Pseudocode:
             %       1. validate required columns exist
             %       2. tokenise and split text
