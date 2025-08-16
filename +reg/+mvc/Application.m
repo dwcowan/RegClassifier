@@ -29,13 +29,13 @@ classdef Application < handle
             %   enforced to be reg.mvc.BaseModel, reg.mvc.BaseView and
             %   reg.mvc.BaseController respectively.
 
-            arguments (Output)
-                obj (1,1) reg.mvc.Application
-            end
             arguments
                 model (1,1) reg.mvc.BaseModel
                 view (1,1) reg.mvc.BaseView
                 controller (1,1) reg.mvc.BaseController
+            end
+            arguments (Output)
+                obj (1,1) reg.mvc.Application
             end
 
             % Expected wiring pseudocode:
