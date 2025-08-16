@@ -80,11 +80,27 @@ classdef PipelineModel < reg.mvc.BaseModel
         end
 
         function docs = ingestCorpus(obj, cfg)
-            %INGESTCORPUS Ingest PDFs and build search index.
+            %INGESTCORPUS Ingest PDFs, persist them and build the index.
             docs = obj.CorpusModel.ingestPdfs(cfg);
             obj.CorpusModel.persistDocuments(docs);
             obj.CorpusModel.buildIndex(docs);
-            obj.CorpusModel.queryIndex("pipeline query", 0.5, 5);
+        end
+
+        function results = exampleSearch(obj, queryString, alpha, topK)
+            %EXAMPLESEARCH Run a sample query against the search index.
+            %   RESULTS = EXAMPLESEARCH(obj, queryString, alpha, topK)
+            %   delegates to CorpusModel.queryIndex. Default parameters are
+            %   provided for debugging convenience.
+            if nargin < 2
+                queryString = "pipeline query";
+            end
+            if nargin < 3
+                alpha = 0.5;
+            end
+            if nargin < 4
+                topK = 5;
+            end
+            results = obj.CorpusModel.queryIndex(queryString, alpha, topK);
         end
 
         function out = runTraining(obj, cfg)
