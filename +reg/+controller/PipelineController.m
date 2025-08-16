@@ -68,16 +68,18 @@ classdef PipelineController < reg.mvc.BaseController
             end
         end
 
-        function runTraining(obj, cfg)
+        function runTraining(obj, cfg, documentsTbl)
             %RUNTRAINING Execute only the training workflow.
-            %   RUNTRAINING(OBJ, CFG) delegates the workflow to the
-            %   PipelineModel using the supplied processed configuration
-            %   CFG and displays the results using the controller view.
+            %   RUNTRAINING(OBJ, CFG, DOCUMENTSTBL) delegates the workflow
+            %   to the PipelineModel using the supplied processed
+            %   configuration CFG and pre-ingested DOCUMENTSTBL, then
+            %   displays the results using the controller view.
             arguments
                 obj
                 cfg (1,1) struct
+                documentsTbl table
             end
-            result = obj.PipelineModel.runTraining(cfg);
+            result = obj.PipelineModel.runTraining(cfg, documentsTbl);
             if ~isempty(obj.View)
                 obj.View.display(result);
             end

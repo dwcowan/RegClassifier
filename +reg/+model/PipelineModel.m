@@ -51,10 +51,14 @@ classdef PipelineModel < reg.mvc.BaseModel
             cfg = obj.ConfigModel.process(cfgRaw);
 
             % Step 2: corpus ingestion and index build
-            searchIndexStruct = obj.ingestCorpus(cfg);
+            %   Ingest PDFs once and reuse the resulting table for both
+            %   search index construction and downstream training.
+            [documentsTbl, searchIndexStruct] = obj.ingestCorpus(cfg);
 
             % Step 3: training workflow (features, embeddings, classifier)
-            trainOut = obj.runTraining(cfg);
+            %   Avoid re-ingestion by supplying the pre-built documents
+            %   table from Step 2.
+            trainOut = obj.runTraining(cfg, documentsTbl);
 
             % Step 4: optional fine-tuning workflow
             if isfield(cfg, 'fineTuneEpochs') && cfg.fineTuneEpochs > 0
@@ -85,14 +89,18 @@ classdef PipelineModel < reg.mvc.BaseModel
                 'Metrics', metrics);
         end
 
-        function searchIndexStruct = ingestCorpus(obj, cfg)
+        function [documentsTbl, searchIndexStruct] = ingestCorpus(obj, cfg)
             %INGESTCORPUS Ingest PDFs, persist them and build the index.
-            %   searchIndexStruct = INGESTCORPUS(obj, cfg) reads PDFs into a
-            %   document table, persists the table and prepares an index
-            %   input struct containing an embedding matrix placeholder.
-            %   The struct is forwarded to CorpusModel.buildIndex and the
-            %   resulting search index structure is returned.
+            %   [DOCUMENTSTBL, SEARCHINDEXSTRUCT] = INGESTCORPUS(obj, cfg)
+            %   reads PDFs into DOCUMENTSTBL, persists the table and
+            %   prepares an index input struct containing an embedding
+            %   matrix placeholder. The struct is forwarded to
+            %   CorpusModel.buildIndex and the resulting search index
+            %   structure is returned. DOCUMENTSTBL is provided so the same
+            %   data can later be used for model training without an extra
+            %   ingestion pass.
             %   Returns
+            %       documentsTbl (table): ingested documents
             %       searchIndexStruct (struct): fields ``docId`` and
             %           ``embedding`` as produced by CorpusModel.buildIndex.
             arguments
@@ -121,17 +129,19 @@ classdef PipelineModel < reg.mvc.BaseModel
             results = obj.CorpusModel.queryIndex(queryString, alpha, topK);
         end
 
-        function out = runTraining(obj, cfg)
+        function out = runTraining(obj, cfg, documentsTbl)
             %RUNTRAINING Execute training sub-pipeline.
-            %   OUT = RUNTRAINING(OBJ, CFG) executes the training workflow
-            %   using the supplied configuration CFG. CFG must be a fully
-            %   processed configuration struct as returned by
-            %   ConfigModel.process.
+            %   OUT = RUNTRAINING(OBJ, CFG, DOCUMENTSTBL) executes the
+            %   training workflow using the supplied configuration CFG and
+            %   pre-ingested DOCUMENTSTBL. CFG must be a fully processed
+            %   configuration struct as returned by ConfigModel.process.
+            %   DOCUMENTSTBL should typically be the same table returned by
+            %   ``ingestCorpus`` so ingestion happens only once.
             arguments
                 obj
                 cfg (1,1) struct
+                documentsTbl table
             end
-            documentsTbl = obj.TrainingModel.ingest(cfg);
             chunksTbl = obj.TrainingModel.chunk(documentsTbl);
             [featuresTbl, ~] = obj.TrainingModel.extractFeatures(chunksTbl);
             embeddingsMat = obj.TrainingModel.computeEmbeddings(featuresTbl);
