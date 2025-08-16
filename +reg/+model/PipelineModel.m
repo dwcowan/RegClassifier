@@ -66,9 +66,13 @@ classdef PipelineModel < reg.mvc.BaseModel
             if isfield(trainOut, 'ProjectedEmbeddings')
                 evalEmbeddings = trainOut.ProjectedEmbeddings;
             end
+            labels = [];
+            if isfield(trainOut, 'PredLabels')
+                labels = trainOut.PredLabels;
+            end
             evalController = reg.controller.EvaluationController(
                 obj.EvaluationModel, reg.model.ReportModel());
-            metrics = evalController.run(evalEmbeddings, []);
+            metrics = evalController.run(evalEmbeddings, labels);
 
             result = struct('Documents', docs, ...
                 'Training', trainOut, ...
