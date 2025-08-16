@@ -10,7 +10,11 @@ classdef DatabaseModel < reg.mvc.BaseModel
 
     methods
         function obj = DatabaseModel(varargin)
-            %#ok<INUSD>
+            arguments
+                varargin (1,:) cell
+            end
+            error("reg:model:NotImplemented", ...
+                "DatabaseModel constructor is not implemented.");
         end
 
         function dbHandles = load(obj, varargin) %#ok<INUSD>
@@ -36,6 +40,9 @@ classdef DatabaseModel < reg.mvc.BaseModel
             arguments
                 obj
                 varargin (1,:) cell
+            end
+            arguments (Output)
+                dbHandles struct
             end
             % Pseudocode:
             %   1. If obj.conn is open, close it
