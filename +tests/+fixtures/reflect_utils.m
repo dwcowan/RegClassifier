@@ -33,7 +33,8 @@ for i=1:numel(funcStarts)-1
     token = regexp(segment,'function\s+(?:[^\n=]*=\s*)?(\w+)\s*\(','tokens','once');
     if isempty(token); continue; end
     name = token{1};
-    if ~contains(segment,'arguments')
+    hasInputArgs = ~isempty(regexp(segment,'(?m)^\s*arguments\s*(?!\(Output\))','once'));
+    if ~hasInputArgs
         missing{end+1} = name; %#ok<AGROW>
     end
 end

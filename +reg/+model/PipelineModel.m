@@ -49,7 +49,7 @@ classdef PipelineModel < reg.mvc.BaseModel
             %   and ``EvaluationInputs`` (struct with embeddings and labels).
 
             arguments
-                obj
+                obj (1,1) reg.model.PipelineModel
             end
             arguments (Output)
                 result struct
@@ -88,7 +88,7 @@ classdef PipelineModel < reg.mvc.BaseModel
             error("reg:model:NotImplemented","PipelineModel.run is not implemented.");
         end
 
-        function out = evaluationInputs(~, trainOut)
+        function out = evaluationInputs(obj, trainOut)
             %EVALUATIONINPUTS Collate embeddings and labels for evaluation.
             %   OUT = EVALUATIONINPUTS(trainOut) extracts the appropriate
             %   embeddings and optional label matrix from TRAINOUT in
@@ -96,7 +96,7 @@ classdef PipelineModel < reg.mvc.BaseModel
             %   with fields ``Embeddings`` (double matrix) and ``Labels``
             %   (double matrix, possibly empty).
             arguments
-                ~
+                obj (1,1) reg.model.PipelineModel
                 trainOut struct
             end
             arguments (Output)
@@ -129,7 +129,7 @@ classdef PipelineModel < reg.mvc.BaseModel
             %       searchIndexStruct (struct): fields ``docId`` (string) and
             %           ``embedding`` (double matrix).
             arguments
-                obj
+                obj (1,1) reg.model.PipelineModel
                 cfg (1,1) struct
             end
             arguments (Output)
@@ -160,7 +160,7 @@ classdef PipelineModel < reg.mvc.BaseModel
             %   provided for debugging convenience. RESULTS is a table with
             %   columns ``docId``, ``score`` and ``rank``.
             arguments
-                obj
+                obj (1,1) reg.model.PipelineModel
                 queryString (1,1) string = "pipeline query"
                 alpha (1,1) double = 0.5
                 topK (1,1) double = 5
@@ -189,7 +189,7 @@ classdef PipelineModel < reg.mvc.BaseModel
             %   ``Thresholds`` (double vector) and ``PredLabels`` (double
             %   matrix).
             arguments
-                obj
+                obj (1,1) reg.model.PipelineModel
                 cfg (1,1) struct
                 documentsTbl table
             end
@@ -237,7 +237,7 @@ classdef PipelineModel < reg.mvc.BaseModel
             %   ``TripletsTbl`` (table) and ``Network`` (struct placeholder
             %   for encoder).
             arguments
-                obj
+                obj (1,1) reg.model.PipelineModel
                 cfg (1,1) struct
             end
             arguments (Output)
@@ -277,7 +277,7 @@ classdef PipelineModel < reg.mvc.BaseModel
             %   matrix of projected embeddings.
 
             arguments
-                obj
+                obj (1,1) reg.model.PipelineModel
                 embeddings double
             end
             arguments (Output)
