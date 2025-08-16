@@ -9,20 +9,28 @@ classdef VisualizationModel < reg.mvc.BaseModel
             %   symmetry with other models in the MVC framework.
         end
 
-        function pngPath = plotTrends(~, csvPath, pngPath) %#ok<INUSD>
-            %PLOTTRENDS Generate trend plots from metrics history.
+        function fig = plotTrends(~, metrics)
+            %PLOTTRENDS Generate trend plot from supplied metrics struct.
             %   Inputs
-            %       csvPath - file path to a metrics CSV containing
-            %                 historical values.
-            %       pngPath - destination file path for the rendered PNG.
+            %       metrics - struct containing training history with fields:
+            %                 ``epochs``, ``accuracy`` and ``loss``.
             %   Output
-            %       pngPath - the path where the plot should be written.
-            %   Side Effects
-            %       Should read metric values from csvPath and write a trend
-            %       plot image to pngPath.
+            %       fig     - handle to the created figure.  No files are
+            %                 written by this stub implementation.
 
-            error("reg:model:NotImplemented", ...
-                "VisualizationModel.plotTrends is not implemented.");
+            arguments
+                ~
+                metrics struct
+                metrics.epochs (:,1) double
+                metrics.accuracy (:,1) double
+                metrics.loss (:,1) double
+            end
+
+            fig = figure("Visible", "off");
+            plot(metrics.epochs, [metrics.accuracy(:), metrics.loss(:)]);
+            legend("Accuracy", "Loss");
+            xlabel("Epoch");
+            ylabel("Metric value");
         end
 
         function pngPath = plotCoRetrievalHeatmap(~, coMatrix, pngPath, labels) %#ok<INUSD>
