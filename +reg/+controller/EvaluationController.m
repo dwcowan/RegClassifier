@@ -41,12 +41,13 @@ classdef EvaluationController < reg.mvc.BaseController
             end
         end
 
-        function run(obj, goldDir, metricsCSV)
+        function metrics = run(obj, goldDir, metricsCSV)
             %RUN Execute end-to-end evaluation workflow.
-            %   RUN(obj, goldDir, metricsCSV) evaluates the contents of
-            %   goldDir, logs metrics, renders reports and produces trend and
-            %   co-retrieval plots.  This method subsumes the responsibilities
-            %   of the legacy EvalController.run and EvaluationPipeline.run.
+            %   METRICS = RUN(obj, goldDir, metricsCSV) evaluates the contents
+            %   of ``goldDir``, generates reports and diagnostic plots and
+            %   returns the computed metrics.  This method subsumes the
+            %   responsibilities of the legacy ``EvalController.run`` and
+            %   ``EvaluationPipeline.run``.
 
             % Step 1: evaluate gold pack and compute metrics
             results = obj.evaluateGoldPack(goldDir);
@@ -83,6 +84,13 @@ classdef EvaluationController < reg.mvc.BaseController
                 obj.PlotView.display(struct(
                     'TrendsPNG', trendsPNG, ...
                     'HeatmapPNG', heatPNG));
+            end
+
+            % Return metrics for upstream consumers
+            if isstruct(results) && isfield(results, 'Metrics')
+                metrics = results.Metrics;
+            else
+                metrics = [];
             end
         end
         function metrics = retrievalMetrics(~, embeddings, posSets, k) %#ok<INUSD>
