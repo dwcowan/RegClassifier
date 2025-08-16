@@ -1,0 +1,68 @@
+[
+  {
+    "path": "+reg/Example.m",
+    "symbol": "Example",
+    "kind": "class",
+    "inputs": []
+  },
+  {
+    "path": "+reg/Example.m",
+    "symbol": "Example",
+    "kind": "method",
+    "inputs": [
+      "varargin"
+    ]
+  },
+  {
+    "path": "+reg/Example.m",
+    "symbol": "estimateObservationCount",
+    "kind": "method",
+    "inputs": [
+      "obj",
+      "durationSec"
+    ]
+  },
+  {
+    "path": "+reg/+controllers/Controller.m",
+    "symbol": "Controller",
+    "kind": "class",
+    "inputs": []
+  },
+  {
+    "path": "+reg/+controllers/Controller.m",
+    "symbol": "runPipeline",
+    "kind": "method",
+    "inputs": [
+      "opts"
+    ]
+  },
+  {
+    "path": "+reg/+models/SignalModel.m",
+    "symbol": "SignalModel",
+    "kind": "class",
+    "inputs": []
+  },
+  {
+    "path": "+reg/+models/SignalModel.m",
+    "symbol": "plan",
+    "kind": "method",
+    "inputs": [
+      "samplingRateHz",
+      "durationSec"
+    ]
+  },
+  {
+    "path": "+reg/+views/Report.m",
+    "symbol": "Report",
+    "kind": "class",
+    "inputs": []
+  },
+  {
+    "path": "+reg/+views/Report.m",
+    "symbol": "render",
+    "kind": "method",
+    "inputs": [
+      "plan"
+    ]
+  }
+]

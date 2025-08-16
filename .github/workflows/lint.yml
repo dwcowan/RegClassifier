@@ -1,0 +1,103 @@
+name: Lint
+on:
+  pull_request:
+    paths:
+      - '+reg/**'
+      - 'reg/**'
+      - 'tools/**'
+      - 'conventions/**'
+      - 'contexts/**'
+      - 'AGENT.md'
+      - 'BASE_AGENT.md'
+  push:
+    branches: [ main ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: matlab-actions/setup-matlab@v2
+        with:
+          release: R2024b
+
+      - name: Print mode
+        uses: matlab-actions/run-command@v2
+        with:
+          command: |
+            addpath('tools');
+            tools.print_mode
+
+      # HARD checks (fail on violation)
+      - name: Style + Contracts (HARD)
+        uses: matlab-actions/run-command@v2
+        with:
+          command: |
+            addpath('tools');
+            % Capture output to diary
+            if ~exist('artifacts/lint','dir'), mkdir('artifacts/lint'); end
+            diary('artifacts/lint/style_contracts.log');
+            try
+              tools.check_style;
+              tools.check_contracts;
+              fprintf('[style+contracts] OK\n');
+            catch ME
+              fprintf(2,'[style+contracts] FAIL\n');
+              disp(getReport(ME,'extended','hyperlinks','off'));
+              diary off; rethrow(ME);
+            end
+            diary off
+
+      # SOFT checks (log only; never fail)
+      - name: Code Analyzer (SOFT warnings)
+        uses: matlab-actions/run-command@v2
+        with:
+          command: |
+            if ~exist('artifacts/lint','dir'), mkdir('artifacts/lint'); end
+            diary('artifacts/lint/checkcode.log');
+            repo = pwd;
+            folders = {'+reg','reg'};
+            total = 0;
+            for i = 1:numel(folders)
+              p = fullfile(repo, folders{i});
+              if exist(p,'dir')
+                issues = checkcode(p,'-cyc','-id','-struct');
+                if ~isempty(issues)
+                  disp(issues);
+                  total = total + numel(issues);
+                end
+              end
+            end
+            fprintf('[checkcode] total issues: %d (SOFT)\n', total);
+            diary off
+        continue-on-error: true
+
+      - name: CC4M (SOFT in lint; HARD in optimisation gate)
+        uses: matlab-actions/run-command@v2
+        with:
+          command: |
+            addpath('tools');
+            if ~exist('artifacts/lint','dir'), mkdir('artifacts/lint'); end
+            diary('artifacts/lint/cc4m.log');
+            m = tools.read_mode();
+            fprintf('[mode] %s\n', m);
+            if m == "optimisation"
+              try
+                tools.check_cc4m;  % may throw on errors
+                fprintf('[cc4m] no errors (SOFT in lint)\n');
+              catch ME
+                fprintf(2,'[cc4m-soft] %s\n', getReport(ME,'extended','hyperlinks','off'));
+              end
+            else
+              fprintf('[cc4m] skipped (mode != optimisation)\n');
+            end
+            diary off
+        continue-on-error: true
+
+      - name: Upload lint artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-artifacts
+          path: artifacts/lint

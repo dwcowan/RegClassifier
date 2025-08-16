@@ -1,0 +1,29 @@
+You are generating a MATLAB Unit Test suite for a clean-room project.
+
+Requirements:
+- Use `matlab.unittest.TestCase`.
+- Place tests under `/tests/` mirroring package layout where applicable.
+- Tests must be self-contained (no network, no external data).
+- Use deterministic randomness: `rng(0,'twister')` in each test method.
+- Include positive, negative (error), and edge-case tests.
+- Prefer parameterized tests when useful.
+
+Coverage Targets:
+- Public functions/classes in `/reg/` must have line and branch coverage goals for:
+  - nominal path (which ends with NotImplemented in clean-room mode)
+  - input validation failures
+  - boundary conditions (empty, scalar, vector, matrix)
+  - numeric tolerances (`AbsTol`/`RelTol`) for design notes
+
+Assertions:
+- Use `verifyEqual`, `verifyError`, `verifySize`, `verifyClass`, `verifyTrue/False`.
+- Include diagnostics with `sprintf` context.
+
+Naming:
+- File: `test_<unit>.m` (or package mirrored: `+pkg/test_<unit>.m`).
+- Class: `classdef test_<Unit> < matlab.unittest.TestCase`
+
+Exit Criteria:
+- The suite runs under:
+  matlab -batch "results = runtests('tests','IncludeSubfolders',true); assertSuccess(results)"
+- In clean-room mode, tests that reach unimplemented paths should mark `Incomplete` rather than `Fail`, with clear diagnostics.

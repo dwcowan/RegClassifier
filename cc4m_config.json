@@ -1,0 +1,26 @@
+{
+  "maxCyclomatic": 10,
+  "maxNesting": 3,
+  "forbiddenAPIs": [
+    "eval",
+    "evalin",
+    "assignin",
+    "global"
+  ],
+  "headlessAPIs": [
+    "figure",
+    "uifigure",
+    "uigetfile",
+    "uiputfile",
+    "uigetdir",
+    "uiwait",
+    "waitbar",
+    "input",
+    "pause"
+  ],
+  "discouragedAPIs": [
+    "str2num"
+  ],
+  "allowToolboxes": true,
+  "warnOnDeprecated": true
+}
