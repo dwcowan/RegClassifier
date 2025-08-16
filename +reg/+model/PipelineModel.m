@@ -283,8 +283,15 @@ classdef PipelineModel < reg.mvc.BaseModel
                 projected double
             end
 
-            tripletsTbl = obj.TrainingModel.prepareDataset(struct('Embeddings', embeddings));
-            projected = obj.TrainingModel.trainProjectionHead(tripletsTbl);
+            % Step 1: assemble triplet dataset from input embeddings
+            % datasetStruct = struct('Embeddings', embeddings);
+            % tripletsTbl = obj.TrainingModel.prepareDataset(datasetStruct);
+
+            % Step 2: train projection head using triplets
+            % projected = obj.TrainingModel.trainProjectionHead(tripletsTbl);
+
+            error("reg:model:NotImplemented", ...
+                "PipelineModel.runProjectionHead is not implemented.");
         end
     end
 end
