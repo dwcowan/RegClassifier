@@ -43,6 +43,21 @@ classdef ReportModel < reg.mvc.BaseModel
                 ~
                 varargin (1,:) cell
             end
+            arguments (Output)
+                reportInputs (1,1) struct
+                reportInputs.chunks table
+                reportInputs.scores double
+                reportInputs.mdlLDA struct
+                reportInputs.vocab string
+                reportInputs.labels string
+            end
+            % Example:
+            %   reportInputs = struct( ...
+            %       'chunks', table("c1","t1", 'VariableNames', {'chunkId','text'}), ...
+            %       'scores', rand(1,1), ...
+            %       'mdlLDA', struct(), ...
+            %       'vocab', "term1", ...
+            %       'labels', "label1");
             % Pseudocode:
             %   1. Load chunk metadata and classifier scores
             %   2. Load or fit LDA model along with vocabulary
@@ -74,6 +89,17 @@ classdef ReportModel < reg.mvc.BaseModel
                 obj
                 reportInputs (1,1) struct
             end
+            arguments (Output)
+                reportData (1,1) struct
+                reportData.coverageTable table
+                reportData.lowConfidence table
+                reportData.ldaTopics cell
+            end
+            % Example:
+            %   reportData = struct( ...
+            %       'coverageTable', table(["L1"],[0.5], 'VariableNames',{'label','coverage'}), ...
+            %       'lowConfidence', table("c1", "snippet", 'VariableNames',{'chunkId','text'}), ...
+            %       'ldaTopics', {{"term1","term2"}});
             % Pseudocode:
             %   % Coverage table derived from scores
             %   1. pred = scores > threshold

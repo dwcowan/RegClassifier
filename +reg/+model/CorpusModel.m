@@ -42,6 +42,12 @@ classdef CorpusModel < reg.mvc.BaseModel
                 ~
                 varargin (1,:) cell
             end
+            arguments (Output)
+                T table
+            end
+            % Example output:
+            %   T = table(["Art1";"Art2"], ["text";"text"], ...
+            %       'VariableNames', {'article', 'text'});
             error("reg:model:NotImplemented", ...
                 "CorpusModel.fetchEba is not implemented.");
         end
@@ -58,6 +64,11 @@ classdef CorpusModel < reg.mvc.BaseModel
                 ~
                 varargin (1,:) cell
             end
+            arguments (Output)
+                T table
+            end
+            % Example output including parsed number:
+            %   T = table(["Art1"], 1, 'VariableNames', {'article','article_num'});
             error("reg:model:NotImplemented", ...
                 "CorpusModel.fetchEbaParsed is not implemented.");
         end
@@ -74,6 +85,10 @@ classdef CorpusModel < reg.mvc.BaseModel
                 ~
                 varargin (1,:) cell
             end
+            arguments (Output)
+                pdfPath (1,1) string
+            end
+            % Example: pdfPath = "data/raw/crr_consolidated.pdf";
             error("reg:model:NotImplemented", ...
                 "CorpusModel.fetchEurlex is not implemented.");
         end
@@ -94,6 +109,14 @@ classdef CorpusModel < reg.mvc.BaseModel
                 params (1,1) struct
                 params.date (1,1) string
             end
+            arguments (Output)
+                out (1,1) struct
+                out.eba_dir (1,1) string
+                out.eba_index (1,1) string
+            end
+            % Example:
+            %   out = struct('eba_dir',"data/eba", ...
+            %                'eba_index',"data/eba/index.csv");
             error("reg:model:NotImplemented", ...
                 "CorpusModel.sync is not implemented.");
         end
@@ -248,6 +271,12 @@ classdef CorpusModel < reg.mvc.BaseModel
                 alpha (1,1) double
                 topK (1,1) double
             end
+            arguments (Output)
+                results table
+            end
+            % Example output:
+            %   results = table(["d1";"d2"],[0.9;0.5],[1;2], ...
+            %       'VariableNames',{'docId','score','rank'});
             error("reg:model:NotImplemented", ...
                 "CorpusModel.queryIndex is not implemented.");
         end
@@ -264,6 +293,13 @@ classdef CorpusModel < reg.mvc.BaseModel
                 dirB (1,1) string
                 outDir (1,1) string
             end
+            arguments (Output)
+                result (1,1) struct
+                result.diffTable table
+            end
+            % Example:
+            %   result = struct('diffTable', table(["1";"2"],[true;false], ...
+            %       'VariableNames', {'article','changed'}));
             error("reg:model:NotImplemented", ...
                 "CorpusModel.runArticles is not implemented.");
         end
@@ -280,6 +316,13 @@ classdef CorpusModel < reg.mvc.BaseModel
                 dirB (1,1) string
                 outDir (1,1) string
             end
+            arguments (Output)
+                diff (1,1) struct
+                diff.fileDiffs table
+            end
+            % Example:
+            %   diff = struct('fileDiffs', table(["a";"b"],[10;5], ...
+            %       'VariableNames',{'file','numChanges'}));
             error("reg:model:NotImplemented", ...
                 "CorpusModel.runVersions is not implemented.");
         end
@@ -297,6 +340,14 @@ classdef CorpusModel < reg.mvc.BaseModel
                 dirB (1,1) string
                 outDir (1,1) string
             end
+            arguments (Output)
+                report (1,1) struct
+                report.pdfPath (1,1) string
+                report.htmlPath (1,1) string
+            end
+            % Example:
+            %   report = struct('pdfPath',"out/report.pdf", ...
+            %                   'htmlPath',"out/report.html");
             error("reg:model:NotImplemented", ...
                 "CorpusModel.runReport is not implemented.");
         end
@@ -312,6 +363,13 @@ classdef CorpusModel < reg.mvc.BaseModel
                 chunksT table
                 config struct = struct()
             end
+            arguments (Output)
+                result (1,1) struct
+                result.metrics table
+            end
+            % Example:
+            %   result = struct('metrics', table(["m1";"m2"],[0.1;0.2], ...
+            %       'VariableNames', {'method','score'}));
             error("reg:model:NotImplemented", ...
                 "CorpusModel.runMethods is not implemented.");
         end
