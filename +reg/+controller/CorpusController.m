@@ -15,7 +15,14 @@ classdef CorpusController < reg.mvc.BaseController
                 model reg.model.CorpusModel = reg.model.CorpusModel()
                 view reg.view.DiffView = reg.view.DiffView()
             end
-            obj@reg.mvc.BaseController(model, view);
+            arguments (Output)
+                obj reg.controller.CorpusController
+            end
+            % PSEUDOCODE:
+            % - invoke superclass constructor with model and view
+            % - assign model and view to the controller instance
+            error("reg:controller:NotImplemented", ...
+                "CorpusController.CorpusController is not implemented.");
         end
 
         function T = fetchEba(obj, varargin)
@@ -27,10 +34,14 @@ classdef CorpusController < reg.mvc.BaseController
                 obj
                 varargin (1,:) cell
             end
-            T = obj.Model.fetchEba(varargin{:});
-            if ~isempty(obj.View)
-                obj.View.display(T);
+            arguments (Output)
+                T table
             end
+            % PSEUDOCODE:
+            % - call obj.Model.fetchEba with varargin to obtain table T
+            % - if obj.View is configured, forward T to obj.View.display
+            error("reg:controller:NotImplemented", ...
+                "CorpusController.fetchEba is not implemented.");
         end
 
         function T = fetchEbaParsed(obj, varargin)
@@ -43,10 +54,14 @@ classdef CorpusController < reg.mvc.BaseController
                 obj
                 varargin (1,:) cell
             end
-            T = obj.Model.fetchEbaParsed(varargin{:});
-            if ~isempty(obj.View)
-                obj.View.display(T);
+            arguments (Output)
+                T table
             end
+            % PSEUDOCODE:
+            % - invoke obj.Model.fetchEbaParsed with varargin to get table T
+            % - if a view exists, send T to obj.View.display
+            error("reg:controller:NotImplemented", ...
+                "CorpusController.fetchEbaParsed is not implemented.");
         end
 
         function pdfPath = fetchEurlex(obj, varargin)
@@ -58,10 +73,14 @@ classdef CorpusController < reg.mvc.BaseController
                 obj
                 varargin (1,:) cell
             end
-            pdfPath = obj.Model.fetchEurlex(varargin{:});
-            if ~isempty(obj.View)
-                obj.View.display(pdfPath);
+            arguments (Output)
+                pdfPath (1,1) string
             end
+            % PSEUDOCODE:
+            % - obtain consolidated PDF path via obj.Model.fetchEurlex
+            % - if a view is set, pass pdfPath to obj.View.display
+            error("reg:controller:NotImplemented", ...
+                "CorpusController.fetchEurlex is not implemented.");
         end
 
         function documents = ingestPdfs(obj, cfg)
@@ -74,10 +93,14 @@ classdef CorpusController < reg.mvc.BaseController
                 cfg struct
                 cfg.inputDir (1,1) string
             end
-            documents = obj.Model.ingestPdfs(cfg);
-            if ~isempty(obj.View)
-                obj.View.display(documents);
+            arguments (Output)
+                documents table
             end
+            % PSEUDOCODE:
+            % - convert PDFs by calling obj.Model.ingestPdfs(cfg)
+            % - when obj.View is available, display documents via the view
+            error("reg:controller:NotImplemented", ...
+                "CorpusController.ingestPdfs is not implemented.");
         end
 
         function persistDocuments(obj, documents)
@@ -88,10 +111,13 @@ classdef CorpusController < reg.mvc.BaseController
                 obj
                 documents table
             end
-            obj.Model.persistDocuments(documents);
-            if ~isempty(obj.View)
-                obj.View.display(documents);
+            arguments (Output)
             end
+            % PSEUDOCODE:
+            % - delegate persistence of documents to obj.Model.persistDocuments
+            % - if a view exists, call obj.View.display with documents
+            error("reg:controller:NotImplemented", ...
+                "CorpusController.persistDocuments is not implemented.");
         end
 
         function searchIndex = buildIndex(obj, indexInputs)
@@ -104,10 +130,14 @@ classdef CorpusController < reg.mvc.BaseController
                 indexInputs.documentsTbl table
                 indexInputs.embeddingsMat double
             end
-            searchIndex = obj.Model.buildIndex(indexInputs);
-            if ~isempty(obj.View)
-                obj.View.display(searchIndex);
+            arguments (Output)
+                searchIndex struct
             end
+            % PSEUDOCODE:
+            % - build or update index by invoking obj.Model.buildIndex(indexInputs)
+            % - if obj.View is set, display searchIndex via the view
+            error("reg:controller:NotImplemented", ...
+                "CorpusController.buildIndex is not implemented.");
         end
 
         function results = queryIndex(obj, queryString, alpha, topK)
@@ -120,10 +150,14 @@ classdef CorpusController < reg.mvc.BaseController
                 alpha (1,1) double
                 topK (1,1) double
             end
-            results = obj.Model.queryIndex(queryString, alpha, topK);
-            if ~isempty(obj.View)
-                obj.View.display(results);
+            arguments (Output)
+                results table
             end
+            % PSEUDOCODE:
+            % - query the index using obj.Model.queryIndex(queryString, alpha, topK)
+            % - if a view exists, present results via obj.View.display
+            error("reg:controller:NotImplemented", ...
+                "CorpusController.queryIndex is not implemented.");
         end
 
         function out = sync(obj, date)
@@ -133,11 +167,15 @@ classdef CorpusController < reg.mvc.BaseController
                 obj
                 date (1,1) string
             end
-            params = obj.Model.load(date);
-            out = obj.Model.process(params);
-            if ~isempty(obj.View)
-                obj.View.display(out);
+            arguments (Output)
+                out struct
             end
+            % PSEUDOCODE:
+            % - load parameters via obj.Model.load(date)
+            % - process parameters with obj.Model.process
+            % - if a view exists, display out using obj.View.display
+            error("reg:controller:NotImplemented", ...
+                "CorpusController.sync is not implemented.");
         end
 
         function result = run(obj, mode, varargin)
@@ -150,19 +188,15 @@ classdef CorpusController < reg.mvc.BaseController
                 mode (1,1) string
                 varargin (1,:) cell
             end
-            switch lower(mode)
-                case 'articles'
-                    result = obj.runArticles(varargin{:});
-                case 'versions'
-                    result = obj.runVersions(varargin{:});
-                case 'report'
-                    result = obj.runReport(varargin{:});
-                case {'methods', 'method'}
-                    result = obj.runMethods(varargin{:});
-                otherwise
-                    error('reg:controller:UnknownMode', ...
-                        'Unknown diff mode: %s', mode);
+            arguments (Output)
+                result struct
             end
+            % PSEUDOCODE:
+            % - switch on lower(mode)
+            % - call runArticles, runVersions, runReport or runMethods as appropriate
+            % - return the result from the delegated method
+            error("reg:controller:NotImplemented", ...
+                "CorpusController.run is not implemented.");
         end
 
         function result = runArticles(obj, dirA, dirB, outDir)
@@ -175,10 +209,14 @@ classdef CorpusController < reg.mvc.BaseController
                 dirB (1,1) string
                 outDir (1,1) string
             end
-            result = obj.Model.runArticles(dirA, dirB, outDir);
-            if ~isempty(obj.View)
-                obj.View.display(result);
+            arguments (Output)
+                result struct
             end
+            % PSEUDOCODE:
+            % - execute obj.Model.runArticles(dirA, dirB, outDir)
+            % - if obj.View exists, display result via obj.View.display
+            error("reg:controller:NotImplemented", ...
+                "CorpusController.runArticles is not implemented.");
         end
 
         function result = runVersions(obj, dirA, dirB, outDir)
@@ -191,10 +229,14 @@ classdef CorpusController < reg.mvc.BaseController
                 dirB (1,1) string
                 outDir (1,1) string
             end
-            result = obj.Model.runVersions(dirA, dirB, outDir);
-            if ~isempty(obj.View)
-                obj.View.display(result);
+            arguments (Output)
+                result struct
             end
+            % PSEUDOCODE:
+            % - invoke obj.Model.runVersions(dirA, dirB, outDir)
+            % - if a view is configured, display result via obj.View.display
+            error("reg:controller:NotImplemented", ...
+                "CorpusController.runVersions is not implemented.");
         end
 
         function report = runReport(obj, dirA, dirB, outDir)
@@ -207,10 +249,14 @@ classdef CorpusController < reg.mvc.BaseController
                 dirB (1,1) string
                 outDir (1,1) string
             end
-            report = obj.Model.runReport(dirA, dirB, outDir);
-            if ~isempty(obj.View)
-                obj.View.display(report);
+            arguments (Output)
+                report struct
             end
+            % PSEUDOCODE:
+            % - generate report by calling obj.Model.runReport(dirA, dirB, outDir)
+            % - if obj.View is set, forward report to obj.View.display
+            error("reg:controller:NotImplemented", ...
+                "CorpusController.runReport is not implemented.");
         end
 
         function result = runMethods(obj, queries, chunksT, config)
@@ -224,10 +270,14 @@ classdef CorpusController < reg.mvc.BaseController
                 chunksT table
                 config struct = struct()
             end
-            result = obj.Model.runMethods(queries, chunksT, config);
-            if ~isempty(obj.View)
-                obj.View.display(result);
+            arguments (Output)
+                result struct
             end
+            % PSEUDOCODE:
+            % - compute method differences via obj.Model.runMethods(queries, chunksT, config)
+            % - if a view exists, display result using obj.View.display
+            error("reg:controller:NotImplemented", ...
+                "CorpusController.runMethods is not implemented.");
         end
     end
 end
