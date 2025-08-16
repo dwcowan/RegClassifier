@@ -170,17 +170,23 @@ classdef ConfigModel < reg.mvc.BaseModel
                 "ConfigModel.printActiveKnobs is not implemented.");
         end
 
-        function S = applySeeds(obj, varargin) %#ok<INUSD,MANU>
+        function S = applySeeds(obj, seed) %#ok<INUSD,MANU>
             %APPLYSEEDS Set RNG seeds for reproducibility.
             %   S = APPLYSEEDS(obj, seed) returns the applied seed struct.
             %   Legacy Reference
             %       Equivalent to `reg.set_seeds`.
+            arguments
+                obj (1,1) reg.model.ConfigModel
+                seed (1,1) double = NaN
+            end
+            arguments (Output)
+                S struct
+            end
             %   Pseudocode:
             %       1. Initialise random number generators
             %       2. Store seeds on obj.seeds
             %       3. Return seed struct
-            error("reg:model:NotImplemented", ...
-                "ConfigModel.applySeeds is not implemented.");
+            error("reg:model:NotImplemented", "ConfigModel.applySeeds is not implemented.");
         end
 
         function cfgStruct = load(obj, cfgPath)
