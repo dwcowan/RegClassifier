@@ -71,6 +71,9 @@ classdef EvaluationController < reg.mvc.BaseController
                 embeddings double
                 labelMatrix double = []
             end
+            arguments (Output)
+                metrics struct
+            end
             % Step 1: ingest runtime labels
             %   rlm   = reg.model.RuntimeLabelModel();
             %   cfg   = rlm.load(labelMatrix);
@@ -106,6 +109,9 @@ classdef EvaluationController < reg.mvc.BaseController
                 posSets cell
                 k (1,1) double
             end
+            arguments (Output)
+                metrics struct
+            end
             %   Legacy Reference
             %       Equivalent to `reg.eval_retrieval` and `reg.metrics_ndcg`.
             %   Pseudocode/Validation stub:
@@ -129,6 +135,9 @@ classdef EvaluationController < reg.mvc.BaseController
                 embeddings double
                 labelMatrix double = []
                 opts struct = struct()
+            end
+            arguments (Output)
+                results struct
             end
 
             error("reg:controller:NotImplemented", ...
