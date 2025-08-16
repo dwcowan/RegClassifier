@@ -103,15 +103,14 @@ classdef PipelineModel < reg.mvc.BaseModel
                 out.Embeddings double
                 out.Labels double
             end
-            evalEmbeddings = trainOut.Embeddings;
-            if isfield(trainOut, 'ProjectedEmbeddings')
-                evalEmbeddings = trainOut.ProjectedEmbeddings;
-            end
-            labels = [];
-            if isfield(trainOut, 'PredLabels')
-                labels = trainOut.PredLabels;
-            end
-            out = struct('Embeddings', evalEmbeddings, 'Labels', labels);
+            % Extract evaluation embeddings from TRAINOUT, falling back to
+            % projected embeddings when available.
+
+            % Gather predicted labels from TRAINOUT if they were produced
+            % during training.
+
+            error("reg:model:NotImplemented", ...
+                "PipelineModel.evaluationInputs is not implemented.");
         end
 
         function [documentsTbl, searchIndexStruct] = ingestCorpus(obj, cfg)
