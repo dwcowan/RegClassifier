@@ -80,14 +80,20 @@ classdef ConfigModel < reg.mvc.BaseModel
             %CONFIGMODEL Construct configuration model with overrides.
             %   OBJ = CONFIGMODEL(args) accepts a struct of fields to
             %   override defaults defined as properties above.
-            if nargin > 0
-                f = fieldnames(args);
-                for i = 1:numel(f)
-                    if isprop(obj, f{i})
-                        obj.(f{i}) = args.(f{i});
-                    end
-                end
+            arguments
+                args (1,1) struct = struct()
             end
+            arguments (Output)
+                obj reg.model.ConfigModel
+            end
+            %   Pseudocode:
+            %       inputs:  args struct containing property overrides
+            %       steps:   for each field in args
+            %                    if object has corresponding property
+            %                        assign obj.(field) = args.(field)
+            %       output:  obj with overridden properties
+            error("reg:model:NotImplemented", ...
+                "ConfigModel constructor is not implemented.");
         end
 
         function validatePaths(obj) %#ok<MANU>
