@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "generatedBy": "tests/+fixtures/+gen/*.m",
+  "rngSeed": 0,
+  "matlab": "R2024b",
+  "files": [
+    {
+      "path": "tests/+fixtures/baselines/example_signal.csv",
+      "sha256": "<compute-after-first-generation>",
+      "schemaRef": "example_signal"
+    }
+  ],
+  "schemas": {
+    "example_signal": {
+      "description": "Deterministic sample signal for regression tests",
+      "columns": [
+        {
+          "name": "tSec",
+          "type": "double",
+          "units": "s"
+        },
+        {
+          "name": "x",
+          "type": "double",
+          "units": "arb"
+        }
+      ],
+      "rowCount": ">= 1"
+    }
+  }
+}
