@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Scaffold Manifest",
+  "type": "object",
+  "properties": {
+    "scaffoldVersion": {"type": "string"},
+    "generatedBy": {"type": "string"},
+    "description": {"type": "string"},
+    "include": {"type": "array", "items": {"type": "string"}},
+    "exclude": {"type": "array", "items": {"type": "string"}},
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {"type": "string"},
+          "sha256": {"type": "string"},
+          "size": {"type": "integer"},
+          "ver": {"type": "string"},
+          "mode": {"type": "string", "enum": ["clean-room","build","optimisation","any"]},
+          "notes": {"type": "string"}
+        },
+        "required": ["path","sha256","size"]
+      }
+    },
+    "notes": {"type": "string"}
+  },
+  "required": ["scaffoldVersion","include","exclude","files"]
+}

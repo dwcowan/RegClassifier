@@ -1,0 +1,30 @@
+{
+  "scaffoldVersion": "1.0.0",
+  "generatedBy": "scripts/update_scaffold_manifest.py",
+  "description": "Cryptographic inventory of scaffold files for clean-room/build/optimisation workflow.",
+  "include": [
+    "AGENT.md",
+    "BASE_AGENT.md",
+    "contexts/**/*.md",
+    "conventions/**/*.md",
+    "tools/**/*.m",
+    "scripts/**/*.bat",
+    "scripts/**/*.ps1",
+    "scripts/**/*.py",
+    "docs/**/*.md",
+    "docs/**/mkdocs.yml",
+    "examples/**",
+    "tests/runAllTests.m",
+    "tests/check_tags.m",
+    "tests/+fixtures/**/*"
+  ],
+  "exclude": [
+    "**/.git/**",
+    "**/__pycache__/**",
+    "docs/**/site/**",
+    "tests/artifacts/**",
+    "**/*.zip"
+  ],
+  "files": [],
+  "notes": "Run scripts/update_scaffold_manifest.py to populate 'files' with SHA256, size, and per-file version. Commit manifest alongside scaffold changes."
+}
