@@ -43,7 +43,7 @@ def main():
         if rel_root == ".": rel_root = ""
         for fname in files:
             rel = os.path.join(rel_root, fname) if rel_root else fname
-            rel = rel.replace("\\","/").replace("\","/")
+            rel = rel.replace("\\", "/")
             if include and not match_any(rel, include): 
                 continue
             if exclude and match_any(rel, exclude): 
