@@ -25,6 +25,271 @@
     "tests/artifacts/**",
     "**/*.zip"
   ],
-  "files": [],
+  "files": [
+    {
+      "path": "AGENT.md",
+      "sha256": "26a80aaf6e73773e6918412bb9dc70d352d50c27737d50f98f5665b5ac972f3d",
+      "size": 4127,
+      "ver": "1.0.0",
+      "mode": "any",
+      "notes": ""
+    },
+    {
+      "path": "BASE_AGENT.md",
+      "sha256": "25e75fd55983e4dde32b9311bf458485097a89eea366deb7f0949a81848b7d6a",
+      "size": 3822,
+      "ver": "1.0.0",
+      "mode": "any",
+      "notes": ""
+    },
+    {
+      "path": "examples/+reg/+controllers/Controller.m",
+      "sha256": "b13fcac0d91e5c5cfef0ac40b2d23b7a1dfc9359acba7c2d0d94b5c51b178541",
+      "size": 744,
+      "ver": "1.0.0",
+      "mode": "any",
+      "notes": ""
+    },
+    {
+      "path": "examples/+reg/+internal/+synth/makeSignal.m",
+      "sha256": "ed66f807ff0f1d9cbd1502d554f1f89a69d4309f770b63d919766c0f24014ddf",
+      "size": 734,
+      "ver": "1.0.0",
+      "mode": "any",
+      "notes": ""
+    },
+    {
+      "path": "examples/+reg/+models/SignalModel.m",
+      "sha256": "79f2ced336a629b26d69d40e1da18df1680d01efffae18dae23f1b7b18cc3504",
+      "size": 844,
+      "ver": "1.0.0",
+      "mode": "any",
+      "notes": ""
+    },
+    {
+      "path": "examples/+reg/+testfixtures/DBConnectionFixture.m",
+      "sha256": "9152d6fb512f7026ee7332ab41bbc6963bc9e24ed0f080e11d542aa6cf9606da",
+      "size": 871,
+      "ver": "1.0.0",
+      "mode": "any",
+      "notes": ""
+    },
+    {
+      "path": "examples/+reg/+views/Report.m",
+      "sha256": "f9a8cc12712c21e99c517fbd85551d7931b8aadc969b23dcf986ffdb5d4dc459",
+      "size": 522,
+      "ver": "1.0.0",
+      "mode": "any",
+      "notes": ""
+    },
+    {
+      "path": "examples/+reg/Example.m",
+      "sha256": "464710fb76161339642879ddc83c23396c33471e66ff147595a471c8c95615f9",
+      "size": 1820,
+      "ver": "1.0.0",
+      "mode": "any",
+      "notes": ""
+    },
+    {
+      "path": "examples/tests/+reg/+controllers/test_Controller_NotImplemented.m",
+      "sha256": "a7b284936c5d280b8b43479e0939e2091f28a7c2fa055c828d07d01cc7d68946",
+      "size": 819,
+      "ver": "1.0.0",
+      "mode": "any",
+      "notes": ""
+    },
+    {
+      "path": "examples/tests/+reg/+db/test_DB_Roundtrip.m",
+      "sha256": "8626b7484515f5b498c61f705b7be3149e6a4c826246c1ded184b390f9f5cdce",
+      "size": 1000,
+      "ver": "1.0.0",
+      "mode": "any",
+      "notes": ""
+    },
+    {
+      "path": "examples/tests/+reg/+internal/+synth/test_makeSignal.m",
+      "sha256": "93a4d6b6487ab32078f239e31cf93a0a082ca92158fa647e25e3b1f14167f133",
+      "size": 732,
+      "ver": "1.0.0",
+      "mode": "any",
+      "notes": ""
+    },
+    {
+      "path": "examples/tests/+reg/+models/test_SignalModel_Edges.m",
+      "sha256": "0b75243a0a9101d8e3f38c7e1ea7232f40a9e65e340c160e61252eec18579811",
+      "size": 749,
+      "ver": "1.0.0",
+      "mode": "any",
+      "notes": ""
+    },
+    {
+      "path": "examples/tests/+reg/+models/test_SignalModel_Validation.m",
+      "sha256": "60be6366ed567812f077f08104f55db4a3ec68fd999cd2d7a16b859170643dce",
+      "size": 776,
+      "ver": "1.0.0",
+      "mode": "any",
+      "notes": ""
+    },
+    {
+      "path": "examples/tests/+reg/+views/test_Report_NotImplemented.m",
+      "sha256": "86e7402e9fc40879fc618b7b1b0a90bd62f493306eca12601c6107a43889fe06",
+      "size": 757,
+      "ver": "1.0.0",
+      "mode": "any",
+      "notes": ""
+    },
+    {
+      "path": "examples/tests/+reg/test_Example.m",
+      "sha256": "34e671e61ca156102c0ca1e18ece1de4331c28d02ed583e63d9634b53781cd88",
+      "size": 1821,
+      "ver": "1.0.0",
+      "mode": "any",
+      "notes": ""
+    },
+    {
+      "path": "examples/tests/+reg/test_Example_Edges.m",
+      "sha256": "4c69bd7985e09eaaebd902a55cc6d55306ba4c59da8e7d09c9dc0ed2eff27752",
+      "size": 805,
+      "ver": "1.0.0",
+      "mode": "any",
+      "notes": ""
+    },
+    {
+      "path": "examples/tests/+reg/test_Example_Regression.m",
+      "sha256": "04ffa6a85eab0f25eabbc68d323eef15bb275d9ec967e5ec75079b73317a7f66",
+      "size": 1695,
+      "ver": "1.0.0",
+      "mode": "any",
+      "notes": ""
+    },
+    {
+      "path": "examples/tests/+reg/test_Example_Validation.m",
+      "sha256": "52c4cc21d5c96fc6989b00c9f889156c6d1eb7e2e669a5b363355be6995c0891",
+      "size": 816,
+      "ver": "1.0.0",
+      "mode": "any",
+      "notes": ""
+    },
+    {
+      "path": "scripts/win/gate_cc4m_release.bat",
+      "sha256": "b8b2eadbc957565538b894821d1edcdfecb7af36bb642358b3648b32484286a4",
+      "size": 303,
+      "ver": "1.0.0",
+      "mode": "any",
+      "notes": ""
+    },
+    {
+      "path": "scripts/win/gate_ready_for_build.bat",
+      "sha256": "f3df5aece4a8f122ff32b48c474a5184830fd678d63594ec1abb71ef3b7566ec",
+      "size": 309,
+      "ver": "1.0.0",
+      "mode": "any",
+      "notes": ""
+    },
+    {
+      "path": "scripts/win/run_cc4m.bat",
+      "sha256": "88696fbef3beabb7d24f1c69bf6957bc173a745f6077477b97513ec82e2c7d73",
+      "size": 287,
+      "ver": "1.0.0",
+      "mode": "any",
+      "notes": ""
+    },
+    {
+      "path": "scripts/win/run_checks.bat",
+      "sha256": "daeed8d6c5aa232f158351fa4ab8df1fa1661a3788bac50552587b70d84d23a8",
+      "size": 376,
+      "ver": "1.0.0",
+      "mode": "any",
+      "notes": ""
+    },
+    {
+      "path": "scripts/win/run_checks.ps1",
+      "sha256": "90d9a950ac61d85d56d3849afee65344b403f75629d01410fa265ab5dcb1dc17",
+      "size": 351,
+      "ver": "1.0.0",
+      "mode": "any",
+      "notes": ""
+    },
+    {
+      "path": "scripts/win/run_tests.bat",
+      "sha256": "368037f5826765373e45d5873c12775a91fbc6f3822bd20766edf655b90515e5",
+      "size": 367,
+      "ver": "1.0.0",
+      "mode": "any",
+      "notes": ""
+    },
+    {
+      "path": "scripts/win/set_mode.bat",
+      "sha256": "2863f0df9c17148bbfcba0afbfecad79897ad89773470e7901032d58882ff035",
+      "size": 549,
+      "ver": "1.0.0",
+      "mode": "any",
+      "notes": ""
+    },
+    {
+      "path": "scripts/win/set_mode.ps1",
+      "sha256": "d4aa146a3c375f88b9191741a32991acfc69d57a69008be4d50e81531fe7d964",
+      "size": 444,
+      "ver": "1.0.0",
+      "mode": "any",
+      "notes": ""
+    },
+    {
+      "path": "scripts/win/snapshot_api.bat",
+      "sha256": "9d2e2f2c444229f7a2b7915da4c6d3909cb76519d20b6b72a09ccda37c297b8b",
+      "size": 345,
+      "ver": "1.0.0",
+      "mode": "any",
+      "notes": ""
+    },
+    {
+      "path": "scripts/win/snapshot_api.ps1",
+      "sha256": "a9b507d004b7e1646b832f659649de7199b4ae510163d4aa785adeaf2e33bcbb",
+      "size": 274,
+      "ver": "1.0.0",
+      "mode": "any",
+      "notes": ""
+    },
+    {
+      "path": "tests/+fixtures/+gen/example_signal.m",
+      "sha256": "18ae19be9b4a8080a4e2f54904c7e03be86d3e75e2a37ef72ebb4e1219081dfd",
+      "size": 660,
+      "ver": "1.0.0",
+      "mode": "any",
+      "notes": ""
+    },
+    {
+      "path": "tests/+fixtures/baselines/SCHEMA.md",
+      "sha256": "3d5c2fe581d7ba9b0d673feae462816dc734b8809f78c713ba5ffa67762f89d5",
+      "size": 328,
+      "ver": "1.0.0",
+      "mode": "any",
+      "notes": ""
+    },
+    {
+      "path": "tests/+fixtures/baselines/manifest.json",
+      "sha256": "c747fe7e9e42f0cc6112607863e8b473b89d3884eafe8cc84d05b48e59261362",
+      "size": 657,
+      "ver": "1.0.0",
+      "mode": "any",
+      "notes": ""
+    },
+    {
+      "path": "tests/check_tags.m",
+      "sha256": "47e786e98d4783e1463aee0d57c4420706530a4cac8542491bdb928c42039189",
+      "size": 1008,
+      "ver": "1.0.0",
+      "mode": "any",
+      "notes": ""
+    },
+    {
+      "path": "tests/runAllTests.m",
+      "sha256": "df1504d613a132e4ee905cb8488fd4007ba6079a8d398053bb2e7a0913246c2f",
+      "size": 2626,
+      "ver": "1.0.0",
+      "mode": "any",
+      "notes": ""
+    }
+  ],
   "notes": "Run scripts/update_scaffold_manifest.py to populate 'files' with SHA256, size, and per-file version. Commit manifest alongside scaffold changes."
 }
