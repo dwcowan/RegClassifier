@@ -64,8 +64,16 @@ C.params = params;
 C.pipeline = pipe;
 
 % === Load knobs.json and apply Chunk overrides ===
-% TODO: implement reg.load_knobs to populate C.knobs and override fields.
 C.knobs = struct();
+if isfile('knobs.json')
+    try
+        knobs = jsondecode(fileread('knobs.json'));
+        C.knobs = knobs;
+    catch ME
+        warning("Knobs load failed: %s. Using empty knobs.", ME.message);
+        C.knobs = struct();
+    end
+end
 
 % Display active knobs summary (placeholder)
 % disp('=== Active knobs configuration ===');

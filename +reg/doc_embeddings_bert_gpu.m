@@ -34,20 +34,21 @@ catch
     end
 end
 
-try
-    %% Try to use fine-tuned encoder if available
+%% Try to use fine-tuned encoder if available
 try
     S = load('fine_tuned_bert.mat','netFT');
     net = S.netFT.base;
     headFT = S.netFT.head; useHead = true;
     maxLenFT = S.netFT.MaxSeqLength;
-catch
-    net = bert("base-uncased");
-    useHead = false; maxLenFT = [];
-end  % returns a dlnetwork
 catch ME
-    error("BERT:ModelMissing", "BERT model not found. Install 'Text Analytics Toolbox Model for BERT English'. Original error: %s", ME.message);
-end
+    % Fine-tuned model not available, use base BERT
+    try
+        net = bert("base-uncased");
+        useHead = false; maxLenFT = [];
+    catch ME2
+        error("BERT:ModelMissing", "BERT model not found. Install 'Text Analytics Toolbox Model for BERT English'. Original error: %s", ME2.message);
+    end
+end  % returns a dlnetwork
 
 textStr = string(textStr);
 N = numel(textStr);
