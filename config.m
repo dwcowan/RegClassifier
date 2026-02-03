@@ -12,11 +12,14 @@ catch ME
 end
 
 % === Load params.json overrides ===
-try
-    params = jsondecode(fileread('params.json'));
-catch ME
-    warning("Params load/apply failed: %s", ME.message);
-    params = struct();
+params = struct();
+if isfile('params.json')
+    try
+        params = jsondecode(fileread('params.json'));
+    catch ME
+        warning("Params load/apply failed: %s", ME.message);
+        params = struct();
+    end
 end
 
 % Default locations and labels are intentionally blank to avoid
@@ -64,8 +67,16 @@ C.params = params;
 C.pipeline = pipe;
 
 % === Load knobs.json and apply Chunk overrides ===
-% TODO: implement reg.load_knobs to populate C.knobs and override fields.
 C.knobs = struct();
+if isfile('knobs.json')
+    try
+        knobs = jsondecode(fileread('knobs.json'));
+        C.knobs = knobs;
+    catch ME
+        warning("Knobs load failed: %s. Using empty knobs.", ME.message);
+        C.knobs = struct();
+    end
+end
 
 % Display active knobs summary (placeholder)
 % disp('=== Active knobs configuration ===');

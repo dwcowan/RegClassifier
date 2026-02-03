@@ -39,7 +39,7 @@ for i = 1:N
     trip(:,end+1) = uint32([i; pidx; nidx]); %#ok<AGROW>
     if size(trip,2) >= R.MaxTriplets, break; end
 end
-P.anchor = trip(0+1,:);
-P.positive = trip(1+1,:);
-P.negative = trip(2+1,:);
+P.anchor = trip(1,:);
+P.positive = trip(2,:);
+P.negative = trip(3,:);
 end

@@ -1,27 +1,27 @@
 {
   "BERT": {
-    "MiniBatchSize": null,
-    "MaxSeqLength": null
+    "MiniBatchSize": 96,
+    "MaxSeqLength": 256
   },
   "Projection": {
-    "ProjDim": null,
-    "Epochs": null,
-    "BatchSize": null,
-    "LR": null,
-    "Margin": null,
-    "UseGPU": null
+    "ProjDim": 384,
+    "Epochs": 5,
+    "BatchSize": 768,
+    "LR": 0.001,
+    "Margin": 0.2,
+    "UseGPU": true
   },
   "FineTune": {
-    "Loss": "",
-    "BatchSize": null,
-    "MaxSeqLength": null,
-    "UnfreezeTopLayers": null,
-    "Epochs": null,
-    "EncoderLR": null,
-    "HeadLR": null
+    "Loss": "triplet",
+    "BatchSize": 32,
+    "MaxSeqLength": 256,
+    "UnfreezeTopLayers": 4,
+    "Epochs": 4,
+    "EncoderLR": 1e-5,
+    "HeadLR": 0.001
   },
   "Chunk": {
-    "SizeTokens": null,
-    "Overlap": null
+    "SizeTokens": 300,
+    "Overlap": 80
   }
 }

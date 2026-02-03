@@ -12,9 +12,10 @@ try
     else
         E = reg.doc_embeddings_bert_gpu(textStr);
     end
-    else
-        E = reg.doc_embeddings_fasttext(textStr, C.fasttext);
-    end
+end
+else
+    E = reg.doc_embeddings_fasttext(textStr, C.fasttext);
+end
 catch ME
     warning('Embeddings fallback to fastText due to: %s', ME.message);
     E = reg.doc_embeddings_fasttext(textStr, C.fasttext);
