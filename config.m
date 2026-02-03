@@ -64,8 +64,26 @@ C.params = params;
 C.pipeline = pipe;
 
 % === Load knobs.json and apply Chunk overrides ===
-% TODO: implement reg.load_knobs to populate C.knobs and override fields.
-C.knobs = struct();
+% Load hyperparameters from knobs.json
+C.knobs = reg.load_knobs('knobs.json');
+
+% Validate knobs (will warn if values are suspicious)
+try
+    reg.validate_knobs(C.knobs);
+catch ME
+    warning('config:KnobsValidationFailed', ...
+        'Knobs validation failed: %s. Using loaded values anyway.', ME.message);
+end
+
+% Apply Chunk overrides from knobs to top-level config
+if isfield(C.knobs, 'Chunk')
+    if isfield(C.knobs.Chunk, 'SizeTokens')
+        C.chunk_size_tokens = C.knobs.Chunk.SizeTokens;
+    end
+    if isfield(C.knobs.Chunk, 'Overlap')
+        C.chunk_overlap = C.knobs.Chunk.Overlap;
+    end
+end
 
 % Display active knobs summary (placeholder)
 % disp('=== Active knobs configuration ===');
