@@ -7,7 +7,7 @@ function S = hybrid_search(Xtfidf, E, vocab)
 %       rank (double) - 1-based rank position
 E = single(E);
 E = E ./ max(1e-9, vecnorm(E,2,2));
-S = struct('Xtfidf', Xtfidf, 'E', E, 'vocab', {vocab});
+S = struct('Xtfidf', Xtfidf, 'E', E, 'vocab', vocab);
 S.query = @(q, alpha) do_query(q, alpha, S);
 end
 

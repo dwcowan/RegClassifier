@@ -30,23 +30,16 @@ classdef EmbeddingService
             input = reg.service.EmbeddingInput(features);
         end
 
-        function output = embed(obj, input) %#ok<INUSD>
+        function output = embed(~, ~) %#ok<STOUT>
             %EMBED Produce dense vectors from INPUT.
             %   OUTPUT = EMBED(INPUT) should return an EmbeddingOutput
             %   containing an array of `reg.model.Embedding` instances.
-            %#ok<NASGU>
-            if ~isempty(obj.ConfigService)
-                cfg = obj.ConfigService.getConfig(); %#ok<NASGU>
-            end
-            output = reg.service.EmbeddingOutput([]);
-            if ~isempty(obj.EmbeddingRepo)
-                obj.EmbeddingRepo.save(output);
-            end
-            if ~isempty(obj.SearchRepo)
-                obj.SearchRepo.save(output);
-            end
+            %
+            %   This is a stub implementation. Use the functional embedding
+            %   functions (reg.doc_embeddings_bert_gpu, reg.doc_embeddings_fasttext)
+            %   or reg.precompute_embeddings instead.
             error("reg:service:NotImplemented", ...
-                "EmbeddingService.embed is not implemented.");
+                "EmbeddingService.embed is not implemented. Use reg.precompute_embeddings() instead.");
         end
     end
 end

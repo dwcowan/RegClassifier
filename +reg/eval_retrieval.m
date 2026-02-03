@@ -12,7 +12,15 @@ for i = 1:N
     if isempty(pos), continue; end
     [~, ord] = sort(scores(i,:), 'descend');
     ord(ord==i) = []; % remove self
-    topK = ord(1:min(K,end));
+
+    % Handle edge case: ord is empty or too small after removing self
+    if isempty(ord)
+        recallK(i) = 0;
+        AP(i) = 0;
+        continue;
+    end
+
+    topK = ord(1:min(K, numel(ord)));
     recallK(i) = any(ismember(topK, pos));
     % AP
     hits = ismember(ord, pos);
