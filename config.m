@@ -12,11 +12,14 @@ catch ME
 end
 
 % === Load params.json overrides ===
-try
-    params = jsondecode(fileread('params.json'));
-catch ME
-    warning("Params load/apply failed: %s", ME.message);
-    params = struct();
+params = struct();
+if isfile('params.json')
+    try
+        params = jsondecode(fileread('params.json'));
+    catch ME
+        warning("Params load/apply failed: %s", ME.message);
+        params = struct();
+    end
 end
 
 % Default locations and labels are intentionally blank to avoid

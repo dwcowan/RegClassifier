@@ -9,9 +9,24 @@ function E = doc_embeddings_bert_gpu(textStr, varargin)
 %
 % If BERT is unavailable, this function throws. Callers should catch and fallback.
 
-params = jsondecode(fileread('params.json'));
-miniBatchSize = params.MiniBatchSize;
-maxSeqLen = params.MaxSeqLength;
+% Set defaults
+miniBatchSize = 96;
+maxSeqLen = 256;
+
+% Override from params.json if available
+if isfile('params.json')
+    try
+        params = jsondecode(fileread('params.json'));
+        if isfield(params, 'MiniBatchSize')
+            miniBatchSize = params.MiniBatchSize;
+        end
+        if isfield(params, 'MaxSeqLength')
+            maxSeqLen = params.MaxSeqLength;
+        end
+    catch ME
+        warning('Could not read params.json: %s. Using defaults.', ME.message);
+    end
+end
 
 p = inputParser;
 addParameter(p,'MiniBatchSize', miniBatchSize, @(x)isnumeric(x)&&x>=1);
