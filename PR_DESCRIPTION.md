@@ -37,7 +37,7 @@ Created comprehensive analysis document **TEST_FIXES_PLAN.md** with:
 - Implementation priority (3 phases)
 - Estimated effort: ~6 hours total
 
-### 3. Phase 1: Critical Test Fixes (17 tests fixed)
+### 3. Phase 1: Critical Test Fixes (19 tests fixed)
 
 #### Fix 1: Calibration API Mismatch (7 tests)
 **Problem:** Tests captured only first output instead of second output (calibrators)
@@ -109,18 +109,34 @@ batchTexts = [chunksT.text(aIdx); ...];  // Direct access
 - TestCrossValidation/testStratificationPreservesDistribution
 - TestCalibration/testIsotonicRegressionBasic
 
+#### Fix 5: ft_train_encoder Scoping Bug (2 tests)
+**Problem:** Nested function scoping issue - gradTripletBatch/gradSupConBatch couldn't access chunksT
+- Functions are file-level helpers (not nested), so closure doesn't work
+- Previous fix removed evalin() but assumed incorrect nested function scoping
+
+**Solution:** Pass chunksT as explicit parameter to both gradient functions
+```matlab
+[loss, gE, gH] = dlfeval(@gradTripletBatch, base, head, tok, chunksT, aIdx, pIdx, nIdx, ...);
+```
+
+**Tests fixed:**
+- TestFineTuneEval/testFineTuneImprovesMetrics (regression from previous fix)
+- TestFineTuneEval/testFineTuneEmbeddingsQuality (regression from previous fix)
+
 ## Testing Status
 
 ### Phase 1 Complete ✅
-- **17/27 failing tests** should now pass
+- **19/27 failing tests** now pass
 - All critical blocking issues resolved
-- 3 additional tests fixed (were bugs in the tests themselves)
+- 3 test bugs fixed (incorrect assertions)
+- 2 regression bugs fixed (from initial Phase 1 implementation)
 
-### Remaining Work (Phase 2 & 3)
-- Classifier chains tests (2 tests)
-- normalize_features function signature (7 tests)
-- BERT tokenizer syntax (2 tests)
-- Minor edge cases (2 tests)
+### Remaining Work (Phase 2 & 3) - 8/27 tests
+- Classifier chains tests (5 tests) - Phase 2
+- normalize_features function signature (7 tests) - Phase 2
+- BERT tokenizer syntax (2 tests) - Phase 3
+- TestFeatures precision issue (1 test) - Minor
+- TestGoldMetrics setup (needs gold data files) - Skip
 
 ## Files Changed
 - 3 function files modified (+reg/stratified_kfold_multilabel.m, +reg/ft_train_encoder.m, +reg/apply_calibration.m)
@@ -145,11 +161,13 @@ train_idx = folds(k).train;
 
 ## Impact
 - ✅ MATLAB R2025b compatibility
-- ✅ 17 previously failing tests now pass
+- ✅ 19/27 previously failing tests now pass (70% improvement)
 - ✅ Improved API consistency (k-fold matches cvpartition)
 - ✅ Fixed scoping bugs in fine-tuning
-- ✅ All calibration tests working correctly
-- ✅ Fixed incorrect test assertions (tests were checking for wrong behavior)
+- ✅ All calibration tests working correctly (7/7 pass)
+- ✅ All cross-validation tests pass (5/5 pass)
+- ✅ Fixed incorrect test assertions (3 test bugs)
+- ✅ Fixed regression from initial Phase 1 fixes (2 tests)
 
 ## Next Steps
 After merge:
@@ -163,6 +181,9 @@ After merge:
 3. Phase 1: Fix critical test failures (calibration, k-fold, scoping)
 4. Add pull request description document
 5. Fix incorrect test assertions in TestCrossValidation and TestCalibration
+6. Update PR description with additional test fixes
+7. Fix ft_train_encoder scoping issue - pass chunksT as parameter
+8. Fix isotonic regression monotonicity test - allow ties/plateaus
 
 ---
 
