@@ -133,6 +133,11 @@ end
 
 % L2 normalize
 n = vecnorm(E,2,2); n(n==0)=1; E = E ./ n;
+
+% Ensure GPU operations complete
+if canUseGPU
+    wait(gpuDevice);
+end
 end
 
 

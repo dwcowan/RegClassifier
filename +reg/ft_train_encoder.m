@@ -132,7 +132,13 @@ numTrip = numel(A);
 mb = R.BatchSize; itersPerEpoch = ceil(numTrip / mb);
 
 % Checkpointing
-if ~isfolder(R.CheckpointDir), mkdir(R.CheckpointDir); end
+if ~isfolder(R.CheckpointDir)
+    [success, msg] = mkdir(R.CheckpointDir);
+    if ~success
+        error('reg:ft_train_encoder:CheckpointDirFailed', ...
+            'Failed to create checkpoint directory: %s', msg);
+    end
+end
 startEpoch = 1; iter = 0;
 taE = []; ta2E = []; taH = []; ta2H = [];
 if R.Resume
@@ -224,6 +230,11 @@ end
 netFT.base = base;
 netFT.head = head;
 netFT.MaxSeqLength = R.MaxSeqLength;
+
+% Ensure all GPU operations complete
+if gpuDeviceCount > 0
+    wait(gpuDevice);
+end
 end
 
 % === Helpers ===

@@ -53,17 +53,30 @@ outDir = fullfile("runs","diff_methods"); if ~isfolder(outDir), mkdir(outDir); e
 for v = fieldnames(R).'
     vn = v{1};
     csv = fullfile(outDir, "diff_" + vn + ".csv");
-    fid = fopen(csv,'w'); fprintf(fid,"query,rank,doc_id,text
-");
-    D = R.(vn);
-    for qi = 1:numel(D)
-        for r = 1:numel(D(qi).top_idx)
-            docid = ""; if isfield(D(qi),'doc_id') && numel(D(qi).doc_id)>=r, docid = D(qi).doc_id(r); end
-            t = D(qi).top_text(r);
-            fprintf(fid, ""%s",%d,"%s","%s"\n", D(qi).query, r, docid, replace(t, '"',''''));
+    fid = -1;
+    try
+        fid = fopen(csv,'w');
+        if fid == -1
+            error('Failed to open file for writing: %s', csv);
         end
+        fprintf(fid,"query,rank,doc_id,text\n");
+        D = R.(vn);
+        for qi = 1:numel(D)
+            for r = 1:numel(D(qi).top_idx)
+                docid = ""; if isfield(D(qi),'doc_id') && numel(D(qi).doc_id)>=r, docid = D(qi).doc_id(r); end
+                t = D(qi).top_text(r);
+                fprintf(fid, ""%s",%d,"%s","%s"\n", D(qi).query, r, docid, replace(t, '"',''''));
+            end
+        end
+    catch ME
+        if fid ~= -1
+            fclose(fid);
+        end
+        rethrow(ME);
     end
-    fclose(fid);
+    if fid ~= -1
+        fclose(fid);
+    end
 end
 fprintf('Wrote method diffs to %s\n', outDir);
 end
