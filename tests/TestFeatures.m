@@ -54,8 +54,8 @@ classdef TestFeatures < fixtures.RegTestCase
 
             % Similarity between str(1) and str2(1) (both about capital requirements)
             simSimilar = E(1,:) * E2(1,:)';
-            % Similarity between str(1) and str(2) (capital requirements vs market risk - different topics)
-            simDissimilar = E(1,:) * E(2,:)';
+            % Similarity between str(1) and str2(2) (capital requirements vs market risk - different topics)
+            simDissimilar = E(1,:) * E2(2,:)';
 
             tc.verifyGreaterThan(simSimilar, simDissimilar, ...
                 'Semantically similar texts should have higher cosine similarity than dissimilar texts');

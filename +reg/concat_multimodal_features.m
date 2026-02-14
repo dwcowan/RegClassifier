@@ -116,7 +116,7 @@ if ~isempty(Xtfidf)
         fprintf('Normalizing TF-IDF features (%d x %d, sparse=%d)...\n', ...
             size(Xtfidf, 1), size(Xtfidf, 2), issparse(Xtfidf));
     end
-    Xtfidf_norm = reg.normalize_features(Xtfidf, normalize_method);
+    Xtfidf_norm = reg.normalize_features(Xtfidf, 'Method', normalize_method);
     feature_parts{end+1} = Xtfidf_norm;
     info.tfidf_dim = size(Xtfidf, 2);
 end
@@ -126,7 +126,7 @@ if ~isempty(lda)
         fprintf('Normalizing LDA features (%d x %d)...\n', ...
             size(lda, 1), size(lda, 2));
     end
-    lda_norm = reg.normalize_features(lda, normalize_method);
+    lda_norm = reg.normalize_features(lda, 'Method', normalize_method);
 
     % Convert to sparse if TFIDF is sparse for memory efficiency
     if ~isempty(Xtfidf) && issparse(Xtfidf)
@@ -152,10 +152,10 @@ if ~isempty(emb)
             end
             emb_norm = emb;
         else
-            emb_norm = reg.normalize_features(emb, normalize_method);
+            emb_norm = reg.normalize_features(emb, 'Method', normalize_method);
         end
     else
-        emb_norm = reg.normalize_features(emb, normalize_method);
+        emb_norm = reg.normalize_features(emb, 'Method', normalize_method);
     end
 
     % Convert to sparse if needed for consistency

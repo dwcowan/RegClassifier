@@ -56,6 +56,12 @@ if isfile('fine_tuned_bert.mat')
     ndcg10_ft = reg.metrics_ndcg(S_ft, posSets, 10);
 end
 
+% --- Log metrics (optional) ---
+runId = string(datetime('now','Format','yyyyMMdd_HHmmss'));
+reg.log_metrics(runId, "baseline", struct('RecallAt10',recall10_base,'mAP',mAP_base,'nDCG_at_10',ndcg10_base), 'Epoch', 0);
+if ~isnan(recall10_proj), reg.log_metrics(runId, "projection", struct('RecallAt10',recall10_proj,'mAP',mAP_proj,'nDCG_at_10',ndcg10_proj), 'Epoch', 0); end
+if ~isnan(recall10_ft),   reg.log_metrics(runId, "finetuned",  struct('RecallAt10',recall10_ft,'mAP',mAP_ft,'nDCG_at_10',ndcg10_ft), 'Epoch', 0); end
+
 % --- Report ---
 r = Report('reg_eval_report','pdf');
 append(r, TitlePage('Title', 'Retrieval & Clustering Evaluation'));
@@ -77,7 +83,7 @@ maskIRB = contains(lower(chunksT.text), ["pd","lgd","ead","internal ratings base
 if any(maskIRB)
     sec2 = Section('IRB PD/LGD/EAD Subset');
     idxIRB = find(maskIRB);
-    posSetsIRB = posSets(idxIRB);
+    posSetsIRB = posSets(idxIRB); %#ok<NASGU>
     % Score on whichever embedding is best available (ft > proj > base)
     if ~isempty(E_ft), E = E_ft; elseif ~isempty(E_proj), E = E_proj; else, E = E_base; end
     Ssub = E(idxIRB,:) * E';   % query IRB subset against full corpus
@@ -94,7 +100,6 @@ if any(maskIRB)
     append(sec2, Paragraph(sprintf('IRB subset Recall@10: %.3f', mean(recIRB))));
     append(r, sec2);
 end
-
 
 %% --- Gold Mini-Pack Metrics ---
 try
@@ -122,6 +127,59 @@ try
 catch ME
     warning("Gold pack metrics section skipped: %s", ME.message);
 end
+
+% --- Generate trend chart if history exists ---
+csvHist = fullfile("runs","metrics.csv");
+if isfile(csvHist)
+    trendsPNG = fullfile("runs","trends.png");
+    reg.plot_trends(csvHist, trendsPNG);
+    secTr = Section('Trends Across Runs/Checkpoints');
+    append(secTr, Image(trendsPNG));
+    append(r, secTr);
+end
+
+% --- Co-retrieval heatmap on best available embedding ---
+if ~isempty(E_ft), Ebest = E_ft; elseif ~isempty(E_proj), Ebest = E_proj; else, Ebest = E_base; end
+[Mcore, order] = reg.label_coretrieval_matrix(Ebest, Yboot, 10);
+labelsStr = string(C.labels);
+heatPNG = fullfile("runs","coretrieval_heatmap.png");
+reg.plot_coretrieval_heatmap(Mcore(order,order), labelsStr(order), heatPNG);
+secHM = Section('Label Co-Retrieval Heatmap (Top-10)');
+append(secHM, Image(heatPNG));
+append(r, secHM);
+
+% --- Gold Mini-Pack (optional) ---
+try
+    if isfile(fullfile("gold","sample_gold_chunks.csv")) && ...
+       isfile(fullfile("gold","sample_gold_labels.json")) && ...
+       isfile(fullfile("gold","sample_gold_Ytrue.csv"))
+        G = reg.load_gold("gold");
+        % Embed with best available model
+        Cg = config(); Cg.labels = G.labels;
+        Eg = reg.precompute_embeddings(G.chunks.text, Cg);
+        % Overall metrics on gold
+        posSetsG = cell(height(G.chunks),1);
+        for i=1:height(G.chunks)
+            labs = G.Y(i,:);
+            pos = find(any(G.Y(:,labs),2)); pos(pos==i) = [];
+            posSetsG{i} = pos;
+        end
+        [recall10_g, mAP_g] = reg.eval_retrieval(Eg, posSetsG, 10);
+        ndcg10_g = reg.metrics_ndcg(Eg*Eg.', posSetsG, 10);
+        perG = reg.eval_per_label(Eg, G.Y, 10);
+        % Add to report
+        secG2 = Section('Gold Mini-Pack Evaluation');
+        Tg = table(["Recall@10";"mAP";"nDCG@10"], [recall10_g; mAP_g; ndcg10_g], 'VariableNames', {'Metric','Value'});
+        append(secG2, FormalTable(Tg));
+        tblG = table(G.labels(:), perG.RecallAtK, 'VariableNames', {'Label','RecallAt10'});
+        append(secG2, FormalTable(tblG));
+        append(r, secG2);
+    end
+catch ME
+    warning("Gold section skipped: %s", ME.message);
+end
+
+% --- Close report (after ALL appends) ---
 close(r);
 fprintf('Wrote evaluation report: %s\n', r.OutputPath);
 
@@ -146,7 +204,7 @@ for s = 1:mb:N
         ids(i, 1:len) = seq(1:len);
     end
     mask = double(ids ~= paddingCode);  % Attention mask: 1 for real tokens, 0 for padding
-    ids = dlarray(gpuArray(int32(ids)),'CB'); mask = dlarray(gpuArray(int32(mask)),'CB');
+    ids = dlarray(gpuArray(single(ids)),'CB'); mask = dlarray(gpuArray(single(mask)),'CB');
     out = predict(netFT.base, ids, mask);
     Z = localPooled(out);
     Z = predict(netFT.head, Z);
@@ -170,63 +228,4 @@ elseif isstruct(out) && isfield(out,'sequenceOutput')
 else
     Z = dlarray(out,'CB');
 end
-end
-
-
-% --- Log metrics (optional) ---
-runId = string(datetime('now','Format','yyyyMMdd_HHmmss'));
-reg.log_metrics(runId, "baseline", struct('RecallAt10',recall10_base,'mAP',mAP_base,'nDCG_at_10',ndcg10_base), 'Epoch', 0);
-if ~isnan(recall10_proj), reg.log_metrics(runId, "projection", struct('RecallAt10',recall10_proj,'mAP',mAP_proj,'nDCG_at_10',ndcg10_proj), 'Epoch', 0); end
-if ~isnan(recall10_ft),   reg.log_metrics(runId, "finetuned",  struct('RecallAt10',recall10_ft,'mAP',mAP_ft,'nDCG_at_10',ndcg10_ft), 'Epoch', 0); end
-
-% --- Generate trend chart if history exists ---
-csvHist = fullfile("runs","metrics.csv");
-if isfile(csvHist)
-    trendsPNG = fullfile("runs","trends.png");
-    reg.plot_trends(csvHist, trendsPNG);
-    secTr = Section('Trends Across Runs/Checkpoints');
-    append(secTr, Image(trendsPNG));
-    append(r, secTr);
-end
-
-% --- Co-retrieval heatmap on best available embedding ---
-if ~isempty(E_ft), Ebest = E_ft; elseif ~isempty(E_proj), Ebest = E_proj; else, Ebest = E_base; end
-[Mcore, order] = reg.label_coretrieval_matrix(Ebest, Yboot, 10);
-labelsStr = string(C.labels);
-heatPNG = fullfile("runs","coretrieval_heatmap.png");
-reg.plot_coretrieval_heatmap(Mcore(order,order), labelsStr(order), heatPNG);
-secHM = Section('Label Co-Retrieval Heatmap (Top-10)');
-append(secHM, Image(heatPNG));
-append(r, secHM);
-
-
-% --- Gold Mini-Pack (optional) ---
-try
-    if isfile(fullfile("gold","sample_gold_chunks.csv")) && ...
-       isfile(fullfile("gold","sample_gold_labels.json")) && ...
-       isfile(fullfile("gold","sample_gold_Ytrue.csv"))
-        G = reg.load_gold("gold");
-        % Embed with best available model
-        Cg = config(); Cg.labels = G.labels;
-        Eg = reg.precompute_embeddings(G.chunks.text, Cg);
-        % Overall metrics on gold
-        posSetsG = cell(height(G.chunks),1);
-        for i=1:height(G.chunks)
-            labs = G.Y(i,:);
-            pos = find(any(G.Y(:,labs),2)); pos(pos==i) = [];
-            posSetsG{i} = pos;
-        end
-        [recall10_g, mAP_g] = reg.eval_retrieval(Eg, posSetsG, 10);
-        ndcg10_g = reg.metrics_ndcg(Eg*Eg.', posSetsG, 10);
-        perG = reg.eval_per_label(Eg, G.Y, 10);
-        % Add to report
-        secG = Section('Gold Mini-Pack Evaluation');
-        Tg = table(["Recall@10";"mAP";"nDCG@10"], [recall10_g; mAP_g; ndcg10_g], 'VariableNames', {'Metric','Value'});
-        append(secG, FormalTable(Tg));
-        tblG = table(G.labels(:), perG.RecallAtK, 'VariableNames', {'Label','RecallAt10'});
-        append(secG, FormalTable(tblG));
-        append(r, secG);
-    end
-catch ME
-    warning("Gold section skipped: %s", ME.message);
 end

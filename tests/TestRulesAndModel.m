@@ -11,15 +11,22 @@ classdef TestRulesAndModel < fixtures.RegTestCase
         function testRulesAndTrainPredict(tc)
             %TESTRULESANDTRAINPREDICT Test complete weak labeling and training pipeline.
             %   Verifies that weak rules, training, and prediction work end-to-end.
+            %   Need at least 3 positive examples per label for train_multilabel.
             text = [
                 "The internal ratings based (IRB) approach uses PD LGD EAD.";
+                "IRB models for credit risk PD estimation and validation.";
+                "Advanced IRB approach for probability of default PD.";
                 "Liquidity Coverage Ratio (LCR) and HQLA are defined.";
-                "AML/KYC requirements for customer due diligence."
+                "LCR liquidity requirements and high quality liquid assets.";
+                "Liquidity coverage ratio LCR stress testing framework.";
+                "AML/KYC requirements for customer due diligence.";
+                "Anti money laundering AML and know your customer KYC rules.";
+                "AML KYC customer identification programme compliance."
             ];
             labels = ["IRB","Liquidity_LCR","AML_KYC"];
             [docsTok, vocab, Xtfidf] = reg.ta_features(text); %#ok<ASGLU>
             bag = bagOfWords(docsTok);
-            mdlLDA = fitlda(bag, 2, 'Verbose',0);  % 2 topics for 3 documents
+            mdlLDA = fitlda(bag, 2, 'Verbose',0);
             topicDist = transform(mdlLDA, bag);
             E = reg.doc_embeddings_fasttext(text, struct('language','en'));
             X = [Xtfidf, sparse(topicDist), E];
