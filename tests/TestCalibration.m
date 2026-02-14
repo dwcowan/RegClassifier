@@ -12,20 +12,22 @@ classdef TestCalibration < fixtures.RegTestCase
             scores = rand(N, 1);
             Ytrue = scores > 0.5;  % Simple threshold
 
-            % Train calibration model
-            calibModel = reg.calibrate_probabilities(scores, Ytrue, 'Method', 'platt');
+            % Train calibration model (function returns [calibrated_scores, calibrators])
+            [probsCal, calibrators] = reg.calibrate_probabilities(scores, Ytrue, 'Method', 'platt');
 
-            tc.verifyTrue(isstruct(calibModel) || isa(calibModel, 'function_handle'), ...
-                'Calibration model should be struct or function handle');
+            tc.verifyNotEmpty(calibrators, ...
+                'Calibrators cell array should not be empty');
+            tc.verifyTrue(iscell(calibrators), ...
+                'Calibrators should be a cell array');
 
-            % Apply calibration
-            probsCal = reg.apply_calibration(scores, calibModel);
+            % Apply calibration to same scores (should give similar results)
+            probsCal2 = reg.apply_calibration(scores, calibrators);
 
-            tc.verifyEqual(size(probsCal), size(scores), ...
+            tc.verifyEqual(size(probsCal2), size(scores), ...
                 'Calibrated probabilities should have same size as scores');
-            tc.verifyGreaterThanOrEqual(min(probsCal), 0, ...
+            tc.verifyGreaterThanOrEqual(min(probsCal2), 0, ...
                 'Calibrated probabilities should be >= 0');
-            tc.verifyLessThanOrEqual(max(probsCal), 1, ...
+            tc.verifyLessThanOrEqual(max(probsCal2), 1, ...
                 'Calibrated probabilities should be <= 1');
         end
 
@@ -38,13 +40,13 @@ classdef TestCalibration < fixtures.RegTestCase
             Ytrue = rand(N, 1) > 0.4;
 
             % Train isotonic calibration
-            calibModel = reg.calibrate_probabilities(scores, Ytrue, 'Method', 'isotonic');
+            [~, calibrators] = reg.calibrate_probabilities(scores, Ytrue, 'Method', 'isotonic');
 
-            tc.verifyNotEmpty(calibModel, ...
+            tc.verifyNotEmpty(calibrators, ...
                 'Isotonic calibration model should not be empty');
 
             % Apply calibration
-            probsCal = reg.apply_calibration(scores, calibModel);
+            probsCal = reg.apply_calibration(scores, calibrators);
 
             tc.verifyEqual(length(probsCal), length(scores), ...
                 'Calibrated probabilities should have same length');
@@ -70,8 +72,7 @@ classdef TestCalibration < fixtures.RegTestCase
             Ytrue = rand(N, 1) < scores * 0.7;  % True labels with noise
 
             % Train calibration
-            calibModel = reg.calibrate_probabilities(scores, Ytrue, 'Method', 'platt');
-            probsCal = reg.apply_calibration(scores, calibModel);
+            [probsCal, calibrators] = reg.calibrate_probabilities(scores, Ytrue, 'Method', 'platt');
 
             % Bin predictions and compare to empirical frequencies
             numBins = 10;
@@ -114,16 +115,16 @@ classdef TestCalibration < fixtures.RegTestCase
             Ytrue = rand(N, L) > 0.5;
 
             % Calibrate each label independently
-            calibModels = cell(L, 1);
+            allCalibrators = cell(L, 1);
             for i = 1:L
-                calibModels{i} = reg.calibrate_probabilities(scores(:, i), Ytrue(:, i), ...
+                [~, allCalibrators{i}] = reg.calibrate_probabilities(scores(:, i), Ytrue(:, i), ...
                     'Method', 'platt');
             end
 
             % Apply calibration
             probsCal = zeros(N, L);
             for i = 1:L
-                probsCal(:, i) = reg.apply_calibration(scores(:, i), calibModels{i});
+                probsCal(:, i) = reg.apply_calibration(scores(:, i), allCalibrators{i});
             end
 
             tc.verifyEqual(size(probsCal), size(scores), ...
@@ -140,8 +141,7 @@ classdef TestCalibration < fixtures.RegTestCase
             Ytrue = rand(N, 1) > 0.5;
             scores = double(Ytrue);  % Perfect scores
 
-            calibModel = reg.calibrate_probabilities(scores, Ytrue, 'Method', 'platt');
-            probsCal = reg.apply_calibration(scores, calibModel);
+            [probsCal, calibrators] = reg.calibrate_probabilities(scores, Ytrue, 'Method', 'platt');
 
             % Calibrated scores should still be close to original
             tc.verifyLessThan(mean(abs(probsCal - scores)), 0.1, ...
@@ -156,16 +156,10 @@ classdef TestCalibration < fixtures.RegTestCase
             scores = rand(N, 1);
             Ytrue = true(N, 1);  % All positive
 
-            try
-                calibModel = reg.calibrate_probabilities(scores, Ytrue, 'Method', 'platt');
-                probsCal = reg.apply_calibration(scores, calibModel);
-                tc.verifyTrue(all(probsCal >= 0 & probsCal <= 1), ...
-                    'Should handle all-positive case');
-            catch ME
-                % Should throw informative error about single class
-                tc.verifyTrue(contains(ME.message, {'class', 'single', 'binary'}), ...
-                    'Error should mention single-class limitation');
-            end
+            % This should work but may produce warning about single class
+            [probsCal, calibrators] = reg.calibrate_probabilities(scores, Ytrue, 'Method', 'platt', 'Verbose', false);
+            tc.verifyTrue(all(probsCal >= 0 & probsCal <= 1), ...
+                'Should handle all-positive case gracefully');
         end
 
         function testEmptyInput(tc)
@@ -175,14 +169,10 @@ classdef TestCalibration < fixtures.RegTestCase
             scores = zeros(0, 1);
             Ytrue = false(0, 1);
 
-            try
-                calibModel = reg.calibrate_probabilities(scores, Ytrue, 'Method', 'platt');
-                tc.verifyNotEmpty(calibModel, ...
-                    'Should return model even for empty input');
-            catch ME
-                tc.verifyTrue(contains(ME.message, {'empty', 'insufficient', 'samples'}), ...
-                    'Error should mention empty/insufficient data');
-            end
+            % Empty input should return empty calibrators with identity calibration
+            [probsCal, calibrators] = reg.calibrate_probabilities(scores, Ytrue, 'Method', 'platt', 'Verbose', false);
+            tc.verifyNotEmpty(calibrators, ...
+                'Should return calibrators even for empty input');
         end
 
         function testCalibrationPersistence(tc)
@@ -193,12 +183,12 @@ classdef TestCalibration < fixtures.RegTestCase
             scores = rand(N, 1);
             Ytrue = rand(N, 1) > 0.5;
 
-            % Train and save
-            calibModel = reg.calibrate_probabilities(scores, Ytrue, 'Method', 'platt');
+            % Train and save calibrators
+            [~, calibrators] = reg.calibrate_probabilities(scores, Ytrue, 'Method', 'platt');
 
             % Apply to new data
             scoresNew = rand(50, 1);
-            probsCal = reg.apply_calibration(scoresNew, calibModel);
+            probsCal = reg.apply_calibration(scoresNew, calibrators);
 
             tc.verifyEqual(length(probsCal), length(scoresNew), ...
                 'Saved model should work on new data');

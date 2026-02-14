@@ -258,10 +258,8 @@ end
 % === Helpers ===
 function [loss, gE, gH] = gradTripletBatch(base, head, tok, aIdx, pIdx, nIdx, maxLen, useFP16, margin)
 B = numel(aIdx);
-% Re-encode directly from caller chunksT:
-persistent cachedChunks;
-if isempty(cachedChunks), cachedChunks = evalin('caller','chunksT'); end
-batchTexts = [cachedChunks.text(aIdx); cachedChunks.text(pIdx); cachedChunks.text(nIdx)];
+% Re-encode batch texts - chunksT is accessible via closure (nested function)
+batchTexts = [chunksT.text(aIdx); chunksT.text(pIdx); chunksT.text(nIdx)];
 enc = encode(tok, batchTexts, 'Padding','longest','Truncation','longest');
 X = enc.InputIDs; M = enc.AttentionMask;
 if size(X,2) > maxLen, X = X(:,1:maxLen); M = M(:,1:maxLen); end
@@ -287,9 +285,8 @@ end
 function [loss, gE, gH] = gradSupConBatch(base, head, tok, aIdx, pIdx, maxLen, useFP16)
 % Supervised contrastive (NT-Xent) with two positives per "class" (anchor ~ positive)
 B = numel(aIdx);
-persistent cachedChunks;
-if isempty(cachedChunks), cachedChunks = evalin('caller','chunksT'); end
-batchTexts = [cachedChunks.text(aIdx); cachedChunks.text(pIdx)];
+% chunksT is accessible via closure (nested function)
+batchTexts = [chunksT.text(aIdx); chunksT.text(pIdx)];
 enc = encode(tok, batchTexts, 'Padding','longest','Truncation','longest');
 X = enc.InputIDs; M = enc.AttentionMask;
 if size(X,2) > maxLen, X = X(:,1:maxLen); M = M(:,1:maxLen); end
