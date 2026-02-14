@@ -19,12 +19,24 @@ for i = 1:numel(files)
     try
         txt = extractFileText(p, 'IgnoreInvisibleText',true);
         if strlength(strtrim(txt)) < 20
+            % Try OCR if text extraction gave insufficient content
+            try
+                % R2025b: Use ExtractionMethod instead of UseOCR
+                txt = extractFileText(p, 'ExtractionMethod', 'ocr');
+            catch ocrErr
+                warning('OCR failed for %s: %s. Using extracted text anyway.', p, ocrErr.message);
+            end
+        end
+    catch extractErr
+        % If extraction completely fails, try OCR as fallback
+        try
             % R2025b: Use ExtractionMethod instead of UseOCR
             txt = extractFileText(p, 'ExtractionMethod', 'ocr');
+        catch ocrErr
+            % If both fail, use empty string and warn
+            warning('PDF extraction failed for %s: %s. Creating empty document.', p, extractErr.message);
+            txt = '';
         end
-    catch
-        % R2025b: Use ExtractionMethod instead of UseOCR
-        txt = extractFileText(p, 'ExtractionMethod', 'ocr');
     end
     doc_id(i) = "DOC_" + string(i);
     text(i)   = string(txt);
