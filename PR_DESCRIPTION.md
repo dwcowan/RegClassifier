@@ -191,6 +191,19 @@ batchTexts = [chunksT.text(aIdx); ...];  // Direct access
 - TestCalibration/testIsotonicRegressionBasic
 - TestCrossValidation/testSingleLabelHandling
 
+#### Fix 8: Implement print_active_knobs Stub Function
+**Problem:** `print_active_knobs.m` was a 7-line stub that did nothing
+
+**Solution:** Implemented full function to display knobs configuration with:
+- Formatted box-drawing characters for visual presentation
+- Four sections: BERT, Projection, FineTune, Chunk
+- Validation using `reg.validate_knobs`
+- Conditional display (only shows fields that exist)
+- Helper `ternary()` function for boolean formatting
+
+**File updated:**
+- +reg/print_active_knobs.m (7 lines → 156 lines)
+
 ## Testing Status
 
 ### Phase 1 Complete ✅
@@ -269,6 +282,8 @@ After merge:
 14. Fix R2025b BERT tokenizer API - simplified syntax (remove params)
 15. Fix BERT tokenizer check - use bert() function per official docs
 16. Fix BERT encode() return value for R2025b - returns cell arrays not struct
+17. Update PR description - document encode() return value fix
+18. Implement print_active_knobs stub function
 
 ---
 
