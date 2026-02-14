@@ -22,13 +22,13 @@ gpuDevice
 Should show RTX 4060 Ti, 16 GB VRAM, `ComputeCapability` ≥ 8.6.
 
 ## 3. Project Installation
-1. Unzip into:
+1. Clone or unzip into your preferred location:
    ```
-   C:\Projects\reg_topic_classifier_matlab\
+   C:\Projects\RegClassifier\
    ```
 2. In MATLAB:
 ```matlab
-cd('C:\Projects\reg_topic_classifier_matlab')
+cd('C:\Projects\RegClassifier')
 addpath(genpath(pwd))
 savepath
 ```

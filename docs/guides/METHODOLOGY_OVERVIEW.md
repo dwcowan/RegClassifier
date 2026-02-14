@@ -502,7 +502,7 @@ end
 
 Enables research without $42-91K annotation budget while maintaining methodological integrity.
 
-**See:** [METHODOLOGICAL_ISSUES.md](METHODOLOGICAL_ISSUES.md), [FIXES_IMPLEMENTED.md](FIXES_IMPLEMENTED.md)
+**See:** [METHODOLOGICAL_ISSUES.md](METHODOLOGICAL_ISSUES.md)
 
 ---
 
@@ -592,7 +592,7 @@ RegClassifier provides a **methodologically sound** approach to regulatory docum
 2. **Budget-adaptive methods** enabling research at all resource levels
 3. **RLHF optimization** for 10-20x annotation efficiency
 4. **Statistical rigor** with proper hypothesis testing and confidence intervals
-5. **Production architecture** with MVC pattern and 90%+ test coverage
+5. **Production architecture** with 61 utility functions and 22 test classes
 
 **Key Innovation:** Multi-tiered validation strategy democratizes access to rigorous evaluation while maintaining scientific integrity.
 

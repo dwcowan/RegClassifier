@@ -70,14 +70,14 @@ results = runtests("tests", "IncludeSubfolders", true, "UseParallel", false);
 % Check results
 table(results)
 
-% Should show 32 tests passing
+% Should show 22 tests passing
 passed = sum([results.Passed]);
 fprintf('\n%d/%d tests passed\n', passed, numel(results));
 ```
 
 **Expected output:**
 ```
-32/32 tests passed
+22/22 tests passed
 ```
 
 If tests fail, see [Troubleshooting](#troubleshooting) below.
@@ -191,7 +191,7 @@ end
 **For testing:** You can use the sample PDFs in `tests/fixtures/`:
 
 ```matlab
-copyfile('tests/fixtures/sim_text.pdf', 'data/pdfs/sample.pdf');
+copyfile('tests/+fixtures/sim_text.pdf', 'data/pdfs/sample.pdf');
 ```
 
 ---
@@ -466,18 +466,18 @@ run('reg_finetune_encoder_workflow.m');
 ## What's Next?
 
 **For Research:**
-1. Read [METHODOLOGY_OVERVIEW.md](METHODOLOGY_OVERVIEW.md) for scientific background
+1. Read [docs/guides/METHODOLOGY_OVERVIEW.md](docs/guides/METHODOLOGY_OVERVIEW.md) for scientific background
 2. Explore [docs/ZERO_BUDGET_VALIDATION.md](docs/ZERO_BUDGET_VALIDATION.md)
 3. Run method comparisons
 
 **For Production:**
-1. Review [INSTALL.md](INSTALL.md) for production setup
+1. Review [INSTALL_GUIDE.md](INSTALL_GUIDE.md) for production setup
 2. Plan annotation budget (see [docs/VALIDATION_DECISION_GUIDE.md](docs/VALIDATION_DECISION_GUIDE.md))
 3. Set up database (PostgreSQL recommended)
 
 **For Development:**
 1. Read [CLAUDE.md](CLAUDE.md) for architecture
-2. Explore MVC pattern in `+reg/+mvc/`
+2. Explore utility functions in `+reg/`
 3. Add your custom labels and rules
 
 ---
@@ -486,7 +486,7 @@ run('reg_finetune_encoder_workflow.m');
 
 **You've successfully:**
 - ✅ Installed RegClassifier
-- ✅ Run all tests (32 passing)
+- ✅ Run all tests (22 passing)
 - ✅ Configured the pipeline
 - ✅ Processed sample PDFs
 - ✅ Generated classification results

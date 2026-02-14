@@ -4,8 +4,8 @@
 
 [![MATLAB](https://img.shields.io/badge/MATLAB-R2024a%2B-orange.svg)](https://www.mathworks.com/products/matlab.html)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-32%20passing-brightgreen.svg)](#testing)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![Tests](https://img.shields.io/badge/tests-22%20passing-brightgreen.svg)](#testing)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/dwcowan/RegClassifier)
 
 ---
 
@@ -35,7 +35,7 @@
 - ✅ Hybrid BM25 + dense vector search
 - ✅ Three-tiered validation ($0 / $2-8K / $42-91K)
 - ✅ RLHF-based annotation optimization
-- ✅ Production MVC architecture
+- ✅ Functional architecture with 61 utility functions
 
 ### What Makes RegClassifier Unique?
 
@@ -93,14 +93,13 @@ Handles complex regulatory documents:
 
 ### 🏗️ Production Architecture
 
-Clean MVC pattern with comprehensive testing:
+Functional architecture with comprehensive testing:
 
-- **30+ Models**: Domain entities and data processors
-- **12 Controllers**: Workflow orchestration
-- **10 Services**: Business logic
-- **6 Repositories**: Data access abstraction
-- **32 Test Classes**: 90%+ coverage
-- **5 Views**: Reporting and visualization
+- **61 Utility Functions**: Stateless data processing and ML operations
+- **6 Data Entities**: Domain objects (Document, Chunk, Embedding, Triplet, Pair, CorpusDiff)
+- **2 Services**: ConfigService, IngestionService + value objects
+- **4 RL Components**: RLHF active learning
+- **22 Test Classes**: Covering all utility functions and workflows
 
 ---
 
@@ -175,21 +174,18 @@ run('reg_pipeline.m')
 ┌──────────────┐  ┌──────────────┐  ┌──────────────┐
 │   Python     │  │   MATLAB     │  │  Optional    │
 │   Extract    │→ │  Processing  │→ │   Database   │
-│ (2-column)   │  │  (MVC Core)  │  │  PostgreSQL  │
+│ (2-column)   │  │  (Utilities) │  │  PostgreSQL  │
 └──────────────┘  └──────────────┘  └──────────────┘
 ```
 
-### MVC Pattern
+### Package Structure
 
 ```
 +reg/
-├── +mvc/           # Base classes (BaseModel, BaseView, BaseController)
-├── +model/         # 30+ models (Document, Chunk, Embedding, etc.)
-├── +controller/    # 12 controllers (Pipeline, FineTune, Evaluation)
-├── +service/       # 10 services (Config, Embedding, Evaluation)
-├── +view/          # 5 views (Report, Metrics, Diff, Plot)
-├── +repository/    # 6 repositories (Document, Embedding, Search)
-└── +rl/            # RLHF components (Environment, Agents, Rewards)
+├── *.m             # 61 utility functions (ingest, chunk, train, eval, search, etc.)
+├── +model/         # 6 data entities (Document, Chunk, Embedding, Triplet, Pair, CorpusDiff)
+├── +service/       # 2 services + 5 value objects (ConfigService, IngestionService)
+└── +rl/            # 4 RLHF components (AnnotationEnvironment, agents, rewards)
 ```
 
 ### Data Flow
@@ -220,7 +216,7 @@ Input PDF → Python Extraction → Text Chunks → Features
 |----------|---------|----------|
 | [QUICKSTART.md](QUICKSTART.md) | Get running in 15 minutes | All users |
 | [INSTALL_GUIDE.md](INSTALL_GUIDE.md) | Detailed installation guide | New users |
-| [METHODOLOGY_OVERVIEW.md](METHODOLOGY_OVERVIEW.md) | Scientific methodology | Researchers |
+| [docs/guides/METHODOLOGY_OVERVIEW.md](docs/guides/METHODOLOGY_OVERVIEW.md) | Scientific methodology | Researchers |
 | [CLAUDE.md](CLAUDE.md) | AI assistant guide | Developers + AI |
 
 ### Validation & Evaluation
@@ -238,13 +234,13 @@ Input PDF → Python Extraction → Text Chunks → Features
 |----------|---------|
 | [docs/guides/RL_HUMAN_FEEDBACK_GUIDE.md](docs/guides/RL_HUMAN_FEEDBACK_GUIDE.md) | RLHF system documentation |
 | [docs/guides/PDF_EXTRACTION_GUIDE.md](docs/guides/PDF_EXTRACTION_GUIDE.md) | Two-column PDF extraction |
-| [METHODOLOGICAL_ISSUES.md](METHODOLOGICAL_ISSUES.md) | 13 identified issues + fixes |
+| [docs/reference/METHODOLOGICAL_ISSUES.md](docs/reference/METHODOLOGICAL_ISSUES.md) | 13 identified issues + fixes |
 
 ### API Reference
 
-- [CLASS_ARCHITECTURE.md](CLASS_ARCHITECTURE.md) - MVC architecture details
-- [EXPERIMENT_CHEATSHEET.md](EXPERIMENT_CHEATSHEET.md) - Quick reference
-- [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md) - Complete system context
+- [docs/reference/CLASS_ARCHITECTURE.md](docs/reference/CLASS_ARCHITECTURE.md) - Functional architecture details
+- [docs/reference/EXPERIMENT_CHEATSHEET.md](docs/reference/EXPERIMENT_CHEATSHEET.md) - Quick reference
+- [docs/reference/PROJECT_CONTEXT.md](docs/reference/PROJECT_CONTEXT.md) - Complete system context
 
 ---
 
@@ -324,18 +320,19 @@ run('run_smoke_test.m')
 
 ### Test Coverage
 
-| Category | Tests | Coverage |
-|----------|-------|----------|
-| PDF Ingestion | 3 | 95% |
-| Chunking & Features | 4 | 92% |
-| Weak Supervision | 2 | 88% |
-| Embeddings | 3 | 90% |
-| Training | 4 | 94% |
-| Validation | 3 | 96% |
-| Database | 2 | 85% |
-| MVC Architecture | 3 | 91% |
-| Integration | 5 | 89% |
-| **Total** | **32** | **~90%** |
+| Category | Tests |
+|----------|-------|
+| Data Pipeline | TestPDFIngest, TestIngestAndChunk, TestFeatures |
+| Core | TestRulesAndModel, TestHybridSearch |
+| Projection | TestProjectionHeadSimulated, TestProjectionAutoloadPipeline |
+| Fine-tuning | TestFineTuneSmoke, TestFineTuneResume |
+| Evaluation | TestGoldMetrics, TestMetricsExpectedJSON, TestRegressionMetricsSimulated |
+| Config | TestPipelineConfig, TestKnobs |
+| Database | TestDB, TestDBIntegrationSimulated |
+| Integration | TestIntegrationSimulated |
+| Edge Cases | TestEdgeCases, TestUtilityFunctions |
+| Reporting | TestReportArtifact, TestDiffReportController, TestSyncController |
+| **Total** | **22** |
 
 ---
 
@@ -422,7 +419,7 @@ end
 
 ## 🤝 Contributing
 
-We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+We welcome contributions!
 
 ### Priority Areas
 
@@ -452,7 +449,7 @@ If you use RegClassifier in your research, please cite:
 
 ## 📄 License
 
-This project is licensed under the MIT License - see [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License.
 
 ---
 

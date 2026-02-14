@@ -148,34 +148,34 @@ All files in `tests/+testhelpers/` were **MVC-specific mocking utilities** used 
 | TestRulesAndModel.m | reg.weak_rules(), reg.train_multilabel() | ✓ Keep - core workflow |
 | TestHybridSearch.m | reg.hybrid_search() | ✓ Keep - tests working utility |
 | TestProjectionHeadSimulated.m | reg.train_projection_head() | ✓ Keep - tests methodology fix |
+| TestProjectionAutoloadPipeline.m | Projection head auto-use in pipeline | ✓ Keep - integration test |
 | TestFineTuneSmoke.m | reg.ft_train_encoder() | ✓ Keep - smoke test |
 | TestFineTuneResume.m | Checkpoint resume | ✓ Keep - tests methodology fix |
 | TestGoldMetrics.m | Gold pack regression | ✓ Keep - critical regression test |
 | TestMetricsExpectedJSON.m | expected_metrics.json | ✓ Keep - regression test |
+| TestRegressionMetricsSimulated.m | Simulated regression metrics | ✓ Keep - regression test |
 | TestDB.m | Database utilities | ✓ Keep - if DB enabled |
 | TestDBIntegrationSimulated.m | DB workflow | ✓ Keep - integration test |
 | TestIntegrationSimulated.m | Full pipeline | ✓ Keep - smoke test |
-| TestReport.m | Report generation | ✓ Keep - tests working code |
-| TestMetrics.m | Metric calculations | ✓ Keep - core functionality |
-| TestEmbeddings.m | Embedding generation | ✓ Keep - core functionality |
-| TestRetrievalMetrics.m | reg.eval_retrieval() | ✓ Keep - tests working utility |
-| TestMultilabelHelpers.m | Stratified k-fold, etc. | ✓ Keep - tests methodology fixes |
-| TestHyperparamSearch.m | reg.hyperparameter_search() | ✓ Keep - tests methodology fix |
-| TestNDCG.m | reg.metrics_ndcg() | ✓ Keep - tests working utility |
-| TestBM25.m | BM25 search | ✓ Keep - tests working utility |
-| TestTripletsContrast.m | reg.sample_triplets(), contrastive loss | ✓ Keep - tests working utilities |
+| TestPipelineConfig.m | Pipeline configuration loading | ✓ Keep - config validation |
+| TestKnobs.m | Hyperparameter loading | ✓ Keep - config validation |
+| TestEdgeCases.m | Edge case handling | ✓ Keep - robustness |
+| TestUtilityFunctions.m | Utility function tests | ✓ Keep - core functionality |
+| TestReportArtifact.m | Report generation | ✓ Keep - tests working code |
+| TestDiffReportController.m | Diff report generation | ✓ Keep - tests working code |
+| TestSyncController.m | CRR sync | ✓ Keep - tests working code |
 
 ---
 
 ## Analysis by Test Category
 
-### Working Utility Functions (14 test files)
+### Working Utility Functions (12 test files)
 Tests for the 61 utility functions in `+reg/` package:
 - Data pipeline: TestPDFIngest, TestIngestAndChunk, TestFeatures, TestRulesAndModel
-- Embeddings: TestEmbeddings, TestProjectionHeadSimulated, TestFineTuneSmoke, TestFineTuneResume, TestTripletsContrast
-- Search: TestHybridSearch, TestBM25
-- Metrics: TestRetrievalMetrics, TestNDCG, TestMetrics
-- Hyperparameters: TestHyperparamSearch, TestMultilabelHelpers
+- Embeddings: TestProjectionHeadSimulated, TestProjectionAutoloadPipeline, TestFineTuneSmoke, TestFineTuneResume
+- Search: TestHybridSearch
+- Edge cases & utilities: TestEdgeCases, TestUtilityFunctions
+- Config: TestPipelineConfig, TestKnobs
 
 **Status**: ✓ **KEEP ALL** - These test working code
 
@@ -186,21 +186,24 @@ Tests for the 61 utility functions in `+reg/` package:
 
 **Status**: ✓ **KEEP ALL** - Critical integration coverage
 
-### Regression Tests (2 files)
+### Regression Tests (3 files)
 - TestGoldMetrics - Ensures gold pack thresholds (recall@10 >= 0.8, mAP >= 0.6, nDCG@10 >= 0.6)
 - TestMetricsExpectedJSON - Validates expected_metrics.json structure
+- TestRegressionMetricsSimulated - Simulated regression metrics
 
 **Status**: ✓ **KEEP ALL** - Critical for detecting regressions
 
-### Data Entity Tests (1 file)
-- TestReport - Tests report generation entities
+### Reporting & Sync Tests (3 files)
+- TestReportArtifact - Tests report generation
+- TestDiffReportController - Tests diff report generation
+- TestSyncController - Tests CRR sync
 
-**Status**: ✓ **KEEP** - Tests working code
+**Status**: ✓ **KEEP ALL** - Tests working code
 
-### Deleted MVC Tests (5 files)
+### Deleted MVC Tests (5 files - already removed)
 - TestServices, TestFetchers, TestRepositories, TestCoRetrievalMatrixModel, TestPipelineLogging
 
-**Status**: ✗ **DELETE** - Test deleted MVC classes
+**Status**: ✗ **DELETED** - Tested deleted MVC classes
 
 ---
 
@@ -274,10 +277,12 @@ Before deletion, each test file was analyzed to confirm:
 The test suite cleanup removed **16 files (5 tests + 11 helpers)** that only tested deleted MVC scaffolding. All deleted tests verified stub methods that threw NotImplemented errors, so **no functional test coverage was lost**.
 
 The remaining **22 test files** provide comprehensive coverage of:
-- All 61 utility functions
-- 16 methodology fixes
+- Core utility functions in `+reg/`
+- Methodology fixes (projection, fine-tuning, weak rules)
 - Full pipeline integration
 - Gold pack regression thresholds
 - Database workflows
+- Configuration loading and validation
+- Report generation and CRR sync
 
 The test suite is now **aligned with the functional architecture** and maintains 100% focus on testing working code.
