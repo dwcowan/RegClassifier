@@ -12,10 +12,17 @@ chunksT = reg.chunk_text(docsT, C.chunk_size_tokens, C.chunk_overlap); % chunk_i
 [docsTok, vocab, Xtfidf] = reg.ta_features(chunksT.text);
 bag = bagOfWords(docsTok);
 numDocs = bag.NumDocuments;
-numTopics = min(C.lda_topics, numDocs);
-if numTopics < C.lda_topics && numTopics > 0
-    warning('Reducing LDA topics from %d to %d due to limited documents', C.lda_topics, numTopics);
+% Handle LDA topic modeling (skip if disabled or insufficient data)
+if isempty(C.lda_topics) || C.lda_topics <= 0
+    % LDA disabled
+    numTopics = 0;
+else
+    numTopics = min(C.lda_topics, numDocs);
+    if numTopics < C.lda_topics
+        warning('Reducing LDA topics from %d to %d due to limited documents', C.lda_topics, numTopics);
+    end
 end
+
 if numTopics > 0
     mdlLDA = fitlda(bag, numTopics, 'Verbose',0);
     topicDist = transform(mdlLDA, bag);
