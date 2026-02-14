@@ -16,7 +16,16 @@ try
         E = reg.doc_embeddings_fasttext(textStr, C.fasttext);
     end
 catch ME
-    warning('Embeddings fallback to fastText due to: %s', ME.message);
+    % Check if it's a BERT installation issue
+    if contains(ME.message, 'BERT model not found') || contains(ME.message, 'BERTModelNotInstalled')
+        warning('RegClassifier:BERTNotAvailable', ...
+            ['BERT embeddings not available - using fastText fallback.\n' ...
+             'To use BERT, install: Text Analytics Toolbox Model for BERT-Base Network\n' ...
+             'Run: supportPackageInstaller']);
+    else
+        warning('RegClassifier:EmbeddingsFallback', ...
+            'Embeddings fallback to fastText due to: %s', ME.message);
+    end
     E = reg.doc_embeddings_fasttext(textStr, C.fasttext);
 end
 % Ensure L2-normalized
