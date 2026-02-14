@@ -1,4 +1,3 @@
-
 classdef TestFineTuneController < RegTestCase
     %TESTFINETUNECONTROLLER Verify FineTuneController integrates models and view.
 
@@ -11,13 +10,13 @@ classdef TestFineTuneController < RegTestCase
     methods(TestMethodSetup)
         function setup(tc)
 
-            pdfModel     = StubModel("files");
-            chunkModel   = StubModel("chunks");
-            weakModel    = StubModel("Yweak","Yboot");
-            dataModel    = StubModel("triplets");
-            encoderModel = StubModel("net");
-            evalService  = StubService(struct('Accuracy',0.42));
-            tc.View = SpyView();
+            pdfModel     = testhelpers.StubModel("files");
+            chunkModel   = testhelpers.StubModel("chunks");
+            weakModel    = testhelpers.StubModel("Yweak","Yboot");
+            dataModel    = testhelpers.StubModel("triplets");
+            encoderModel = testhelpers.StubModel("net");
+            evalService  = testhelpers.StubService(struct('Accuracy',0.42));
+            tc.View = testhelpers.SpyView();
             tc.Controller = reg.controller.FineTuneController(pdfModel, chunkModel, weakModel, dataModel, encoderModel, evalService, tc.View);
 
         end
@@ -40,50 +39,3 @@ classdef TestFineTuneController < RegTestCase
         end
     end
 end
-
-classdef StubModel < handle
-    properties
-        ProcessOutputs
-    end
-    methods
-        function obj = StubModel(varargin)
-            obj.ProcessOutputs = varargin;
-        end
-        function varargout = load(~)
-            varargout = cell(1,nargout);
-            [varargout{:}] = deal([]);
-        end
-        function varargout = process(obj, ~)
-            varargout = obj.ProcessOutputs;
-        end
-    end
-end
-
-classdef StubService < handle
-    properties
-        ComputeOutput
-    end
-    methods
-        function obj = StubService(out)
-            obj.ComputeOutput = out;
-        end
-        function data = prepare(~)
-            data = [];
-        end
-        function out = compute(obj, ~)
-            out = obj.ComputeOutput;
-        end
-    end
-end
-
-classdef SpyView < handle
-    properties
-        DisplayedData
-    end
-    methods
-        function display(obj, data)
-            obj.DisplayedData = data;
-        end
-    end
-end
-
