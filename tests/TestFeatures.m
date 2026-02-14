@@ -1,4 +1,4 @@
-classdef TestFeatures < RegTestCase
+classdef TestFeatures < fixtures.RegTestCase
     %TESTFEATURES Unit tests for feature extraction functions.
     %   Tests TF-IDF feature extraction (reg.ta_features) and embedding
     %   generation (reg.doc_embeddings_fasttext). Verifies vocabulary

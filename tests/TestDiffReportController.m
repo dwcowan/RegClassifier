@@ -1,4 +1,4 @@
-classdef TestDiffReportController < RegTestCase
+classdef TestDiffReportController < fixtures.RegTestCase
 
     %TESTDIFFREPORTCONTROLLER Verify diff report generation writes artifacts.
 

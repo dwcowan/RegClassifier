@@ -1,4 +1,4 @@
-classdef TestRulesAndModel < RegTestCase
+classdef TestRulesAndModel < fixtures.RegTestCase
     %TESTRULESANDMODEL Tests for weak rules and multi-label classifier.
     %   Tests reg.weak_rules, reg.train_multilabel, and reg.predict_multilabel
     %   with both positive and negative test cases.

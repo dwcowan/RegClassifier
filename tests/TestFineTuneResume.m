@@ -1,4 +1,4 @@
-classdef TestFineTuneResume < RegTestCase
+classdef TestFineTuneResume < fixtures.RegTestCase
     methods (TestMethodSetup)
         function setupCleanup(tc)
             % Ensure cleanup of generated files and directories even if test fails

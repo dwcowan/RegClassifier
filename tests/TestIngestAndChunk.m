@@ -1,4 +1,4 @@
-classdef TestIngestAndChunk < RegTestCase
+classdef TestIngestAndChunk < fixtures.RegTestCase
     %TESTINGESTANDCHUNK Integration test for PDF ingestion and text chunking.
     %   Tests the complete pipeline from PDF to chunks, verifying chunk
     %   properties, boundaries, and document representation.

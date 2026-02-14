@@ -1,4 +1,4 @@
-classdef TestPipelineConfig < RegTestCase
+classdef TestPipelineConfig < fixtures.RegTestCase
     methods (TestMethodSetup)
         function backupPipelineConfig(tc)
             % Backup pipeline.json and restore after test

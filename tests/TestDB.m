@@ -1,4 +1,4 @@
-classdef TestDB < RegTestCase
+classdef TestDB < fixtures.RegTestCase
     properties
         TempDB
     end

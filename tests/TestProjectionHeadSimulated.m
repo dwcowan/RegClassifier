@@ -1,4 +1,4 @@
-classdef TestProjectionHeadSimulated < RegTestCase
+classdef TestProjectionHeadSimulated < fixtures.RegTestCase
     methods (Test)
         function projection_improves_or_equal(tc)
             [chunksT, labels, Ytrue] = testutil.generate_simulated_crr();

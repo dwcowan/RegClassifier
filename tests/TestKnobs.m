@@ -1,4 +1,4 @@
-classdef TestKnobs < RegTestCase
+classdef TestKnobs < fixtures.RegTestCase
     methods (TestMethodSetup)
         function backupConfig(tc)
             % Backup knobs.json if it exists and restore it after test

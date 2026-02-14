@@ -1,4 +1,4 @@
-classdef TestReportArtifact < RegTestCase
+classdef TestReportArtifact < fixtures.RegTestCase
     methods (Test)
         function report_exists_and_nontrivial(tc)
             C = config();

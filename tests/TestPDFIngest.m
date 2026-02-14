@@ -1,4 +1,4 @@
-classdef TestPDFIngest < RegTestCase
+classdef TestPDFIngest < fixtures.RegTestCase
     %TESTPDFINGEST Tests for PDF ingestion with OCR fallback.
     %   Tests reg.ingest_pdfs function with text-based and image-only PDFs.
     %   Verifies table structure, column types, and content extraction quality.

@@ -1,4 +1,4 @@
-classdef TestHybridSearch < RegTestCase
+classdef TestHybridSearch < fixtures.RegTestCase
     %TESTHYBRIDSEARCH Tests for hybrid BM25 + dense search.
     %   Tests reg.hybrid_search with various queries, alpha values,
     %   and edge cases including empty queries and extreme alpha values.

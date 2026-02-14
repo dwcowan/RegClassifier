@@ -1,4 +1,4 @@
-classdef TestGoldMetrics < RegTestCase
+classdef TestGoldMetrics < fixtures.RegTestCase
     %TESTGOLDMETRICS Regression test against gold mini-pack.
     %   Tests that retrieval metrics on the gold mini-pack meet minimum
     %   thresholds. Uses caching to avoid recomputing embeddings.
