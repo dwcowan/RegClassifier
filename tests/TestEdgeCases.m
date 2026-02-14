@@ -224,7 +224,7 @@ classdef TestEdgeCases < fixtures.RegTestCase
             %HYBRIDSEARCHEMPTYQUERY Test hybrid search with empty query.
             %   Empty query should handle gracefully.
             chunks = ["capital requirements", "IRB approach", "leverage ratio"];
-            [Xtfidf, vocab] = reg.ta_features(chunks);
+            [~, vocab, Xtfidf] = reg.ta_features(chunks);
             E = randn(3, 10);
             E = E ./ vecnorm(E, 2, 2);
             S = reg.hybrid_search(Xtfidf, E, vocab);
@@ -238,7 +238,7 @@ classdef TestEdgeCases < fixtures.RegTestCase
             %HYBRIDSEARCHSINGLEDOCUMENT Test hybrid search with single document.
             %   Single document corpus should handle gracefully.
             chunks = ["single document"];
-            [Xtfidf, vocab] = reg.ta_features(chunks);
+            [~, vocab, Xtfidf] = reg.ta_features(chunks);
             E = randn(1, 10);
             E = E / norm(E);
             S = reg.hybrid_search(Xtfidf, E, vocab);
