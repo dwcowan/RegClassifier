@@ -9,7 +9,7 @@ classdef TestPDFIngest < fixtures.RegTestCase
             %   Verifies that text PDFs are ingested correctly with proper
             %   table structure and expected content.
             C = config();
-            folder = fullfile("tests","fixtures");
+            folder = fullfile("tests","+fixtures");
             files = dir(fullfile(folder, "sim_text.pdf"));
             tc.assumeNotEmpty(files, "Missing sim_text.pdf");
             % Temporarily point input_dir to fixtures
@@ -50,7 +50,7 @@ classdef TestPDFIngest < fixtures.RegTestCase
                 tc.assumeFail("OCR not available; skipping OCR ingest test.");
             end
             C = config();
-            folder = fullfile("tests","fixtures");
+            folder = fullfile("tests","+fixtures");
             files = dir(fullfile(folder, "sim_image_only.pdf"));
             tc.assumeNotEmpty(files, "Missing sim_image_only.pdf");
             C.input_dir = folder;
