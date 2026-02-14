@@ -29,7 +29,7 @@ classdef TestProjectionAutoloadPipeline < fixtures.RegTestCase
                 error('Failed to copy PDF: %s', msg);
             end
             % Verify file exists and is readable after copy
-            pause(0.1); % Small delay for OneDrive/file system
+            pause(0.5); % Longer delay for OneDrive/file system sync
             tc.verifyTrue(isfile(dstPDF), 'PDF file should exist after copy');
             % Capture output to confirm autoload message
             out = evalc('run(''reg_pipeline.m'')');
