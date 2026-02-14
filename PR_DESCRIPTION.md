@@ -137,11 +137,21 @@ batchTexts = [chunksT.text(aIdx); ...];  // Direct access
    - NEW (correct): `[net, tokenizer] = bert("Model", "base")`
    - Returns both network and tokenizer
 
-2. **encode() method:**
+2. **encode() method parameters:**
    - OLD: `encode(tok, text, 'Padding','longest','Truncation','longest')`
    - NEW: `encode(tok, text)`
    - Only optional param: `AddSpecialTokens` (true/false)
    - Padding/truncation handled automatically by MATLAB
+
+3. **encode() return value:**
+   - OLD (R2024a and earlier): Returns struct with `.InputIDs` and `.AttentionMask` fields
+   - NEW (R2025b): Returns `[tokenCodes, segments]` as cell arrays
+   - Conversion needed:
+     ```matlab
+     [tokenCodes, ~] = encode(tok, text);
+     ids = cell2mat(tokenCodes');  % N x SeqLen matrix
+     mask = double(ids ~= tok.PaddingCode);  % Create attention mask
+     ```
 
 **Documentation References:**
 - https://www.mathworks.com/help/textanalytics/ref/bert.html
@@ -149,12 +159,12 @@ batchTexts = [chunksT.text(aIdx); ...];  // Direct access
 - https://www.mathworks.com/help/textanalytics/ref/berttokenizer.encode.html
 
 **Files updated:**
-- +reg/ft_train_encoder.m (3 encode calls - removed all params)
-- +reg/doc_embeddings_bert_gpu.m (1 encode call)
-- +reg/ft_eval.m (1 encode call)
-- reg_eval_and_report.m (1 encode call)
-- tests/TestFineTuneResume.m (use bert() function)
-- tests/TestFineTuneSmoke.m (use bert() function)
+- +reg/ft_train_encoder.m (4 encode calls - fixed return value handling at lines 263, 292, 360, 398)
+- +reg/doc_embeddings_bert_gpu.m (1 encode call - fixed return value)
+- +reg/ft_eval.m (1 encode call - fixed return value)
+- reg_eval_and_report.m (1 encode call - fixed return value)
+- tests/TestFineTuneResume.m (use bert() function instead of bertTokenizer)
+- tests/TestFineTuneSmoke.m (use bert() function instead of bertTokenizer)
 
 **Tests fixed:**
 - TestFineTuneEval/testFineTuneImprovesMetrics
@@ -258,6 +268,7 @@ After merge:
 13. Update PR description - 23/27 tests pass (85% improvement)
 14. Fix R2025b BERT tokenizer API - simplified syntax (remove params)
 15. Fix BERT tokenizer check - use bert() function per official docs
+16. Fix BERT encode() return value for R2025b - returns cell arrays not struct
 
 ---
 
