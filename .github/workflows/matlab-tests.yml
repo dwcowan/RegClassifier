@@ -21,7 +21,7 @@ jobs:
       - name: Set up MATLAB
         uses: matlab-actions/setup-matlab@v2
         with:
-          release: R2024a  # Change to your MATLAB version
+          release: R2025b  # Change to your MATLAB version
           products: >
             Deep_Learning_Toolbox
             Text_Analytics_Toolbox

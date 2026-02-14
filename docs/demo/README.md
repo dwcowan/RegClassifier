@@ -212,7 +212,7 @@ All features should complete successfully with:
 
 **Tests failing?**
 - Run `runtests('tests')` first to verify installation
-- Check MATLAB version (R2024a recommended)
+- Check MATLAB version (R2025b recommended)
 - Ensure all toolboxes installed
 
 ---

@@ -1,4 +1,4 @@
-% Full contrastive fine-tuning workflow (MATLAB R2024a)
+% Full contrastive fine-tuning workflow (MATLAB R2025b)
 C = config();
 % TODO: set random seeds for reproducibility
 % reg.set_seeds(42);
