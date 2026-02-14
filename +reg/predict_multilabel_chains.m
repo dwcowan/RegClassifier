@@ -45,26 +45,11 @@ end
 
 scores = zeros(N, K);
 
-for j = 1:K
+parfor j = 1:K
     M = models{j};
     if isempty(M), continue; end
-
-    % Augment features with previous label columns (chain dependency)
-    if j == 1
-        X_aug = X;
-    else
-        X_aug = [X, double(Yboot(:, 1:(j-1)))];
-    end
-
-    if isa(M, 'ClassificationPartitionedLinear')
-        % Cross-validated model: use kfoldPredict
-        [~, s] = kfoldPredict(M);
-        scores(:, j) = s(:, 2);
-    else
-        % Regular model: use predict with augmented features
-        [~, s] = predict(M, X_aug);
-        scores(:, j) = s(:, 2);
-    end
+    [~, s] = kfoldPredict(M);
+    scores(:, j) = s(:, 2);
 end
 
 % Calibrate thresholds (same logic as predict_multilabel)

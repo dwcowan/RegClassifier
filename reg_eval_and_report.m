@@ -204,8 +204,9 @@ for s = 1:mb:N
         ids(i, 1:len) = seq(1:len);
     end
     mask = double(ids ~= paddingCode);  % Attention mask: 1 for real tokens, 0 for padding
-    ids = dlarray(gpuArray(single(ids)),'CB'); mask = dlarray(gpuArray(single(mask)),'CB');
-    out = predict(netFT.base, ids, mask);
+    segs = zeros(numSeqs, maxLen);  % Segment IDs (all zeros)
+    ids = dlarray(gpuArray(single(ids)),'CB'); segs = dlarray(gpuArray(single(segs)),'CB'); mask = dlarray(gpuArray(single(mask)),'CB');
+    out = predict(netFT.base, ids, segs, mask);
     Z = localPooled(out);
     Z = predict(netFT.head, Z);
     Z = gather(extractdata(Z))';

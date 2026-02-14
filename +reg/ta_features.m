@@ -24,7 +24,8 @@ counts = full(sum(bag.Counts,1));
 if any(counts >= 2)
     bag = removeInfrequentWords(bag, 2);
 end
-bag = removeEmptyDocuments(bag);
+% Note: do NOT call removeEmptyDocuments here, as it changes the
+% document count and causes dimension mismatches downstream.
 X = bag.Counts;                  % docs×terms
 idf = log( size(X,1) ./ max(1,sum(X>0,1)) );
 Xtfidf = X .* idf;

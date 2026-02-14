@@ -80,14 +80,15 @@ mask = double(ids ~= paddingCode);  % Attention mask: 1 for real tokens, 0 for p
 
 % Mini-batch inference on GPU
 E = zeros(N, 768, 'single');  % bert-base hidden size
-dlX = [];
+segs = zeros(numSeqs, maxLen);  % Segment IDs (all zeros for single-segment)
 for s = 1:miniBatchSize:N
     e = min(N, s+miniBatchSize-1);
-    idsMB  = gpuArray(int32(ids(s:e, :)));
-    maskMB = gpuArray(int32(mask(s:e, :)));
+    idsMB  = dlarray(gpuArray(single(ids(s:e, :))),'CB');
+    segsMB = dlarray(gpuArray(single(segs(s:e, :))),'CB');
+    maskMB = dlarray(gpuArray(single(mask(s:e, :))),'CB');
 
     % Forward through BERT; get pooled output
-    out = predict(net, idsMB, maskMB);
+    out = predict(net, idsMB, segsMB, maskMB);
     if useHead
         pooled = getPooled(out);
         pooled = predict(headFT, pooled);
@@ -134,7 +135,7 @@ end
 n = vecnorm(E,2,2); n(n==0)=1; E = E ./ n;
 
 % Ensure GPU operations complete
-if canUseGPU
+if gpuDeviceCount > 0
     wait(gpuDevice);
 end
 end
