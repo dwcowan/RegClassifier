@@ -6,7 +6,7 @@ classdef TestReportArtifact < fixtures.RegTestCase
             testDir = fileparts(mfilename("fullpath"));
             pdfDir = fullfile(testDir, "data", "pdfs");
             if ~isfolder(pdfDir), mkdir(pdfDir); end
-            copyfile(fullfile(testDir, "fixtures", "sim_text.pdf"), fullfile(pdfDir, "sim_text.pdf"));
+            copyfile(fullfile(testDir, "+fixtures", "sim_text.pdf"), fullfile(pdfDir, "sim_text.pdf"));
             run reg_pipeline
             run reg_eval_and_report
             f = dir("reg_eval_report.pdf");

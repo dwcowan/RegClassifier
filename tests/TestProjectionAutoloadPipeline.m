@@ -11,7 +11,7 @@ classdef TestProjectionAutoloadPipeline < fixtures.RegTestCase
             save('projection_head.mat','head','-v7.3');
             % Place a fixtures PDF in data/pdfs so reg_pipeline can run end-to-end
             if ~isfolder("data/pdfs"), mkdir("data/pdfs"); end
-            copyfile(fullfile("tests","fixtures","sim_text.pdf"), fullfile("data","pdfs","sim_text.pdf"));
+            copyfile(fullfile("tests","+fixtures","sim_text.pdf"), fullfile("data","pdfs","sim_text.pdf"));
             % Capture output to confirm autoload message
             out = evalc('run(''reg_pipeline.m'')');
             tc.verifyTrue(contains(out, "Applied projection head"), "reg_pipeline did not auto-apply projection head.");

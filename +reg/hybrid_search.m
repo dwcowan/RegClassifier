@@ -43,7 +43,18 @@ catch ME
     end
 end
 seq = doc2sequence(emb, qTok);
-if ~isempty(seq) && ~isempty(seq{1}), qe = mean(single(seq{1}),2)'; else, qe = zeros(1,size(S.E,2),'single'); end
+if ~isempty(seq) && ~isempty(seq{1})
+    qe = mean(single(seq{1}),2)';
+    % Ensure query embedding matches corpus embedding dimension
+    if size(qe,2) ~= size(S.E,2)
+        warning('RegClassifier:DimensionMismatch', ...
+            'Query embedding dim (%d) != corpus embedding dim (%d). Using zero vector.', ...
+            size(qe,2), size(S.E,2));
+        qe = zeros(1,size(S.E,2),'single');
+    end
+else
+    qe = zeros(1,size(S.E,2),'single');
+end
 qe = qe ./ max(1e-9, norm(qe));
 
 bm = (S.Xtfidf * qtfidf') ./ max(1e-9, norm(qtfidf));
