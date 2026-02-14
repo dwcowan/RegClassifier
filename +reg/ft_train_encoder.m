@@ -271,12 +271,12 @@ for i = 1:numSeqs
     X(i, 1:len) = seq(1:len);
 end
 M = double(X ~= paddingCode);  % Attention mask: 1 for real tokens, 0 for padding
-Xa = dlarray(gpuArray(int32(X(1:B,:))),'CB');
-Xp = dlarray(gpuArray(int32(X(B+1:2*B,:))),'CB');
-Xn = dlarray(gpuArray(int32(X(2*B+1:end,:))),'CB');
-Ma = dlarray(gpuArray(int32(M(1:B,:))),'CB');
-Mp = dlarray(gpuArray(int32(M(B+1:2*B,:))),'CB');
-Mn = dlarray(gpuArray(int32(M(2*B+1:end,:))),'CB');
+Xa = dlarray(gpuArray(single(X(1:B,:))),'CB');
+Xp = dlarray(gpuArray(single(X(B+1:2*B,:))),'CB');
+Xn = dlarray(gpuArray(single(X(2*B+1:end,:))),'CB');
+Ma = dlarray(gpuArray(single(M(1:B,:))),'CB');
+Mp = dlarray(gpuArray(single(M(B+1:2*B,:))),'CB');
+Mn = dlarray(gpuArray(single(M(2*B+1:end,:))),'CB');
 
 oA = predict(base, Xa, Ma); oP = predict(base, Xp, Mp); oN = predict(base, Xn, Mn);
 ZA = pooled(oA); ZP = pooled(oP); ZN = pooled(oN);
@@ -306,8 +306,8 @@ for i = 1:numSeqs
     X(i, 1:len) = seq(1:len);
 end
 M = double(X ~= paddingCode);  % Attention mask: 1 for real tokens, 0 for padding
-X1 = dlarray(gpuArray(int32(X(1:B,:))),'CB');  M1 = dlarray(gpuArray(int32(M(1:B,:))),'CB');
-X2 = dlarray(gpuArray(int32(X(B+1:end,:))),'CB'); M2 = dlarray(gpuArray(int32(M(B+1:end,:))),'CB');
+X1 = dlarray(gpuArray(single(X(1:B,:))),'CB');  M1 = dlarray(gpuArray(single(M(1:B,:))),'CB');
+X2 = dlarray(gpuArray(single(X(B+1:end,:))),'CB'); M2 = dlarray(gpuArray(single(M(B+1:end,:))),'CB');
 
 o1 = predict(base, X1, M1); o2 = predict(base, X2, M2);
 Z1 = pooled(o1); Z2 = pooled(o2);
@@ -380,7 +380,7 @@ for i = 1:numSeqs
     ids(i, 1:len) = seq(1:len);
 end
 mask = double(ids ~= paddingCode);  % Attention mask
-ids = dlarray(gpuArray(int32(ids)),'CB'); mask = dlarray(gpuArray(int32(mask)),'CB');
+ids = dlarray(gpuArray(single(ids)),'CB'); mask = dlarray(gpuArray(single(mask)),'CB');
 out = predict(base, ids, mask);
 Z = pooled(out);
 Z = forward(head, Z);
@@ -425,7 +425,7 @@ for s = 1:mb:N
         ids(i, 1:len) = seq(1:len);
     end
     mask = double(ids ~= paddingCode);  % Attention mask: 1 for real tokens, 0 for padding
-    ids = dlarray(gpuArray(int32(ids)),'CB'); mask = dlarray(gpuArray(int32(mask)),'CB');
+    ids = dlarray(gpuArray(single(ids)),'CB'); mask = dlarray(gpuArray(single(mask)),'CB');
     out = predict(base, ids, mask);
     Z = pooled(out);
     Z = predict(head, Z);
