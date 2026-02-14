@@ -58,7 +58,7 @@ classdef TestCalibration < fixtures.RegTestCase
             % Verify monotonicity (if input sorted, output should be sorted)
             [scoresSorted, idx] = sort(scores);
             probsCalSorted = probsCal(idx);
-            tc.verifyTrue(issorted(probsCalSorted, 'ascend', 'Rows'), ...
+            tc.verifyTrue(issorted(probsCalSorted, 'ascend'), ...
                 'Isotonic calibration should preserve monotonicity');
         end
 
