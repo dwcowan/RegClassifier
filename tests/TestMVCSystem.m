@@ -1,4 +1,4 @@
-classdef TestMVCSystem < matlab.unittest.TestCase
+classdef TestMVCSystem < fixtures.RegTestCase
     %TESTMVCSYSTEM System test exercising end-to-end application wiring.
 
     properties

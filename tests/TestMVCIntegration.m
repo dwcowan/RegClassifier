@@ -1,4 +1,4 @@
-classdef TestMVCIntegration < matlab.unittest.TestCase
+classdef TestMVCIntegration < fixtures.RegTestCase
     %TESTMVCINTEGRATION Integration tests for MVC coordination.
 
     properties

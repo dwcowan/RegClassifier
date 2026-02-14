@@ -1,4 +1,4 @@
-classdef TestEvaluationPipeline < matlab.unittest.TestCase
+classdef TestEvaluationPipeline < fixtures.RegTestCase
     %TESTEVALUATIONPIPELINE Verify pipeline orchestrates controller and view.
 
     methods(Test)

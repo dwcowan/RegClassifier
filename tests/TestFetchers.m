@@ -1,4 +1,4 @@
-classdef TestFetchers < matlab.unittest.TestCase
+classdef TestFetchers < fixtures.RegTestCase
     %TESTFETCHERS Ensure CRR fetcher model stubs raise NotImplemented.
     methods (Test)
         function fetchEbaNotImplemented(tc)

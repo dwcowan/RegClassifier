@@ -1,4 +1,4 @@
-classdef TestMVCUnit < matlab.unittest.TestCase
+classdef TestMVCUnit < fixtures.RegTestCase
     %TESTMVCUNIT Unit tests for MVC stub components.
 
     properties

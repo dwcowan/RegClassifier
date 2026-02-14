@@ -1,4 +1,4 @@
-classdef TestMVCRegression < matlab.unittest.TestCase
+classdef TestMVCRegression < fixtures.RegTestCase
     %TESTMVCREGRESSION Regression tests ensuring interfaces remain stable.
 
     properties
