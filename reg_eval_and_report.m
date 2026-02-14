@@ -147,7 +147,7 @@ close(r);
 fprintf('Wrote evaluation report: %s\n', r.OutputPath);
 
 function E = local_embed_ft(textStr, netFT)
-tok = bertTokenizer("base-uncased");
+tok = bertTokenizer("base");
 textStr = string(textStr);
 N = numel(textStr);
 mb = 64;

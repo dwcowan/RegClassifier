@@ -40,10 +40,10 @@ assert(gpuDeviceCount > 0, 'No GPU device found. Install CUDA-enabled GPU driver
 
 % Load tokenizer and model
 try
-    tok = bertTokenizer("base-uncased"); % R2023b+ (support package)
+    tok = bertTokenizer("base"); % R2023b+ (support package)
 catch
     try
-        tok = bertWordPieceTokenizer("base-uncased"); % older naming
+        tok = bertWordPieceTokenizer("base"); % older naming
     catch ME
         error("BERT:TokenizerMissing", "BERT tokenizer not found. Install 'Text Analytics Toolbox Model for BERT English'. Original error: %s", ME.message);
     end
@@ -58,7 +58,7 @@ try
 catch ME
     % Fine-tuned model not available, use base BERT
     try
-        net = bert("base-uncased");
+        net = bert(Model="base");
         useHead = false; maxLenFT = [];
     catch ME2
         error("BERT:ModelMissing", "BERT model not found. Install 'Text Analytics Toolbox Model for BERT English'. Original error: %s", ME2.message);

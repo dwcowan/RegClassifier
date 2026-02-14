@@ -89,8 +89,8 @@ parse(p,varargin{:});
 R = p.Results;
 
 assert(gpuDeviceCount > 0, 'GPU required for fine-tuning');
-tok = bertTokenizer("base-uncased");
-base = bert("base-uncased");   % dlnetwork
+tok = bertTokenizer("base");
+base = bert(Model="base");   % dlnetwork
 
 % Small MLP head on pooled output
 projDim = 384;
@@ -337,7 +337,7 @@ subset = 1:Nall;
 if Nall > maxN
     subset = sort(randperm(Nall, maxN));
 end
-tok = bertTokenizer("base-uncased");
+tok = bertTokenizer("base");
 texts = string(chunksT.text(subset));
 enc = encode(tok, texts, 'Padding','longest','Truncation','longest');
 ids = enc.InputIDs; mask = enc.AttentionMask;
@@ -369,7 +369,7 @@ end
 end
 
 function metrics = localEvaluate(base, head, textStr, Ylogical, maxLen)
-tok = bertTokenizer("base-uncased");
+tok = bertTokenizer("base");
 textStr = string(textStr);
 N = numel(textStr);
 mb = 64;
