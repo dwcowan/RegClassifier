@@ -27,6 +27,15 @@ jobs:
             Text_Analytics_Toolbox
             Statistics_and_Machine_Learning_Toolbox
 
+      # Set up MATLAB paths
+      - name: Set up MATLAB paths
+        uses: matlab-actions/run-command@v2
+        with:
+          command: |
+            addpath(genpath('tests/fixtures'));
+            savepath;
+            fprintf('MATLAB path configured\n');
+
       # Run tests
       - name: Run MATLAB tests
         uses: matlab-actions/run-tests@v2
