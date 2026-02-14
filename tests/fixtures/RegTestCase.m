@@ -50,10 +50,14 @@ classdef (Abstract, SharedTestFixtures={ ...
             N = size(Ytrue, 1);
             posSets = cell(N, 1);
             for i = 1:N
-                labs = Ytrue(i,:);
-                pos = find(any(Ytrue(:,labs), 2));
-                pos(pos == i) = [];
-                posSets{i} = pos;
+                labs = find(Ytrue(i,:));  % Get indices of true labels
+                if ~isempty(labs)
+                    pos = find(any(Ytrue(:,labs), 2));
+                    pos(pos == i) = [];
+                    posSets{i} = pos;
+                else
+                    posSets{i} = [];  % No positive labels
+                end
             end
         end
 
