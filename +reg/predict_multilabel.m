@@ -1,6 +1,24 @@
 function [scores, thresholds, pred] = predict_multilabel(models, X, Yboot)
 %PREDICT_MULTILABEL Calibrated probabilities from CV; pick per-label thresholds
+arguments
+    models cell
+    X double
+    Yboot {mustBeNumericOrLogical}
+end
+
 K = numel(models); N = size(X,1);
+
+% Validate dimensions match
+if K ~= size(Yboot, 2)
+    error('reg:predict_multilabel:DimensionMismatch', ...
+        'Number of models (%d) must match number of label columns in Yboot (%d)', ...
+        K, size(Yboot, 2));
+end
+if N ~= size(Yboot, 1)
+    error('reg:predict_multilabel:DimensionMismatch', ...
+        'Number of samples in X (%d) must match number of rows in Yboot (%d)', ...
+        N, size(Yboot, 1));
+end
 scores = zeros(N,K);
 parfor j = 1:K
     M = models{j};
