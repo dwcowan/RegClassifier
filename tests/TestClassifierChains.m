@@ -62,7 +62,8 @@ classdef TestClassifierChains < fixtures.RegTestCase
 
             % Scores should differ (chains exploit order)
             % At least some difference expected
-            diff = sum(abs(scores1(:) - fliplr(scores2)(:)));
+            scores2_flipped = fliplr(scores2);
+            diff = sum(abs(scores1(:) - scores2_flipped(:)));
             tc.verifyGreaterThan(diff, 0, ...
                 'Chain order should affect predictions');
         end
