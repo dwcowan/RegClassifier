@@ -9,6 +9,17 @@ classdef TestProjectionAutoloadPipeline < fixtures.RegTestCase
             P = reg.build_pairs(Yweak, 'MaxTriplets', 500);
             head = reg.train_projection_head(Ebase, P, 'Epochs', 1, 'BatchSize', 64);
             save('projection_head.mat','head','-v7.3');
+
+            % Create minimal pipeline.json with labels for reg_pipeline
+            pipeConfig = struct('input_dir', 'data/pdfs', ...
+                                'labels', labels, ...
+                                'min_rule_conf', 0.5, ...
+                                'kfold', 0);
+            fid = fopen('pipeline.json', 'w');
+            fprintf(fid, '%s', jsonencode(pipeConfig));
+            fclose(fid);
+            tc.addTeardown(@() delete('pipeline.json'));
+
             % Place a fixtures PDF in data/pdfs so reg_pipeline can run end-to-end
             if ~isfolder("data/pdfs"), mkdir("data/pdfs"); end
             copyfile(fullfile("+fixtures","sim_text.pdf"), fullfile("data","pdfs","sim_text.pdf"));
