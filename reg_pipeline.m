@@ -5,8 +5,21 @@ if isempty(gcp('nocreate')), parpool('threads'); end
 % A) Ingest PDFs (with OCR fallback) → document table
 docsT = reg.ingest_pdfs(C.input_dir);   % columns: doc_id, path, text, meta
 
+% Validate ingested documents
+if isempty(docsT) || height(docsT) == 0
+    error('No documents found in %s. Please check input_dir path.', C.input_dir);
+end
+if all(strlength(docsT.text) == 0)
+    error('All documents are empty. Check PDF extraction or input files.');
+end
+
 % B) Chunk documents → chunk table
 chunksT = reg.chunk_text(docsT, C.chunk_size_tokens, C.chunk_overlap); % chunk_id, doc_id, text, start_idx, end_idx
+
+% Validate chunks
+if isempty(chunksT) || height(chunksT) == 0
+    error('No chunks generated. Check chunk_size_tokens and document content.');
+end
 
 % C) Features: TF-IDF bag + LDA topics + embeddings
 [docsTok, vocab, Xtfidf] = reg.ta_features(chunksT.text);

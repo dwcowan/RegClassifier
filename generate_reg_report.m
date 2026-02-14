@@ -8,8 +8,16 @@ append(r, TableOfContents);
 
 % Coverage
 sec = Section('Label Coverage');
-cov = mean(pred,1);
-tbl = table(labels', cov', 'VariableNames', {'Label','Coverage'});
+if isempty(pred) || size(pred,2) ~= numel(labels)
+    % Handle edge case: empty predictions or size mismatch
+    cov = zeros(1, numel(labels));
+else
+    cov = mean(pred,1);
+end
+% Ensure both are column vectors
+labelsCol = labels(:);
+covCol = cov(:);
+tbl = table(labelsCol, covCol, 'VariableNames', {'Label','Coverage'});
 append(sec, FormalTable(tbl));
 append(r, sec);
 
