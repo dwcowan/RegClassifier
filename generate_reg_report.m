@@ -8,18 +8,26 @@ append(r, TableOfContents);
 
 % Coverage
 sec = Section('Label Coverage');
-if isempty(pred) || size(pred,2) ~= numel(labels)
-    % Handle edge case: empty predictions or size mismatch
-    cov = zeros(1, numel(labels));
+% Handle edge cases for empty or mismatched data
+if isempty(labels) || numel(labels) == 0
+    % No labels defined - skip coverage section
+    append(r, sec);
+elseif isempty(pred) || size(pred,2) ~= numel(labels)
+    % Empty predictions or size mismatch - show zero coverage
+    labelsCol = reshape(string(labels), [], 1);  % Force column vector of strings
+    covCol = zeros(numel(labels), 1);  % Matching zero coverage column
+    tbl = table(labelsCol, covCol, 'VariableNames', {'Label','Coverage'});
+    append(sec, FormalTable(tbl));
+    append(r, sec);
 else
-    cov = mean(pred,1);
+    % Normal case - compute coverage
+    cov = mean(pred, 1);  % 1×N row vector
+    labelsCol = reshape(string(labels), [], 1);  % N×1 column
+    covCol = reshape(cov, [], 1);  % N×1 column
+    tbl = table(labelsCol, covCol, 'VariableNames', {'Label','Coverage'});
+    append(sec, FormalTable(tbl));
+    append(r, sec);
 end
-% Ensure both are column vectors
-labelsCol = labels(:);
-covCol = cov(:);
-tbl = table(labelsCol, covCol, 'VariableNames', {'Label','Coverage'});
-append(sec, FormalTable(tbl));
-append(r, sec);
 
 % Low-confidence queue (simple heuristic)
 sec2 = Section('Low-Confidence Queue');
