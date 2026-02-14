@@ -15,7 +15,7 @@ if ~ismember("text", chunks.Properties.VariableNames)
     if isempty(idx)
         idx = width(chunks); % assume last column holds text
     end
-    chunks.Properties.VariableNames{idx} = "text";
+    chunks.Properties.VariableNames{idx} = 'text';  % Use char, not string
 end
 labJ = jsondecode(fileread(fullfile(dirPath,"sample_gold_labels.json")));
 Y = readmatrix(fullfile(dirPath,"sample_gold_Ytrue.csv"));
