@@ -260,7 +260,7 @@ function [loss, gE, gH] = gradTripletBatch(base, head, tok, chunksT, aIdx, pIdx,
 B = numel(aIdx);
 % Re-encode batch texts from chunksT table
 batchTexts = [chunksT.text(aIdx); chunksT.text(pIdx); chunksT.text(nIdx)];
-enc = encode(tok, batchTexts, 'Padding','longest','Truncation','longest');
+enc = encode(tok, batchTexts, 'Padding', 'longest');  % R2025b: removed 'Truncation' param
 X = enc.InputIDs; M = enc.AttentionMask;
 if size(X,2) > maxLen, X = X(:,1:maxLen); M = M(:,1:maxLen); end
 Xa = dlarray(gpuArray(int32(X(1:B,:))),'CB');
@@ -287,7 +287,7 @@ function [loss, gE, gH] = gradSupConBatch(base, head, tok, chunksT, aIdx, pIdx, 
 B = numel(aIdx);
 % Re-encode batch texts from chunksT table
 batchTexts = [chunksT.text(aIdx); chunksT.text(pIdx)];
-enc = encode(tok, batchTexts, 'Padding','longest','Truncation','longest');
+enc = encode(tok, batchTexts, 'Padding', 'longest');  % R2025b: removed 'Truncation' param
 X = enc.InputIDs; M = enc.AttentionMask;
 if size(X,2) > maxLen, X = X(:,1:maxLen); M = M(:,1:maxLen); end
 X1 = dlarray(gpuArray(int32(X(1:B,:))),'CB');  M1 = dlarray(gpuArray(int32(M(1:B,:))),'CB');
@@ -353,7 +353,7 @@ if Nall > maxN
     subset = sort(randperm(Nall, maxN));
 end
 texts = string(chunksT.text(subset));
-enc = encode(tok, texts, 'Padding','longest','Truncation','longest');
+enc = encode(tok, texts, 'Padding', 'longest');  % R2025b: removed 'Truncation' param
 ids = enc.InputIDs; mask = enc.AttentionMask;
 if size(ids,2) > maxLen, ids = ids(:,1:maxLen); mask = mask(:,1:maxLen); end
 ids = dlarray(gpuArray(int32(ids)),'CB'); mask = dlarray(gpuArray(int32(mask)),'CB');
@@ -389,7 +389,7 @@ mb = 64;
 E = zeros(N, 384, 'single');
 for s = 1:mb:N
     e = min(N, s+mb-1);
-    enc = encode(tok, textStr(s:e), 'Padding','longest','Truncation','longest');
+    enc = encode(tok, textStr(s:e), 'Padding', 'longest');  % R2025b: removed 'Truncation' param
     ids = enc.InputIDs; mask = enc.AttentionMask;
     if size(ids,2) > maxLen, ids = ids(:,1:maxLen); mask = mask(:,1:maxLen); end
     ids = dlarray(gpuArray(int32(ids)),'CB'); mask = dlarray(gpuArray(int32(mask)),'CB');
