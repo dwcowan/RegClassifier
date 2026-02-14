@@ -41,6 +41,8 @@ textStr = string(textStr);
 N = numel(textStr);
 mb = 64;  % reasonable default for pooled inference
 E = zeros(N, 384, 'single');
+useGPU = gpuDeviceCount > 0;
+
 for s = 1:mb:N
     e = min(N, s+mb-1);
     enc = encode(tok, textStr(s:e), 'Padding','longest','Truncation','longest');
@@ -56,6 +58,16 @@ for s = 1:mb:N
     % L2 norm
     n = vecnorm(Z,2,2); n(n==0)=1; Z = Z ./ n;
     E(s:e,:) = single(Z);
+
+    % Clear GPU arrays to prevent memory accumulation in loop
+    if useGPU
+        clear ids mask out Z;
+    end
+end
+
+% Final GPU cleanup
+if useGPU
+    wait(gpuDevice);
 end
 end
 
