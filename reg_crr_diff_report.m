@@ -37,7 +37,12 @@ if N > 0
     % For brevity, include first ~300 lines of patch
     lines = splitlines(string(txt));
     if numel(lines) > 300, lines = lines(1:300); end
-    pre = PreformattedText(join(lines, newline));
+    % Handle API change: PreformattedText -> Preformatted
+    try
+        pre = Preformatted(join(lines, newline));
+    catch
+        pre = PreformattedText(join(lines, newline));
+    end
     append(sec2, pre);
     append(r, sec2);
 end

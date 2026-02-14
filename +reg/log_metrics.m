@@ -18,9 +18,17 @@ csvPath = fullfile(outDir, "metrics.csv");
 ts = string(datetime('now','Format','yyyy-MM-dd''T''HH:mm:ss'));
 fields = fieldnames(metrics);
 rows = strings(numel(fields),1);
+
+% Handle epoch value - convert NaN to empty string to avoid <missing> in sprintf
+if isnan(R.Epoch)
+    epochStr = "";
+else
+    epochStr = string(R.Epoch);
+end
+
 for i=1:numel(fields)
     key = fields{i}; val = metrics.(key);
-    rows(i) = sprintf('%s,%s,%s,%s,%.6f,%s', ts, runId, variant, key, val, string(R.Epoch));
+    rows(i) = sprintf('%s,%s,%s,%s,%.6f,%s', ts, runId, variant, key, val, epochStr);
 end
 
 % Use try-finally to ensure file handle is always closed

@@ -9,12 +9,12 @@ classdef TestDBIntegrationSimulated < fixtures.RegTestCase
             reg.upsert_chunks(conn, chunksT, labels, pred, scores);
             if isstruct(conn) && isfield(conn,'sqlite')
                 cur = fetch(conn.sqlite, "SELECT COUNT(*) FROM reg_chunks");
-                tc.verifyGreaterThanOrEqual(cur{1}, height(chunksT));
+                tc.verifyGreaterThanOrEqual(cur{1,1}, height(chunksT));
                 colNames = fetch(conn.sqlite, "SELECT name FROM pragma_table_info('reg_chunks');");
                 if istable(colNames)
                     names = string(colNames{:,:});
                 else
-                    names = string(colNames(:,1));
+                    names = string(colNames{:,1});
                 end
                 scoreCol = char("score_" + labels(1));
                 tc.verifyTrue(any(names == scoreCol));
