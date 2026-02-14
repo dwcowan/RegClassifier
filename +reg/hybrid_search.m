@@ -15,9 +15,18 @@ function out = do_query(q, alpha, S)
 if nargin<2, alpha = 0.5; end
 qTok = tokenizedDocument(string(q));
 qTok = lower(erasePunctuation(removeStopWords(qTok)));
+
+% Create bag and get counts aligned with corpus vocabulary
 bagQ = bagOfWords(qTok);
-bagQ = removeWords(bagQ, ~ismember(bagQ.Vocabulary, S.vocab));
-qv = encode(bagQ, S.vocab);
+qv = zeros(1, numel(S.vocab));
+for i = 1:numel(bagQ.Vocabulary)
+    word = bagQ.Vocabulary(i);
+    idx = find(strcmp(S.vocab, word), 1);
+    if ~isempty(idx)
+        qv(idx) = bagQ.Counts(1, i);
+    end
+end
+
 idf = log( size(S.Xtfidf,1) ./ max(1,sum(S.Xtfidf>0,1)) );
 qtfidf = qv .* idf;
 
