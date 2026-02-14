@@ -16,9 +16,9 @@ classdef TestFineTuneResume < fixtures.RegTestCase
                 tc.assumeFail("No GPU available; skipping fine-tune resume test.");
             end
 
-            % Check if BERT is available (R2025b syntax)
+            % Check if BERT is available
             try
-                bertTokenizer('Model', 'base');  % R2025b: use name-value pairs, not = syntax
+                [~, ~] = bert("Model", "base");  % Load BERT model and tokenizer
             catch ME
                 if contains(ME.identifier, 'BERTNotAvailable') || ...
                    contains(ME.identifier, 'specialTokensNotInVocab') || ...

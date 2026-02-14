@@ -15,9 +15,9 @@ classdef TestFineTuneSmoke < fixtures.RegTestCase
                 tc.assumeTrue(false, 'No GPU, skipping fine-tune smoke test.');
             end
 
-            % Check if BERT is available (R2025b syntax)
+            % Check if BERT is available
             try
-                bertTokenizer('Model', 'base');  % R2025b: use name-value pairs, not = syntax
+                [~, ~] = bert("Model", "base");  % Load BERT model and tokenizer
             catch ME
                 if contains(ME.identifier, 'BERTNotAvailable') || ...
                    contains(ME.identifier, 'specialTokensNotInVocab') || ...
