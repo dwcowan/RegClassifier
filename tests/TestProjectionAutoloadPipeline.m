@@ -22,7 +22,15 @@ classdef TestProjectionAutoloadPipeline < fixtures.RegTestCase
 
             % Place a fixtures PDF in data/pdfs so reg_pipeline can run end-to-end
             if ~isfolder("data/pdfs"), mkdir("data/pdfs"); end
-            copyfile(fullfile("+fixtures","sim_text.pdf"), fullfile("data","pdfs","sim_text.pdf"));
+            srcPDF = fullfile("+fixtures","sim_text.pdf");
+            dstPDF = fullfile("data","pdfs","sim_text.pdf");
+            [status, msg] = copyfile(srcPDF, dstPDF);
+            if ~status
+                error('Failed to copy PDF: %s', msg);
+            end
+            % Verify file exists and is readable after copy
+            pause(0.1); % Small delay for OneDrive/file system
+            tc.verifyTrue(isfile(dstPDF), 'PDF file should exist after copy');
             % Capture output to confirm autoload message
             out = evalc('run(''reg_pipeline.m'')');
             tc.verifyTrue(contains(out, "Applied projection head"), "reg_pipeline did not auto-apply projection head.");
