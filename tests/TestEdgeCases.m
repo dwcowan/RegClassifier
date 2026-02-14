@@ -223,6 +223,13 @@ classdef TestEdgeCases < fixtures.RegTestCase
         function hybridSearchEmptyQuery(tc)
             %HYBRIDSEARCHEMPTYQUERY Test hybrid search with empty query.
             %   Empty query should handle gracefully.
+            %   Note: Uses low-dim random embeddings for speed; dimension mismatch
+            %   warning is expected and suppressed.
+
+            % Suppress expected dimension mismatch warning
+            warnState = warning('off', 'RegClassifier:DimensionMismatch');
+            tc.addTeardown(@() warning(warnState));
+
             chunks = ["capital requirements", "IRB approach", "leverage ratio"];
             [~, vocab, Xtfidf] = reg.ta_features(chunks);
             E = randn(3, 10);
@@ -237,6 +244,13 @@ classdef TestEdgeCases < fixtures.RegTestCase
         function hybridSearchSingleDocument(tc)
             %HYBRIDSEARCHSINGLEDOCUMENT Test hybrid search with single document.
             %   Single document corpus should handle gracefully.
+            %   Note: Uses low-dim random embeddings for speed; dimension mismatch
+            %   warning is expected and suppressed.
+
+            % Suppress expected dimension mismatch warning
+            warnState = warning('off', 'RegClassifier:DimensionMismatch');
+            tc.addTeardown(@() warning(warnState));
+
             chunks = ["single document"];
             [~, vocab, Xtfidf] = reg.ta_features(chunks);
             E = randn(1, 10);

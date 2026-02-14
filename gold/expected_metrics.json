@@ -5,7 +5,7 @@
       "overall": {
         "RecallAt10_min": 0.8,
         "mAP_min": 0.6,
-        "nDCG@10_min": 0.6,
+        "nDCGAt10_min": 0.6,
         "tolerance": 0.02
       },
       "per_label": {
@@ -20,7 +20,7 @@
       "overall": {
         "RecallAt10_min": 0.35,
         "mAP_min": 0.25,
-        "nDCG@10_min": 0.25,
+        "nDCGAt10_min": 0.25,
         "tolerance": 0.05
       },
       "per_label": {
@@ -35,7 +35,7 @@
   "overall": {
     "RecallAt10_min": 0.35,
     "mAP_min": 0.25,
-    "nDCG@10_min": 0.25,
+    "nDCGAt10_min": 0.25,
     "tolerance": 0.05,
     "_note": "Default to fastText thresholds for compatibility"
   },

@@ -6,26 +6,30 @@ function C = config()
 projectRoot = find_project_root();
 
 % === Load pipeline.json ===
+% Check current directory first, then project root
 pipe = struct();
 try
-    pipelinePath = fullfile(projectRoot, 'pipeline.json');
-    if isfile(pipelinePath)
-        pipe = jsondecode(fileread(pipelinePath));
+    if isfile('pipeline.json')
+        pipe = jsondecode(fileread('pipeline.json'));
+    elseif isfile(fullfile(projectRoot, 'pipeline.json'))
+        pipe = jsondecode(fileread(fullfile(projectRoot, 'pipeline.json')));
     end
 catch ME
     warning("Pipeline config load failed: %s", ME.message);
 end
 
 % === Load params.json overrides ===
+% Check current directory first, then project root
 params = struct();
-paramsPath = fullfile(projectRoot, 'params.json');
-if isfile(paramsPath)
-    try
-        params = jsondecode(fileread(paramsPath));
-    catch ME
-        warning("Params load/apply failed: %s", ME.message);
-        params = struct();
+try
+    if isfile('params.json')
+        params = jsondecode(fileread('params.json'));
+    elseif isfile(fullfile(projectRoot, 'params.json'))
+        params = jsondecode(fileread(fullfile(projectRoot, 'params.json')));
     end
+catch ME
+    warning("Params load/apply failed: %s", ME.message);
+    params = struct();
 end
 
 % Default locations and labels are intentionally blank to avoid
@@ -73,9 +77,12 @@ C.params = params;
 C.pipeline = pipe;
 
 % === Load knobs.json and apply Chunk overrides ===
-% Load hyperparameters from knobs.json (use absolute path from project root)
-knobsPath = fullfile(projectRoot, 'knobs.json');
-C.knobs = reg.load_knobs(knobsPath);
+% Check current directory first, then project root
+if isfile('knobs.json')
+    C.knobs = reg.load_knobs('knobs.json');
+else
+    C.knobs = reg.load_knobs(fullfile(projectRoot, 'knobs.json'));
+end
 
 % Validate knobs (will warn if values are suspicious)
 try

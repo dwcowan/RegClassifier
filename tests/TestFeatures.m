@@ -16,9 +16,10 @@ classdef TestFeatures < fixtures.RegTestCase
             %   embeddings have correct dimensions, and similar texts
             %   have higher cosine similarity than dissimilar texts.
             % Use repeated tokens so they survive removeInfrequentWords(2)
-            str = ["IRB PD LGD EAD framework and requirements.";
-                   "LCR requires HQLA and framework compliance.";
-                   "AML and KYC obligations and requirements"];
+            % Use longer words that won't be filtered by removeShortWords(3)
+            str = ["capital requirements apply framework provisions rules";
+                   "capital framework requires compliance provisions rules";
+                   "capital requirements mandate provisions rules framework"];
 
             % Test TF-IDF features
             [docsTok, vocab, Xtfidf] = reg.ta_features(str); %#ok<NASGU>
@@ -29,7 +30,7 @@ classdef TestFeatures < fixtures.RegTestCase
 
             % Verify vocabulary contains tokens that appear multiple times
             vocabStr = string(vocab);
-            hasCommonTokens = any(contains(lower(vocabStr), ["requirement", "framework"]));
+            hasCommonTokens = any(contains(lower(vocabStr), ["capital", "provision", "rule", "framework"]));
             tc.verifyTrue(hasCommonTokens, ...
                 'Vocabulary should contain tokens appearing in multiple documents');
 
@@ -48,12 +49,12 @@ classdef TestFeatures < fixtures.RegTestCase
                 'Embedding norms should be reasonable (not exploding)');
 
             % Test semantic similarity: create similar and dissimilar pairs
-            str2 = ["PD and LGD in IRB approach"; "Market risk capital"];
+            str2 = ["capital requirements apply regulatory framework"; "market risk trading desk"];
             E2 = reg.doc_embeddings_fasttext(str2, struct('language','en'));
 
-            % Similarity between str(1) and str2(1) (both about IRB)
+            % Similarity between str(1) and str2(1) (both about capital requirements)
             simSimilar = E(1,:) * E2(1,:)';
-            % Similarity between str(1) and str(2) (IRB vs LCR - different topics)
+            % Similarity between str(1) and str(2) (capital requirements vs market risk - different topics)
             simDissimilar = E(1,:) * E(2,:)';
 
             tc.verifyGreaterThan(simSimilar, simDissimilar, ...
