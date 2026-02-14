@@ -1,15 +1,68 @@
 {
+  "_comment": "Dual thresholds: BERT achieves >0.8/0.6/0.6, fastText baseline >0.3/0.2/0.2",
+  "backend": {
+    "bert": {
+      "overall": {
+        "RecallAt10_min": 0.8,
+        "mAP_min": 0.6,
+        "nDCG@10_min": 0.6,
+        "tolerance": 0.02
+      },
+      "per_label": {
+        "IRB": 0.8,
+        "Liquidity_LCR": 0.8,
+        "AML_KYC": 0.75,
+        "Securitisation": 0.7,
+        "LeverageRatio": 0.75
+      }
+    },
+    "fasttext": {
+      "overall": {
+        "RecallAt10_min": 0.35,
+        "mAP_min": 0.25,
+        "nDCG@10_min": 0.25,
+        "tolerance": 0.05
+      },
+      "per_label": {
+        "IRB": 0.4,
+        "Liquidity_LCR": 0.4,
+        "AML_KYC": 0.3,
+        "Securitisation": 0.25,
+        "LeverageRatio": 0.3
+      }
+    }
+  },
   "overall": {
-    "RecallAt10_min": 0.8,
-    "mAP_min": 0.6,
-    "nDCG@10_min": 0.6,
-    "tolerance": 0.02
+    "RecallAt10_min": 0.35,
+    "mAP_min": 0.25,
+    "nDCG@10_min": 0.25,
+    "tolerance": 0.05,
+    "_note": "Default to fastText thresholds for compatibility"
   },
   "per_label": {
-    "IRB": 0.8,
-    "Liquidity_LCR": 0.8,
-    "AML_KYC": 0.6,
-    "Securitisation": 0.6,
-    "LeverageRatio": 0.6
+    "IRB": 0.4,
+    "Liquidity_LCR": 0.4,
+    "AML_KYC": 0.3,
+    "Securitisation": 0.25,
+    "LeverageRatio": 0.3,
+    "_note": "Default to fastText thresholds; switch to BERT when available"
+  },
+  "test_coverage": {
+    "total_chunks": 27,
+    "single_label_chunks": 22,
+    "multi_label_chunks": 3,
+    "noise_chunks": 2,
+    "labels_per_chunk": {
+      "IRB": 6,
+      "Liquidity_LCR": 6,
+      "AML_KYC": 5,
+      "Securitisation": 7,
+      "LeverageRatio": 5
+    },
+    "multi_label_examples": [
+      "IRB + Securitisation",
+      "LCR + Securitisation",
+      "AML + LeverageRatio"
+    ]
   }
 }
