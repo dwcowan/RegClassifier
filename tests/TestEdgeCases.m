@@ -1,4 +1,4 @@
-classdef TestEdgeCases < fixtures.RegTestCase
+classdef TestEdgeCases < RegTestCase
     %TESTEDGECASES Comprehensive edge case tests for RegClassifier functions.
     %   Tests boundary conditions, empty inputs, extreme values, and invalid
     %   inputs to ensure robust error handling and graceful degradation.

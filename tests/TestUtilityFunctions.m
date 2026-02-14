@@ -1,4 +1,4 @@
-classdef TestUtilityFunctions < fixtures.RegTestCase
+classdef TestUtilityFunctions < RegTestCase
     %TESTUTILITYFUNCTIONS Tests for utility functions in +reg package.
     %   Tests set_seeds, validate_knobs, log_metrics, and other utility
     %   functions for correct behavior, error handling, and edge cases.
