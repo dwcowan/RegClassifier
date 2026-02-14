@@ -90,38 +90,18 @@ R = p.Results;
 
 assert(gpuDeviceCount > 0, 'GPU required for fine-tuning');
 
-% Initialize BERT tokenizer and model with proper error handling
+% Initialize BERT tokenizer and model
+% Note: BERT is installed by default in R2025b+
+% For earlier versions, run supportPackageInstaller
 try
-    % Try to load BERT tokenizer
     tok = bertTokenizer("base-uncased");
-catch ME
-    if contains(ME.identifier, 'specialTokensNotInVocab') || ...
-       contains(ME.message, 'special tokens')
-        % BERT model files not properly downloaded or configured
-        % Try alternative approach: use default tokenizer without model name
-        try
-            tok = bertTokenizer();
-        catch
-            error('RegClassifier:BERTNotAvailable', ...
-                ['BERT tokenizer not available. Please ensure:\n' ...
-                 '1. Deep Learning Toolbox is installed\n' ...
-                 '2. Text Analytics Toolbox is installed\n' ...
-                 '3. Run "supportPackageInstaller" to download BERT models\n' ...
-                 'Original error: %s'], ME.message);
-        end
-    else
-        rethrow(ME);
-    end
-end
-
-try
     base = bert("base-uncased");   % dlnetwork
 catch ME
-    error('RegClassifier:BERTModelNotAvailable', ...
-        ['BERT model not available. Please ensure:\n' ...
-         '1. Deep Learning Toolbox is installed\n' ...
-         '2. Run "supportPackageInstaller" to download BERT models\n' ...
-         'Original error: %s'], ME.message);
+    error('RegClassifier:BERTNotAvailable', ...
+        ['BERT initialization failed.\n' ...
+         'BERT is installed by default in MATLAB R2025b+.\n' ...
+         'For earlier versions, run: supportPackageInstaller\n' ...
+         'Error: %s'], ME.message);
 end
 
 % Small MLP head on pooled output
