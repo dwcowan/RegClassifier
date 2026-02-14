@@ -3,9 +3,9 @@ name: MATLAB Tests
 
 on:
   push:
-    branches: [ main, 'claude/**' ]
+    branches: [ main ]  # Only run on direct pushes to main (after merge)
   pull_request:
-    branches: [ main ]
+    branches: [ main ]  # Run on PRs to main (before merge)
 
 jobs:
   test:
