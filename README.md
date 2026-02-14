@@ -219,7 +219,7 @@ Input PDF → Python Extraction → Text Chunks → Features
 | Document | Purpose | Audience |
 |----------|---------|----------|
 | [QUICKSTART.md](QUICKSTART.md) | Get running in 15 minutes | All users |
-| [INSTALL.md](INSTALL.md) | Detailed installation guide | New users |
+| [INSTALL_GUIDE.md](INSTALL_GUIDE.md) | Detailed installation guide | New users |
 | [METHODOLOGY_OVERVIEW.md](METHODOLOGY_OVERVIEW.md) | Scientific methodology | Researchers |
 | [CLAUDE.md](CLAUDE.md) | AI assistant guide | Developers + AI |
 
@@ -227,19 +227,18 @@ Input PDF → Python Extraction → Text Chunks → Features
 
 | Document | Purpose | Budget |
 |----------|---------|--------|
-| [docs/ZERO_BUDGET_VALIDATION.md](docs/ZERO_BUDGET_VALIDATION.md) | Split-rule validation | $0 |
-| [docs/HYBRID_VALIDATION_STRATEGY.md](docs/HYBRID_VALIDATION_STRATEGY.md) | Active learning + RLHF | $2-8K |
-| [docs/ANNOTATION_PROTOCOL.md](docs/ANNOTATION_PROTOCOL.md) | Ground-truth annotation | $42-91K |
-| [docs/VALIDATION_DECISION_GUIDE.md](docs/VALIDATION_DECISION_GUIDE.md) | Choose your approach | All |
+| [docs/guides/ZERO_BUDGET_VALIDATION.md](docs/guides/ZERO_BUDGET_VALIDATION.md) | Split-rule validation | $0 |
+| [docs/guides/HYBRID_VALIDATION_STRATEGY.md](docs/guides/HYBRID_VALIDATION_STRATEGY.md) | Active learning + RLHF | $2-8K |
+| [docs/guides/ANNOTATION_PROTOCOL.md](docs/guides/ANNOTATION_PROTOCOL.md) | Ground-truth annotation | $42-91K |
+| [docs/guides/VALIDATION_DECISION_GUIDE.md](docs/guides/VALIDATION_DECISION_GUIDE.md) | Choose your approach | All |
 
 ### Advanced Topics
 
 | Document | Purpose |
 |----------|---------|
-| [docs/RL_HUMAN_FEEDBACK_GUIDE.md](docs/RL_HUMAN_FEEDBACK_GUIDE.md) | RLHF system documentation |
-| [docs/PDF_EXTRACTION_GUIDE.md](docs/PDF_EXTRACTION_GUIDE.md) | Two-column PDF extraction |
+| [docs/guides/RL_HUMAN_FEEDBACK_GUIDE.md](docs/guides/RL_HUMAN_FEEDBACK_GUIDE.md) | RLHF system documentation |
+| [docs/guides/PDF_EXTRACTION_GUIDE.md](docs/guides/PDF_EXTRACTION_GUIDE.md) | Two-column PDF extraction |
 | [METHODOLOGICAL_ISSUES.md](METHODOLOGICAL_ISSUES.md) | 13 identified issues + fixes |
-| [FIXES_IMPLEMENTED.md](FIXES_IMPLEMENTED.md) | Implementation details |
 
 ### API Reference
 
@@ -301,7 +300,7 @@ Production-grade validation for deployment.
 
 **Method:** 1000-2000 chunks with 3 annotators, inter-annotator agreement, adjudication
 
-See [docs/ANNOTATION_PROTOCOL.md](docs/ANNOTATION_PROTOCOL.md) for complete protocol.
+See [docs/guides/ANNOTATION_PROTOCOL.md](docs/guides/ANNOTATION_PROTOCOL.md) for complete protocol.
 
 **Performance:** F1 > 0.95, very high confidence
 
@@ -370,7 +369,7 @@ run('reg_hybrid_validation_workflow.m');
 
 ```matlab
 % Full ground-truth annotation protocol
-% See docs/ANNOTATION_PROTOCOL.md
+% See docs/guides/ANNOTATION_PROTOCOL.md
 
 % 1000-2000 chunks, 3 annotators, adjudication
 % Achieves F1 > 0.95 for production deployment
