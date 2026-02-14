@@ -55,10 +55,15 @@ append(r, sec2);
 
 % LDA topics
 sec3 = Section('LDA Topics');
-K = mdlLDA.NumTopics;
-for k = 1:K
-    [~, topIdx] = maxk(mdlLDA.TopicWordProbabilities(k,:), 10);
-    append(sec3, Paragraph(sprintf('Topic %d: %s', k, strjoin(vocab(topIdx), ', '))));
+if ~isempty(mdlLDA) && isobject(mdlLDA)
+    K = mdlLDA.NumTopics;
+    for k = 1:K
+        [~, topIdx] = maxk(mdlLDA.TopicWordProbabilities(k,:), 10);
+        append(sec3, Paragraph(sprintf('Topic %d: %s', k, strjoin(vocab(topIdx), ', '))));
+    end
+else
+    % LDA disabled or no topics available
+    append(sec3, Paragraph('LDA topic modeling disabled (lda_topics = 0)'));
 end
 append(r, sec3);
 
