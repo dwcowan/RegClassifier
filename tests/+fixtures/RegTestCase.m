@@ -24,7 +24,7 @@ classdef (Abstract, SharedTestFixtures={ ...
             if ~isfolder(targetDir)
                 mkdir(targetDir);
             end
-            sourcePath = fullfile("tests", "fixtures", filename);
+            sourcePath = fullfile("tests", "+fixtures", filename);
             targetPath = fullfile(targetDir, filename);
             if ~isfile(targetPath)
                 copyfile(sourcePath, targetPath);
