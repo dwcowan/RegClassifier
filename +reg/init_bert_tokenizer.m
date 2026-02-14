@@ -4,28 +4,28 @@ function tok = init_bert_tokenizer()
 % Returns:
 %   tok - bertTokenizer object
 %
-% This function uses the correct R2025b API where bert() returns both
-% the network and tokenizer together.
+% R2025b API: bert() with no arguments returns [net, tokenizer] for BERT-Base
 
 % Try multiple syntax variants for different MATLAB versions
 
-% R2025b+ syntax: bert(Model="base") returns [net, tokenizer]
+% R2025b syntax: bert() with no args returns [net, tokenizer] for BERT-Base
+% This is the documented syntax from https://www.mathworks.com/help/textanalytics/ref/bert.html
 try
-    [~, tok] = bert(Model="base");
+    [~, tok] = bert();
     return;
 catch ME1
 end
 
-% R2023b-R2024b syntax: bert("base") returns [net, tokenizer]
+% R2023b-R2024b syntax: bert(Model="base") with name-value pair
 try
-    [~, tok] = bert("base");
+    [~, tok] = bert(Model="base");
     return;
 catch ME2
 end
 
-% Older syntax: bert() with no args, then create tokenizer separately
+% Alternative syntax: bert("base") with positional argument
 try
-    [~, tok] = bert();
+    [~, tok] = bert("base");
     return;
 catch ME3
 end
@@ -41,10 +41,10 @@ end
 error('RegClassifier:BERTTokenizerFailed', ...
     ['Failed to initialize BERT tokenizer using any known syntax.\n\n' ...
      'Attempted methods:\n' ...
-     '  1. bert(Model="base"): %s\n' ...
-     '  2. bert("base"): %s\n' ...
-     '  3. bert(): %s\n' ...
-     '  4. bertTokenizer("base"): %s\n\n' ...
+     '  1. bert() [R2025b]: %s\n' ...
+     '  2. bert(Model="base") [R2024b]: %s\n' ...
+     '  3. bert("base") [positional]: %s\n' ...
+     '  4. bertTokenizer("base") [direct]: %s\n\n' ...
      'Please verify BERT support package is installed:\n' ...
      '  - Run: supportPackageInstaller\n' ...
      '  - Install: Text Analytics Toolbox Model for BERT-Base Network'], ...
