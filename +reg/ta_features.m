@@ -1,6 +1,15 @@
 function [docsTok, vocab, Xtfidf] = ta_features(textStr)
 %TA_FEATURES Tokenize/clean; build TF-IDF
 textStr = string(textStr);
+
+% Handle empty input
+if isempty(textStr)
+    docsTok = tokenizedDocument(string.empty(0,1));
+    vocab = string.empty(0,1);
+    Xtfidf = zeros(0,0);
+    return;
+end
+
 docsTok = tokenizedDocument(textStr);
 docsTok = lower(docsTok);
 docsTok = erasePunctuation(docsTok);

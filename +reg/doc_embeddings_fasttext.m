@@ -35,7 +35,16 @@ end
 % and trailing spaces before splitting to avoid empty tokens at the ends of
 % the array.
 textStr = string(textStr);
-d = size(emb.WordVectors,2);
+
+% Handle API differences between MATLAB versions
+% Older versions: emb.WordVectors (matrix property)
+% Newer versions: emb.Dimension (scalar property)
+try
+    d = emb.Dimension;
+catch
+    d = size(emb.WordVectors, 2);
+end
+
 E = zeros(numel(textStr), d, 'single');
 for i = 1:numel(textStr)
     t = split(strtrim(regexprep(lower(textStr(i)), '\s+', ' ')));

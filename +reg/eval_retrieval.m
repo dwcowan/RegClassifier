@@ -29,7 +29,9 @@ for i = 1:N
     if isempty(ranks)
         AP(i) = 0;
     else
-        precAtHits = cumHits(ranks) ./ ranks';
+        % Ensure both are column vectors for element-wise division
+        ranks = ranks(:);
+        precAtHits = cumHits(ranks) ./ ranks;
         AP(i) = mean(precAtHits);
     end
 end

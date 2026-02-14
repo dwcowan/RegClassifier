@@ -2,7 +2,7 @@ classdef TestMetricsExpectedJSON < fixtures.RegTestCase
     methods (Test)
         function metrics_meet_expected(tc)
             testDir = fileparts(mfilename("fullpath"));
-            fixturesDir = fullfile(testDir, "fixtures");
+            fixturesDir = fullfile(testDir, "+fixtures");
             tc.applyFixture(matlab.unittest.fixtures.PathFixture(fixturesDir));
             K = jsondecode(fileread(fullfile(fixturesDir, "expected_metrics.json")));
             [chunksT, labels, Ytrue] = testutil.generate_simulated_crr();
