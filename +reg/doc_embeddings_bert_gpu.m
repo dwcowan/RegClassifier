@@ -60,7 +60,7 @@ end  % returns a dlnetwork
 textStr = string(textStr);
 N = numel(textStr);
 % Tokenize to IDs and masks
-enc = encode(tok, textStr, 'Padding', 'longest'); % R2025b: removed 'Truncation' param. struct with fields: InputIDs, AttentionMask, ...
+enc = encode(tok, textStr); % R2025b: automatic padding. struct with fields: InputIDs, AttentionMask, ...
 ids = enc.InputIDs; mask = enc.AttentionMask;
 maxLen = size(ids,2);
 

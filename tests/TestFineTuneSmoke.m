@@ -17,7 +17,7 @@ classdef TestFineTuneSmoke < fixtures.RegTestCase
 
             % Check if BERT is available (R2025b syntax)
             try
-                bertTokenizer('Model', 'base');  % R2025b: use name-value pairs, not = syntax
+                bertTokenizer("base");  % R2025b: model name as positional argument
             catch ME
                 if contains(ME.identifier, 'BERTNotAvailable') || ...
                    contains(ME.identifier, 'specialTokensNotInVocab') || ...

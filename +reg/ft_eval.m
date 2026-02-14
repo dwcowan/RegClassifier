@@ -45,7 +45,7 @@ useGPU = gpuDeviceCount > 0;
 
 for s = 1:mb:N
     e = min(N, s+mb-1);
-    enc = encode(tok, textStr(s:e), 'Padding', 'longest');  % R2025b: removed 'Truncation' param
+    enc = encode(tok, textStr(s:e));  % R2025b: automatic padding
     ids = enc.InputIDs; mask = enc.AttentionMask;
     if size(ids,2) > netFT.MaxSeqLength
         ids = ids(:,1:netFT.MaxSeqLength); mask = mask(:,1:netFT.MaxSeqLength);
