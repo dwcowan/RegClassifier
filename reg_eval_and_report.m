@@ -167,9 +167,9 @@ end
 
 % --- Log metrics (optional) ---
 runId = string(datetime('now','Format','yyyyMMdd_HHmmss'));
-reg.log_metrics(runId, "baseline", struct('RecallAt10',recall10_base,'mAP',mAP_base,'nDCG@10',ndcg10_base), 'Epoch', 0);
-if ~isnan(recall10_proj), reg.log_metrics(runId, "projection", struct('RecallAt10',recall10_proj,'mAP',mAP_proj,'nDCG@10',ndcg10_proj), 'Epoch', 0); end
-if ~isnan(recall10_ft),   reg.log_metrics(runId, "finetuned",  struct('RecallAt10',recall10_ft,'mAP',mAP_ft,'nDCG@10',ndcg10_ft), 'Epoch', 0); end
+reg.log_metrics(runId, "baseline", struct('RecallAt10',recall10_base,'mAP',mAP_base,'nDCG_at_10',ndcg10_base), 'Epoch', 0);
+if ~isnan(recall10_proj), reg.log_metrics(runId, "projection", struct('RecallAt10',recall10_proj,'mAP',mAP_proj,'nDCG_at_10',ndcg10_proj), 'Epoch', 0); end
+if ~isnan(recall10_ft),   reg.log_metrics(runId, "finetuned",  struct('RecallAt10',recall10_ft,'mAP',mAP_ft,'nDCG_at_10',ndcg10_ft), 'Epoch', 0); end
 
 % --- Generate trend chart if history exists ---
 csvHist = fullfile("runs","metrics.csv");
