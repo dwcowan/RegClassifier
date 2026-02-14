@@ -17,7 +17,8 @@ meta   = cell(numel(files),1);
 for i = 1:numel(files)
     p = string(fullfile(files(i).folder, files(i).name));
     try
-        txt = extractFileText(p, 'IgnoreInvisibleText',true);
+        % R2025b: Only valid parameters are Password, Encoding, ExtractionMethod, Pages
+        txt = extractFileText(p);
         if strlength(strtrim(txt)) < 20
             % Try OCR if text extraction gave insufficient content
             try

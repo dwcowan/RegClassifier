@@ -26,11 +26,13 @@ textStr = lower(string(textStr));
 Yweak = zeros(numel(textStr), numel(labels));
 for j = 1:numel(labels)
     lab = labels(j);
-    if ~isKey(rules, lab)
+    % Convert string to char for containers.Map compatibility
+    labKey = char(lab);
+    if ~isKey(rules, labKey)
         % Undefined label: leave zeros in Yweak column
         continue;
     end
-    pats = rules(lab);
+    pats = rules(labKey);
     hit = false(numel(textStr),1);
     for p = 1:numel(pats)
         hit = hit | contains(textStr, lower(pats(p)));
