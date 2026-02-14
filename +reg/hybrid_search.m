@@ -15,8 +15,10 @@ function out = do_query(q, alpha, S)
 if nargin<2, alpha = 0.5; end
 qTok = tokenizedDocument(string(q));
 qTok = lower(erasePunctuation(removeStopWords(qTok)));
-bagQ = bagOfWords(qTok, S.vocab);
-qv = bagQ.Counts; idf = log( size(S.Xtfidf,1) ./ max(1,sum(S.Xtfidf>0,1)) );
+bagQ = bagOfWords(qTok);
+bagQ = removeWords(bagQ, ~ismember(bagQ.Vocabulary, S.vocab));
+qv = encode(bagQ, S.vocab);
+idf = log( size(S.Xtfidf,1) ./ max(1,sum(S.Xtfidf>0,1)) );
 qtfidf = qv .* idf;
 
 % fastTextWordEmbedding has differing input requirements across MATLAB

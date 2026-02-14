@@ -46,7 +46,9 @@ try
             error('Failed to open file for appending: %s', csvPath);
         end
     end
-    fprintf(fid, "%s\n", strjoin(rows, "\n"));
+    for j = 1:numel(rows)
+        fprintf(fid, "%s\n", rows(j));
+    end
 catch ME
     if fid ~= -1
         fclose(fid);
