@@ -1,6 +1,6 @@
-function fold_indices = stratified_kfold_multilabel(Y, num_folds, varargin)
+function folds = stratified_kfold_multilabel(Y, num_folds, varargin)
 %STRATIFIED_KFOLD_MULTILABEL Stratified k-fold cross-validation for multi-label data.
-%   fold_indices = STRATIFIED_KFOLD_MULTILABEL(Y, num_folds) creates fold
+%   folds = STRATIFIED_KFOLD_MULTILABEL(Y, num_folds) creates fold
 %   assignments that preserve label distribution across folds.
 %
 %   This implements iterative stratification (Sechidis et al. 2011) which is
@@ -19,8 +19,9 @@ function fold_indices = stratified_kfold_multilabel(Y, num_folds, varargin)
 %       'Seed'    - Random seed for reproducibility (default: [])
 %
 %   OUTPUTS:
-%       fold_indices - Fold assignment for each example (N x 1)
-%                      Values in [1, num_folds]
+%       folds - Struct array (num_folds x 1) with fields:
+%               .train - Training indices for this fold (logical or indices)
+%               .test  - Test indices for this fold (logical or indices)
 %
 %   ALGORITHM:
 %       Iterative stratification ensures balanced label distribution:
@@ -29,20 +30,20 @@ function fold_indices = stratified_kfold_multilabel(Y, num_folds, varargin)
 %       3. Update fold label counts and repeat
 %
 %   EXAMPLE 1: Basic usage
-%       fold_idx = reg.stratified_kfold_multilabel(Yboot, 5);
-%       for k = 1:5
-%           train_idx = fold_idx ~= k;
-%           test_idx = fold_idx == k;
+%       folds = reg.stratified_kfold_multilabel(Yboot, 5);
+%       for k = 1:length(folds)
+%           train_idx = folds(k).train;
+%           test_idx = folds(k).test;
 %           models = reg.train_multilabel(X(train_idx,:), Yboot(train_idx,:), 1);
 %           % Evaluate on test_idx
 %       end
 %
 %   EXAMPLE 2: Verify stratification quality
-%       fold_idx = reg.stratified_kfold_multilabel(Yboot, 5, 'Verbose', true);
+%       folds = reg.stratified_kfold_multilabel(Yboot, 5, 'Verbose', true);
 %       % Displays max label frequency deviation per fold
 %
 %   EXAMPLE 3: Reproducible folds
-%       fold_idx = reg.stratified_kfold_multilabel(Yboot, 5, 'Seed', 42);
+%       folds = reg.stratified_kfold_multilabel(Yboot, 5, 'Seed', 42);
 %
 %   COMPARISON WITH RANDOM K-FOLD:
 %       Random k-fold:
@@ -239,6 +240,14 @@ for k = 1:num_folds
         error('reg:stratified_kfold_multilabel:EmptyFold', ...
             'Fold %d is empty! Try using fewer folds.', k);
     end
+end
+
+% Convert fold indices to struct array format
+% Similar to MATLAB's cvpartition API
+folds = struct('train', {}, 'test', {});
+for k = 1:num_folds
+    folds(k).test = find(fold_indices == k);
+    folds(k).train = find(fold_indices ~= k);
 end
 
 end
