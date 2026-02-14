@@ -1,5 +1,16 @@
 function chunksT = chunk_text(docsT, chunkTokens, overlap)
 %CHUNK_TEXT Split documents into overlapping token windows
+arguments
+    docsT table
+    chunkTokens (1,1) double {mustBePositive, mustBeInteger}
+    overlap (1,1) double {mustBeNonnegative, mustBeInteger}
+end
+
+% Validate overlap < chunkTokens
+if overlap >= chunkTokens
+    error('reg:chunk_text:InvalidOverlap', ...
+        'Overlap (%d) must be less than chunk size (%d)', overlap, chunkTokens);
+end
 
 % Estimate total chunks for pre-allocation
 estimatedChunks = 0;

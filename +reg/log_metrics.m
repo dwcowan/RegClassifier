@@ -23,12 +23,29 @@ for i=1:numel(fields)
     rows(i) = sprintf('%s,%s,%s,%s,%.6f,%s', ts, runId, variant, key, val, string(R.Epoch));
 end
 
-if ~isfile(csvPath)
-    fid = fopen(csvPath,'w');
-    fprintf(fid, "timestamp,run_id,variant,metric,value,epoch\n");
-else
-    fid = fopen(csvPath,'a');
+% Use try-finally to ensure file handle is always closed
+fid = -1;
+try
+    if ~isfile(csvPath)
+        fid = fopen(csvPath,'w');
+        if fid == -1
+            error('Failed to open file for writing: %s', csvPath);
+        end
+        fprintf(fid, "timestamp,run_id,variant,metric,value,epoch\n");
+    else
+        fid = fopen(csvPath,'a');
+        if fid == -1
+            error('Failed to open file for appending: %s', csvPath);
+        end
+    end
+    fprintf(fid, "%s\n", strjoin(rows, "\n"));
+catch ME
+    if fid ~= -1
+        fclose(fid);
+    end
+    rethrow(ME);
 end
-fprintf(fid, "%s\n", strjoin(rows, "\n"));
-fclose(fid);
+if fid ~= -1
+    fclose(fid);
+end
 end
