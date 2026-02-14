@@ -1,4 +1,4 @@
-classdef TestRepositories < fixtures.RegTestCase
+classdef TestRepositories < RegTestCase
     %TESTREPOSITORIES Tests for repository layer classes.
     %   Tests repository interfaces and stub implementations to verify
     %   proper error handling and API contracts.
