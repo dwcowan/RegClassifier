@@ -40,7 +40,7 @@ classdef EvaluationPipeline < handle
             end
 
             % Step 2: plot historical trends (legacy `plot_trends`)
-            trendsPNG = obj.Controller.VisualizationModel.plotTrends(
+            trendsPNG = obj.Controller.VisualizationModel.plotTrends(...
                 metricsCSV, fullfile(tempdir(), 'trends.png'));
 
             % Step 3: plot co‑retrieval heatmap (legacy
@@ -53,7 +53,7 @@ classdef EvaluationPipeline < handle
                 if isfield(results, 'labelMatrix'), labelMatrix = results.labelMatrix; end
                 if isfield(results, 'labels'), labels = results.labels; end
             end
-            heatPNG = obj.Controller.VisualizationModel.plotCoRetrievalHeatmap(
+            heatPNG = obj.Controller.VisualizationModel.plotCoRetrievalHeatmap(...
                 embeddings, labelMatrix, fullfile(tempdir(), 'heatmap.png'), labels);
 
             % Step 4: hand off plots to plot view
