@@ -45,8 +45,10 @@ useGPU = gpuDeviceCount > 0;
 
 for s = 1:mb:N
     e = min(N, s+mb-1);
-    enc = encode(tok, textStr(s:e));  % R2025b: automatic padding
-    ids = enc.InputIDs; mask = enc.AttentionMask;
+    % R2025b: encode returns [tokenCodes, segments] as cell arrays, not struct
+    [tokenCodes, ~] = encode(tok, textStr(s:e));
+    ids = cell2mat(tokenCodes');  % Convert to N x SeqLen matrix
+    mask = double(ids ~= tok.PaddingCode);  % Attention mask: 1 for real tokens, 0 for padding
     if size(ids,2) > netFT.MaxSeqLength
         ids = ids(:,1:netFT.MaxSeqLength); mask = mask(:,1:netFT.MaxSeqLength);
     end
