@@ -1,4 +1,4 @@
-classdef TestProjectionAutoloadPipeline < RegTestCase
+classdef TestProjectionAutoloadPipeline < fixtures.RegTestCase
     methods (Test)
         function pipeline_uses_projection_if_present(tc)
             % Create a small head from synthetic data and save to projection_head.mat

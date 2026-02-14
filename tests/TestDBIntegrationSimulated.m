@@ -1,4 +1,4 @@
-classdef TestDBIntegrationSimulated < RegTestCase
+classdef TestDBIntegrationSimulated < fixtures.RegTestCase
     methods (Test)
         function sqlite_roundtrip(tc)
             [chunksT, labels, Ytrue] = testutil.generate_simulated_crr();

@@ -1,4 +1,4 @@
-classdef TestMetricsExpectedJSON < RegTestCase
+classdef TestMetricsExpectedJSON < fixtures.RegTestCase
     methods (Test)
         function metrics_meet_expected(tc)
             testDir = fileparts(mfilename("fullpath"));

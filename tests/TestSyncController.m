@@ -1,4 +1,4 @@
-classdef TestSyncController < RegTestCase
+classdef TestSyncController < fixtures.RegTestCase
     %TESTSYNCCONTROLLER Verify sync orchestrator returns paths.
 
     properties

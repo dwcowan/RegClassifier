@@ -1,4 +1,4 @@
-classdef TestPipelineLogging < RegTestCase
+classdef TestPipelineLogging < fixtures.RegTestCase
     %TESTPIPELINELOGGING Verify PipelineController logs metrics.
 
     properties

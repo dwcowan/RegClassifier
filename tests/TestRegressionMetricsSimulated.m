@@ -1,4 +1,4 @@
-classdef TestRegressionMetricsSimulated < RegTestCase
+classdef TestRegressionMetricsSimulated < fixtures.RegTestCase
     methods (Test)
         function regression_metrics(tc)
             [chunksT, labels, Ytrue] = testutil.generate_simulated_crr();

@@ -1,4 +1,4 @@
-classdef TestServices < RegTestCase
+classdef TestServices < fixtures.RegTestCase
     %TESTSERVICES Unit tests for service layer classes.
     %   Tests service classes in +reg/+service package for correct
     %   behavior, dependency injection, and error handling.
