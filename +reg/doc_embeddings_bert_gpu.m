@@ -38,16 +38,8 @@ maxSeqLen = p.Results.MaxSeqLength;
 % Ensure GPU is available
 assert(gpuDeviceCount > 0, 'No GPU device found. Install CUDA-enabled GPU drivers.');
 
-% Load tokenizer and model
-try
-    tok = bertTokenizer("base-uncased"); % R2023b+ (support package)
-catch
-    try
-        tok = bertWordPieceTokenizer("base-uncased"); % older naming
-    catch ME
-        error("BERT:TokenizerMissing", "BERT tokenizer not found. Install 'Text Analytics Toolbox Model for BERT English'. Original error: %s", ME.message);
-    end
-end
+% Load tokenizer using shared initialization function
+tok = reg.init_bert_tokenizer();
 
 %% Try to use fine-tuned encoder if available
 try

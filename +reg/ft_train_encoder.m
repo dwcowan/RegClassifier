@@ -90,51 +90,23 @@ R = p.Results;
 
 assert(gpuDeviceCount > 0, 'GPU required for fine-tuning');
 
-% Initialize BERT tokenizer and model
-% Note: BERT is installed by default in R2025b+
-% Try multiple approaches for compatibility across MATLAB versions
-tok = [];
-base = [];
+% Initialize BERT tokenizer and model using shared initialization
+tok = reg.init_bert_tokenizer();
 
-% Approach 1: Try bert model first (R2025b+ preferred)
+% Initialize BERT model with version compatibility
 try
     base = bert("base-uncased");
-    % Try to get tokenizer - API might vary by version
+catch
     try
-        tok = bertTokenizer("base-uncased");
-    catch
-        % R2025b might require loading tokenizer differently
-        tok = bertTokenizer();  % Use default
-    end
-catch ME1
-    % Approach 2: Try tokenizer first (older MATLAB versions)
-    try
-        tok = bertTokenizer();
         base = bert();
-    catch ME2
-        % Approach 3: Try with explicit model name
+    catch
         try
-            % Download and cache if needed
-            modelName = "bert-base-uncased";
-            base = bert(modelName);
-            tok = bertTokenizer(modelName);
-        catch ME3
+            base = bert("bert-base-uncased");
+        catch ME
             error('RegClassifier:BERTNotAvailable', ...
-                ['BERT initialization failed with all methods.\n' ...
-                 'BERT is included in R2025b+ by default.\n' ...
-                 'For earlier versions: run supportPackageInstaller\n' ...
-                 'Errors:\n' ...
-                 '  bert("base-uncased"): %s\n' ...
-                 '  bert(): %s\n' ...
-                 '  bert("%s"): %s'], ...
-                ME1.message, ME2.message, modelName, ME3.message);
+                'Failed to initialize BERT model: %s', ME.message);
         end
     end
-end
-
-% Verify we have valid tokenizer and model
-if isempty(tok) || isempty(base)
-    error('RegClassifier:BERTNotAvailable', 'Failed to initialize BERT tokenizer or model.');
 end
 
 % Small MLP head on pooled output
@@ -209,7 +181,7 @@ for epoch = startEpoch:R.Epochs
     if R.HardNegatives
         if ~isempty(R.Yboot)
             try
-                [A, Pp, Nn] = localMineNegatives(base, head, chunksT, R.Yboot, A, Pp, Nn, R.MaxSeqLength, R.HardNegMaxN);
+                [A, Pp, Nn] = localMineNegatives(tok, base, head, chunksT, R.Yboot, A, Pp, Nn, R.MaxSeqLength, R.HardNegMaxN);
             catch ME
                 warning('Hard-negative mining skipped: %s', ME.message);
             end
@@ -250,7 +222,7 @@ for epoch = startEpoch:R.Epochs
     % End-of-epoch evaluation & early stopping
     if ~isempty(R.EvalY) && mod(epoch, R.EvalEvery)==0
         try
-            metrics = localEvaluate(base, head, chunksT.text, R.EvalY, R.MaxSeqLength);
+            metrics = localEvaluate(tok, base, head, chunksT.text, R.EvalY, R.MaxSeqLength);
             curr = double(metrics.ndcg10);
             fprintf("Eval Epoch %d: Recall@10=%.3f mAP=%.3f nDCG@10=%.3f\n", epoch, metrics.recall10, metrics.mAP, metrics.ndcg10);
             if curr > bestScore + R.EarlyStopMinDelta
@@ -375,14 +347,13 @@ n = sqrt(sum(Z.^2,1) + 1e-9);
 Z = Z ./ n;
 end
 
-function [Aout, Pout, Nout] = localMineNegatives(base, head, chunksT, Yboot, A, P, N, maxLen, maxN)
+function [Aout, Pout, Nout] = localMineNegatives(tok, base, head, chunksT, Yboot, A, P, N, maxLen, maxN)
 % Mine hard negatives using current encoder: closest items with different labels
 Nall = height(chunksT);
 subset = 1:Nall;
 if Nall > maxN
     subset = sort(randperm(Nall, maxN));
 end
-tok = bertTokenizer("base-uncased");
 texts = string(chunksT.text(subset));
 enc = encode(tok, texts, 'Padding','longest','Truncation','longest');
 ids = enc.InputIDs; mask = enc.AttentionMask;
@@ -413,8 +384,7 @@ for i = subset
 end
 end
 
-function metrics = localEvaluate(base, head, textStr, Ylogical, maxLen)
-tok = bertTokenizer("base-uncased");
+function metrics = localEvaluate(tok, base, head, textStr, Ylogical, maxLen)
 textStr = string(textStr);
 N = numel(textStr);
 mb = 64;
