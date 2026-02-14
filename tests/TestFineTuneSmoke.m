@@ -14,6 +14,18 @@ classdef TestFineTuneSmoke < fixtures.RegTestCase
             if gpuDeviceCount==0
                 tc.assumeTrue(false, 'No GPU, skipping fine-tune smoke test.');
             end
+
+            % Check if BERT is available
+            try
+                bertTokenizer("base-uncased");
+            catch ME
+                if contains(ME.identifier, 'BERTNotAvailable') || ...
+                   contains(ME.identifier, 'specialTokensNotInVocab') || ...
+                   contains(ME.message, 'special tokens')
+                    tc.assumeTrue(false, 'BERT model not available. Run supportPackageInstaller to download.');
+                end
+            end
+
             C = config();
             docsT = reg.ingest_pdfs(C.input_dir);
             chunksT = reg.chunk_text(docsT, 80, 16);

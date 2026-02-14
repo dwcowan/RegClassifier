@@ -89,8 +89,40 @@ parse(p,varargin{:});
 R = p.Results;
 
 assert(gpuDeviceCount > 0, 'GPU required for fine-tuning');
-tok = bertTokenizer("base-uncased");
-base = bert("base-uncased");   % dlnetwork
+
+% Initialize BERT tokenizer and model with proper error handling
+try
+    % Try to load BERT tokenizer
+    tok = bertTokenizer("base-uncased");
+catch ME
+    if contains(ME.identifier, 'specialTokensNotInVocab') || ...
+       contains(ME.message, 'special tokens')
+        % BERT model files not properly downloaded or configured
+        % Try alternative approach: use default tokenizer without model name
+        try
+            tok = bertTokenizer();
+        catch
+            error('RegClassifier:BERTNotAvailable', ...
+                ['BERT tokenizer not available. Please ensure:\n' ...
+                 '1. Deep Learning Toolbox is installed\n' ...
+                 '2. Text Analytics Toolbox is installed\n' ...
+                 '3. Run "supportPackageInstaller" to download BERT models\n' ...
+                 'Original error: %s'], ME.message);
+        end
+    else
+        rethrow(ME);
+    end
+end
+
+try
+    base = bert("base-uncased");   % dlnetwork
+catch ME
+    error('RegClassifier:BERTModelNotAvailable', ...
+        ['BERT model not available. Please ensure:\n' ...
+         '1. Deep Learning Toolbox is installed\n' ...
+         '2. Run "supportPackageInstaller" to download BERT models\n' ...
+         'Original error: %s'], ME.message);
+end
 
 % Small MLP head on pooled output
 projDim = 384;
