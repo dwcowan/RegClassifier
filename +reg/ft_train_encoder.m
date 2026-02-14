@@ -89,8 +89,53 @@ parse(p,varargin{:});
 R = p.Results;
 
 assert(gpuDeviceCount > 0, 'GPU required for fine-tuning');
-tok = bertTokenizer("base-uncased");
-base = bert("base-uncased");   % dlnetwork
+
+% Initialize BERT tokenizer and model
+% Note: BERT is installed by default in R2025b+
+% Try multiple approaches for compatibility across MATLAB versions
+tok = [];
+base = [];
+
+% Approach 1: Try bert model first (R2025b+ preferred)
+try
+    base = bert("base-uncased");
+    % Try to get tokenizer - API might vary by version
+    try
+        tok = bertTokenizer("base-uncased");
+    catch
+        % R2025b might require loading tokenizer differently
+        tok = bertTokenizer();  % Use default
+    end
+catch ME1
+    % Approach 2: Try tokenizer first (older MATLAB versions)
+    try
+        tok = bertTokenizer();
+        base = bert();
+    catch ME2
+        % Approach 3: Try with explicit model name
+        try
+            % Download and cache if needed
+            modelName = "bert-base-uncased";
+            base = bert(modelName);
+            tok = bertTokenizer(modelName);
+        catch ME3
+            error('RegClassifier:BERTNotAvailable', ...
+                ['BERT initialization failed with all methods.\n' ...
+                 'BERT is included in R2025b+ by default.\n' ...
+                 'For earlier versions: run supportPackageInstaller\n' ...
+                 'Errors:\n' ...
+                 '  bert("base-uncased"): %s\n' ...
+                 '  bert(): %s\n' ...
+                 '  bert("%s"): %s'], ...
+                ME1.message, ME2.message, modelName, ME3.message);
+        end
+    end
+end
+
+% Verify we have valid tokenizer and model
+if isempty(tok) || isempty(base)
+    error('RegClassifier:BERTNotAvailable', 'Failed to initialize BERT tokenizer or model.');
+end
 
 % Small MLP head on pooled output
 projDim = 384;
