@@ -4,40 +4,27 @@ function tok = init_bert_tokenizer()
 % Returns:
 %   tok - bertTokenizer object
 %
-% This function tries multiple approaches to handle different MATLAB versions
-% and BERT API changes across releases.
+% This function uses the correct R2025b API where bert() returns both
+% the network and tokenizer together.
 
-tok = [];
-
-% Approach 1: Standard model name (R2025b preferred)
+% R2025b+ syntax: bert() returns [net, tokenizer]
 try
-    tok = bertTokenizer("base-uncased");
+    [~, tok] = bert(Model="base");
     return;
 catch ME1
-    % Continue to fallback
+    % Fallback: Try without name-value syntax (older MATLAB)
+    try
+        [~, tok] = bert();
+        return;
+    catch ME2
+        error('RegClassifier:BERTTokenizerFailed', ...
+            ['Failed to initialize BERT tokenizer.\n' ...
+             'BERT is included by default in MATLAB R2025b+.\n' ...
+             'For earlier versions, run: supportPackageInstaller\n\n' ...
+             'Errors:\n' ...
+             '  bert(Model="base"): %s\n' ...
+             '  bert(): %s'], ...
+            ME1.message, ME2.message);
+    end
 end
 
-% Approach 2: No arguments (older versions)
-try
-    tok = bertTokenizer();
-    return;
-catch ME2
-    % Continue to fallback
-end
-
-% Approach 3: Alternative model name
-try
-    tok = bertTokenizer("bert-base-uncased");
-    return;
-catch ME3
-    % All approaches failed
-    error('RegClassifier:BERTTokenizerFailed', ...
-        ['Failed to initialize BERT tokenizer with all methods.\n' ...
-         'BERT is included by default in MATLAB R2025b+.\n' ...
-         'For earlier versions, run: supportPackageInstaller\n\n' ...
-         'Attempted methods:\n' ...
-         '  bertTokenizer("base-uncased"): %s\n' ...
-         '  bertTokenizer(): %s\n' ...
-         '  bertTokenizer("bert-base-uncased"): %s'], ...
-        ME1.message, ME2.message, ME3.message);
-end
