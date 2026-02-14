@@ -43,7 +43,7 @@ RegClassifier/
 │   ├── sample_gold_labels.json
 │   ├── sample_gold_Ytrue.csv
 │   └── expected_metrics.json
-├── docs/                    # Step-by-step guides (step01-step12)
+├── docs/                    # Documentation (guides, implementation, reference)
 ├── config.m                 # Configuration loader
 ├── pipeline.json            # Pipeline settings
 ├── knobs.json               # Training hyperparameters
@@ -345,9 +345,9 @@ Adjust in `knobs.json` under `BERT` and `Projection` sections.
 | `CLASS_ARCHITECTURE.md` | MVC design with layer tables |
 | `INSTALL_GUIDE.md` | Setup instructions |
 | `EXPERIMENT_CHEATSHEET.md` | Quick reference for experiment stages |
-| `docs/SYSTEM_BUILD_PLAN.md` | 12-step development roadmap |
-| `docs/step01-step12_*.md` | Detailed implementation guides |
-| `docs/Matlab_Style_Guide.md` | Comprehensive coding conventions |
+| `docs/reference/SYSTEM_BUILD_PLAN.md` | 12-step development roadmap |
+| `docs/implementation/step01-step12_*.md` | Detailed implementation guides |
+| `docs/reference/Matlab_Style_Guide.md` | Comprehensive coding conventions |
 
 ---
 
