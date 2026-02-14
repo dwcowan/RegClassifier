@@ -62,15 +62,20 @@ N = numel(textStr);
 % Tokenize to IDs and masks
 % R2025b: encode returns [tokenCodes, segments] as cell arrays, not struct
 [tokenCodes, ~] = encode(tok, textStr);
-ids = cell2mat(tokenCodes');  % Convert to N x SeqLen matrix
-mask = double(ids ~= tok.PaddingCode);  % Attention mask: 1 for real tokens, 0 for padding
-maxLen = size(ids,2);
-
-if maxSeqLen < maxLen
-    ids  = ids(:, 1:maxSeqLen);
-    mask = mask(:,1:maxSeqLen);
-    maxLen = maxSeqLen;
+% Manually pad sequences (R2025b encode doesn't auto-pad)
+paddingCode = double(tok.PaddingCode);
+numSeqs = numel(tokenCodes);
+% Find max length in batch, cap at maxSeqLen
+seqLens = cellfun(@numel, tokenCodes);
+maxLen = min(max(seqLens), maxSeqLen);
+% Create padded matrix
+ids = paddingCode * ones(numSeqs, maxLen);  % Pre-fill with padding
+for i = 1:numSeqs
+    seq = double(tokenCodes{i});
+    len = min(numel(seq), maxLen);
+    ids(i, 1:len) = seq(1:len);
 end
+mask = double(ids ~= paddingCode);  % Attention mask: 1 for real tokens, 0 for padding
 
 
 % Mini-batch inference on GPU
