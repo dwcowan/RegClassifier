@@ -34,12 +34,12 @@ classdef TestDB < fixtures.RegTestCase
 
             if isstruct(conn) && isfield(conn,'sqlite')
                 cur = fetch(conn.sqlite, "SELECT count(*) FROM reg_chunks");
-                tc.verifyGreaterThanOrEqual(cur{1}, 2);
+                tc.verifyGreaterThanOrEqual(cur{1,1}, 2);
                 colNames = fetch(conn.sqlite, "SELECT name FROM pragma_table_info('reg_chunks');");
                 if istable(colNames)
                     names = string(colNames{:,:});
                 else
-                    names = string(colNames(:,1));
+                    names = string(colNames{:,1});
                 end
                 tc.verifyTrue(any(names == "score_IRB"));
                 close(conn.sqlite);

@@ -29,6 +29,5 @@ catch ME
 end
 
 out = struct('pdf', pdfPath, 'eba_dir', outDir, 'eba_index', fullfile(outDir,'index.csv'));
-fprintf('CRR sync complete. PDF=%s  EBA_DIR=%s
-', pdfPath, outDir);
+fprintf('CRR sync complete. PDF=%s  EBA_DIR=%s\n', pdfPath, outDir);
 end

@@ -19,7 +19,7 @@ classdef TestRulesAndModel < fixtures.RegTestCase
             labels = ["IRB","Liquidity_LCR","AML_KYC"];
             [docsTok, vocab, Xtfidf] = reg.ta_features(text); %#ok<ASGLU>
             bag = bagOfWords(docsTok);
-            mdlLDA = fitlda(bag, 6, 'Verbose',0);
+            mdlLDA = fitlda(bag, 2, 'Verbose',0);  % 2 topics for 3 documents
             topicDist = transform(mdlLDA, bag);
             E = reg.doc_embeddings_fasttext(text, struct('language','en'));
             X = [Xtfidf, sparse(topicDist), E];
@@ -51,7 +51,8 @@ classdef TestRulesAndModel < fixtures.RegTestCase
             %   Verifies that training handles cases where most labels are negative.
             X = randn(20, 30);
             Y = false(20, 5);
-            Y(1, 1) = true;  % Only one positive label total
+            Y(1:3, 1) = true;  % 3 positive examples for label 1 (minimum for 2-fold CV)
+            Y(4, 2) = true;     % Only 1 positive for label 2 (will be skipped)
             k = 2;
 
             models = reg.train_multilabel(X, Y, k);
@@ -59,7 +60,9 @@ classdef TestRulesAndModel < fixtures.RegTestCase
             tc.verifyEqual(length(models), 5, ...
                 'Should return one model per label even with sparse labels');
             tc.verifyNotEmpty(models{1}, ...
-                'Models should be created even with minimal positive examples');
+                'Label 1 should have a model (3 positive examples)');
+            tc.verifyEmpty(models{2}, ...
+                'Label 2 should be skipped (only 1 positive example < 3)');
         end
 
         function testPredictMultilabelConsistency(tc)

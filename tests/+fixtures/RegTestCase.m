@@ -24,7 +24,10 @@ classdef (Abstract, SharedTestFixtures={ ...
             if ~isfolder(targetDir)
                 mkdir(targetDir);
             end
-            sourcePath = fullfile("tests", "+fixtures", filename);
+            % Find fixture path relative to this class file's location
+            classPath = fileparts(mfilename('fullpath', 'class'));
+            % classPath is tests/+fixtures, so fixture PDFs are in same dir
+            sourcePath = fullfile(classPath, filename);
             targetPath = fullfile(targetDir, filename);
             if ~isfile(targetPath)
                 copyfile(sourcePath, targetPath);

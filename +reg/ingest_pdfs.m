@@ -17,12 +17,27 @@ meta   = cell(numel(files),1);
 for i = 1:numel(files)
     p = string(fullfile(files(i).folder, files(i).name));
     try
-        txt = extractFileText(p, 'IgnoreInvisibleText',true);
+        % R2025b: Only valid parameters are Password, Encoding, ExtractionMethod, Pages
+        txt = extractFileText(p);
         if strlength(strtrim(txt)) < 20
-            txt = extractFileText(p, 'UseOCR', true);
+            % Try OCR if text extraction gave insufficient content
+            try
+                % R2025b: Use ExtractionMethod instead of UseOCR
+                txt = extractFileText(p, 'ExtractionMethod', 'ocr');
+            catch ocrErr
+                warning('OCR failed for %s: %s. Using extracted text anyway.', p, ocrErr.message);
+            end
         end
-    catch
-        txt = extractFileText(p, 'UseOCR', true);
+    catch extractErr
+        % If extraction completely fails, try OCR as fallback
+        try
+            % R2025b: Use ExtractionMethod instead of UseOCR
+            txt = extractFileText(p, 'ExtractionMethod', 'ocr');
+        catch ocrErr
+            % If both fail, use empty string and warn
+            warning('PDF extraction failed for %s: %s. Creating empty document.', p, extractErr.message);
+            txt = '';
+        end
     end
     doc_id(i) = "DOC_" + string(i);
     text(i)   = string(txt);

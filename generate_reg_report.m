@@ -2,16 +2,45 @@ function pdfPath = generate_reg_report(titleStr, chunksT, labels, pred, scores, 
 import mlreportgen.report.*
 import mlreportgen.dom.*
 
-r = Report('reg_topics_snapshot','pdf');
+% Clean up any existing temp directories from previous failed runs
+reportBaseName = 'reg_topics_snapshot';
+tempDirs = {[reportBaseName '_FO'], [reportBaseName '_FI']};
+for i = 1:numel(tempDirs)
+    if isfolder(tempDirs{i})
+        try
+            rmdir(tempDirs{i}, 's');
+        catch
+            % If locked, try to continue anyway
+        end
+    end
+end
+
+r = Report(reportBaseName, 'pdf');
 append(r, TitlePage('Title', titleStr));
 append(r, TableOfContents);
 
 % Coverage
 sec = Section('Label Coverage');
-cov = mean(pred,1);
-tbl = table(labels', cov', 'VariableNames', {'Label','Coverage'});
-append(sec, FormalTable(tbl));
-append(r, sec);
+% Handle edge cases for empty or mismatched data
+if isempty(labels) || numel(labels) == 0
+    % No labels defined - skip coverage section
+    append(r, sec);
+elseif isempty(pred) || size(pred,2) ~= numel(labels)
+    % Empty predictions or size mismatch - show zero coverage
+    labelsCol = reshape(string(labels), [], 1);  % Force column vector of strings
+    covCol = zeros(numel(labels), 1);  % Matching zero coverage column
+    tbl = table(labelsCol, covCol, 'VariableNames', {'Label','Coverage'});
+    append(sec, FormalTable(tbl));
+    append(r, sec);
+else
+    % Normal case - compute coverage
+    cov = mean(pred, 1);  % 1×N row vector
+    labelsCol = reshape(string(labels), [], 1);  % N×1 column
+    covCol = reshape(cov, [], 1);  % N×1 column
+    tbl = table(labelsCol, covCol, 'VariableNames', {'Label','Coverage'});
+    append(sec, FormalTable(tbl));
+    append(r, sec);
+end
 
 % Low-confidence queue (simple heuristic)
 sec2 = Section('Low-Confidence Queue');
