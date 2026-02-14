@@ -52,8 +52,23 @@ for epoch = 1:R.Epochs
         [head, trailingAvg, trailingAvgSq] = adamupdate(head, gradients, ...
             trailingAvg, trailingAvgSq, it + (epoch-1)*itersPerEpoch, R.LR, 0.9, 0.999);
         lossEpoch = lossEpoch + double(gather(extractdata(L)));
+
+        % Clear GPU arrays to prevent memory accumulation
+        if exec=="gpu"
+            clear Xa Xp Xn L gradients;
+        end
     end
     fprintf('Epoch %d/%d - loss: %.4f\n', epoch, R.Epochs, lossEpoch / itersPerEpoch);
+
+    % Periodic GPU memory cleanup between epochs
+    if exec=="gpu" && gpuDeviceCount > 0
+        wait(gpuDevice);
+    end
+end
+
+% Final GPU cleanup
+if exec=="gpu" && gpuDeviceCount > 0
+    wait(gpuDevice);
 end
 end
 

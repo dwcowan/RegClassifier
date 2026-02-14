@@ -1,6 +1,21 @@
 function conn = ensure_db(DB)
 %ENSURE_DB Returns a connection struct supporting Postgres or SQLite.
 % For SQLite, it creates a file (DB.sqlite_path) and returns struct with .sqlite handle.
+%
+% IMPORTANT: Always close database connections when done using reg.close_db(conn)
+% to prevent resource leaks. Database connections hold system resources that
+% must be explicitly released.
+%
+% Example:
+%   conn = reg.ensure_db(DB);
+%   try
+%       % Use connection
+%       reg.upsert_chunks(conn, chunksT, labels, pred, scores);
+%   catch ME
+%       reg.close_db(conn);
+%       rethrow(ME);
+%   end
+%   reg.close_db(conn);
 if isfield(DB,'vendor') && strcmpi(DB.vendor,'sqlite')
 
     % Octave is stricter than MATLAB about using commas to separate
