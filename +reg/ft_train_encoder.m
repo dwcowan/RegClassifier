@@ -199,10 +199,10 @@ for epoch = startEpoch:R.Epochs
 
         switch lower(R.Loss)
             case 'triplet'
-                [loss, gE, gH] = dlfeval(@gradTripletBatch, base, head, tok, aIdx, pIdx, nIdx, R.MaxSeqLength, R.UseFP16, R.Margin);
+                [loss, gE, gH] = dlfeval(@gradTripletBatch, base, head, tok, chunksT, aIdx, pIdx, nIdx, R.MaxSeqLength, R.UseFP16, R.Margin);
             case 'supcon'
                 % Build two views per anchor: view1 = anchor, view2 = positive; negatives provided as usual
-                [loss, gE, gH] = dlfeval(@gradSupConBatch, base, head, tok, aIdx, pIdx, R.MaxSeqLength, R.UseFP16);
+                [loss, gE, gH] = dlfeval(@gradSupConBatch, base, head, tok, chunksT, aIdx, pIdx, R.MaxSeqLength, R.UseFP16);
         end
 
         % Zero grads for frozen encoder params
@@ -256,9 +256,9 @@ end
 end
 
 % === Helpers ===
-function [loss, gE, gH] = gradTripletBatch(base, head, tok, aIdx, pIdx, nIdx, maxLen, useFP16, margin)
+function [loss, gE, gH] = gradTripletBatch(base, head, tok, chunksT, aIdx, pIdx, nIdx, maxLen, useFP16, margin)
 B = numel(aIdx);
-% Re-encode batch texts - chunksT is accessible via closure (nested function)
+% Re-encode batch texts from chunksT table
 batchTexts = [chunksT.text(aIdx); chunksT.text(pIdx); chunksT.text(nIdx)];
 enc = encode(tok, batchTexts, 'Padding','longest','Truncation','longest');
 X = enc.InputIDs; M = enc.AttentionMask;
@@ -282,10 +282,10 @@ gH = dlgradient(loss, head.Learnables);
 gE = dlgradient(loss, base.Learnables);
 end
 
-function [loss, gE, gH] = gradSupConBatch(base, head, tok, aIdx, pIdx, maxLen, useFP16)
+function [loss, gE, gH] = gradSupConBatch(base, head, tok, chunksT, aIdx, pIdx, maxLen, useFP16)
 % Supervised contrastive (NT-Xent) with two positives per "class" (anchor ~ positive)
 B = numel(aIdx);
-% chunksT is accessible via closure (nested function)
+% Re-encode batch texts from chunksT table
 batchTexts = [chunksT.text(aIdx); chunksT.text(pIdx)];
 enc = encode(tok, batchTexts, 'Padding','longest','Truncation','longest');
 X = enc.InputIDs; M = enc.AttentionMask;

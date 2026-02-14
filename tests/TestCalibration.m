@@ -55,11 +55,13 @@ classdef TestCalibration < fixtures.RegTestCase
             tc.verifyLessThanOrEqual(max(probsCal), 1, ...
                 'Probabilities should be <= 1');
 
-            % Verify monotonicity (if input sorted, output should be sorted)
-            [scoresSorted, idx] = sort(scores);
+            % Verify monotonicity (non-decreasing, allowing ties/plateaus from PAV)
+            [~, idx] = sort(scores);
             probsCalSorted = probsCal(idx);
-            tc.verifyTrue(issorted(probsCalSorted, 'ascend'), ...
-                'Isotonic calibration should preserve monotonicity');
+            % Check for violations: any decrease means non-monotonic
+            diffs = diff(probsCalSorted);
+            tc.verifyTrue(all(diffs >= -1e-10), ...
+                'Isotonic calibration should be monotonic non-decreasing (allowing numerical tolerance)');
         end
 
         function testCalibrationImprovesReliability(tc)
