@@ -1,6 +1,11 @@
 function Yweak = weak_rules(textStr, labels)
 %WEAK_RULES Simple keyword-based weak supervision
 %   Labels without a defined rule set produce zero scores.
+arguments
+    textStr {mustBeText}
+    labels {mustBeText}
+end
+
 rules = containers.Map;
 rules('IRB') = ["internal ratings based","irb","pd","lgd","ead","slotting"];
 rules('CreditRisk') = ["credit risk","credit conversion factor","counterparty credit"];

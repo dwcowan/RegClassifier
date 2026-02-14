@@ -26,7 +26,9 @@ for i = 1:N
 end
 
 % Build negatives: no shared labels
-trip = zeros(3,0,'uint32');
+% Pre-allocate for performance (avoid array growing in loop)
+trip = zeros(3, R.MaxTriplets, 'uint32');
+count = 0;
 for i = 1:N
     pos = posSets{i};
     if numel(pos) < R.MinPosPerAnchor, continue; end
@@ -35,8 +37,20 @@ for i = 1:N
     negCandidates = find(overlap==0 & (1:N)'~=i);
     if isempty(negCandidates), continue; end
     nidx = negCandidates(randi(numel(negCandidates)));
-    trip(:,end+1) = uint32([i; pidx; nidx]); %#ok<AGROW>
-    if size(trip,2) >= R.MaxTriplets, break; end
+    count = count + 1;
+    trip(:,count) = uint32([i; pidx; nidx]);
+    if count >= R.MaxTriplets, break; end
 end
+% Trim to actual count
+trip = trip(:, 1:count);
+
+% Warn if too few triplets created
+if count < 100 && N > 100
+    warning('Only %d triplets created from %d chunks. Check label distribution.', count, N);
+end
+if count == 0
+    error('No triplets created. Labels may be too sparse or all items share all labels.');
+end
+
 P.anchor = trip(1,:); P.positive = trip(2,:); P.negative = trip(3,:);
 end
