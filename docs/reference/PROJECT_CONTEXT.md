@@ -14,10 +14,10 @@ The system’s goal is to:
 - **Generate reports** (MATLAB Report Generator) summarizing classification & retrieval metrics.
 
 The project is optimised for a **single-user Windows 10 machine** with:
-- 64 GB RAM  
-- Intel i9 CPU  
-- NVIDIA RTX 4060 Ti (16 GB VRAM)  
-- MATLAB R2024a and all relevant toolboxes installed (Text Analytics, Deep Learning, Statistics, Database, Report Generator, etc.)
+- 64 GB RAM
+- Intel i9 CPU
+- NVIDIA RTX 4060 Ti (16 GB VRAM)
+- MATLAB R2025b and all relevant toolboxes installed (Text Analytics, Deep Learning, Statistics, Database, Report Generator, etc.)
 
 ## 2. Major Features Implemented
 ### Core Pipeline

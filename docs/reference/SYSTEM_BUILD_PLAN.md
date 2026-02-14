@@ -8,7 +8,7 @@ This guide outlines a clean-room rebuild of the MATLAB-based regulatory topic cl
 - **Goal:** Prepare a reproducible MATLAB workspace.
 - **Dependencies:** None.
 - **Steps:**
-  1. Install MATLAB R2024a.
+  1. Install MATLAB R2025b.
   2. Install required toolboxes: Text Analytics, Deep Learning, Statistics and Machine Learning, Database, Parallel Computing, Report Generator, (optional) Computer Vision.
   3. Install add-on: *Deep Learning Toolbox Model for BERT-Base, English*.
   4. Verify GPU via `gpuDevice` (CUDA ≥12, e.g., RTX 4060 Ti 16 GB).

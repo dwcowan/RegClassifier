@@ -10,7 +10,7 @@ This guide will get you from zero to running the complete RegClassifier pipeline
 
 Before starting, ensure you have:
 
-- [ ] MATLAB R2024a or later installed
+- [ ] MATLAB R2025b or later installed
 - [ ] GPU with 8GB+ VRAM (RTX 3060 Ti or better recommended)
 - [ ] Required MATLAB Toolboxes (see below)
 - [ ] 10GB+ free disk space
@@ -342,7 +342,7 @@ chunksT = reg.chunk_text(docsT, C.chunk_size_tokens, C.chunk_overlap);
 **Common causes:**
 1. **Missing toolboxes** - Check prerequisites
 2. **GPU memory** - Close other applications
-3. **MATLAB version** - Need R2024a+
+3. **MATLAB version** - Need R2025b+
 
 **Fix:**
 ```matlab

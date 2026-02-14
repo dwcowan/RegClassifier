@@ -1,5 +1,5 @@
 function netFT = ft_train_encoder(chunksT, P, varargin)
-%FT_TRAIN_ENCODER Contrastive fine-tuning of BERT encoder (MATLAB R2024a)
+%FT_TRAIN_ENCODER Contrastive fine-tuning of BERT encoder (MATLAB R2025b)
 % Name-Value params (defaults read from params.json > FineTune when available):
 %   'Epochs' (4)
 %   'BatchSize' (32)

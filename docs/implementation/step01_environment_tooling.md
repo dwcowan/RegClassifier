@@ -5,7 +5,7 @@
 **Depends on:** None.
 
 ## Instructions
-1. Install **MATLAB R2024a** on your workstation.
+1. Install **MATLAB R2025b** on your workstation.
 2. During installation, add these toolboxes:
    - Text Analytics
    - Deep Learning

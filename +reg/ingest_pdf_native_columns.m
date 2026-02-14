@@ -289,7 +289,7 @@ end
 function img = pdf2image(pdfPath, page_num)
 % Convert PDF page to image
 
-% Try using importPDFImages (R2023a+)
+% Try using importPDFImages (R2025b+)
 if exist('importPDFImages', 'file')
     imgs = importPDFImages(pdfPath, page_num);
     if ~isempty(imgs)
@@ -299,7 +299,7 @@ if exist('importPDFImages', 'file')
 end
 
 % Fallback: Use external tool or error
-error('PDF to image conversion requires R2023a+ or external tool');
+error('PDF to image conversion requires R2025b+ or external tool');
 end
 
 function [textStr, metadata] = extract_simple(pdfPath, verbose)

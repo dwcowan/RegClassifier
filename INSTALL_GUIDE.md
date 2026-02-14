@@ -1,7 +1,7 @@
 # MATLAB Regulation Classifier — Install & First-Run Guide
 
 ## 1. MATLAB Environment
-- **Version**: MATLAB **R2024a**
+- **Version**: MATLAB **R2025b**
 - **Required Toolboxes**:
   - Text Analytics Toolbox
   - Deep Learning Toolbox
@@ -14,7 +14,7 @@
   - Deep Learning Toolbox Model for **BERT-Base, English** — install from MATLAB Add-On Explorer.
 
 ## 2. GPU & Driver Setup
-- Ensure NVIDIA drivers support CUDA 12.x+ (for MATLAB R2024a GPU acceleration).
+- Ensure NVIDIA drivers support CUDA 12.x+ (for MATLAB R2025b GPU acceleration).
 - Test GPU in MATLAB:
 ```matlab
 gpuDevice

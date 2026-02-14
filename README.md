@@ -2,7 +2,7 @@
 
 > **Production-grade multi-label text classification for banking regulations with advanced validation, active learning, and RLHF capabilities**
 
-[![MATLAB](https://img.shields.io/badge/MATLAB-R2024a%2B-orange.svg)](https://www.mathworks.com/products/matlab.html)
+[![MATLAB](https://img.shields.io/badge/MATLAB-R2025b%2B-orange.svg)](https://www.mathworks.com/products/matlab.html)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Tests](https://img.shields.io/badge/tests-22%20passing-brightgreen.svg)](#testing)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/dwcowan/RegClassifier)
@@ -108,7 +108,7 @@ Functional architecture with comprehensive testing:
 ### Prerequisites
 
 **Required:**
-- MATLAB R2024a or later
+- MATLAB R2025b or later
 - GPU with 8GB+ VRAM (RTX 3060 Ti or better)
 
 **MATLAB Toolboxes:**

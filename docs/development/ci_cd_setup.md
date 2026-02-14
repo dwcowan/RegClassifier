@@ -43,7 +43,7 @@ Edit `.github/workflows/matlab-tests.yml`:
 ```yaml
 # Change MATLAB version
 with:
-  release: R2024a  # Change to R2023b, R2024b, etc.
+  release: R2025b  # Change to R2025b or later
 
 # Add more toolboxes
 products: >
@@ -134,7 +134,7 @@ MathWorks provides official GitHub Actions:
 ```yaml
 - uses: matlab-actions/setup-matlab@v2
   with:
-    release: R2024a
+    release: R2025b
 ```
 
 ### 2. Run Tests
@@ -166,7 +166,7 @@ MathWorks provides official GitHub Actions:
 Our GitHub Actions workflow runs these steps:
 
 1. **Checkout code** from repository
-2. **Setup MATLAB** (R2024a with required toolboxes)
+2. **Setup MATLAB** (R2025b with required toolboxes)
 3. **Run test suite** (`runtests('tests')`)
 4. **Run validation** (`validate_bug_fixes()`)
 5. **Run smoke test** (`run_smoke_test`)
@@ -215,7 +215,7 @@ on:
 ```yaml
 strategy:
   matrix:
-    matlab-version: [R2023b, R2024a, R2024b]
+    matlab-version: [R2025b]
 
 steps:
   - uses: matlab-actions/setup-matlab@v2
@@ -274,7 +274,7 @@ chmod +x .git/hooks/pre-push
 ```yaml
 - uses: matlab-actions/setup-matlab@v2
   with:
-    release: R2024a  # Specify valid release
+    release: R2025b  # Specify valid release
 ```
 
 ### Tests Take Too Long

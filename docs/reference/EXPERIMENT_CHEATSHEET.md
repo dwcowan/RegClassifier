@@ -1,4 +1,4 @@
-# Experiment Cheat Sheet — Regulatory Topic Classifier (MATLAB R2024a, RTX 4060 Ti 16GB)
+# Experiment Cheat Sheet — Regulatory Topic Classifier (MATLAB R2025b, RTX 4060 Ti 16GB)
 
 ## 0) One-time setup
 1) MATLAB Add-Ons → install **“Text Analytics Toolbox Model for BERT English.”**

@@ -5,7 +5,7 @@
 **RegClassifier** is an end-to-end MATLAB project for regulatory topic classification, specifically designed for banking regulations (e.g., CRR - Capital Requirements Regulation). The system handles PDF ingestion, text chunking, weak-rule bootstrapping, multi-label training, hybrid retrieval, and report generation.
 
 **Key Technologies:**
-- MATLAB R2024a with GPU acceleration (RTX 4060 Ti 16GB)
+- MATLAB R2025b with GPU acceleration (RTX 4060 Ti 16GB)
 - SQLite/PostgreSQL for persistence
 - BERT embeddings with FastText fallback
 - Functional architecture with utility functions
@@ -223,7 +223,7 @@ Labels: IRB, Liquidity_LCR, AML_KYC, Securitisation, LeverageRatio
 
 ### MATLAB Conventions
 
-- Use `arguments` blocks for input validation (R2019b+)
+- Use `arguments` blocks for input validation (R2025b+)
 - Prefer table over struct for tabular data
 - Use `string` arrays over cell arrays of chars
 - GPU arrays for deep learning operations
