@@ -1,13 +1,13 @@
-classdef (Abstract) RegTestCase < matlab.unittest.TestCase
+classdef (Abstract, SharedTestFixtures={ ...
+    matlab.unittest.fixtures.PathFixture('..')}) ...
+    RegTestCase < matlab.unittest.TestCase
     %REGTESTCASE Base class for RegClassifier test cases.
     %   Provides common setup, helper functions, and utilities for all tests.
-
-    methods (TestClassSetup)
-        function addProjectPath(tc)
-            % Ensure parent directory is on MATLAB path for access to project code
-            tc.applyFixture(matlab.unittest.fixtures.PathFixture('..'));
-        end
-    end
+    %   Uses SharedTestFixtures to add project root to path before test discovery.
+    %
+    %   The PathFixture adds '..' (project root) to MATLAB path so that +reg
+    %   package and all dependencies are available during both test discovery
+    %   and test execution phases.
 
     methods (Static)
         function ensureFixturePDF(targetDir, filename)
