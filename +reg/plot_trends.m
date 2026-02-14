@@ -1,13 +1,18 @@
 function pngPath = plot_trends(csvPath, pngPath)
 %PLOT_TRENDS Read runs/metrics.csv and produce trend lines for Recall@10, mAP, nDCG@10
 T = readtable(csvPath);
-% Keep only desired metrics
-keep = ismember(T.metric, {'RecallAt10','mAP','nDCG@10','recallAt10','ndcg','nDCG'});
+% Keep only desired metrics (including new nDCG_at_10 field name)
+keep = ismember(T.metric, {'RecallAt10','mAP','nDCG@10','nDCG_at_10','recallAt10','ndcg','nDCG'});
 T = T(keep,:);
 % Normalize metric names
 T.metric = strrep(T.metric, 'recallAt10','RecallAt10');
+T.metric = strrep(T.metric, 'nDCG_at_10','nDCG@10');
 T.metric = strrep(T.metric, 'nDCG','nDCG@10');
 T.metric = strrep(T.metric, 'ndcg','nDCG@10');
+
+% Convert table columns to string arrays for consistent comparison
+T.variant = string(T.variant);
+T.metric = string(T.metric);
 
 fig = figure('Visible','off');
 hold on;
@@ -16,7 +21,8 @@ markers = {'o','x','s','d','^','v','>','<','p','h'};
 mk = 1;
 for v = 1:numel(uVar)
     for m = ["RecallAt10","mAP","nDCG@10"]
-        mask = T.variant==uVar(v) & T.metric==m;
+        % String array comparison works with ==
+        mask = T.variant == uVar(v) & T.metric == m;
         if ~any(mask), continue; end
         x = T.epoch(mask);
         y = T.value(mask);
