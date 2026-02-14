@@ -325,10 +325,10 @@ Adjust in `knobs.json` under `BERT` and `Projection` sections.
 
 | Document | Purpose |
 |----------|---------|
-| `PROJECT_CONTEXT.md` | Complete project handover document |
-| `CLASS_ARCHITECTURE.md` | Functional architecture overview |
+| `docs/reference/PROJECT_CONTEXT.md` | Complete project handover document |
+| `docs/reference/CLASS_ARCHITECTURE.md` | Functional architecture overview |
 | `INSTALL_GUIDE.md` | Setup instructions |
-| `EXPERIMENT_CHEATSHEET.md` | Quick reference for experiment stages |
+| `docs/reference/EXPERIMENT_CHEATSHEET.md` | Quick reference for experiment stages |
 | `docs/reference/SYSTEM_BUILD_PLAN.md` | 12-step development roadmap |
 | `docs/implementation/step01-step12_*.md` | Detailed implementation guides |
 | `docs/reference/Matlab_Style_Guide.md` | Comprehensive coding conventions |

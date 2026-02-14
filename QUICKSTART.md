@@ -466,7 +466,7 @@ run('reg_finetune_encoder_workflow.m');
 ## What's Next?
 
 **For Research:**
-1. Read [METHODOLOGY_OVERVIEW.md](METHODOLOGY_OVERVIEW.md) for scientific background
+1. Read [docs/guides/METHODOLOGY_OVERVIEW.md](docs/guides/METHODOLOGY_OVERVIEW.md) for scientific background
 2. Explore [docs/ZERO_BUDGET_VALIDATION.md](docs/ZERO_BUDGET_VALIDATION.md)
 3. Run method comparisons
 

@@ -216,7 +216,7 @@ Input PDF → Python Extraction → Text Chunks → Features
 |----------|---------|----------|
 | [QUICKSTART.md](QUICKSTART.md) | Get running in 15 minutes | All users |
 | [INSTALL_GUIDE.md](INSTALL_GUIDE.md) | Detailed installation guide | New users |
-| [METHODOLOGY_OVERVIEW.md](METHODOLOGY_OVERVIEW.md) | Scientific methodology | Researchers |
+| [docs/guides/METHODOLOGY_OVERVIEW.md](docs/guides/METHODOLOGY_OVERVIEW.md) | Scientific methodology | Researchers |
 | [CLAUDE.md](CLAUDE.md) | AI assistant guide | Developers + AI |
 
 ### Validation & Evaluation
@@ -234,13 +234,13 @@ Input PDF → Python Extraction → Text Chunks → Features
 |----------|---------|
 | [docs/guides/RL_HUMAN_FEEDBACK_GUIDE.md](docs/guides/RL_HUMAN_FEEDBACK_GUIDE.md) | RLHF system documentation |
 | [docs/guides/PDF_EXTRACTION_GUIDE.md](docs/guides/PDF_EXTRACTION_GUIDE.md) | Two-column PDF extraction |
-| [METHODOLOGICAL_ISSUES.md](METHODOLOGICAL_ISSUES.md) | 13 identified issues + fixes |
+| [docs/reference/METHODOLOGICAL_ISSUES.md](docs/reference/METHODOLOGICAL_ISSUES.md) | 13 identified issues + fixes |
 
 ### API Reference
 
-- [CLASS_ARCHITECTURE.md](CLASS_ARCHITECTURE.md) - Functional architecture details
-- [EXPERIMENT_CHEATSHEET.md](EXPERIMENT_CHEATSHEET.md) - Quick reference
-- [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md) - Complete system context
+- [docs/reference/CLASS_ARCHITECTURE.md](docs/reference/CLASS_ARCHITECTURE.md) - Functional architecture details
+- [docs/reference/EXPERIMENT_CHEATSHEET.md](docs/reference/EXPERIMENT_CHEATSHEET.md) - Quick reference
+- [docs/reference/PROJECT_CONTEXT.md](docs/reference/PROJECT_CONTEXT.md) - Complete system context
 
 ---
 
