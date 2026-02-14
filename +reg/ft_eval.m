@@ -36,7 +36,7 @@ metrics = struct('recallAtK', recallK, 'mAP', mAP, ...
 end
 
 function E = ft_embed_all(textStr, netFT)
-tok = bertTokenizer("base-uncased");
+tok = reg.init_bert_tokenizer();
 textStr = string(textStr);
 N = numel(textStr);
 mb = 64;  % reasonable default for pooled inference
