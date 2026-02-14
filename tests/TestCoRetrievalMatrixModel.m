@@ -1,4 +1,4 @@
-classdef TestCoRetrievalMatrixModel < matlab.unittest.TestCase
+classdef TestCoRetrievalMatrixModel < fixtures.RegTestCase
     methods (Test)
         function matchesLegacy(tc)
             [chunksT, labels, Ytrue] = testutil.generate_simulated_crr(); %#ok<ASGLU>

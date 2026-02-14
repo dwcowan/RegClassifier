@@ -1,4 +1,4 @@
-classdef TestPipelineController < matlab.unittest.TestCase
+classdef TestPipelineController < fixtures.RegTestCase
     %TESTPIPELINECONTROLLER Ensure PipelineController propagates NotImplemented.
 
     properties

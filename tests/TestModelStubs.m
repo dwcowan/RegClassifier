@@ -1,4 +1,4 @@
-classdef TestModelStubs < matlab.unittest.TestCase
+classdef TestModelStubs < fixtures.RegTestCase
     %TESTMODELSTUBS Ensure stub models raise NotImplemented errors.
     
     properties (TestParameter)
