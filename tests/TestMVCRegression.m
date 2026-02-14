@@ -8,7 +8,7 @@ classdef TestMVCRegression < matlab.unittest.TestCase
 
     methods(TestMethodSetup)
         function setup(tc)
-            tc.Controller = SpyController();
+            tc.Controller = testhelpers.SpyController();
             tc.App = reg.mvc.Application([], [], tc.Controller);
         end
     end
@@ -24,20 +24,6 @@ classdef TestMVCRegression < matlab.unittest.TestCase
         function applicationStartInvokesController(tc)
             tc.App.start();
             tc.verifyTrue(tc.Controller.RunCalled);
-        end
-    end
-end
-
-classdef SpyController < reg.mvc.BaseController
-    properties
-        RunCalled = false;
-    end
-    methods
-        function obj = SpyController()
-            obj@reg.mvc.BaseController([], []);
-        end
-        function run(obj)
-            obj.RunCalled = true;
         end
     end
 end

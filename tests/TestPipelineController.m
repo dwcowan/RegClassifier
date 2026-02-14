@@ -9,7 +9,7 @@ classdef TestPipelineController < matlab.unittest.TestCase
         function setup(tc)
             cfgModel = reg.model.ConfigModel();
             cfgSvc = reg.service.ConfigService(cfgModel);
-            ingestSvc = IngestStub();
+            ingestSvc = testhelpers.IngestStub();
             embSvc = reg.service.EmbeddingService(cfgSvc);
             evalSvc = reg.service.EvaluationService(cfgSvc);
             logModel = reg.model.LoggingModel();
@@ -27,14 +27,6 @@ classdef TestPipelineController < matlab.unittest.TestCase
     methods(Test)
         function runPropagatesNotImplemented(tc)
             tc.verifyError(@() tc.Controller.run(), 'reg:service:NotImplemented');
-        end
-    end
-end
-
-classdef IngestStub < handle
-    methods
-        function out = ingest(~, ~)
-            out = reg.service.IngestionOutput([], [], []);
         end
     end
 end
