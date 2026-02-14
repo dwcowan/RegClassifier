@@ -2,7 +2,20 @@ function pdfPath = generate_reg_report(titleStr, chunksT, labels, pred, scores, 
 import mlreportgen.report.*
 import mlreportgen.dom.*
 
-r = Report('reg_topics_snapshot','pdf');
+% Clean up any existing temp directories from previous failed runs
+reportBaseName = 'reg_topics_snapshot';
+tempDirs = {[reportBaseName '_FO'], [reportBaseName '_FI']};
+for i = 1:numel(tempDirs)
+    if isfolder(tempDirs{i})
+        try
+            rmdir(tempDirs{i}, 's');
+        catch
+            % If locked, try to continue anyway
+        end
+    end
+end
+
+r = Report(reportBaseName, 'pdf');
 append(r, TitlePage('Title', titleStr));
 append(r, TableOfContents);
 
