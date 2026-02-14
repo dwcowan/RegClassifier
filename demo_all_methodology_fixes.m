@@ -39,8 +39,13 @@ fprintf('═══════════════════════�
 fprintf('Problem: Random k-fold creates imbalanced folds for multi-label data\n');
 fprintf('Solution: Iterative stratification (Sechidis et al. 2011)\n\n');
 
-% Create stratified folds
-fold_indices = reg.stratified_kfold_multilabel(Ytrue, 5, 'Verbose', true);
+% Create stratified folds (use 3 for small demo dataset)
+num_folds = min(3, floor(N / 5));  % At least 5 samples per fold
+if num_folds < 2
+    warning('Dataset too small for k-fold, using 2 folds');
+    num_folds = 2;
+end
+fold_indices = reg.stratified_kfold_multilabel(Ytrue, num_folds, 'Verbose', true);
 
 fprintf('\nInterpretation:\n');
 fprintf('  Max deviation < 0.05 = EXCELLENT quality\n');

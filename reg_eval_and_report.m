@@ -17,10 +17,14 @@ Yboot = Yweak >= C.min_rule_conf;
 N = height(chunksT);
 posSets = cell(N,1);
 for i = 1:N
-    labs = Yboot(i,:);
-    pos = find(any(Yboot(:,labs),2));
-    pos(pos==i) = [];
-    posSets{i} = pos;
+    labs = find(Yboot(i,:));  % Get indices of true labels
+    if ~isempty(labs)
+        pos = find(any(Yboot(:,labs),2));
+        pos(pos==i) = [];
+        posSets{i} = pos;
+    else
+        posSets{i} = [];  % No positive labels for this chunk
+    end
 end
 
 % --- Variant A: Baseline BERT embeddings ---
