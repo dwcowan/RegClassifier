@@ -60,8 +60,10 @@ end  % returns a dlnetwork
 textStr = string(textStr);
 N = numel(textStr);
 % Tokenize to IDs and masks
-enc = encode(tok, textStr); % R2025b: automatic padding. struct with fields: InputIDs, AttentionMask, ...
-ids = enc.InputIDs; mask = enc.AttentionMask;
+% R2025b: encode returns [tokenCodes, segments] as cell arrays, not struct
+[tokenCodes, ~] = encode(tok, textStr);
+ids = cell2mat(tokenCodes');  % Convert to N x SeqLen matrix
+mask = double(ids ~= tok.PaddingCode);  % Attention mask: 1 for real tokens, 0 for padding
 maxLen = size(ids,2);
 
 if maxSeqLen < maxLen
