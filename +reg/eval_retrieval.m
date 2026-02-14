@@ -31,7 +31,9 @@ for i = 1:N
     else
         % Ensure both are column vectors for element-wise division
         ranks = ranks(:);
-        precAtHits = cumHits(ranks) ./ ranks;
+        cumHitsAtRanks = cumHits(ranks);
+        cumHitsAtRanks = cumHitsAtRanks(:);  % Ensure column vector
+        precAtHits = cumHitsAtRanks ./ ranks;
         AP(i) = mean(precAtHits);
     end
 end

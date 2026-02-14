@@ -19,7 +19,8 @@ classdef TestPipelineConfig < fixtures.RegTestCase
             fprintf(fid,'{ "input_dir": "tests/fixtures", "lda_topics": 3 }');
             fclose(fid);
             C = config();
-            tc.verifyEqual(C.input_dir, "tests/fixtures", ...
+            % jsondecode may return char or string, accept both
+            tc.verifyEqual(string(C.input_dir), "tests/fixtures", ...
                 'Input directory should match pipeline.json override');
             tc.verifyEqual(C.lda_topics, 3, ...
                 'LDA topics should match pipeline.json override');
