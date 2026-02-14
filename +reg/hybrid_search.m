@@ -15,8 +15,19 @@ function out = do_query(q, alpha, S)
 if nargin<2, alpha = 0.5; end
 qTok = tokenizedDocument(string(q));
 qTok = lower(erasePunctuation(removeStopWords(qTok)));
-bagQ = bagOfWords(qTok, S.vocab);
-qv = bagQ.Counts; idf = log( size(S.Xtfidf,1) ./ max(1,sum(S.Xtfidf>0,1)) );
+
+% Create bag and get counts aligned with corpus vocabulary
+bagQ = bagOfWords(qTok);
+qv = zeros(1, numel(S.vocab));
+for i = 1:numel(bagQ.Vocabulary)
+    word = bagQ.Vocabulary(i);
+    idx = find(strcmp(S.vocab, word), 1);
+    if ~isempty(idx)
+        qv(idx) = bagQ.Counts(1, i);
+    end
+end
+
+idf = log( size(S.Xtfidf,1) ./ max(1,sum(S.Xtfidf>0,1)) );
 qtfidf = qv .* idf;
 
 % fastTextWordEmbedding has differing input requirements across MATLAB
@@ -32,7 +43,18 @@ catch ME
     end
 end
 seq = doc2sequence(emb, qTok);
-if ~isempty(seq) && ~isempty(seq{1}), qe = mean(single(seq{1}),2)'; else, qe = zeros(1,size(S.E,2),'single'); end
+if ~isempty(seq) && ~isempty(seq{1})
+    qe = mean(single(seq{1}),2)';
+    % Ensure query embedding matches corpus embedding dimension
+    if size(qe,2) ~= size(S.E,2)
+        warning('RegClassifier:DimensionMismatch', ...
+            'Query embedding dim (%d) != corpus embedding dim (%d). Using zero vector.', ...
+            size(qe,2), size(S.E,2));
+        qe = zeros(1,size(S.E,2),'single');
+    end
+else
+    qe = zeros(1,size(S.E,2),'single');
+end
 qe = qe ./ max(1e-9, norm(qe));
 
 bm = (S.Xtfidf * qtfidf') ./ max(1e-9, norm(qtfidf));

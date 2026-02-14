@@ -5,10 +5,10 @@
 **RegClassifier** is an end-to-end MATLAB project for regulatory topic classification, specifically designed for banking regulations (e.g., CRR - Capital Requirements Regulation). The system handles PDF ingestion, text chunking, weak-rule bootstrapping, multi-label training, hybrid retrieval, and report generation.
 
 **Key Technologies:**
-- MATLAB R2024a with GPU acceleration (RTX 4060 Ti 16GB)
+- MATLAB R2025b with GPU acceleration (RTX 4060 Ti 16GB)
 - SQLite/PostgreSQL for persistence
 - BERT embeddings with FastText fallback
-- MVC architecture pattern
+- Functional architecture with utility functions
 
 **Required Toolboxes:**
 - Text Analytics Toolbox
@@ -25,17 +25,14 @@
 
 ```
 RegClassifier/
-├── +reg/                    # Main package (modules, models, controllers, views)
-│   ├── +mvc/                # MVC base classes (BaseModel, BaseView, BaseController)
-│   ├── +model/              # 30+ data models and domain entities
-│   ├── +controller/         # 12 workflow orchestrators
-│   ├── +service/            # 10 business logic services
-│   ├── +view/               # 5 presentation components
-│   ├── +repository/         # 6 data access abstractions
-│   └── *.m                  # 40+ utility functions
+├── +reg/                    # Main package (utility functions + subpackages)
+│   ├── +model/              # 6 data entity classes (Document, Chunk, Embedding, etc.)
+│   ├── +service/            # 2 service classes + 5 value objects
+│   ├── +rl/                 # 4 RLHF/active learning components
+│   └── *.m                  # 61 utility functions
 ├── +testutil/               # Test data generators
-├── tests/                   # 32 test classes + fixtures
-│   └── fixtures/            # Test PDFs, expected metrics, RegTestCase base
+├── tests/                   # 22 test classes + fixtures
+│   └── +fixtures/           # Test PDFs, expected metrics, RegTestCase base
 ├── data/
 │   └── pdfs/                # Input PDF directory
 ├── gold/                    # Gold mini-pack for regression testing
@@ -55,23 +52,15 @@ RegClassifier/
 
 ## Architecture
 
-### MVC Pattern
+### Functional Architecture
 
-The codebase follows a clean MVC architecture defined in `+reg/+mvc/`:
+The codebase uses a **functional architecture** with stateless utility functions organized by domain:
 
-| Layer | Base Class | Purpose |
-|-------|------------|---------|
-| Model | `BaseModel` | Data processing with `load()` and `process()` lifecycle |
-| View | `BaseView` | Presentation and rendering |
-| Controller | `BaseController` | Orchestrates models and views |
-
-**Key Architectural Components:**
-
-- **Models** (`+reg/+model/`): ConfigModel, PDFIngestModel, TextChunkModel, EncoderFineTuneModel, ClassifierModel, etc.
-- **Controllers** (`+reg/+controller/`): PipelineController, FineTuneController, EvaluationController, etc.
-- **Services** (`+reg/+service/`): ConfigService, EmbeddingService, EvaluationService, IngestionService
-- **Views** (`+reg/+view/`): ReportView, MetricsView, DiffView, EmbeddingView, PlotView
-- **Repositories** (`+reg/+repository/`): DocumentRepository, EmbeddingRepository, SearchIndexRepository
+- **Utility Functions** (`+reg/`): 61 pure functions for data processing and ML operations
+- **Data Entities** (`+reg/+model/`): 6 simple classes representing domain objects
+- **Services** (`+reg/+service/`): ConfigService, IngestionService + 5 value objects (EmbeddingInput/Output, EvaluationInput/Result, IngestionOutput)
+- **RL Components** (`+reg/+rl/`): AnnotationEnvironment, train_annotation_agent, train_reward_model, validate_rlhf_system
+- **Main Workflows**: Scripts orchestrating utility functions
 
 ### Domain Entities
 
@@ -81,6 +70,7 @@ Located in `+reg/+model/`:
 - `Embedding.m` - Dense embedding vector
 - `Triplet.m` - Anchor-positive-negative for contrastive learning
 - `Pair.m` - Document pair
+- `CorpusDiff.m` - Corpus comparison
 
 ---
 
@@ -186,18 +176,20 @@ run('run_smoke_test.m')
 |----------|-------|---------|
 | Data Pipeline | TestPDFIngest, TestIngestAndChunk, TestFeatures | Ingestion & chunking |
 | Core | TestRulesAndModel, TestHybridSearch | Rules & retrieval |
-| Projection | TestProjectionHeadSimulated | Projection head training |
+| Projection | TestProjectionHeadSimulated, TestProjectionAutoloadPipeline | Projection head training |
 | Fine-tuning | TestFineTuneSmoke, TestFineTuneResume | Encoder fine-tuning |
-| Evaluation | TestGoldMetrics, TestMetricsExpectedJSON | Metrics validation |
+| Evaluation | TestGoldMetrics, TestMetricsExpectedJSON, TestRegressionMetricsSimulated | Metrics validation |
+| Config | TestPipelineConfig, TestKnobs | Configuration loading |
 | Database | TestDB, TestDBIntegrationSimulated | SQLite integration |
-| Integration | TestIntegrationSimulated, TestPipelineController | Full pipeline |
-| MVC | TestMVCUnit, TestMVCIntegration, TestMVCSystem | Architecture |
+| Integration | TestIntegrationSimulated | Full pipeline |
+| Edge Cases | TestEdgeCases, TestUtilityFunctions | Robustness |
+| Reporting | TestReportArtifact, TestDiffReportController, TestSyncController | Reports & sync |
 
 ### Test Fixtures
 
-- `tests/fixtures/sim_text.pdf` - Text PDF fixture
-- `tests/fixtures/sim_image_only.pdf` - Image-only PDF for OCR testing
-- `tests/fixtures/RegTestCase.m` - Abstract base test class
+- `tests/+fixtures/sim_text.pdf` - Text PDF fixture
+- `tests/+fixtures/sim_image_only.pdf` - Image-only PDF for OCR testing
+- `tests/+fixtures/RegTestCase.m` - Abstract base test class
 
 ### Gold Mini-Pack
 
@@ -216,7 +208,7 @@ Labels: IRB, Liquidity_LCR, AML_KYC, Securitisation, LeverageRatio
 
 | Element | Convention | Example |
 |---------|------------|---------|
-| Classes | UpperCamelCase | `ConfigModel`, `PipelineController` |
+| Classes | UpperCamelCase | `ConfigService`, `Document` |
 | Functions | lowerCamelCase or snake_case | `loadConfig`, `train_multilabel` |
 | Variables | lowerCamelCase | `chunkSize`, `embeddingDim` |
 | Constants | UPPER_SNAKE_CASE | `MAX_SEQ_LENGTH` |
@@ -231,7 +223,7 @@ Labels: IRB, Liquidity_LCR, AML_KYC, Securitisation, LeverageRatio
 
 ### MATLAB Conventions
 
-- Use `arguments` blocks for input validation (R2019b+)
+- Use `arguments` blocks for input validation (R2025b+)
 - Prefer table over struct for tabular data
 - Use `string` arrays over cell arrays of chars
 - GPU arrays for deep learning operations
@@ -241,36 +233,28 @@ Labels: IRB, Liquidity_LCR, AML_KYC, Securitisation, LeverageRatio
 
 ## Common Tasks for AI Assistants
 
-### Adding a New Model
+### Adding a New Utility Function
 
-1. Create class in `+reg/+model/` extending `reg.mvc.BaseModel`
-2. Implement `load()` and `process()` methods
-3. Add corresponding test in `tests/`
+1. Create function in `+reg/`
+2. Add corresponding test in `tests/`
 
 ```matlab
-classdef NewModel < reg.mvc.BaseModel
-    methods
-        function obj = load(obj, data)
-            % Load input data
-        end
-        function result = process(obj)
-            % Process and return result
-        end
-    end
+function result = my_new_function(input1, input2, options)
+%MY_NEW_FUNCTION Brief description.
+arguments
+    input1
+    input2
+    options.Param = defaultValue
+end
+result = process(input1, input2, options.Param);
 end
 ```
 
-### Adding a New Controller
+### Adding a New Data Entity
 
-1. Create class in `+reg/+controller/` extending `reg.mvc.BaseController`
-2. Wire models and views
-3. Add integration test
-
-### Adding a New Service
-
-1. Create class in `+reg/+service/`
-2. Define input/output value objects if needed
-3. Inject into controllers as dependency
+1. Create class in `+reg/+model/`
+2. Define properties for the domain object
+3. Add corresponding test in `tests/`
 
 ### Modifying Hyperparameters
 
@@ -282,7 +266,7 @@ end
 
 1. Create test class in `tests/` extending `fixtures.RegTestCase`
 2. Follow naming pattern `Test*.m`
-3. Use fixture data from `tests/fixtures/` or generate via `+testutil/`
+3. Use fixture data from `tests/+fixtures/` or generate via `+testutil/`
 
 ```matlab
 classdef TestNewFeature < fixtures.RegTestCase
@@ -341,10 +325,10 @@ Adjust in `knobs.json` under `BERT` and `Projection` sections.
 
 | Document | Purpose |
 |----------|---------|
-| `PROJECT_CONTEXT.md` | Complete project handover document |
-| `CLASS_ARCHITECTURE.md` | MVC design with layer tables |
+| `docs/reference/PROJECT_CONTEXT.md` | Complete project handover document |
+| `docs/reference/CLASS_ARCHITECTURE.md` | Functional architecture overview |
 | `INSTALL_GUIDE.md` | Setup instructions |
-| `EXPERIMENT_CHEATSHEET.md` | Quick reference for experiment stages |
+| `docs/reference/EXPERIMENT_CHEATSHEET.md` | Quick reference for experiment stages |
 | `docs/reference/SYSTEM_BUILD_PLAN.md` | 12-step development roadmap |
 | `docs/implementation/step01-step12_*.md` | Detailed implementation guides |
 | `docs/reference/Matlab_Style_Guide.md` | Comprehensive coding conventions |
@@ -353,11 +337,11 @@ Adjust in `knobs.json` under `BERT` and `Projection` sections.
 
 ## Important Notes for AI Assistants
 
-1. **Always check existing patterns** - The codebase has established MVC patterns; follow them
+1. **Always check existing patterns** - The codebase uses stateless utility functions; follow the same style
 2. **Test coverage required** - Add tests for any new functionality
 3. **Configuration via JSON** - Don't hardcode values; use pipeline.json or knobs.json
 4. **GPU memory awareness** - Consider batch sizes when modifying embedding code
 5. **Package namespaces** - Use proper `+` package prefixes for imports
 6. **Gold pack regression** - Ensure changes don't break gold pack metrics
-7. **Database abstraction** - Use repository pattern for data access
-8. **Service layer** - Put business logic in services, not controllers
+7. **Database utilities** - Use `reg.ensure_db`, `reg.upsert_chunks`, `reg.close_db` for DB access
+8. **Functional style** - Keep functions stateless; use tables for structured data

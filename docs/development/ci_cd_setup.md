@@ -1,6 +1,6 @@
 # CI/CD Setup for MATLAB Testing
 
-**Automated testing on push** is now configured! Choose the option that works best for your workflow.
+**Automated testing on push** can be configured using the options below. A GitHub Actions workflow file exists but has not been verified in CI (requires MATLAB license).
 
 ---
 
@@ -8,9 +8,9 @@
 
 **What it does:** Automatically runs tests on GitHub when you push or create a PR.
 
-### ✅ Already Set Up!
+### Workflow File
 
-I've created `.github/workflows/matlab-tests.yml` which will:
+`.github/workflows/matlab-tests.yml` is configured to:
 - ✅ Run on every push to `main` and `claude/**` branches
 - ✅ Run on every pull request
 - ✅ Execute `validate_bug_fixes()` test suite
@@ -34,9 +34,7 @@ I've created `.github/workflows/matlab-tests.yml` which will:
 
 ### MATLAB Licensing
 
-**Good news:** MATLAB, Simulink, and most add-ons are **FREE for batch use** in GitHub Actions!
-
-No additional license needed for CI/CD.
+**Note:** MATLAB GitHub Actions require a valid license. MathWorks provides free batch-mode licenses for public repositories. For private repositories, a MATLAB license server or startup code may be required.
 
 ### Customize the Workflow
 
@@ -45,7 +43,7 @@ Edit `.github/workflows/matlab-tests.yml`:
 ```yaml
 # Change MATLAB version
 with:
-  release: R2024a  # Change to R2023b, R2024b, etc.
+  release: R2025b  # Change to R2025b or later
 
 # Add more toolboxes
 products: >
@@ -66,9 +64,9 @@ on:
 
 **What it does:** Runs tests on your local machine before allowing push.
 
-### ✅ Already Set Up!
+### Setup
 
-I've created `.git/hooks/pre-push` which will:
+A `.git/hooks/pre-push` hook can be configured to:
 - ✅ Run `validate_bug_fixes()` before each push
 - ✅ Prevent push if tests fail
 - ✅ Show clear pass/fail messages
@@ -136,7 +134,7 @@ MathWorks provides official GitHub Actions:
 ```yaml
 - uses: matlab-actions/setup-matlab@v2
   with:
-    release: R2024a
+    release: R2025b
 ```
 
 ### 2. Run Tests
@@ -168,7 +166,7 @@ MathWorks provides official GitHub Actions:
 Our GitHub Actions workflow runs these steps:
 
 1. **Checkout code** from repository
-2. **Setup MATLAB** (R2024a with required toolboxes)
+2. **Setup MATLAB** (R2025b with required toolboxes)
 3. **Run test suite** (`runtests('tests')`)
 4. **Run validation** (`validate_bug_fixes()`)
 5. **Run smoke test** (`run_smoke_test`)
@@ -217,7 +215,7 @@ on:
 ```yaml
 strategy:
   matrix:
-    matlab-version: [R2023b, R2024a, R2024b]
+    matlab-version: [R2025b]
 
 steps:
   - uses: matlab-actions/setup-matlab@v2
@@ -276,7 +274,7 @@ chmod +x .git/hooks/pre-push
 ```yaml
 - uses: matlab-actions/setup-matlab@v2
   with:
-    release: R2024a  # Specify valid release
+    release: R2025b  # Specify valid release
 ```
 
 ### Tests Take Too Long
@@ -366,13 +364,13 @@ Then add coverage badge to README.
 
 ---
 
-## ✅ Current Setup Status
+## Current Setup Status
 
-- [x] GitHub Actions workflow created
-- [x] Pre-push hook created
+- [x] GitHub Actions workflow file created (`.github/workflows/matlab-tests.yml`)
 - [x] Test suite available (`validate_bug_fixes.m`)
 - [x] Smoke test available (`run_smoke_test.m`)
-- [ ] **TODO:** Push workflow to enable on GitHub
+- [ ] **TODO:** Verify workflow runs successfully on GitHub
+- [ ] **TODO:** Set up pre-push hook locally
 - [ ] **TODO:** Protect main branch with status checks
 - [ ] **TODO:** Add status badge to README
 
@@ -414,4 +412,4 @@ That's it! Tests will run automatically on every push. ✅
 
 ---
 
-**Setup complete!** 🎉 Your MATLAB tests will now run automatically on push.
+**Workflow file is ready.** Push it and verify it runs successfully on GitHub Actions.

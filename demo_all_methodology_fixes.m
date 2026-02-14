@@ -70,8 +70,8 @@ fprintf('Feature matrix: %d x %d\n\n', size(X, 1), size(X, 2));
 % Train classifier chains
 fprintf('Training classifier chains...\n');
 tic;
-models = reg.train_multilabel_chains(X, Ytrue, fold_indices, ...
-    'NumChains', 5, 'Verbose', true);
+models = reg.train_multilabel_chains(X, Ytrue, 0, ...
+    'FoldIndices', fold_indices, 'NumEnsemble', 5, 'Verbose', true);
 train_time = toc;
 
 fprintf('\nTraining complete in %.1f seconds\n\n', train_time);

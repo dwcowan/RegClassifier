@@ -15,6 +15,20 @@ classdef TestFineTuneResume < fixtures.RegTestCase
             if gpuDeviceCount==0
                 tc.assumeFail("No GPU available; skipping fine-tune resume test.");
             end
+
+            % Check if BERT is available (R2025b syntax)
+            try
+                bertTokenizer(Model="base");
+            catch ME
+                if contains(ME.identifier, 'BERTNotAvailable') || ...
+                   contains(ME.identifier, 'specialTokensNotInVocab') || ...
+                   contains(ME.message, 'special tokens')
+                    tc.assumeTrue(false, 'BERT model not available. Run supportPackageInstaller to download.');
+                else
+                    rethrow(ME);  % Re-throw unexpected errors
+                end
+            end
+
             % Small synthetic setup
             [chunksT, labels, Ytrue] = testutil.generate_simulated_crr();
             Yboot = Ytrue;  % use ground truth for stability

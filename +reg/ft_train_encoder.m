@@ -1,5 +1,5 @@
 function netFT = ft_train_encoder(chunksT, P, varargin)
-%FT_TRAIN_ENCODER Contrastive fine-tuning of BERT encoder (MATLAB R2024a)
+%FT_TRAIN_ENCODER Contrastive fine-tuning of BERT encoder (MATLAB R2025b)
 % Name-Value params (defaults read from params.json > FineTune when available):
 %   'Epochs' (4)
 %   'BatchSize' (32)
@@ -89,8 +89,26 @@ parse(p,varargin{:});
 R = p.Results;
 
 assert(gpuDeviceCount > 0, 'GPU required for fine-tuning');
-tok = bertTokenizer("base");
-base = bert(Model="base");   % dlnetwork
+
+% Initialize BERT model and tokenizer (R2025b API)
+% In R2025b, bert() returns both network and tokenizer together
+try
+    [base, tok] = bert(Model="base");
+catch ME1
+    % Fallback for older MATLAB versions
+    try
+        [base, tok] = bert();
+    catch ME2
+        error('RegClassifier:BERTNotAvailable', ...
+            ['Failed to initialize BERT model and tokenizer.\n' ...
+             'BERT is included by default in MATLAB R2025b+.\n' ...
+             'For earlier versions, run: supportPackageInstaller\n\n' ...
+             'Errors:\n' ...
+             '  bert(Model="base"): %s\n' ...
+             '  bert(): %s'], ...
+            ME1.message, ME2.message);
+    end
+end
 
 % Small MLP head on pooled output
 projDim = 384;
@@ -164,7 +182,7 @@ for epoch = startEpoch:R.Epochs
     if R.HardNegatives
         if ~isempty(R.Yboot)
             try
-                [A, Pp, Nn] = localMineNegatives(base, head, chunksT, R.Yboot, A, Pp, Nn, R.MaxSeqLength, R.HardNegMaxN);
+                [A, Pp, Nn] = localMineNegatives(tok, base, head, chunksT, R.Yboot, A, Pp, Nn, R.MaxSeqLength, R.HardNegMaxN);
             catch ME
                 warning('Hard-negative mining skipped: %s', ME.message);
             end
@@ -205,7 +223,7 @@ for epoch = startEpoch:R.Epochs
     % End-of-epoch evaluation & early stopping
     if ~isempty(R.EvalY) && mod(epoch, R.EvalEvery)==0
         try
-            metrics = localEvaluate(base, head, chunksT.text, R.EvalY, R.MaxSeqLength);
+            metrics = localEvaluate(tok, base, head, chunksT.text, R.EvalY, R.MaxSeqLength);
             curr = double(metrics.ndcg10);
             fprintf("Eval Epoch %d: Recall@10=%.3f mAP=%.3f nDCG@10=%.3f\n", epoch, metrics.recall10, metrics.mAP, metrics.ndcg10);
             if curr > bestScore + R.EarlyStopMinDelta
@@ -330,14 +348,13 @@ n = sqrt(sum(Z.^2,1) + 1e-9);
 Z = Z ./ n;
 end
 
-function [Aout, Pout, Nout] = localMineNegatives(base, head, chunksT, Yboot, A, P, N, maxLen, maxN)
+function [Aout, Pout, Nout] = localMineNegatives(tok, base, head, chunksT, Yboot, A, P, N, maxLen, maxN)
 % Mine hard negatives using current encoder: closest items with different labels
 Nall = height(chunksT);
 subset = 1:Nall;
 if Nall > maxN
     subset = sort(randperm(Nall, maxN));
 end
-tok = bertTokenizer("base");
 texts = string(chunksT.text(subset));
 enc = encode(tok, texts, 'Padding','longest','Truncation','longest');
 ids = enc.InputIDs; mask = enc.AttentionMask;
@@ -368,8 +385,7 @@ for i = subset
 end
 end
 
-function metrics = localEvaluate(base, head, textStr, Ylogical, maxLen)
-tok = bertTokenizer("base");
+function metrics = localEvaluate(tok, base, head, textStr, Ylogical, maxLen)
 textStr = string(textStr);
 N = numel(textStr);
 mb = 64;

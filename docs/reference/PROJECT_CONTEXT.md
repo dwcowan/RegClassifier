@@ -14,10 +14,10 @@ The system’s goal is to:
 - **Generate reports** (MATLAB Report Generator) summarizing classification & retrieval metrics.
 
 The project is optimised for a **single-user Windows 10 machine** with:
-- 64 GB RAM  
-- Intel i9 CPU  
-- NVIDIA RTX 4060 Ti (16 GB VRAM)  
-- MATLAB R2024a and all relevant toolboxes installed (Text Analytics, Deep Learning, Statistics, Database, Report Generator, etc.)
+- 64 GB RAM
+- Intel i9 CPU
+- NVIDIA RTX 4060 Ti (16 GB VRAM)
+- MATLAB R2025b and all relevant toolboxes installed (Text Analytics, Deep Learning, Statistics, Database, Report Generator, etc.)
 
 ## 2. Major Features Implemented
 ### Core Pipeline
@@ -32,9 +32,9 @@ The project is optimised for a **single-user Windows 10 machine** with:
   - Projection head dim / epochs / LR
   - Fine-tuning loss / unfreeze layers / epochs
   - Chunk size / overlap
-- `+reg/load_knobs.m` — stub for loading knob JSON (see `docs/knobs_interface.md`)
-- `+reg/print_active_knobs.m` — stub for printing knob configuration
-- `config.m` — reads knobs and applies overrides (placeholders only).
+- `+reg/load_knobs.m` — loads knob JSON (see `docs/reference/knobs_interface.md`)
+- `+reg/print_active_knobs.m` — prints knob configuration
+- `config.m` — reads knobs and applies overrides.
 
 ### Testing & Validation
 We have a **comprehensive MATLAB test suite** covering:
@@ -219,7 +219,7 @@ Main report now includes a **Gold Mini-Pack** section (if `gold/*` exists), show
   - Diffs:
     - `+reg/crr_diff_versions.m` — compare two CRR corpora (e.g., older vs newer EBA text dumps), write CSV + patch.
     - `+reg/diff_methods.m` — compare Top-10 retrievals across baseline/projection/fine-tuned for a query set.
-  - Tests: `tests/TestFetchers.m` (network-tolerant signatures).
+  - Tests: `tests/TestSyncController.m` (network-tolerant signatures).
   - When switching from raw downloads to pipeline ingestion, move the files into `data/pdfs` or update `pipeline.json`'s `input_dir` to point at `data/raw`.
 
 ---

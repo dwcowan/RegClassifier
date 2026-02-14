@@ -122,32 +122,11 @@ try
 catch ME
     warning("Gold pack metrics section skipped: %s", ME.message);
 end
-
-% --- Generate trend chart if history exists ---
-csvHist = fullfile("runs","metrics.csv");
-if isfile(csvHist)
-    trendsPNG = fullfile("runs","trends.png");
-    reg.plot_trends(csvHist, trendsPNG);
-    secTr = Section('Trends Across Runs/Checkpoints');
-    append(secTr, Image(trendsPNG));
-    append(r, secTr);
-end
-
-% --- Co-retrieval heatmap on best available embedding ---
-if ~isempty(E_ft), Ebest = E_ft; elseif ~isempty(E_proj), Ebest = E_proj; else, Ebest = E_base; end
-[Mcore, order] = reg.label_coretrieval_matrix(Ebest, Yboot, 10);
-labelsStr = string(C.labels);
-heatPNG = fullfile("runs","coretrieval_heatmap.png");
-reg.plot_coretrieval_heatmap(Mcore(order,order), labelsStr(order), heatPNG);
-secHM = Section('Label Co-Retrieval Heatmap (Top-10)');
-append(secHM, Image(heatPNG));
-append(r, secHM);
-
 close(r);
 fprintf('Wrote evaluation report: %s\n', r.OutputPath);
 
 function E = local_embed_ft(textStr, netFT)
-tok = bertTokenizer("base");
+tok = reg.init_bert_tokenizer();
 textStr = string(textStr);
 N = numel(textStr);
 mb = 64;
@@ -191,6 +170,26 @@ runId = string(datetime('now','Format','yyyyMMdd_HHmmss'));
 reg.log_metrics(runId, "baseline", struct('RecallAt10',recall10_base,'mAP',mAP_base,'nDCG_at_10',ndcg10_base), 'Epoch', 0);
 if ~isnan(recall10_proj), reg.log_metrics(runId, "projection", struct('RecallAt10',recall10_proj,'mAP',mAP_proj,'nDCG_at_10',ndcg10_proj), 'Epoch', 0); end
 if ~isnan(recall10_ft),   reg.log_metrics(runId, "finetuned",  struct('RecallAt10',recall10_ft,'mAP',mAP_ft,'nDCG_at_10',ndcg10_ft), 'Epoch', 0); end
+
+% --- Generate trend chart if history exists ---
+csvHist = fullfile("runs","metrics.csv");
+if isfile(csvHist)
+    trendsPNG = fullfile("runs","trends.png");
+    reg.plot_trends(csvHist, trendsPNG);
+    secTr = Section('Trends Across Runs/Checkpoints');
+    append(secTr, Image(trendsPNG));
+    append(r, secTr);
+end
+
+% --- Co-retrieval heatmap on best available embedding ---
+if ~isempty(E_ft), Ebest = E_ft; elseif ~isempty(E_proj), Ebest = E_proj; else, Ebest = E_base; end
+[Mcore, order] = reg.label_coretrieval_matrix(Ebest, Yboot, 10);
+labelsStr = string(C.labels);
+heatPNG = fullfile("runs","coretrieval_heatmap.png");
+reg.plot_coretrieval_heatmap(Mcore(order,order), labelsStr(order), heatPNG);
+secHM = Section('Label Co-Retrieval Heatmap (Top-10)');
+append(secHM, Image(heatPNG));
+append(r, secHM);
 
 
 % --- Gold Mini-Pack (optional) ---
