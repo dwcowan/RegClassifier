@@ -34,6 +34,35 @@ classdef TestDiffReportController < fixtures.RegTestCase
             tc.verifyTrue(isfile(fullfile(outDir,'summary.csv')));
             tc.verifyTrue(isfile(fullfile(outDir,'patch.txt')));
         end
+
+        function generatesHtmlReport(tc)
+            %GENERATESHTMLREPORT Verify HTML diff report generation.
+            % Tests reg_crr_diff_report_html which requires index.csv
+            % from fetch_crr_eba_parsed output format.
+            tc.assumeTrue(exist('mlreportgen.report.Report','class') == 8, ...
+                'Requires MATLAB Report Generator');
+
+            dirA = fullfile(tc.WorkFolder,'HA');
+            dirB = fullfile(tc.WorkFolder,'HB');
+            mkdir(dirA); mkdir(dirB);
+
+            % Create index.csv files (fetch_crr_eba_parsed output format)
+            tA = table("Art1", "Title A1", "a1.html", "http://a/1", ...
+                'VariableNames', {'article_num','title','html_file','url'});
+            tB = table("Art1", "Title B1", "a1.html", "http://b/1", ...
+                'VariableNames', {'article_num','title','html_file','url'});
+            writetable(tA, fullfile(dirA,'index.csv'));
+            writetable(tB, fullfile(dirB,'index.csv'));
+
+            % Create corresponding text files (matched to html_file stem)
+            writelines("article one version A", fullfile(dirA,'a1.txt'));
+            writelines("article one version B changed", fullfile(dirB,'a1.txt'));
+
+            outDir = fullfile(tc.WorkFolder,'html_out');
+            reg_crr_diff_report_html(dirA, dirB, 'OutDir', outDir);
+            tc.verifyTrue(isfile(fullfile(outDir,'crr_diff_report.html')));
+            tc.verifyTrue(isfile(fullfile(outDir,'summary_by_article.csv')));
+        end
     end
 end
 

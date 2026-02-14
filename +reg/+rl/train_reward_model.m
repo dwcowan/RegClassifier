@@ -123,6 +123,9 @@ if verbose
 end
 
 %% Build Network Architecture
+% Use dlnetwork + trainnet (R2025b) instead of deprecated trainNetwork.
+% Terminal layers (classificationLayer/regressionLayer) are not needed
+% with trainnet; a loss function string is passed directly instead.
 
 layers = [featureInputLayer(D, 'Name', 'input')];
 
@@ -141,59 +144,32 @@ if strcmp(model_type, 'regression')
         fullyConnectedLayer(1, 'Name', 'output')
         sigmoidLayer('Name', 'sigmoid')  % Constrain to [0,1]
     ];
+    lossFcn = "mse";
 else
     % Binary classification: predict preference (0 or 1)
     layers = [layers
         fullyConnectedLayer(2, 'Name', 'output')
         softmaxLayer('Name', 'softmax')
     ];
+    lossFcn = "crossentropy";
 end
 
-if strcmp(model_type, 'binary')
-    layers = [layers
-        classificationLayer('Name', 'classification')
-    ];
-else
-    layers = [layers
-        regressionLayer('Name', 'regression')
-    ];
-end
+% Convert layer array to dlnetwork for trainnet
+reward_net = dlnetwork(layers);
 
 %% Training Options
 
-if strcmp(model_type, 'regression')
-    options = trainingOptions('adam', ...
-        'MaxEpochs', epochs, ...
-        'MiniBatchSize', minibatch_size, ...
-        'ValidationFrequency', 10, ...
-        'ValidationData', {}, ...  % Will add below
-        'Shuffle', 'every-epoch', ...
-        'Verbose', verbose, ...
-        'Plots', 'training-progress', ...
-        'InitialLearnRate', 1e-3, ...
-        'LearnRateSchedule', 'piecewise', ...
-        'LearnRateDropFactor', 0.5, ...
-        'LearnRateDropPeriod', 30);
-else
-    options = trainingOptions('adam', ...
-        'MaxEpochs', epochs, ...
-        'MiniBatchSize', minibatch_size, ...
-        'ValidationFrequency', 10, ...
-        'ValidationData', {}, ...
-        'Shuffle', 'every-epoch', ...
-        'Verbose', verbose, ...
-        'Plots', 'training-progress', ...
-        'InitialLearnRate', 1e-3, ...
-        'LearnRateSchedule', 'piecewise', ...
-        'LearnRateDropFactor', 0.5, ...
-        'LearnRateDropPeriod', 30, ...
-        'Metrics', 'accuracy');
-end
-
-if ~verbose
-    options.Plots = 'none';
-    options.Verbose = false;
-end
+options = trainingOptions('adam', ...
+    'MaxEpochs', epochs, ...
+    'MiniBatchSize', minibatch_size, ...
+    'ValidationFrequency', 10, ...
+    'Shuffle', 'every-epoch', ...
+    'Verbose', verbose, ...
+    'Plots', 'none', ...
+    'InitialLearnRate', 1e-3, ...
+    'LearnRateSchedule', 'piecewise', ...
+    'LearnRateDropFactor', 0.5, ...
+    'LearnRateDropPeriod', 30);
 
 %% Split Training/Validation
 
@@ -228,9 +204,9 @@ end
 
 if strcmp(model_type, 'binary')
     y_train_cat = categorical(y_train);
-    reward_model = trainNetwork(X_train, y_train_cat, layers, options);
+    reward_model = trainnet(X_train, y_train_cat, reward_net, lossFcn, options);
 else
-    reward_model = trainNetwork(X_train, y_train, layers, options);
+    reward_model = trainnet(X_train, y_train, reward_net, lossFcn, options);
 end
 
 if verbose
@@ -242,7 +218,8 @@ end
 if val_fraction > 0
     if strcmp(model_type, 'regression')
         % Regression metrics
-        y_pred = predict(reward_model, X_val);
+        y_pred = minibatchpredict(reward_model, X_val);
+        y_pred = extractdata(y_pred);
 
         mse = mean((y_pred - y_val).^2);
         mae = mean(abs(y_pred - y_val));
@@ -259,8 +236,9 @@ if val_fraction > 0
             fprintf('R²:   %.4f\n\n', r2);
         end
     else
-        % Classification metrics
-        y_pred_class = classify(reward_model, X_val);
+        % Classification metrics using minibatchpredict + scores2label
+        scores = minibatchpredict(reward_model, X_val);
+        y_pred_class = scores2label(scores, categories(categorical(y_val)));
         accuracy = sum(y_pred_class == categorical(y_val)) / numel(y_val);
 
         stats.accuracy = accuracy;

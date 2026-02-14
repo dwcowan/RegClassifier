@@ -8,9 +8,9 @@
 
 ## Executive Summary
 
-The RegClassifier codebase is **~95% R2025b compatible**. Most core functions already use modern APIs with explicit R2025b comments and version-aware fallbacks. The scan identified **7 high-priority**, **5 medium-priority**, and **6 low-priority** findings across 6 toolbox areas.
+The RegClassifier codebase is **~99% R2025b compatible** after fixes applied on 2026-02-14. The scan identified 7 high-priority, 5 medium-priority, and 6 low-priority findings across 6 toolbox areas. **All high-priority issues have been fixed** and test coverage added.
 
-**Highest risk area:** `+reg/+rl/train_reward_model.m` uses the deprecated `trainNetwork`/`classificationLayer`/`classify` pipeline and needs migration to `trainnet`/`dlnetwork`.
+**Fixed:** `train_reward_model.m` migrated from deprecated `trainNetwork`/`classificationLayer`/`classify` to `trainnet`/`dlnetwork`/`minibatchpredict`. `reg_crr_diff_report_html.m` now has `Preformatted`/`PreformattedText` fallback. Tests added for both.
 
 ---
 

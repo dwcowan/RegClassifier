@@ -49,7 +49,12 @@ if isfile(patchFile)
     sec3 = Section('Patch Sample');
     lines = splitlines(string(fileread(patchFile)));
     if numel(lines) > 300, lines = lines(1:300); end
-    pre = PreformattedText(join(lines, newline));
+    % Handle API change: PreformattedText -> Preformatted in newer MATLAB
+    try
+        pre = Preformatted(join(lines, newline));
+    catch
+        pre = PreformattedText(join(lines, newline));
+    end
     append(sec3, pre);
     append(r, sec3);
 end
