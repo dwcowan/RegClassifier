@@ -90,22 +90,23 @@ R = p.Results;
 
 assert(gpuDeviceCount > 0, 'GPU required for fine-tuning');
 
-% Initialize BERT tokenizer and model using shared initialization
-tok = reg.init_bert_tokenizer();
-
-% Initialize BERT model with version compatibility
+% Initialize BERT model and tokenizer (R2025b API)
+% In R2025b, bert() returns both network and tokenizer together
 try
-    base = bert("base-uncased");
-catch
+    [base, tok] = bert(Model="base");
+catch ME1
+    % Fallback for older MATLAB versions
     try
-        base = bert();
-    catch
-        try
-            base = bert("bert-base-uncased");
-        catch ME
-            error('RegClassifier:BERTNotAvailable', ...
-                'Failed to initialize BERT model: %s', ME.message);
-        end
+        [base, tok] = bert();
+    catch ME2
+        error('RegClassifier:BERTNotAvailable', ...
+            ['Failed to initialize BERT model and tokenizer.\n' ...
+             'BERT is included by default in MATLAB R2025b+.\n' ...
+             'For earlier versions, run: supportPackageInstaller\n\n' ...
+             'Errors:\n' ...
+             '  bert(Model="base"): %s\n' ...
+             '  bert(): %s'], ...
+            ME1.message, ME2.message);
     end
 end
 
