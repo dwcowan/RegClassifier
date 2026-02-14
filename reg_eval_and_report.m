@@ -135,11 +135,17 @@ for s = 1:mb:N
     e = min(N, s+mb-1);
     % R2025b: encode returns [tokenCodes, segments] as cell arrays, not struct
     [tokenCodes, ~] = encode(tok, textStr(s:e));
-    ids = cell2mat(tokenCodes');  % Convert to N x SeqLen matrix
-    mask = double(ids ~= tok.PaddingCode);  % Attention mask: 1 for real tokens, 0 for padding
-    if size(ids,2) > netFT.MaxSeqLength
-        ids = ids(:,1:netFT.MaxSeqLength); mask = mask(:,1:netFT.MaxSeqLength);
+    % Manually pad sequences to maxLen (R2025b encode doesn't auto-pad)
+    paddingCode = double(tok.PaddingCode);
+    numSeqs = numel(tokenCodes);
+    maxLen = netFT.MaxSeqLength;
+    ids = paddingCode * ones(numSeqs, maxLen);  % Pre-fill with padding
+    for i = 1:numSeqs
+        seq = double(tokenCodes{i});
+        len = min(numel(seq), maxLen);
+        ids(i, 1:len) = seq(1:len);
     end
+    mask = double(ids ~= paddingCode);  % Attention mask: 1 for real tokens, 0 for padding
     ids = dlarray(gpuArray(int32(ids)),'CB'); mask = dlarray(gpuArray(int32(mask)),'CB');
     out = predict(netFT.base, ids, mask);
     Z = localPooled(out);
