@@ -275,8 +275,8 @@ M = double(X ~= paddingCode);  % Attention mask: 1 for real tokens, 0 for paddin
 Xa = dlarray(gpuArray(single(permute(X(1:B,:), [3,2,1]))),'CTB');
 Xp = dlarray(gpuArray(single(permute(X(B+1:2*B,:), [3,2,1]))),'CTB');
 Xn = dlarray(gpuArray(single(permute(X(2*B+1:end,:), [3,2,1]))),'CTB');
-% Segment IDs (all zeros for single-segment input)
-Sa = dlarray(gpuArray(single(zeros(1, maxLen, B))),'CTB');
+% Segment IDs (all ones for single-segment input; MATLAB embedding uses 1-based indexing)
+Sa = dlarray(gpuArray(single(ones(1, maxLen, B))),'CTB');
 Sp = Sa; Sn = Sa;
 Ma = dlarray(gpuArray(single(permute(M(1:B,:), [3,2,1]))),'CTB');
 Mp = dlarray(gpuArray(single(permute(M(B+1:2*B,:), [3,2,1]))),'CTB');
@@ -316,9 +316,9 @@ X1 = dlarray(gpuArray(single(permute(X(1:B,:), [3,2,1]))),'CTB');
 M1 = dlarray(gpuArray(single(permute(M(1:B,:), [3,2,1]))),'CTB');
 X2 = dlarray(gpuArray(single(permute(X(B+1:end,:), [3,2,1]))),'CTB');
 M2 = dlarray(gpuArray(single(permute(M(B+1:end,:), [3,2,1]))),'CTB');
-% Segment IDs (all zeros for single-segment input)
-S1 = dlarray(gpuArray(single(zeros(1, maxLen, B))),'CTB');
-S2 = dlarray(gpuArray(single(zeros(1, maxLen, B2))),'CTB');
+% Segment IDs (all ones for single-segment input; MATLAB embedding uses 1-based indexing)
+S1 = dlarray(gpuArray(single(ones(1, maxLen, B))),'CTB');
+S2 = dlarray(gpuArray(single(ones(1, maxLen, B2))),'CTB');
 
 o1 = predict(base, X1, S1, M1); o2 = predict(base, X2, S2, M2);
 Z1 = pooled(o1); Z2 = pooled(o2);
@@ -394,7 +394,7 @@ end
 mask = double(ids ~= paddingCode);  % Attention mask
 % Reshape to 3D (1, maxLen, N) 'CTB' format for BERT sequenceInputLayer (C=1)
 ids = dlarray(gpuArray(single(permute(ids, [3,2,1]))),'CTB');
-segs = dlarray(gpuArray(single(zeros(1, maxLen, numSeqs))),'CTB');
+segs = dlarray(gpuArray(single(ones(1, maxLen, numSeqs))),'CTB');
 mask = dlarray(gpuArray(single(permute(mask, [3,2,1]))),'CTB');
 out = predict(base, ids, segs, mask);
 Z = pooled(out);
@@ -442,7 +442,7 @@ for s = 1:mb:N
     mask = double(ids ~= paddingCode);  % Attention mask: 1 for real tokens, 0 for padding
     % Reshape to 3D (1, maxLen, N) 'CTB' format for BERT sequenceInputLayer (C=1)
     ids = dlarray(gpuArray(single(permute(ids, [3,2,1]))),'CTB');
-    segs = dlarray(gpuArray(single(zeros(1, maxLen, numSeqs))),'CTB');
+    segs = dlarray(gpuArray(single(ones(1, maxLen, numSeqs))),'CTB');
     mask = dlarray(gpuArray(single(permute(mask, [3,2,1]))),'CTB');
     out = predict(base, ids, segs, mask);
     Z = pooled(out);
