@@ -80,12 +80,13 @@ mask = double(ids ~= paddingCode);  % Attention mask: 1 for real tokens, 0 for p
 
 % Mini-batch inference on GPU
 E = zeros(N, 768, 'single');  % bert-base hidden size
-segs = zeros(numSeqs, maxLen);  % Segment IDs (all zeros for single-segment)
 for s = 1:miniBatchSize:N
     e = min(N, s+miniBatchSize-1);
-    idsMB  = dlarray(gpuArray(single(ids(s:e, :))),'CB');
-    segsMB = dlarray(gpuArray(single(segs(s:e, :))),'CB');
-    maskMB = dlarray(gpuArray(single(mask(s:e, :))),'CB');
+    batchN = e - s + 1;
+    % Reshape to 3D (1, maxLen, batchN) 'CTB' format for BERT sequenceInputLayer (C=1)
+    idsMB  = dlarray(gpuArray(single(permute(ids(s:e, :), [3,2,1]))),'CTB');
+    segsMB = dlarray(gpuArray(single(zeros(1, maxLen, batchN))),'CTB');
+    maskMB = dlarray(gpuArray(single(permute(mask(s:e, :), [3,2,1]))),'CTB');
 
     % Forward through BERT; get pooled output
     out = predict(net, idsMB, segsMB, maskMB);
@@ -147,8 +148,9 @@ if isstruct(out) && isfield(out,'pooledOutput')
 elseif isstruct(out) && isfield(out,'sequenceOutput')
     seq = out.sequenceOutput;
     if ndims(seq)==3
-        Z = squeeze(seq(:,1,:));
-        Z = dlarray(Z','CB');
+        % seq is (hidden, seqLen, batch) 'CTB'; extract CLS token (position 1)
+        Z = squeeze(seq(:,1,:));  % (hidden, batch)
+        Z = dlarray(Z,'CB');
     else
         Z = dlarray(seq,'CB');
     end
