@@ -33,7 +33,7 @@ classdef TestFineTuneEval < fixtures.RegTestCase
 
             % Fine-tune encoder (minimal epochs for testing)
             netFT = reg.ft_train_encoder(chunksT, P, 'Epochs', 1, 'BatchSize', 16, ...
-                'MaxSeqLength', 128, 'UnfreezeTopLayers', 2);
+                'MaxSeqLength', 128, 'UnfreezeTopLayers', 2, 'Resume', false);
 
             tc.verifyTrue(isstruct(netFT) && isfield(netFT, 'base') && isfield(netFT, 'head'), ...
                 'Fine-tuned network should be a struct with base and head fields');
@@ -83,7 +83,7 @@ classdef TestFineTuneEval < fixtures.RegTestCase
 
             % Fine-tune encoder (minimal epochs for testing)
             netFT = reg.ft_train_encoder(chunksT, P, 'Epochs', 1, 'BatchSize', 16, ...
-                'MaxSeqLength', 128, 'UnfreezeTopLayers', 2);
+                'MaxSeqLength', 128, 'UnfreezeTopLayers', 2, 'Resume', false);
 
             % Get fine-tuned embeddings
             Eft = reg.ft_eval(netFT, chunksT.text, 'MaxSeqLength', 128, 'BatchSize', 16);

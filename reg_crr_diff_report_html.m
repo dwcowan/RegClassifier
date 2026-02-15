@@ -23,7 +23,12 @@ append(sec, Paragraph(sprintf('Added: %d  Removed: %d  Changed: %d  Same: %d', R
 append(r, sec);
 
 % Changed articles table with links
-ch = S(S.status=="CHANGED",:);
+% Guard: empty tables may have wrong column types (readtable infers double)
+if height(S) > 0
+    ch = S(S.status=="CHANGED",:);
+else
+    ch = table();
+end
 if ~isempty(ch)
     sec2 = Section('Changed Articles');
     tbl = BaseTable();
