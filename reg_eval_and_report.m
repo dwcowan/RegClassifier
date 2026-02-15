@@ -204,10 +204,11 @@ for s = 1:mb:N
         ids(i, 1:len) = seq(1:len);
     end
     mask = double(ids ~= paddingCode);  % Attention mask: 1 for real tokens, 0 for padding
-    % R2025b: BERT expects 3 inputs (tokenIDs, segmentIDs, mask)
-    seg = ones(numSeqs, maxLen);
-    ids = dlarray(gpuArray(single(ids)),'CB'); seg = dlarray(gpuArray(single(seg)),'CB'); mask = dlarray(gpuArray(single(mask)),'CB');
-    out = predict(netFT.base, ids, seg, mask);
+    % Reshape to 3D (1, maxLen, N) 'CTB' format for BERT sequenceInputLayer (C=1)
+    ids = dlarray(gpuArray(single(permute(ids, [3,2,1]))),'CTB');
+    segs = dlarray(gpuArray(single(ones(1, maxLen, numSeqs))),'CTB');
+    mask = dlarray(gpuArray(single(permute(mask, [3,2,1]))),'CTB');
+    out = predict(netFT.base, ids, segs, mask);
     Z = localPooled(out);
     Z = predict(netFT.head, Z);
     Z = gather(extractdata(Z))';
@@ -222,8 +223,9 @@ if isstruct(out) && isfield(out,'pooledOutput')
 elseif isstruct(out) && isfield(out,'sequenceOutput')
     seq = out.sequenceOutput;
     if ndims(seq)==3
-        Z = squeeze(seq(:,1,:));
-        Z = dlarray(Z','CB');
+        % seq is (hidden, seqLen, batch) 'CTB'; extract CLS token (position 1)
+        Z = squeeze(seq(:,1,:));  % (hidden, batch)
+        Z = dlarray(Z,'CB');
     else
         Z = dlarray(seq,'CB');
     end

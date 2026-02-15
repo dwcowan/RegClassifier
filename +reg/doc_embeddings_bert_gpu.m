@@ -80,17 +80,16 @@ mask = double(ids ~= paddingCode);  % Attention mask: 1 for real tokens, 0 for p
 
 % Mini-batch inference on GPU
 E = zeros(N, 768, 'single');  % bert-base hidden size
-dlX = [];
 for s = 1:miniBatchSize:N
     e = min(N, s+miniBatchSize-1);
-    idsMB  = gpuArray(int32(ids(s:e, :)));
-    % R2025b: BERT expects 3 inputs (tokenIDs, segmentIDs, mask).
-    % Segment IDs must be 1-indexed; use all 1s for single sentences.
-    segMB  = gpuArray(int32(ones(size(ids(s:e, :)))));
-    maskMB = gpuArray(int32(mask(s:e, :)));
+    batchN = e - s + 1;
+    % Reshape to 3D (1, maxLen, batchN) 'CTB' format for BERT sequenceInputLayer (C=1)
+    idsMB  = dlarray(gpuArray(single(permute(ids(s:e, :), [3,2,1]))),'CTB');
+    segsMB = dlarray(gpuArray(single(ones(1, maxLen, batchN))),'CTB');
+    maskMB = dlarray(gpuArray(single(permute(mask(s:e, :), [3,2,1]))),'CTB');
 
     % Forward through BERT; get pooled output
-    out = predict(net, idsMB, segMB, maskMB);
+    out = predict(net, idsMB, segsMB, maskMB);
     if useHead
         pooled = getPooled(out);
         pooled = predict(headFT, pooled);
@@ -137,7 +136,7 @@ end
 n = vecnorm(E,2,2); n(n==0)=1; E = E ./ n;
 
 % Ensure GPU operations complete
-if canUseGPU
+if gpuDeviceCount > 0
     wait(gpuDevice);
 end
 end
@@ -149,8 +148,9 @@ if isstruct(out) && isfield(out,'pooledOutput')
 elseif isstruct(out) && isfield(out,'sequenceOutput')
     seq = out.sequenceOutput;
     if ndims(seq)==3
-        Z = squeeze(seq(:,1,:));
-        Z = dlarray(Z','CB');
+        % seq is (hidden, seqLen, batch) 'CTB'; extract CLS token (position 1)
+        Z = squeeze(seq(:,1,:));  % (hidden, batch)
+        Z = dlarray(Z,'CB');
     else
         Z = dlarray(seq,'CB');
     end

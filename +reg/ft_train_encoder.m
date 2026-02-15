@@ -271,16 +271,16 @@ for i = 1:numSeqs
     X(i, 1:len) = seq(1:len);
 end
 M = double(X ~= paddingCode);  % Attention mask: 1 for real tokens, 0 for padding
-Xa = dlarray(gpuArray(single(X(1:B,:))),'CB');
-Xp = dlarray(gpuArray(single(X(B+1:2*B,:))),'CB');
-Xn = dlarray(gpuArray(single(X(2*B+1:end,:))),'CB');
-% R2025b: BERT expects 3 inputs (tokenIDs, segmentIDs, mask).
-% Segment IDs must be 1-indexed; use all 1s for single sentences.
-Sa = dlarray(gpuArray(ones(B, maxLen, 'single')),'CB');
+% Reshape to 3D (1, maxLen, B) 'CTB' format for BERT sequenceInputLayer (C=1)
+Xa = dlarray(gpuArray(single(permute(X(1:B,:), [3,2,1]))),'CTB');
+Xp = dlarray(gpuArray(single(permute(X(B+1:2*B,:), [3,2,1]))),'CTB');
+Xn = dlarray(gpuArray(single(permute(X(2*B+1:end,:), [3,2,1]))),'CTB');
+% Segment IDs (all ones for single-segment input; MATLAB embedding uses 1-based indexing)
+Sa = dlarray(gpuArray(single(ones(1, maxLen, B))),'CTB');
 Sp = Sa; Sn = Sa;
-Ma = dlarray(gpuArray(single(M(1:B,:))),'CB');
-Mp = dlarray(gpuArray(single(M(B+1:2*B,:))),'CB');
-Mn = dlarray(gpuArray(single(M(2*B+1:end,:))),'CB');
+Ma = dlarray(gpuArray(single(permute(M(1:B,:), [3,2,1]))),'CTB');
+Mp = dlarray(gpuArray(single(permute(M(B+1:2*B,:), [3,2,1]))),'CTB');
+Mn = dlarray(gpuArray(single(permute(M(2*B+1:end,:), [3,2,1]))),'CTB');
 
 oA = predict(base, Xa, Sa, Ma); oP = predict(base, Xp, Sp, Mp); oN = predict(base, Xn, Sn, Mn);
 ZA = pooled(oA); ZP = pooled(oP); ZN = pooled(oN);
@@ -310,11 +310,15 @@ for i = 1:numSeqs
     X(i, 1:len) = seq(1:len);
 end
 M = double(X ~= paddingCode);  % Attention mask: 1 for real tokens, 0 for padding
-X1 = dlarray(gpuArray(single(X(1:B,:))),'CB');  M1 = dlarray(gpuArray(single(M(1:B,:))),'CB');
-X2 = dlarray(gpuArray(single(X(B+1:end,:))),'CB'); M2 = dlarray(gpuArray(single(M(B+1:end,:))),'CB');
-% R2025b: BERT expects 3 inputs (tokenIDs, segmentIDs, mask)
-S1 = dlarray(gpuArray(ones(B, maxLen, 'single')),'CB');
-S2 = dlarray(gpuArray(ones(size(X,1)-B, maxLen, 'single')),'CB');
+B2 = size(X,1) - B;
+% Reshape to 3D (1, maxLen, B) 'CTB' format for BERT sequenceInputLayer (C=1)
+X1 = dlarray(gpuArray(single(permute(X(1:B,:), [3,2,1]))),'CTB');
+M1 = dlarray(gpuArray(single(permute(M(1:B,:), [3,2,1]))),'CTB');
+X2 = dlarray(gpuArray(single(permute(X(B+1:end,:), [3,2,1]))),'CTB');
+M2 = dlarray(gpuArray(single(permute(M(B+1:end,:), [3,2,1]))),'CTB');
+% Segment IDs (all ones for single-segment input; MATLAB embedding uses 1-based indexing)
+S1 = dlarray(gpuArray(single(ones(1, maxLen, B))),'CTB');
+S2 = dlarray(gpuArray(single(ones(1, maxLen, B2))),'CTB');
 
 o1 = predict(base, X1, S1, M1); o2 = predict(base, X2, S2, M2);
 Z1 = pooled(o1); Z2 = pooled(o2);
@@ -353,8 +357,9 @@ if isstruct(out) && isfield(out,'pooledOutput')
 elseif isstruct(out) && isfield(out,'sequenceOutput')
     seq = out.sequenceOutput;
     if ndims(seq)==3
-        Z = squeeze(seq(:,1,:));
-        Z = dlarray(Z','CB');
+        % seq is (hidden, seqLen, batch) 'CTB'; extract CLS token (position 1)
+        Z = squeeze(seq(:,1,:));  % (hidden, batch)
+        Z = dlarray(Z,'CB');
     else
         Z = dlarray(seq,'CB');
     end
@@ -387,10 +392,11 @@ for i = 1:numSeqs
     ids(i, 1:len) = seq(1:len);
 end
 mask = double(ids ~= paddingCode);  % Attention mask
-% R2025b: BERT expects 3 inputs (tokenIDs, segmentIDs, mask)
-seg = ones(numSeqs, maxLen);
-ids = dlarray(gpuArray(single(ids)),'CB'); seg = dlarray(gpuArray(single(seg)),'CB'); mask = dlarray(gpuArray(single(mask)),'CB');
-out = predict(base, ids, seg, mask);
+% Reshape to 3D (1, maxLen, N) 'CTB' format for BERT sequenceInputLayer (C=1)
+ids = dlarray(gpuArray(single(permute(ids, [3,2,1]))),'CTB');
+segs = dlarray(gpuArray(single(ones(1, maxLen, numSeqs))),'CTB');
+mask = dlarray(gpuArray(single(permute(mask, [3,2,1]))),'CTB');
+out = predict(base, ids, segs, mask);
 Z = pooled(out);
 Z = forward(head, Z);
 Z = gather(extractdata(Z))';
@@ -434,10 +440,11 @@ for s = 1:mb:N
         ids(i, 1:len) = seq(1:len);
     end
     mask = double(ids ~= paddingCode);  % Attention mask: 1 for real tokens, 0 for padding
-    % R2025b: BERT expects 3 inputs (tokenIDs, segmentIDs, mask)
-    seg = ones(numSeqs, maxLen);
-    ids = dlarray(gpuArray(single(ids)),'CB'); seg = dlarray(gpuArray(single(seg)),'CB'); mask = dlarray(gpuArray(single(mask)),'CB');
-    out = predict(base, ids, seg, mask);
+    % Reshape to 3D (1, maxLen, N) 'CTB' format for BERT sequenceInputLayer (C=1)
+    ids = dlarray(gpuArray(single(permute(ids, [3,2,1]))),'CTB');
+    segs = dlarray(gpuArray(single(ones(1, maxLen, numSeqs))),'CTB');
+    mask = dlarray(gpuArray(single(permute(mask, [3,2,1]))),'CTB');
+    out = predict(base, ids, segs, mask);
     Z = pooled(out);
     Z = predict(head, Z);
     Z = gather(extractdata(Z))';
