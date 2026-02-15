@@ -119,17 +119,20 @@ end
 
 function Z = localPooled(out)
 if isstruct(out) && isfield(out,'pooledOutput')
-    Z = dlarray(out.pooledOutput,'CB');
+    p = out.pooledOutput;
 elseif isstruct(out) && isfield(out,'sequenceOutput')
-    seq = out.sequenceOutput;
-    if ndims(seq)==3
-        % seq is (hidden, seqLen, batch) 'CTB'; extract CLS token (position 1)
-        Z = squeeze(seq(:,1,:));  % (hidden, batch)
-        Z = dlarray(Z,'CB');
-    else
-        Z = dlarray(seq,'CB');
-    end
+    p = out.sequenceOutput;
 else
-    Z = dlarray(out,'CB');
+    p = out;
 end
+% Handle 3D (CTB) arrays: extract CLS token at position 1
+if ndims(p) >= 3
+    p = p(:,1,:);
+    p = reshape(p, size(p,1), []);
+end
+% Strip existing format labels before re-labeling as CB
+if isa(p, 'dlarray')
+    p = stripdims(p);
+end
+Z = dlarray(p, 'CB');
 end

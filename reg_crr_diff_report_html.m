@@ -60,6 +60,5 @@ if isfile(patchFile)
 end
 
 close(r);
-fprintf('Wrote HTML diff report: %s
-', fullfile(O,'crr_diff_report.html'));
+fprintf('Wrote HTML diff report: %s\n', fullfile(O,'crr_diff_report.html'));
 end

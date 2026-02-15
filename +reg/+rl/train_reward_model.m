@@ -219,7 +219,9 @@ if val_fraction > 0
     if strcmp(model_type, 'regression')
         % Regression metrics
         y_pred = minibatchpredict(reward_model, X_val);
-        y_pred = extractdata(y_pred);
+        if isa(y_pred, 'dlarray')
+            y_pred = extractdata(y_pred);
+        end
 
         mse = mean((y_pred - y_val).^2);
         mae = mean(abs(y_pred - y_val));
