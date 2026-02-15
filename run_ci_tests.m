@@ -77,7 +77,7 @@ function status = run_ci_tests()
     end
 
     % Display incomplete tests
-    numIncomplete = sum([results.Incomplete]));
+    numIncomplete = sum([results.Incomplete]);
     if numIncomplete > 0
         fprintf('\nIncomplete Tests:\n');
         for i = 1:numel(results)

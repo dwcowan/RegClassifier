@@ -70,26 +70,22 @@ fprintf('Feature matrix: %d x %d\n\n', size(X, 1), size(X, 2));
 % Train classifier chains
 fprintf('Training classifier chains...\n');
 tic;
-models = reg.train_multilabel_chains(X, Ytrue, 0, ...
-    'FoldIndices', fold_indices, 'NumEnsemble', 5, 'Verbose', true);
+models = reg.train_multilabel_chains(X, Ytrue, 0, 'Verbose', true);
 train_time = toc;
 
 fprintf('\nTraining complete in %.1f seconds\n\n', train_time);
 
-% Predict with uncertainty
-fprintf('Predicting with ensemble...\n');
-[Y_pred, scores, info] = reg.predict_multilabel_chains(models, X, ...
-    'ReturnUncertainty', true);
+% Predict with chains
+fprintf('Predicting with chains...\n');
+[scores, thresholds, pred] = reg.predict_multilabel_chains(models, X, Ytrue);
 
 fprintf('\nPrediction Statistics:\n');
-fprintf('  Mean uncertainty:       %.3f\n', mean(info.prediction_std(:)));
-fprintf('  Mean chain agreement:   %.3f\n', mean(info.agreement(:)));
-fprintf('  High-confidence preds:  %d/%d (%.1f%%)\n', ...
-    nnz(info.agreement > 0.8), numel(info.agreement), ...
-    100 * nnz(info.agreement > 0.8) / numel(info.agreement));
+fprintf('  Mean score:             %.3f\n', mean(scores(:)));
+fprintf('  Predicted positives:    %d/%d (%.1f%%)\n', ...
+    nnz(pred), numel(pred), 100 * nnz(pred) / numel(pred));
 
 % Compute accuracy
-accuracy = mean(Y_pred(:) == Ytrue(:));
+accuracy = mean(pred(:) == Ytrue(:));
 fprintf('  Overall accuracy:       %.3f\n', accuracy);
 
 fprintf('\n✓ Classifier chains COMPLETE\n\n');

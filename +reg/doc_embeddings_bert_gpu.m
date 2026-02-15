@@ -48,12 +48,18 @@ try
     headFT = S.netFT.head; useHead = true;
     maxLenFT = S.netFT.MaxSeqLength;
 catch ME
-    % Fine-tuned model not available, use base BERT
+    % Fine-tuned model not available, use base BERT (R2025b API)
     try
-        net = bert("base-uncased");
+        [net, ~] = bert(Model="base");
         useHead = false; maxLenFT = [];
     catch ME2
-        error("BERT:ModelMissing", "BERT model not found. Install 'Text Analytics Toolbox Model for BERT English'. Original error: %s", ME2.message);
+        try
+            [net, ~] = bert();
+            useHead = false; maxLenFT = [];
+        catch ME3
+            error('BERT:ModelMissing', ...
+                'BERT model not found. Install ''Text Analytics Toolbox Model for BERT English''. Original error: %s', ME3.message);
+        end
     end
 end  % returns a dlnetwork
 

@@ -18,7 +18,7 @@ classdef TestFineTuneResume < fixtures.RegTestCase
 
             % Check if BERT is available
             try
-                [~, ~] = bert("Model", "base");  % Load BERT model and tokenizer
+                [~, ~] = bert(Model="base");  % Load BERT model and tokenizer
             catch ME
                 if contains(ME.identifier, 'BERTNotAvailable') || ...
                    contains(ME.identifier, 'specialTokensNotInVocab') || ...
