@@ -282,7 +282,7 @@ Ma = dlarray(gpuArray(single(permute(M(1:B,:), [3,2,1]))),'CTB');
 Mp = dlarray(gpuArray(single(permute(M(B+1:2*B,:), [3,2,1]))),'CTB');
 Mn = dlarray(gpuArray(single(permute(M(2*B+1:end,:), [3,2,1]))),'CTB');
 
-oA = predict(base, Xa, Sa, Ma); oP = predict(base, Xp, Sp, Mp); oN = predict(base, Xn, Sn, Mn);
+oA = reg.bert_predict(base, Xa, Sa, Ma); oP = reg.bert_predict(base, Xp, Sp, Mp); oN = reg.bert_predict(base, Xn, Sn, Mn);
 ZA = pooled(oA); ZP = pooled(oP); ZN = pooled(oN);
 ZA = forward(head, ZA); ZP = forward(head, ZP); ZN = forward(head, ZN);
 ZA = l2norm(ZA); ZP = l2norm(ZP); ZN = l2norm(ZN);
@@ -320,7 +320,7 @@ M2 = dlarray(gpuArray(single(permute(M(B+1:end,:), [3,2,1]))),'CTB');
 S1 = dlarray(gpuArray(single(ones(1, maxLen, B))),'CTB');
 S2 = dlarray(gpuArray(single(ones(1, maxLen, B2))),'CTB');
 
-o1 = predict(base, X1, S1, M1); o2 = predict(base, X2, S2, M2);
+o1 = reg.bert_predict(base, X1, S1, M1); o2 = reg.bert_predict(base, X2, S2, M2);
 Z1 = pooled(o1); Z2 = pooled(o2);
 Z1 = forward(head, Z1); Z2 = forward(head, Z2);
 Z1 = l2norm(Z1); Z2 = l2norm(Z2);
@@ -396,7 +396,7 @@ mask = double(ids ~= paddingCode);  % Attention mask
 ids = dlarray(gpuArray(single(permute(ids, [3,2,1]))),'CTB');
 segs = dlarray(gpuArray(single(ones(1, maxLen, numSeqs))),'CTB');
 mask = dlarray(gpuArray(single(permute(mask, [3,2,1]))),'CTB');
-out = predict(base, ids, segs, mask);
+out = reg.bert_predict(base, ids, segs, mask);
 Z = pooled(out);
 Z = forward(head, Z);
 Z = gather(extractdata(Z))';
@@ -444,7 +444,7 @@ for s = 1:mb:N
     ids = dlarray(gpuArray(single(permute(ids, [3,2,1]))),'CTB');
     segs = dlarray(gpuArray(single(ones(1, maxLen, numSeqs))),'CTB');
     mask = dlarray(gpuArray(single(permute(mask, [3,2,1]))),'CTB');
-    out = predict(base, ids, segs, mask);
+    out = reg.bert_predict(base, ids, segs, mask);
     Z = pooled(out);
     Z = predict(head, Z);
     Z = gather(extractdata(Z))';

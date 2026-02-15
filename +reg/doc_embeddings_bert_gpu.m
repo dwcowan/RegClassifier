@@ -89,7 +89,7 @@ for s = 1:miniBatchSize:N
     maskMB = dlarray(gpuArray(single(permute(mask(s:e, :), [3,2,1]))),'CTB');
 
     % Forward through BERT; get pooled output
-    out = predict(net, idsMB, segsMB, maskMB);
+    out = reg.bert_predict(net, idsMB, segsMB, maskMB);
     if useHead
         pooled = getPooled(out);
         pooled = predict(headFT, pooled);
