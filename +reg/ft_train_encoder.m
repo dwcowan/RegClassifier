@@ -274,11 +274,15 @@ M = double(X ~= paddingCode);  % Attention mask: 1 for real tokens, 0 for paddin
 Xa = dlarray(gpuArray(single(X(1:B,:))),'CB');
 Xp = dlarray(gpuArray(single(X(B+1:2*B,:))),'CB');
 Xn = dlarray(gpuArray(single(X(2*B+1:end,:))),'CB');
+% R2025b: BERT expects 3 inputs (tokenIDs, segmentIDs, mask).
+% Segment IDs must be 1-indexed; use all 1s for single sentences.
+Sa = dlarray(gpuArray(ones(B, maxLen, 'single')),'CB');
+Sp = Sa; Sn = Sa;
 Ma = dlarray(gpuArray(single(M(1:B,:))),'CB');
 Mp = dlarray(gpuArray(single(M(B+1:2*B,:))),'CB');
 Mn = dlarray(gpuArray(single(M(2*B+1:end,:))),'CB');
 
-oA = predict(base, Xa, Ma); oP = predict(base, Xp, Mp); oN = predict(base, Xn, Mn);
+oA = predict(base, Xa, Sa, Ma); oP = predict(base, Xp, Sp, Mp); oN = predict(base, Xn, Sn, Mn);
 ZA = pooled(oA); ZP = pooled(oP); ZN = pooled(oN);
 ZA = forward(head, ZA); ZP = forward(head, ZP); ZN = forward(head, ZN);
 ZA = l2norm(ZA); ZP = l2norm(ZP); ZN = l2norm(ZN);
@@ -308,8 +312,11 @@ end
 M = double(X ~= paddingCode);  % Attention mask: 1 for real tokens, 0 for padding
 X1 = dlarray(gpuArray(single(X(1:B,:))),'CB');  M1 = dlarray(gpuArray(single(M(1:B,:))),'CB');
 X2 = dlarray(gpuArray(single(X(B+1:end,:))),'CB'); M2 = dlarray(gpuArray(single(M(B+1:end,:))),'CB');
+% R2025b: BERT expects 3 inputs (tokenIDs, segmentIDs, mask)
+S1 = dlarray(gpuArray(ones(B, maxLen, 'single')),'CB');
+S2 = dlarray(gpuArray(ones(size(X,1)-B, maxLen, 'single')),'CB');
 
-o1 = predict(base, X1, M1); o2 = predict(base, X2, M2);
+o1 = predict(base, X1, S1, M1); o2 = predict(base, X2, S2, M2);
 Z1 = pooled(o1); Z2 = pooled(o2);
 Z1 = forward(head, Z1); Z2 = forward(head, Z2);
 Z1 = l2norm(Z1); Z2 = l2norm(Z2);
@@ -380,8 +387,10 @@ for i = 1:numSeqs
     ids(i, 1:len) = seq(1:len);
 end
 mask = double(ids ~= paddingCode);  % Attention mask
-ids = dlarray(gpuArray(single(ids)),'CB'); mask = dlarray(gpuArray(single(mask)),'CB');
-out = predict(base, ids, mask);
+% R2025b: BERT expects 3 inputs (tokenIDs, segmentIDs, mask)
+seg = ones(numSeqs, maxLen);
+ids = dlarray(gpuArray(single(ids)),'CB'); seg = dlarray(gpuArray(single(seg)),'CB'); mask = dlarray(gpuArray(single(mask)),'CB');
+out = predict(base, ids, seg, mask);
 Z = pooled(out);
 Z = forward(head, Z);
 Z = gather(extractdata(Z))';
@@ -425,8 +434,10 @@ for s = 1:mb:N
         ids(i, 1:len) = seq(1:len);
     end
     mask = double(ids ~= paddingCode);  % Attention mask: 1 for real tokens, 0 for padding
-    ids = dlarray(gpuArray(single(ids)),'CB'); mask = dlarray(gpuArray(single(mask)),'CB');
-    out = predict(base, ids, mask);
+    % R2025b: BERT expects 3 inputs (tokenIDs, segmentIDs, mask)
+    seg = ones(numSeqs, maxLen);
+    ids = dlarray(gpuArray(single(ids)),'CB'); seg = dlarray(gpuArray(single(seg)),'CB'); mask = dlarray(gpuArray(single(mask)),'CB');
+    out = predict(base, ids, seg, mask);
     Z = pooled(out);
     Z = predict(head, Z);
     Z = gather(extractdata(Z))';

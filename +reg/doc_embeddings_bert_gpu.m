@@ -84,10 +84,13 @@ dlX = [];
 for s = 1:miniBatchSize:N
     e = min(N, s+miniBatchSize-1);
     idsMB  = gpuArray(int32(ids(s:e, :)));
+    % R2025b: BERT expects 3 inputs (tokenIDs, segmentIDs, mask).
+    % Segment IDs must be 1-indexed; use all 1s for single sentences.
+    segMB  = gpuArray(int32(ones(size(ids(s:e, :)))));
     maskMB = gpuArray(int32(mask(s:e, :)));
 
     % Forward through BERT; get pooled output
-    out = predict(net, idsMB, maskMB);
+    out = predict(net, idsMB, segMB, maskMB);
     if useHead
         pooled = getPooled(out);
         pooled = predict(headFT, pooled);

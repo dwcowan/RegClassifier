@@ -58,8 +58,10 @@ for s = 1:mb:N
         ids(i, 1:len) = seq(1:len);
     end
     mask = double(ids ~= paddingCode);  % Attention mask: 1 for real tokens, 0 for padding
-    ids = dlarray(gpuArray(int32(ids)),'CB'); mask = dlarray(gpuArray(int32(mask)),'CB');
-    out = predict(netFT.base, ids, mask);
+    % R2025b: BERT expects 3 inputs (tokenIDs, segmentIDs, mask)
+    seg = ones(numSeqs, maxLen);
+    ids = dlarray(gpuArray(int32(ids)),'CB'); seg = dlarray(gpuArray(int32(seg)),'CB'); mask = dlarray(gpuArray(int32(mask)),'CB');
+    out = predict(netFT.base, ids, seg, mask);
     Z = localPooled(out);
     Z = predict(netFT.head, Z);
     Z = gather(extractdata(Z))';
