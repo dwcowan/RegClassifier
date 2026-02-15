@@ -85,7 +85,7 @@ for s = 1:miniBatchSize:N
     batchN = e - s + 1;
     % Reshape to 3D (1, maxLen, batchN) 'CTB' format for BERT sequenceInputLayer (C=1)
     idsMB  = dlarray(gpuArray(single(permute(ids(s:e, :), [3,2,1]))),'CTB');
-    segsMB = dlarray(gpuArray(single(zeros(1, maxLen, batchN))),'CTB');
+    segsMB = dlarray(gpuArray(single(ones(1, maxLen, batchN))),'CTB');
     maskMB = dlarray(gpuArray(single(permute(mask(s:e, :), [3,2,1]))),'CTB');
 
     % Forward through BERT; get pooled output

@@ -95,7 +95,7 @@ for s = 1:mb:N
     mask = double(ids ~= paddingCode);  % Attention mask: 1 for real tokens, 0 for padding
     % Reshape to 3D (1, maxLen, N) 'CTB' format for BERT sequenceInputLayer (C=1)
     ids = dlarray(gpuArray(single(permute(ids, [3,2,1]))),'CTB');
-    segs = dlarray(gpuArray(single(zeros(1, maxLen, numSeqs))),'CTB');
+    segs = dlarray(gpuArray(single(ones(1, maxLen, numSeqs))),'CTB');
     mask = dlarray(gpuArray(single(permute(mask, [3,2,1]))),'CTB');
     out = predict(netFT.base, ids, segs, mask);
     Z = localPooled(out);
