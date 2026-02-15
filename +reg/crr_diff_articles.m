@@ -61,18 +61,18 @@ try
 
         if inA && ~inB
             removed = removed + 1;
-            fprintf(fidCSV,"%s,REMOVED,\"%s\",\"\",%s,%s\n", key, titleA, urlA, "");
+            fprintf(fidCSV,'%s,REMOVED,"%s","",%s,%s\n', key, titleA, urlA, '');
         elseif ~inA && inB
             added = added + 1;
-            fprintf(fidCSV,"%s,ADDED,\",\"%s\",%s,%s\n", key, titleB, "", urlB);
+            fprintf(fidCSV,'%s,ADDED,"","%s",%s,%s\n', key, titleB, '', urlB);
         else
             la = splitlines(tA); lb = splitlines(tB);
             if isequal(la, lb)
                 same = same + 1;
-                fprintf(fidCSV,"%s,SAME,\"%s\",\"%s\",%s,%s\n", key, titleA, titleB, urlA, urlB);
+                fprintf(fidCSV,'%s,SAME,"%s","%s",%s,%s\n', key, titleA, titleB, urlA, urlB);
             else
                 changed = changed + 1;
-                fprintf(fidCSV,"%s,CHANGED,\"%s\",\"%s\",%s,%s\n", key, titleA, titleB, urlA, urlB);
+                fprintf(fidCSV,'%s,CHANGED,"%s","%s",%s,%s\n', key, titleA, titleB, urlA, urlB);
                 fprintf(fidPatch, "=== Article %s ===\n%s\n-> %s\n", key, urlA, urlB);
                 maxL = max(numel(la), numel(lb));
                 cnt = 0;

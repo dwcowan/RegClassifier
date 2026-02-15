@@ -150,12 +150,27 @@ elseif isstruct(out) && isfield(out,'sequenceOutput')
 else
     p = out;
 end
-% Handle 3D (CTB) arrays: extract CLS token at position 1
+% For 3D+ outputs, extract CLS token and flatten to (hidden, batch)
 if ndims(p) >= 3
-    p = p(:,1,:);
-    p = reshape(p, size(p,1), []);
+    seqDim = 2; chanDim = 1; batchDim = 3;  % defaults for CTB
+    if isa(p, 'dlarray')
+        fmt = dims(p);
+        if strlength(fmt) >= ndims(p)
+            fc = char(fmt);
+            t = find(fc == 'T' | fc == 'S');
+            c = find(fc == 'C');
+            b = find(fc == 'B');
+            if ~isempty(t), seqDim = t(1); end
+            if ~isempty(c), chanDim = c(1); end
+            if ~isempty(b), batchDim = b(1); end
+        end
+    end
+    idx = repmat({':'}, 1, ndims(p));
+    idx{seqDim} = 1;
+    p = p(idx{:});
+    p = permute(p, [chanDim, batchDim, seqDim]);
+    p = reshape(p, size(p,1), size(p,2));
 end
-% Strip existing format labels before re-labeling as CB
 if isa(p, 'dlarray')
     p = stripdims(p);
 end
