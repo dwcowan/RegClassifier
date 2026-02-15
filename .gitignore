@@ -1,0 +1,6 @@
+
+# EUR-Lex data
+data/eurlex/repo/
+data/eurlex/*.jsonl
+data/eurlex/*.jsonl.gz
+data/eurovoc_banking_mapping.json

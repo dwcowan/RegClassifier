@@ -1,0 +1,71 @@
+[
+  {
+    "celex_id": "32013R0575_IRB",
+    "title": "Regulation (EU) No 575/2013 - Internal Ratings Based Approach",
+    "text": "Article 165: Permission to use the IRB Approach\n\nInstitutions shall seek prior permission from competent authorities to use the IRB Approach for calculating own funds requirements for credit risk. The foundation IRB (F-IRB) approach requires institutions to calculate the probability of default (PD) themselves, while relying on supervisory estimates for loss given default (LGD) and exposure at default (EAD). \n\nThe advanced IRB (A-IRB) approach permits institutions to use own estimates of PD, LGD, EAD and maturity (M). Institutions using the IRB Approach must have in place a credit risk rating system covering exposures to corporates, institutions, central governments and central banks. \n\nThe rating system must include a credit rating scale with separate rating grades for performing and non-performing exposures. Institutions must perform regular back-testing and model validation to ensure the accuracy of their internal models. The credit conversion factor (CCF) for undrawn commitments must be estimated based on historical data. \n\nFor specialized lending exposures, institutions may use the supervisory slotting approach as an alternative to the IRB framework. This requires assigning exposures to supervisory categories based on underwriting and other objective criteria.",
+    "labels": [
+      "c_896e199b",
+      "c_dcf3f7c0",
+      "100200",
+      "2149"
+    ]
+  },
+  {
+    "celex_id": "32015R0061_LCR",
+    "title": "Delegated Regulation (EU) 2015/61 - Liquidity Coverage Requirement",
+    "text": "Article 412: Liquidity Coverage Ratio (LCR)\n\nInstitutions shall maintain liquid assets in the amount of the liquidity coverage requirement equal to total net liquidity outflows over a 30-day stress period. The liquidity coverage ratio shall be calculated as high quality liquid assets (HQLA) divided by total net cash outflows.\n\nHQLA are divided into Level 1 assets (including cash, central bank reserves, and certain government bonds), Level 2A assets (including high quality covered bonds and corporate debt securities), and Level 2B assets (including lower rated corporate bonds and equities). Level 1 assets are subject to no haircut, while Level 2A and 2B assets are subject to 15% and 50% haircuts respectively.\n\nInstitutions must ensure that their liquidity buffer consists of unencumbered assets that can be converted into cash within 30 days with no or minimal loss of value. The calculation includes stress outflows from operational deposits, wholesale funding, and other contractual outflows. Institutions must report their LCR using template C 73.00 of Implementing Regulation (EU) No 680/2014.\n\nCovered bonds that are ECB-eligible and meet certain criteria may be included as Level 1 assets, subject to an overall cap of 70% of the total HQLA.",
+    "labels": [
+      "178",
+      "1676",
+      "c_3e6af2e7",
+      "1452"
+    ]
+  },
+  {
+    "celex_id": "32015D0849_AML",
+    "title": "Directive (EU) 2015/849 - Anti-Money Laundering",
+    "text": "Article 13: Customer Due Diligence (CDD)\n\nCredit and financial institutions shall apply customer due diligence (CDD) measures when establishing a business relationship, carrying out occasional transactions above EUR 15,000, or when there is suspicion of money laundering or terrorist financing.\n\nCDD measures include identifying and verifying the customer's identity, identifying the beneficial ownership, understanding the purpose and nature of the business relationship, and conducting ongoing monitoring. Enhanced due diligence (EDD) shall be applied for politically exposed persons (PEPs), correspondent banking relationships, and transactions with high-risk third countries.\n\nInstitutions must implement a risk-based approach to AML/KYC, with procedures for sanctions screening, suspicious transaction reporting (STR) to the Financial Intelligence Unit (FIU), and record retention for at least five years. Wire transfer regulations require that transfers include complete information on the payer and payee.\n\nOngoing monitoring involves scrutiny of transactions to ensure consistency with the institution's knowledge of the customer, their business and risk profile, and where necessary, the source of funds. Regular reviews of customer files and information must be conducted, particularly for higher risk categories.",
+    "labels": [
+      "5465",
+      "3870",
+      "3483",
+      "c_8f89faac"
+    ]
+  },
+  {
+    "celex_id": "32017R2402_SEC",
+    "title": "Regulation (EU) 2017/2402 - Securitisation",
+    "text": "Article 242: Securitisation Framework\n\nFor the purposes of calculating own funds requirements, institutions shall distinguish between traditional securitisation, synthetic securitisation, and resecuritisation positions. Institutions may use the SEC-IRBA, SEC-ERBA, or SEC-SA approaches depending on their permission and the nature of the position.\n\nSecuritisations qualifying as simple, transparent and standardised (STS) benefit from more favorable capital treatment. The STS criteria include true sale structures, homogeneous and granular pools, and no re-securitisation. An STS securitisation must be backed by a pool of exposures that does not include transferable securities.\n\nFor significant risk transfer (SRT) to be recognized, the originator must demonstrate that credit risk has been transferred to third parties through senior and mezzanine tranches. Residential mortgage-backed securities (RMBS) and asset-backed commercial paper (ABCP) conduits are common securitisation structures subject to these rules.\n\nInstitutions using the internal assessment approach (IAA) for ABCP programs must have internal methodologies to assess the credit quality of securitisation positions. The capital requirement (KIRB) for securitisation exposures must be calculated according to the hierarchy of approaches specified in this regulation.",
+    "labels": [
+      "1459",
+      "100200",
+      "1804",
+      "c_834b57c4"
+    ]
+  },
+  {
+    "celex_id": "32013R0575_LEV",
+    "title": "Regulation (EU) No 575/2013 - Leverage Ratio",
+    "text": "Article 429: Leverage Ratio\n\nInstitutions shall calculate their leverage ratio as their Tier 1 capital divided by their total exposure measure. The leverage ratio shall be reported to competent authorities using template C 47.00. The total exposure measure includes on-balance-sheet exposures, off-balance-sheet items, and derivative exposures.\n\nFor derivatives, the exposure measure is calculated as the sum of replacement cost (mark-to-market value) and potential future exposure (PFE) using the standardized approach for counterparty credit risk or the original exposure method. For securities financing transactions (SFT) including repos and securities lending, the exposure is generally the gross amount of assets less specific haircuts.\n\nOff-balance-sheet items are converted to credit exposure equivalents using credit conversion factors (CCF) ranging from 0% to 100% depending on the type of commitment. Unconditionally cancellable commitments receive a 10% CCF, while trade finance instruments and guarantees receive higher conversion factors.\n\nThe Basel III framework established a minimum leverage ratio of 3% for all institutions, with an enhanced requirement for global systemically important banks (G-SIBs). The leverage ratio serves as a non-risk based backstop to the risk-weighted capital requirements and helps limit excessive on and off-balance-sheet leverage.",
+    "labels": [
+      "3942",
+      "c_3e6af2e7",
+      "100200",
+      "2149"
+    ]
+  },
+  {
+    "celex_id": "32019R0876_MIXED",
+    "title": "Regulation (EU) 2019/876 - Banking Package (Mixed Topics)",
+    "text": "Article 1: Risk Management and Capital Adequacy\n\nThis regulation amends Regulation (EU) No 575/2013 concerning prudential requirements for credit institutions and investment firms. Institutions must maintain adequate capital buffers, including the capital conservation buffer and countercyclical buffer, to absorb losses during stress periods.\n\nFor market risk, institutions may use the internal models approach (IMA) or the standardized approach (SA). The internal models must be subject to rigorous back-testing and stress testing. Liquidity risk management requires institutions to maintain the liquidity coverage ratio (LCR) above 100% and monitor the net stable funding ratio (NSFR).\n\nLarge exposures to single counterparties or groups of connected clients are subject to limits of 25% of Tier 1 capital. For exposures to financial institutions, additional restrictions may apply. Institutions must also comply with the minimum requirement for own funds and eligible liabilities (MREL) to ensure adequate loss absorption and recapitalization capacity.\n\nGovernance and risk management frameworks must be approved by the management body and subject to regular independent review. This includes credit risk, operational risk, market risk, and liquidity risk. The supervisor may impose additional capital requirements under Pillar 2 where risks are not adequately covered by Pillar 1.",
+    "labels": [
+      "c_dcf3f7c0",
+      "c_3e6af2e7",
+      "c_8f89faac",
+      "100200",
+      "2149",
+      "178",
+      "3942"
+    ]
+  }
+]

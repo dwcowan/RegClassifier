@@ -1,0 +1,60 @@
+{
+  "description": "Manually curated mapping of EUROVOC codes to RegClassifier labels",
+  "version": "1.0",
+  "mapping": {
+    "IRB": {
+      "description": "Internal Ratings Based - Credit risk modeling and capital requirements",
+      "eurovoc_codes": ["c_896e199b", "c_dcf3f7c0", "100200", "2149", "c_3e6af2e7"],
+      "eurovoc_terms": ["credit rating", "financial risk", "financial institutions and credit", "banking", "financial stability"],
+      "keywords": ["internal ratings", "credit risk", "pd", "lgd", "ead", "rating system", "model validation", "basel"]
+    },
+    "Liquidity_LCR": {
+      "description": "Liquidity Coverage Ratio and liquidity risk management",
+      "eurovoc_codes": ["178", "1676", "1677", "3220", "c_3e6af2e7", "1452"],
+      "eurovoc_terms": ["liquidity control", "money-market liquidity", "international liquidity", "private-sector liquidity", "financial stability", "financial institution"],
+      "keywords": ["lcr", "liquidity coverage ratio", "hqla", "liquid assets", "stress outflows", "liquidity buffer"]
+    },
+    "AML_KYC": {
+      "description": "Anti-Money Laundering and Know Your Customer compliance",
+      "eurovoc_codes": ["5465", "3870", "3483", "5124", "c_8f89faac"],
+      "eurovoc_terms": ["money laundering", "economic sanctions", "international sanctions", "military sanctions", "financial supervision"],
+      "keywords": ["aml", "anti-money laundering", "kyc", "know your customer", "cdd", "due diligence", "pep", "sanctions"]
+    },
+    "Securitisation": {
+      "description": "Securitisation, asset-backed securities, and structured finance",
+      "eurovoc_codes": ["1459", "100200", "1804", "c_834b57c4"],
+      "eurovoc_terms": ["financial instrument", "financial institutions and credit", "financial market", "shadow banking"],
+      "keywords": ["securitisation", "securitization", "srt", "sts", "tranche", "rmbs", "abcp", "asset backed"]
+    },
+    "LeverageRatio": {
+      "description": "Leverage Ratio and capital adequacy",
+      "eurovoc_codes": ["3942", "c_3e6af2e7", "100200", "2149"],
+      "eurovoc_terms": ["financial solvency", "financial stability", "financial institutions and credit", "banking"],
+      "keywords": ["leverage ratio", "tier 1 capital", "exposure measure", "basel iii", "capital ratio"]
+    }
+  },
+  "general_financial_codes": {
+    "description": "General financial regulation codes that apply to multiple labels",
+    "codes": [
+      {"code": "100148", "term": "finance"},
+      {"code": "100200", "term": "financial institutions and credit"},
+      {"code": "100202", "term": "financing and investment"},
+      {"code": "2149", "term": "banking"},
+      {"code": "1452", "term": "financial institution"},
+      {"code": "1804", "term": "financial market"},
+      {"code": "8469", "term": "financial services"},
+      {"code": "c_8f89faac", "term": "financial supervision"},
+      {"code": "c_3e6af2e7", "term": "financial stability"},
+      {"code": "3119", "term": "financial regulation"},
+      {"code": "560", "term": "financial legislation"},
+      {"code": "c_c565cff5", "term": "EU banking union"},
+      {"code": "4763", "term": "central bank"}
+    ]
+  },
+  "label_hierarchy": {
+    "description": "Recommended label assignment strategy for EUR-Lex documents",
+    "strategy": "multi-label",
+    "min_confidence": 0.5,
+    "notes": "A document can have multiple labels if it contains EUROVOC codes from different categories"
+  }
+}
