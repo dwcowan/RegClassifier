@@ -26,13 +26,14 @@ classdef TestReportArtifact < fixtures.RegTestCase
             fprintf(fid, '%s', jsonencode(pipeConfig));
             fclose(fid);
             tc.addTeardown(@() deleteIfExists('pipeline.json'));
+            tc.addTeardown(@() deleteIfExists(fullfile(pdfDir, "sim_text.pdf")));
+            tc.addTeardown(@() deleteIfExists('reg_eval_report.pdf'));
 
             run reg_pipeline
             run reg_eval_and_report
             f = dir("reg_eval_report.pdf");
             tc.verifyFalse(isempty(f), "Report not generated");
             tc.verifyGreaterThan(f.bytes, 10*1024, "Report seems too small to be valid");
-            delete(fullfile(pdfDir, "sim_text.pdf"));
         end
     end
 end

@@ -23,6 +23,15 @@ crit_tests = {
 results = runtests(crit_tests);
 disp(results);
 
+smokeOk = true;
+
+% Check test results for failures
+nFailed = sum([results.Failed]);
+if nFailed > 0
+    fprintf("SMOKE TEST: %d critical test(s) FAILED\n", nFailed);
+    smokeOk = false;
+end
+
 % 3) Pipeline on simulated data
 try
     run reg_pipeline
@@ -30,6 +39,12 @@ try
     fprintf("Pipeline & report completed.\n");
 catch ME
     warning("Pipeline run failed: %s", ME.message);
+    smokeOk = false;
 end
 
-fprintf("=== Smoke Test End ===\n");
+if smokeOk
+    fprintf("=== Smoke Test PASSED ===\n");
+else
+    fprintf("=== Smoke Test FAILED ===\n");
+    error('reg:smoke_test:Failed', 'Smoke test failed. See output above for details.');
+end
