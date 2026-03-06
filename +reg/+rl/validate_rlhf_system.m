@@ -237,20 +237,39 @@ end
 % =========================================================================
 
 function selected = select_with_rl(chunksT, features, Yweak, budget)
-%SELECT_WITH_RL Select chunks using RL agent (simplified).
+%SELECT_WITH_RL Select chunks using a trained RL agent.
+%   Trains the RL agent with reduced episodes for validation speed,
+%   then uses the trained agent to select chunks.
 
-% Note: Full RL training is expensive, so we use a simplified version
-% In practice, would call reg.rl.train_annotation_agent()
-
-% For validation, use uncertainty as proxy for RL
-% (RL should learn to do better than pure uncertainty)
 scores = predict_scores(features, Yweak);
+labels = arrayfun(@(j) sprintf('label_%d', j), 1:size(Yweak, 2), 'UniformOutput', false);
+labels = string(labels);
 
-% Uncertainty-based selection (RL should improve on this)
-[selected, ~] = reg.select_chunks_active_learning(...
-    chunksT, scores, Yweak, Yweak, budget, ...
-    fieldnames(table2struct(chunksT)), ...
-    'Strategy', 'uncertainty', 'Verbose', false);
+% Split weak labels for train/eval within RL training
+[rules_train, rules_eval] = reg.split_weak_rules_for_validation();
+Yweak_eval = reg.weak_rules_improved(chunksT.text, labels, ...
+    'RuleSet', rules_eval, 'Verbose', false);
+
+% Train RL agent with reduced episodes for validation
+try
+    [agent, ~] = reg.rl.train_annotation_agent(chunksT, features, scores, ...
+        Yweak, Yweak_eval, labels, ...
+        'BudgetTotal', budget, ...
+        'AgentType', 'DQN', ...
+        'MaxEpisodes', 50, ...  % Reduced from default 500 for validation
+        'Verbose', false, ...
+        'SaveAgent', false);
+
+    % Use trained agent to select chunks
+    env = reg.rl.AnnotationEnvironment(chunksT, features, scores, ...
+        Yweak, Yweak_eval, labels, 'BudgetTotal', budget);
+    selected = env.selectChunksWithAgent(agent, budget);
+catch ME
+    warning('RL training failed (%s). Falling back to adaptive strategy.', ME.message);
+    [selected, ~] = reg.select_chunks_active_learning(...
+        chunksT, scores, Yweak, Yweak, budget, labels, ...
+        'Strategy', 'adaptive', 'Verbose', false);
+end
 
 end
 
@@ -275,19 +294,24 @@ end
 
 function f1 = evaluate_selection(selected, features, Yweak_train, Yweak_eval, labels)
 %EVALUATE_SELECTION Evaluate selected chunks.
+%   Trains on the full dataset: uses eval-rule ground truth for selected
+%   chunks (simulating human annotation) and weak labels for the rest.
+%   This isolates the effect of correcting specific labels from dataset size.
 
-% Train on selected + weak labels
-X_sel = features(selected, :);
-Y_sel = Yweak_train(selected, :);
+N = size(features, 1);
+L = size(Yweak_train, 2);
 
-% Train simple models
-L = size(Y_sel, 2);
+% Build training labels: ground truth (eval rules) for selected, weak for rest
+Y_train = Yweak_train;
+Y_train(selected, :) = Yweak_eval(selected, :);
+
+% Train simple models on the full dataset
 Y_pred = zeros(size(Yweak_eval));
 
 for j = 1:L
-    y = Y_sel(:, j);
+    y = Y_train(:, j);
     if nnz(y) >= 3
-        mdl = fitclinear(X_sel, y, 'Learner', 'logistic', ...
+        mdl = fitclinear(features, y, 'Learner', 'logistic', ...
             'ObservationsIn', 'rows');
         [~, scores] = predict(mdl, features);
         Y_pred(:, j) = scores(:, 2) > 0.5;

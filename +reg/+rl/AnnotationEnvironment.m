@@ -238,8 +238,9 @@ classdef AnnotationEnvironment < rl.env.MATLABEnvironment
             % Compute uncertainty scores for all chunks
 
             % Combine multiple uncertainty metrics
-            % 1. Entropy
-            entropy = -sum(this.Scores .* log(this.Scores + 1e-10), 2);
+            % 1. Binary entropy for independent multi-label predictions
+            p = max(min(this.Scores, 1 - 1e-10), 1e-10);
+            entropy = -sum(p .* log(p) + (1 - p) .* log(1 - p), 2);
 
             % 2. Disagreement between train and eval rules
             disagreement = sum(xor(this.YweakTrain > 0.5, this.YweakEval > 0.5), 2);
@@ -257,38 +258,40 @@ classdef AnnotationEnvironment < rl.env.MATLABEnvironment
         end
 
         function f1 = evaluateWithAnnotations(this)
-            % Evaluate model performance with current annotations
+            % Evaluate model performance with current annotations.
+            % Retrains a classifier using ground truth for annotated chunks
+            % and weak labels for remaining chunks, so the reward reflects
+            % which specific chunks were selected (content-aware).
+
+            N = height(this.ChunksTable);
+            L = size(this.YweakTrain, 2);
 
             if isempty(this.AnnotatedIndices)
-                % No annotations yet: use eval rules
+                % No annotations yet: evaluate baseline predictions
                 predictions = this.Scores > 0.5;
-                ground_truth = this.GroundTruth;
-                f1 = this.computeF1(predictions, ground_truth);
+                f1 = this.computeF1(predictions, this.GroundTruth);
                 return;
-            else
-                % Simulate improvement from annotations
-                % In real system, would retrain model with ground truth
-
-                % For simulation: assume linear improvement with annotations
-                % Start with eval rule F1, improve toward 1.0
-
-                predictions = this.Scores > 0.5;
-                ground_truth = this.GroundTruth;
-
-                % Base F1 (without annotations)
-                base_f1 = this.computeF1(predictions, ground_truth);
-
-                % Simulate improvement (diminishing returns)
-                % Each annotation improves model slightly
-                improvement_rate = 0.3;  % Max 30% improvement possible
-                saturation = 1 - exp(-numel(this.AnnotatedIndices) / this.BudgetTotal);
-
-                f1 = base_f1 + improvement_rate * (1 - base_f1) * saturation;
-
-                % Add noise
-                f1 = f1 + 0.01 * randn();
-                f1 = max(0, min(1, f1));  % Clip to [0,1]
             end
+
+            % Build training labels: ground truth for annotated, weak for rest
+            Y_train = this.YweakTrain > 0.5;
+            Y_train(this.AnnotatedIndices, :) = this.GroundTruth(this.AnnotatedIndices, :);
+
+            % Retrain simple per-label classifiers and predict
+            predictions = false(N, L);
+            for j = 1:L
+                y = double(Y_train(:, j));
+                if nnz(y) >= 2 && nnz(y) < N
+                    mdl = fitclinear(this.Features, y, ...
+                        'Learner', 'logistic', 'ObservationsIn', 'rows');
+                    [~, sc] = predict(mdl, this.Features);
+                    predictions(:, j) = sc(:, end) > 0.5;
+                else
+                    predictions(:, j) = y > 0.5;
+                end
+            end
+
+            f1 = this.computeF1(predictions, this.GroundTruth);
         end
 
         function f1 = computeF1(this, predictions, ground_truth)

@@ -256,8 +256,10 @@ uncertainty = zeros(N, 1);
 
 switch metric
     case 'entropy'
-        % Shannon entropy across label predictions
-        uncertainty = -sum(scores .* log(scores + 1e-10), 2);
+        % Binary entropy for independent multi-label predictions
+        % Each label is an independent Bernoulli, not a categorical distribution
+        p = max(min(scores, 1 - 1e-10), 1e-10);  % Clamp to avoid log(0)
+        uncertainty = -sum(p .* log(p) + (1 - p) .* log(1 - p), 2);
 
     case 'disagreement'
         % Disagreement between train and eval rule sets
@@ -282,7 +284,8 @@ switch metric
 
     case 'combined'
         % Weighted combination of multiple metrics
-        entropy = -sum(scores .* log(scores + 1e-10), 2);
+        p = max(min(scores, 1 - 1e-10), 1e-10);
+        entropy = -sum(p .* log(p) + (1 - p) .* log(1 - p), 2);
         disagreement = sum(xor(Yweak_train > 0.5, Yweak_eval > 0.5), 2);
         [max_prob, ~] = max(scores, [], 2);
         least_conf = 1 - max_prob;

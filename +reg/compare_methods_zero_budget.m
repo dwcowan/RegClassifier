@@ -71,6 +71,12 @@ end
 % Get split rules for validation
 [rules_train, rules_eval] = reg.split_weak_rules_for_validation();
 
+%% Compute embeddings once (shared across all methods)
+if verbose
+    fprintf('Computing embeddings...\n');
+end
+E = compute_embeddings(chunksT.text, verbose);
+
 %% Test each method
 for m = 1:numel(methods_to_test)
     method_name = methods_to_test{m};
@@ -86,10 +92,6 @@ for m = 1:numel(methods_to_test)
             Yweak_train = generate_labels_simple(chunksT.text, labels, rules_train);
             [docsTok, vocab, Xtfidf] = reg.ta_features(chunksT.text);
 
-            % Compute embeddings (simplified - in practice use full pipeline)
-            E = randn(height(chunksT), 768);  % Placeholder
-            E = E ./ vecnorm(E, 2, 2);  % L2 normalize
-
             % Unnormalized concatenation
             features = [Xtfidf, E];
 
@@ -99,8 +101,6 @@ for m = 1:numel(methods_to_test)
                 'UseWordBoundaries', true, 'WeightBySpecificity', true, 'Verbose', false);
 
             [docsTok, vocab, Xtfidf] = reg.ta_features(chunksT.text);
-            E = randn(height(chunksT), 768);  % Placeholder
-            E = E ./ vecnorm(E, 2, 2);
 
             % Unnormalized concatenation
             features = [Xtfidf, E];
@@ -110,8 +110,6 @@ for m = 1:numel(methods_to_test)
             Yweak_train = generate_labels_simple(chunksT.text, labels, rules_train);
 
             [docsTok, vocab, Xtfidf] = reg.ta_features(chunksT.text);
-            E = randn(height(chunksT), 768);  % Placeholder
-            E = E ./ vecnorm(E, 2, 2);
 
             % Normalized concatenation
             features = reg.concat_multimodal_features(...
@@ -123,8 +121,6 @@ for m = 1:numel(methods_to_test)
                 'UseWordBoundaries', true, 'WeightBySpecificity', true, 'Verbose', false);
 
             [docsTok, vocab, Xtfidf] = reg.ta_features(chunksT.text);
-            E = randn(height(chunksT), 768);  % Placeholder
-            E = E ./ vecnorm(E, 2, 2);
 
             % Normalized concatenation
             features = reg.concat_multimodal_features(...
@@ -207,6 +203,35 @@ if verbose
     fprintf('validation without manual annotation.\n\n');
 end
 
+end
+
+function E = compute_embeddings(texts, verbose)
+%COMPUTE_EMBEDDINGS Compute real embeddings with BERT->FastText fallback.
+    try
+        E = reg.doc_embeddings_bert_gpu(texts);
+        if verbose
+            fprintf('  Using BERT embeddings (%d dims)\n', size(E, 2));
+        end
+    catch
+        try
+            E = reg.doc_embeddings_fasttext(texts);
+            if verbose
+                fprintf('  BERT unavailable, using FastText embeddings (%d dims)\n', size(E, 2));
+            end
+        catch
+            if verbose
+                warning('reg:compare_methods:NoEmbeddings', ...
+                    'Neither BERT nor FastText available. Using TF-IDF only.');
+            end
+            E = zeros(numel(texts), 0);  % Empty: use TF-IDF features only
+        end
+    end
+    % L2 normalize if non-empty
+    if ~isempty(E)
+        norms = vecnorm(E, 2, 2);
+        norms(norms < 1e-10) = 1;
+        E = E ./ norms;
+    end
 end
 
 function Yweak = generate_labels_simple(texts, labels, rules)

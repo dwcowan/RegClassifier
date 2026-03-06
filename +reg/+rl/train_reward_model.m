@@ -1,132 +1,108 @@
-function [reward_model, stats] = train_reward_model(features, human_feedback, varargin)
-%TRAIN_REWARD_MODEL Train reward model from human feedback (RLHF-style).
-%   [model, stats] = TRAIN_REWARD_MODEL(features, human_feedback, ...)
-%   trains a neural network to predict human preference/quality scores,
-%   enabling RLHF-style reinforcement learning from human feedback.
+function [reward_model, stats] = train_reward_model(features_preferred, features_rejected, varargin)
+%TRAIN_REWARD_MODEL Train reward model from pairwise human preferences (RLHF).
+%   [model, stats] = TRAIN_REWARD_MODEL(features_preferred, features_rejected, ...)
+%   trains a neural network reward model using the Bradley-Terry pairwise
+%   preference framework, the standard approach for RLHF.
 %
 %   INPUTS:
-%       features       - Feature matrix (N x D) for annotated chunks
-%       human_feedback - Human quality scores (N x 1) in range [0, 1]
-%                        OR binary preferences (N x 1) with values 0 or 1
+%       features_preferred - Feature matrix (N x D) for preferred samples
+%       features_rejected  - Feature matrix (N x D) for rejected samples
+%                            Each row i forms a pair: preferred(i) > rejected(i)
 %
 %   NAME-VALUE ARGUMENTS:
-%       'ModelType'    - Network architecture:
-%                        'regression' (default) - Predict continuous quality
-%                        'binary' - Predict binary preference
 %       'HiddenSizes'  - Hidden layer sizes (default: [256, 128, 64])
 %       'Epochs'       - Training epochs (default: 100)
 %       'MiniBatchSize' - Batch size (default: 32)
 %       'ValidationFraction' - Fraction for validation (default: 0.2)
+%       'ValidationPatience' - Early stopping patience (default: 10)
 %       'Verbose'      - Display training progress (default: true)
 %
 %   OUTPUTS:
-%       reward_model - Trained network for reward prediction
+%       reward_model - Trained dlnetwork that outputs a scalar reward
 %       stats        - Training statistics struct
 %
-%   USE CASES:
+%   PAIRWISE PREFERENCE FRAMEWORK (Bradley-Terry):
+%       Given pairs (x_preferred, x_rejected), the model learns a reward
+%       function r(x) such that r(x_preferred) > r(x_rejected).
 %
-%   1. Quality Scoring:
-%      Human annotators rate chunks on quality (0-1 scale)
-%      Model learns to predict quality from features
+%       Loss = -mean(log(sigmoid(r(x_preferred) - r(x_rejected))))
 %
-%   2. Preference Learning:
-%      Human chooses between pairs of chunks (binary preference)
-%      Model learns which chunks are more valuable to annotate
+%       This is more reliable than pointwise scoring because:
+%       - Humans are more consistent at comparisons than absolute ratings
+%       - No need to calibrate scores across annotators
+%       - Standard in RLHF (Christiano et al. 2017, Ouyang et al. 2022)
 %
-%   3. Agreement Scoring:
-%      Compute agreement between model and human labels
-%      Model learns to predict when it will agree with humans
-%
-%   EXAMPLE 1: Train from quality ratings
-%       % Humans rate 100 chunks on quality (0=poor, 1=excellent)
-%       quality_scores = [0.3; 0.8; 0.6; ...];  % Human ratings
-%
+%   EXAMPLE 1: Train from pairwise preferences
+%       % Annotator chose chunk A over B in each pair
 %       [reward_model, stats] = reg.rl.train_reward_model(...
-%           features(annotated_idx,:), quality_scores, 'ModelType', 'regression');
+%           features(preferred_idx,:), features(rejected_idx,:));
 %
-%       % Use model to score all chunks
-%       predicted_quality = predict(reward_model, features);
+%       % Score all chunks
+%       all_rewards = predict_reward(reward_model, features);
+%       [~, priority] = sort(all_rewards, 'descend');
 %
-%       % Annotate lowest quality chunks first
-%       [~, priority_order] = sort(predicted_quality);
-%
-%   EXAMPLE 2: Train from binary preferences
-%       % Human prefers chunk A over B (1) or not (0)
-%       preferences = [1; 0; 1; ...];  % Binary preferences
-%
-%       [reward_model, stats] = reg.rl.train_reward_model(...
-%           features(annotated_idx,:), preferences, 'ModelType', 'binary');
-%
-%   EXAMPLE 3: Train from agreement scores
-%       % Compute agreement between model predictions and human labels
-%       agreement = sum(predictions(annotated_idx,:) == Ytrue, 2) / numel(labels);
-%
-%       [reward_model, stats] = reg.rl.train_reward_model(...
-%           features(annotated_idx,:), agreement);
-%
-%       % Predict which chunks will have low agreement (high value to annotate)
-%       predicted_agreement = predict(reward_model, features);
-%       [~, to_annotate] = sort(predicted_agreement);  % Low agreement first
+%   EXAMPLE 2: Convert pointwise ratings to pairs
+%       % If you have pointwise scores, convert to pairs
+%       pairs = nchoosek(1:N, 2);
+%       better = scores(pairs(:,1)) > scores(pairs(:,2));
+%       pref_idx = pairs(better, 1); rej_idx = pairs(better, 2);
+%       % Swap where second is better
+%       pref_idx(~better) = pairs(~better, 2);
+%       rej_idx(~better) = pairs(~better, 1);
 %
 %   INTEGRATION WITH RL:
-%       Use reward model to provide shaped rewards for RL agent:
-%
 %       % Train reward model from initial annotations
-%       [reward_model, ~] = reg.rl.train_reward_model(features(annotated,:), quality);
+%       [reward_model, ~] = reg.rl.train_reward_model(feat_pref, feat_rej);
 %
-%       % Use in RL environment to predict rewards before getting human feedback
-%       predicted_reward = predict(reward_model, features(candidate_chunk,:));
+%       % Use in RL environment to predict rewards
+%       predicted_reward = predict_reward(reward_model, features(candidate,:));
 %
 %   REFERENCES:
 %       Christiano et al. 2017 - Deep RL from Human Preferences
 %       Ouyang et al. 2022 - Training language models to follow instructions
 %                            with human feedback (InstructGPT)
+%       Bradley & Terry 1952 - Rank Analysis of Incomplete Block Designs
 %
-%   SEE ALSO: reg.rl.train_annotation_agent, reg.rl.AnnotationEnvironment
+%   SEE ALSO: reg.rl.train_annotation_agent, reg.rl.AnnotationEnvironment,
+%             predict_reward
 
 % Parse arguments
 p = inputParser;
-addParameter(p, 'ModelType', 'regression', @(x) ismember(x, {'regression', 'binary'}));
 addParameter(p, 'HiddenSizes', [256, 128, 64], @(x) isnumeric(x) && all(x > 0));
 addParameter(p, 'Epochs', 100, @(x) x > 0);
 addParameter(p, 'MiniBatchSize', 32, @(x) x > 0);
 addParameter(p, 'ValidationFraction', 0.2, @(x) x >= 0 && x < 1);
+addParameter(p, 'ValidationPatience', 10, @(x) x > 0);
 addParameter(p, 'Verbose', true, @islogical);
 parse(p, varargin{:});
 
-model_type = p.Results.ModelType;
 hidden_sizes = p.Results.HiddenSizes;
 epochs = p.Results.Epochs;
 minibatch_size = p.Results.MiniBatchSize;
 val_fraction = p.Results.ValidationFraction;
+patience = p.Results.ValidationPatience;
 verbose = p.Results.Verbose;
 
 % Validate inputs
-N = size(features, 1);
-D = size(features, 2);
+N = size(features_preferred, 1);
+D = size(features_preferred, 2);
 
-if numel(human_feedback) ~= N
+if size(features_rejected, 1) ~= N || size(features_rejected, 2) ~= D
     error('reg:rl:train_reward_model:SizeMismatch', ...
-        'human_feedback must have same length as features (N=%d)', N);
+        'features_preferred and features_rejected must have same size (N=%d, D=%d)', N, D);
 end
 
-human_feedback = human_feedback(:);  % Column vector
-
 if verbose
-    fprintf('\n=== Training Reward Model from Human Feedback ===\n');
-    fprintf('Model Type:    %s\n', model_type);
-    fprintf('Samples:       %d\n', N);
-    fprintf('Features:      %d dimensions\n', D);
-    fprintf('Hidden Layers: [%s]\n', num2str(hidden_sizes));
-    fprintf('Epochs:        %d\n', epochs);
+    fprintf('\n=== Training Pairwise Reward Model (Bradley-Terry) ===\n');
+    fprintf('Preference pairs: %d\n', N);
+    fprintf('Features:         %d dimensions\n', D);
+    fprintf('Hidden Layers:    [%s]\n', num2str(hidden_sizes));
+    fprintf('Epochs:           %d\n', epochs);
+    fprintf('Early stopping:   patience=%d\n', patience);
     fprintf('\n');
 end
 
-%% Build Network Architecture
-% Use dlnetwork + trainnet (R2025b) instead of deprecated trainNetwork.
-% Terminal layers (classificationLayer/regressionLayer) are not needed
-% with trainnet; a loss function string is passed directly instead.
-
+%% Build Reward Network (scalar output, no sigmoid -- linear for reward)
 layers = [featureInputLayer(D, 'Name', 'input')];
 
 for i = 1:numel(hidden_sizes)
@@ -137,124 +113,175 @@ for i = 1:numel(hidden_sizes)
     ];
 end
 
-% Output layer depends on model type
-if strcmp(model_type, 'regression')
-    % Regression: predict continuous quality score [0,1]
-    layers = [layers
-        fullyConnectedLayer(1, 'Name', 'output')
-        sigmoidLayer('Name', 'sigmoid')  % Constrain to [0,1]
-    ];
-    lossFcn = "mse";
-else
-    % Binary classification: predict preference (0 or 1)
-    layers = [layers
-        fullyConnectedLayer(2, 'Name', 'output')
-        softmaxLayer('Name', 'softmax')
-    ];
-    lossFcn = "crossentropy";
-end
+% Linear scalar output (reward value, unconstrained range)
+layers = [layers
+    fullyConnectedLayer(1, 'Name', 'reward_output')
+];
 
-% Convert layer array to dlnetwork for trainnet
 reward_net = dlnetwork(layers);
 
-%% Training Options
-
-options = trainingOptions('adam', ...
-    'MaxEpochs', epochs, ...
-    'MiniBatchSize', minibatch_size, ...
-    'ValidationFrequency', 10, ...
-    'Shuffle', 'every-epoch', ...
-    'Verbose', verbose, ...
-    'Plots', 'none', ...
-    'InitialLearnRate', 1e-3, ...
-    'LearnRateSchedule', 'piecewise', ...
-    'LearnRateDropFactor', 0.5, ...
-    'LearnRateDropPeriod', 30);
-
 %% Split Training/Validation
-
-if val_fraction > 0
+if val_fraction > 0 && N > 10
     cv = cvpartition(N, 'HoldOut', val_fraction);
-    train_idx = training(cv);
-    val_idx = test(cv);
-
-    X_train = features(train_idx, :);
-    y_train = human_feedback(train_idx);
-    X_val = features(val_idx, :);
-    y_val = human_feedback(val_idx);
-
-    if strcmp(model_type, 'binary')
-        % Convert to categorical
-        y_train_cat = categorical(y_train);
-        y_val_cat = categorical(y_val);
-        options.ValidationData = {X_val, y_val_cat};
-    else
-        options.ValidationData = {X_val, y_val};
-    end
+    train_idx = find(training(cv));
+    val_idx = find(test(cv));
 else
-    X_train = features;
-    y_train = human_feedback;
+    train_idx = (1:N)';
+    val_idx = [];
 end
 
-%% Train Model
+X_pref_train = features_preferred(train_idx, :);
+X_rej_train = features_rejected(train_idx, :);
+X_pref_val = features_preferred(val_idx, :);
+X_rej_val = features_rejected(val_idx, :);
 
+N_train = numel(train_idx);
+N_val = numel(val_idx);
+
+%% Training Loop with Bradley-Terry Loss
 if verbose
-    fprintf('Training reward model...\n');
+    fprintf('Training reward model (Bradley-Terry pairwise loss)...\n');
 end
 
-if strcmp(model_type, 'binary')
-    y_train_cat = categorical(y_train);
-    reward_model = trainnet(X_train, y_train_cat, reward_net, lossFcn, options);
-else
-    reward_model = trainnet(X_train, y_train, reward_net, lossFcn, options);
+% Adam optimizer state
+avg_grad = [];
+avg_sq_grad = [];
+learn_rate = 1e-3;
+iteration = 0;
+
+% Early stopping state
+best_val_loss = inf;
+best_net = reward_net;
+wait_count = 0;
+
+% Training history
+train_losses = zeros(epochs, 1);
+val_losses = zeros(epochs, 1);
+
+for epoch = 1:epochs
+    % Shuffle training data
+    perm = randperm(N_train);
+    X_pref_shuf = X_pref_train(perm, :);
+    X_rej_shuf = X_rej_train(perm, :);
+
+    epoch_loss = 0;
+    num_batches = 0;
+
+    % Mini-batch training
+    for batch_start = 1:minibatch_size:N_train
+        batch_end = min(batch_start + minibatch_size - 1, N_train);
+
+        X_pref_batch = dlarray(X_pref_shuf(batch_start:batch_end, :)', 'CB');
+        X_rej_batch = dlarray(X_rej_shuf(batch_start:batch_end, :)', 'CB');
+
+        % Compute loss and gradients
+        [loss, gradients] = dlfeval(@bradleyTerryLoss, reward_net, X_pref_batch, X_rej_batch);
+
+        % Update with Adam
+        iteration = iteration + 1;
+        [reward_net, avg_grad, avg_sq_grad] = adamupdate(...
+            reward_net, gradients, avg_grad, avg_sq_grad, iteration, learn_rate);
+
+        epoch_loss = epoch_loss + double(extractdata(loss));
+        num_batches = num_batches + 1;
+    end
+
+    train_losses(epoch) = epoch_loss / num_batches;
+
+    % Validation loss
+    if N_val > 0
+        X_pref_v = dlarray(X_pref_val', 'CB');
+        X_rej_v = dlarray(X_rej_val', 'CB');
+        val_loss = dlfeval(@bradleyTerryLoss, reward_net, X_pref_v, X_rej_v);
+        val_losses(epoch) = double(extractdata(val_loss));
+
+        % Early stopping check
+        if val_losses(epoch) < best_val_loss
+            best_val_loss = val_losses(epoch);
+            best_net = reward_net;
+            wait_count = 0;
+        else
+            wait_count = wait_count + 1;
+            if wait_count >= patience
+                if verbose
+                    fprintf('  Early stopping at epoch %d (patience=%d)\n', epoch, patience);
+                end
+                break;
+            end
+        end
+    else
+        best_net = reward_net;
+    end
+
+    % Learning rate decay every 30 epochs
+    if mod(epoch, 30) == 0
+        learn_rate = learn_rate * 0.5;
+    end
+
+    if verbose && (mod(epoch, 10) == 0 || epoch == 1)
+        if N_val > 0
+            fprintf('  Epoch %3d: train_loss=%.4f  val_loss=%.4f\n', ...
+                epoch, train_losses(epoch), val_losses(epoch));
+        else
+            fprintf('  Epoch %3d: train_loss=%.4f\n', epoch, train_losses(epoch));
+        end
+    end
 end
+
+reward_model = best_net;
 
 if verbose
     fprintf('Training complete!\n\n');
 end
 
 %% Evaluate Model
-
-if val_fraction > 0
-    if strcmp(model_type, 'regression')
-        % Regression metrics
-        y_pred = minibatchpredict(reward_model, X_val);
-        y_pred = extractdata(y_pred);
-
-        mse = mean((y_pred - y_val).^2);
-        mae = mean(abs(y_pred - y_val));
-        r2 = 1 - sum((y_val - y_pred).^2) / sum((y_val - mean(y_val)).^2);
-
-        stats.mse = mse;
-        stats.mae = mae;
-        stats.r2 = r2;
-
-        if verbose
-            fprintf('=== Validation Performance ===\n');
-            fprintf('MSE:  %.4f\n', mse);
-            fprintf('MAE:  %.4f\n', mae);
-            fprintf('R²:   %.4f\n\n', r2);
-        end
-    else
-        % Classification metrics using minibatchpredict + scores2label
-        scores = minibatchpredict(reward_model, X_val);
-        y_pred_class = scores2label(scores, categories(categorical(y_val)));
-        accuracy = sum(y_pred_class == categorical(y_val)) / numel(y_val);
-
-        stats.accuracy = accuracy;
-
-        if verbose
-            fprintf('=== Validation Performance ===\n');
-            fprintf('Accuracy: %.2f%%\n\n', accuracy * 100);
-        end
-    end
-else
-    stats = struct();
-end
-
-stats.model_type = model_type;
-stats.num_samples = N;
+stats = struct();
+stats.num_pairs = N;
 stats.num_features = D;
 stats.hidden_sizes = hidden_sizes;
+stats.train_losses = train_losses(1:epoch);
+stats.val_losses = val_losses(1:epoch);
+stats.epochs_trained = epoch;
 
+if N_val > 0
+    % Compute pairwise accuracy on validation set
+    r_pref = predict_reward(reward_model, X_pref_val);
+    r_rej = predict_reward(reward_model, X_rej_val);
+    pairwise_accuracy = mean(r_pref > r_rej);
+
+    stats.pairwise_accuracy = pairwise_accuracy;
+    stats.best_val_loss = best_val_loss;
+
+    if verbose
+        fprintf('=== Validation Performance ===\n');
+        fprintf('Pairwise accuracy: %.2f%%\n', pairwise_accuracy * 100);
+        fprintf('Best val loss:     %.4f\n\n', best_val_loss);
+    end
+end
+
+end
+
+%% Bradley-Terry pairwise preference loss
+function [loss, gradients] = bradleyTerryLoss(net, X_preferred, X_rejected)
+%BRADLEYTERRY Loss = -mean(log(sigmoid(r_preferred - r_rejected)))
+
+r_preferred = forward(net, X_preferred);
+r_rejected = forward(net, X_rejected);
+
+% Bradley-Terry: P(preferred > rejected) = sigmoid(r_pref - r_rej)
+% Loss = -log(P) = -log(sigmoid(r_pref - r_rej))
+% Using log-sigmoid form: log(sigmoid(x)) = -softplus(-x) for stability
+diff = r_preferred - r_rejected;
+loss = mean(softplus(-diff), 'all');
+
+gradients = dlgradient(loss, net.Learnables);
+end
+
+%% Predict rewards for new data
+function rewards = predict_reward(net, features)
+%PREDICT_REWARD Compute scalar rewards for feature matrix.
+X = dlarray(features', 'CB');
+r = predict(net, X);
+rewards = double(extractdata(r))';
+rewards = rewards(:);
 end
