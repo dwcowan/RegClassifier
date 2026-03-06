@@ -234,26 +234,89 @@ if ismember('synthetic', methods)
         fprintf('--- Method 3: Synthetic Test Cases ---\n');
     end
 
-    % Generate synthetic test cases
-    [synthetic_texts, synthetic_labels] = generate_synthetic_tests(labels);
+    % Generate synthetic test cases with known expected labels
+    [synthetic_texts, expected_labels] = generate_synthetic_tests(labels);
 
-    % Compute features for synthetic texts
-    % (In practice, would need to process through full pipeline)
-    % Here we just report what was generated
-
-    synthetic_results = struct();
-    synthetic_results.num_tests = numel(synthetic_texts);
-    synthetic_results.tests = cell(numel(synthetic_texts), 2);
-    for i = 1:numel(synthetic_texts)
-        synthetic_results.tests{i,1} = synthetic_texts{i};
-        synthetic_results.tests{i,2} = synthetic_labels{i};
+    % Build ground truth matrix for synthetic texts
+    num_synth = numel(synthetic_texts);
+    synth_Ytrue = false(num_synth, numel(labels));
+    for i = 1:num_synth
+        for k = 1:numel(expected_labels{i})
+            lbl_idx = find(labels == string(expected_labels{i}{k}));
+            if ~isempty(lbl_idx)
+                synth_Ytrue(i, lbl_idx) = true;
+            end
+        end
     end
 
+    % Process synthetic texts through feature extraction and prediction
+    % Train on the full corpus, then predict on synthetic texts
+    [rules_train_s, ~] = reg.split_weak_rules_for_validation('Verbose', false);
+    Yweak_synth_train = generate_labels_from_rules(chunksT.text, labels, rules_train_s);
+    Yboot_synth_train = Yweak_synth_train >= 0.5;
+
+    % Train models on corpus
+    models_synth = reg.train_multilabel(features, Yboot_synth_train, kfold);
+
+    % Featurize synthetic texts in same TF-IDF space
+    all_texts = [chunksT.text; string(synthetic_texts')];
+    [~, ~, Xtfidf_all] = reg.ta_features(all_texts);
+    synth_features = Xtfidf_all(end-num_synth+1:end, :);
+
+    % Pad/trim features to match training feature dimensions
+    D_train = size(features, 2);
+    D_synth = size(synth_features, 2);
+    if D_synth < D_train
+        synth_features = [synth_features, zeros(num_synth, D_train - D_synth)];
+    elseif D_synth > D_train
+        synth_features = synth_features(:, 1:D_train);
+    end
+
+    % Predict on synthetic texts
+    [~, ~, synth_pred] = reg.predict_multilabel(models_synth, synth_features, Yboot_synth_train);
+
+    % Evaluate: pass/fail per test case
+    synthetic_results = struct();
+    synthetic_results.num_tests = num_synth;
+    synthetic_results.passed = 0;
+    synthetic_results.failed = 0;
+    synthetic_results.details = cell(num_synth, 1);
+
+    for i = 1:num_synth
+        expected = synth_Ytrue(i, :);
+        predicted = synth_pred(i, :);
+        match = isequal(expected, predicted);
+
+        if match
+            synthetic_results.passed = synthetic_results.passed + 1;
+            status = 'PASS';
+        else
+            synthetic_results.failed = synthetic_results.failed + 1;
+            status = 'FAIL';
+        end
+
+        detail = struct();
+        detail.text = synthetic_texts{i};
+        detail.expected = labels(expected);
+        detail.predicted = labels(predicted);
+        detail.status = status;
+        synthetic_results.details{i} = detail;
+
+        if verbose
+            exp_str = strjoin(labels(expected), ', ');
+            pred_str = strjoin(labels(predicted), ', ');
+            if isempty(exp_str); exp_str = '(none)'; end
+            if isempty(pred_str); pred_str = '(none)'; end
+            fprintf('  [%s] Expected: {%s}  Predicted: {%s}\n', status, exp_str, pred_str);
+        end
+    end
+
+    synthetic_results.accuracy = synthetic_results.passed / num_synth;
     results.synthetic = synthetic_results;
 
     if verbose
-        fprintf('  Generated %d synthetic test cases\n', synthetic_results.num_tests);
-        fprintf('  (To evaluate: process through pipeline and check predictions)\n\n');
+        fprintf('  Synthetic test accuracy: %d/%d (%.0f%%)\n\n', ...
+            synthetic_results.passed, num_synth, synthetic_results.accuracy * 100);
     end
 end
 
@@ -263,9 +326,10 @@ if isfield(results, 'split_rules')
     results.summary.split_rules_f1 = results.split_rules.micro_f1;
 end
 if isfield(results, 'consistency')
-    results.summary.consistency_score = results.consistency.mean_agreement;
+    results.summary.consistency_score = results.consistency.mean_kappa;
 end
 if isfield(results, 'synthetic')
+    results.summary.synthetic_accuracy = results.synthetic.accuracy;
     results.summary.num_synthetic_tests = results.synthetic.num_tests;
 end
 

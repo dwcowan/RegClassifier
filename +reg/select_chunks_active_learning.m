@@ -305,8 +305,20 @@ switch metric
         disagreement_norm = normalize_to_01(disagreement);
         least_conf_norm = normalize_to_01(least_conf);
 
-        % Weighted combination
-        uncertainty = 0.4 * entropy_norm + 0.4 * disagreement_norm + 0.2 * least_conf_norm;
+        % Load weights from knobs.json (configurable), with defaults
+        w_ent = 0.4; w_dis = 0.4; w_lc = 0.2;
+        if isfile('knobs.json')
+            try
+                knobs = jsondecode(fileread('knobs.json'));
+                if isfield(knobs, 'ActiveLearning') && isfield(knobs.ActiveLearning, 'UncertaintyWeights')
+                    uw = knobs.ActiveLearning.UncertaintyWeights;
+                    if isfield(uw, 'Entropy'); w_ent = uw.Entropy; end
+                    if isfield(uw, 'Disagreement'); w_dis = uw.Disagreement; end
+                    if isfield(uw, 'LeastConfidence'); w_lc = uw.LeastConfidence; end
+                end
+            catch; end
+        end
+        uncertainty = w_ent * entropy_norm + w_dis * disagreement_norm + w_lc * least_conf_norm;
 
     otherwise
         error('Unknown uncertainty metric: %s', metric);

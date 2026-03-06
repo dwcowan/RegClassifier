@@ -62,6 +62,11 @@ classdef AnnotationEnvironment < rl.env.MATLABEnvironment
         % Cached computations
         UncertaintyScores   % Pre-computed uncertainty for all chunks
         AvailableChunks     % Chunks not yet annotated
+
+        % Running reward normalization (prevents reward scale drift)
+        RewardRunningSum    % Sum of rewards seen
+        RewardRunningSumSq  % Sum of squared rewards
+        RewardCount         % Number of rewards seen
     end
 
     methods
@@ -103,16 +108,41 @@ classdef AnnotationEnvironment < rl.env.MATLABEnvironment
             this.Labels = labels;
             this.BudgetTotal = p.Results.BudgetTotal;
 
-            % Initialize ground truth (simulated from eval rules if not provided)
+            % Initialize ground truth
             if isempty(p.Results.GroundTruth)
-                % Simulate ground truth: use eval rules as proxy
-                this.GroundTruth = Yweak_eval > 0.5;
+                % No ground truth provided: attempt to load gold labels,
+                % otherwise warn and fall back to eval rules (circular).
+                gold_path = fullfile('gold', 'sample_gold_Ytrue.csv');
+                if isfile(gold_path)
+                    gold_Y = readmatrix(gold_path);
+                    if size(gold_Y, 1) >= height(chunksT) && size(gold_Y, 2) >= numel(labels)
+                        this.GroundTruth = gold_Y(1:height(chunksT), 1:numel(labels)) > 0.5;
+                    else
+                        warning('reg:rl:AnnotationEnvironment:GoldSizeMismatch', ...
+                            ['Gold labels size (%d x %d) does not match data (%d x %d). ' ...
+                             'Falling back to eval rules as ground truth (circular). ' ...
+                             'Provide ''GroundTruth'' argument for reliable training.'], ...
+                            size(gold_Y, 1), size(gold_Y, 2), height(chunksT), numel(labels));
+                        this.GroundTruth = Yweak_eval > 0.5;
+                    end
+                else
+                    warning('reg:rl:AnnotationEnvironment:NoGroundTruth', ...
+                        ['No ground truth provided and gold labels not found at ''%s''. ' ...
+                         'Using eval rules as ground truth proxy (circular). ' ...
+                         'Provide ''GroundTruth'' argument for reliable training.'], gold_path);
+                    this.GroundTruth = Yweak_eval > 0.5;
+                end
             else
                 this.GroundTruth = p.Results.GroundTruth;
             end
 
             % Pre-compute uncertainty scores
             this.UncertaintyScores = this.computeUncertainty();
+
+            % Initialize reward normalization state (persists across episodes)
+            this.RewardRunningSum = 0;
+            this.RewardRunningSumSq = 0;
+            this.RewardCount = 0;
 
             % Initialize state
             this.EpisodeCount = 0;
@@ -152,18 +182,31 @@ classdef AnnotationEnvironment < rl.env.MATLABEnvironment
             % (In real system, would retrain. Here we simulate improvement)
             this.CurrentF1 = this.evaluateWithAnnotations();
 
-            % Compute reward
+            % Compute raw reward
             f1_improvement = this.CurrentF1 - prev_f1;
 
             % Reward = improvement in F1 per annotation
             % Bonus if high-uncertainty chunk was selected
             uncertainty_bonus = this.UncertaintyScores(chunk_idx) * 0.1;
 
-            reward = f1_improvement * 100 + uncertainty_bonus;
+            raw_reward = f1_improvement * 100 + uncertainty_bonus;
 
             % Small penalty for using budget (encourages efficiency)
-            budget_penalty = -0.01;
-            reward = reward + budget_penalty;
+            raw_reward = raw_reward - 0.01;
+
+            % Normalize reward using running statistics (prevents scale drift)
+            this.RewardRunningSum = this.RewardRunningSum + raw_reward;
+            this.RewardRunningSumSq = this.RewardRunningSumSq + raw_reward^2;
+            this.RewardCount = this.RewardCount + 1;
+
+            if this.RewardCount >= 2
+                running_mean = this.RewardRunningSum / this.RewardCount;
+                running_var = this.RewardRunningSumSq / this.RewardCount - running_mean^2;
+                running_std = sqrt(max(running_var, 1e-8));
+                reward = (raw_reward - running_mean) / running_std;
+            else
+                reward = raw_reward;
+            end
 
             % Update total reward
             this.TotalReward = this.TotalReward + reward;
@@ -243,7 +286,20 @@ classdef AnnotationEnvironment < rl.env.MATLABEnvironment
             disagreement_norm = (disagreement - min(disagreement)) / (max(disagreement) - min(disagreement) + 1e-10);
             least_conf_norm = (least_conf - min(least_conf)) / (max(least_conf) - min(least_conf) + 1e-10);
 
-            uncertainty = 0.4 * entropy_norm + 0.4 * disagreement_norm + 0.2 * least_conf_norm;
+            % Load weights from knobs.json (configurable), with defaults
+            w_ent = 0.4; w_dis = 0.4; w_lc = 0.2;
+            if isfile('knobs.json')
+                try
+                    knobs = jsondecode(fileread('knobs.json'));
+                    if isfield(knobs, 'ActiveLearning') && isfield(knobs.ActiveLearning, 'UncertaintyWeights')
+                        uw = knobs.ActiveLearning.UncertaintyWeights;
+                        if isfield(uw, 'Entropy'); w_ent = uw.Entropy; end
+                        if isfield(uw, 'Disagreement'); w_dis = uw.Disagreement; end
+                        if isfield(uw, 'LeastConfidence'); w_lc = uw.LeastConfidence; end
+                    end
+                catch; end
+            end
+            uncertainty = w_ent * entropy_norm + w_dis * disagreement_norm + w_lc * least_conf_norm;
         end
 
         function f1 = evaluateWithAnnotations(this)

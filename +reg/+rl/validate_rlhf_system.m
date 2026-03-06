@@ -70,6 +70,7 @@ addParameter(p, 'NumTrials', 5, @isnumeric);
 addParameter(p, 'Methods', {'random', 'uncertainty', 'diversity', 'rl'}, @iscell);
 addParameter(p, 'Verbose', true, @islogical);
 addParameter(p, 'PlotResults', true, @islogical);
+addParameter(p, 'GoldLabels', [], @ismatrix);  % Optional gold labels for evaluation
 parse(p, varargin{:});
 
 budgets = p.Results.BudgetRange;
@@ -83,7 +84,6 @@ if verbose
     fprintf('Budgets: %s\n', mat2str(budgets));
     fprintf('Trials: %d\n', num_trials);
     fprintf('Methods: %s\n', strjoin(methods, ', '));
-    fprintf('\n');
 end
 
 % Initialize results storage
@@ -92,9 +92,41 @@ num_methods = numel(methods);
 results = zeros(num_budgets, num_methods, num_trials);
 
 % Split weak labels for validation
-[rules_train, rules_eval] = reg.split_weak_rules_for_validation();
+[rules_train, rules_eval] = reg.split_weak_rules_for_validation('Verbose', false);
 Yweak_eval = reg.weak_rules_improved(chunksT.text, labels, ...
     'RuleSet', rules_eval, 'Verbose', false);
+
+% Use gold labels for evaluation if provided or available
+gold_labels = p.Results.GoldLabels;
+if isempty(gold_labels)
+    gold_path = fullfile('gold', 'sample_gold_Ytrue.csv');
+    if isfile(gold_path)
+        gold_Y = readmatrix(gold_path);
+        if size(gold_Y, 1) >= height(chunksT) && size(gold_Y, 2) >= numel(labels)
+            gold_labels = gold_Y(1:height(chunksT), 1:numel(labels)) > 0.5;
+            if verbose
+                fprintf('Using gold labels for evaluation (from %s)\n', gold_path);
+            end
+        end
+    end
+end
+
+% Determine evaluation labels: prefer gold, fall back to weak eval rules
+if ~isempty(gold_labels)
+    Y_eval_final = gold_labels;
+    eval_source = 'gold';
+else
+    Y_eval_final = Yweak_eval;
+    eval_source = 'weak-rules';
+    if verbose
+        fprintf('WARNING: No gold labels available. Evaluating against weak labels.\n');
+        fprintf('Results reflect weak-label agreement only, not true quality.\n');
+    end
+end
+
+if verbose
+    fprintf('Eval source: %s\n\n', eval_source);
+end
 
 % For each budget
 for budget_idx = 1:num_budgets
@@ -128,7 +160,7 @@ for budget_idx = 1:num_budgets
                 end
 
                 % Simulate annotation and evaluate
-                f1 = evaluate_selection(selected, features, Yweak, Yweak_eval, labels);
+                f1 = evaluate_selection(selected, features, Yweak, Y_eval_final, labels);
                 results(budget_idx, method_idx, trial) = f1;
 
             catch ME
@@ -179,6 +211,7 @@ report.mean_performance = mean_perf;
 report.std_performance = std_perf;
 report.rl_improvement = mean_rl_improvement;
 report.rl_improvements_per_budget = rl_improvements;
+report.eval_source = eval_source;
 
 if verbose
     fprintf('\n=== Summary ===\n');
@@ -246,7 +279,7 @@ labels = arrayfun(@(j) sprintf('label_%d', j), 1:size(Yweak, 2), 'UniformOutput'
 labels = string(labels);
 
 % Split weak labels for train/eval within RL training
-[rules_train, rules_eval] = reg.split_weak_rules_for_validation();
+[rules_train, rules_eval] = reg.split_weak_rules_for_validation('Verbose', false);
 Yweak_eval = reg.weak_rules_improved(chunksT.text, labels, ...
     'RuleSet', rules_eval, 'Verbose', false);
 

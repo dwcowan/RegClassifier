@@ -1,8 +1,11 @@
-function [rules_train, rules_eval] = split_weak_rules_for_validation()
+function [rules_train, rules_eval] = split_weak_rules_for_validation(varargin)
 %SPLIT_WEAK_RULES_FOR_VALIDATION Create independent train/eval rule sets.
 %   [rules_train, rules_eval] = SPLIT_WEAK_RULES_FOR_VALIDATION()
 %   splits weak labeling keywords into two disjoint sets for training and
 %   evaluation, addressing data leakage without manual annotation.
+%
+%   NAME-VALUE ARGUMENTS:
+%       'Verbose' - Display split statistics (default: true)
 %
 %   PRINCIPLE:
 %       - Training rules: Primary/common keywords
@@ -35,8 +38,20 @@ function [rules_train, rules_eval] = split_weak_rules_for_validation()
 %       - Both sets still noisy (weak labels)
 %       - Requires careful keyword splitting
 %       - Evaluation set may be smaller (fewer keywords)
+%       - SEMANTIC LEAKAGE: While keywords are lexically disjoint, they
+%         describe the same regulatory concepts and co-occur in documents.
+%         A model trained on "irb approach" will match documents containing
+%         "foundation irb" because these terms co-occur. This makes
+%         validation metrics systematically overoptimistic. Supplement with
+%         document-level splits and the gold mini-pack for calibration.
 %
 %   SEE ALSO: reg.weak_rules_improved, reg.weak_rules
+
+% Parse arguments
+p = inputParser;
+addParameter(p, 'Verbose', true, @islogical);
+parse(p, varargin{:});
+verbose = p.Results.Verbose;
 
 % Training rules (primary/common keywords)
 rules_train = containers.Map;
@@ -224,11 +239,16 @@ if ~isempty(overlap)
 end
 
 % Print statistics
-fprintf('\n=== Weak Rule Split Statistics ===\n');
-fprintf('Training keywords: %d\n', numel(all_train_keywords));
-fprintf('Evaluation keywords: %d\n', numel(all_eval_keywords));
-fprintf('Overlap: %d keywords\n', numel(overlap));
-fprintf('Labels covered: %d\n', numel(train_labels));
-fprintf('=====================================\n\n');
+if verbose
+    fprintf('\n=== Weak Rule Split Statistics ===\n');
+    fprintf('Training keywords: %d\n', numel(all_train_keywords));
+    fprintf('Evaluation keywords: %d\n', numel(all_eval_keywords));
+    fprintf('Overlap: %d keywords\n', numel(overlap));
+    fprintf('Labels covered: %d\n', numel(train_labels));
+    fprintf('\nNOTE: Keyword-level disjointness does not guarantee semantic\n');
+    fprintf('independence. Co-occurring terms cause leakage. Use gold labels\n');
+    fprintf('for absolute calibration.\n');
+    fprintf('=====================================\n\n');
+end
 
 end

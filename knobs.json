@@ -23,5 +23,12 @@
   "Chunk": {
     "SizeTokens": 300,
     "Overlap": 80
+  },
+  "ActiveLearning": {
+    "UncertaintyWeights": {
+      "Entropy": 0.4,
+      "Disagreement": 0.4,
+      "LeastConfidence": 0.2
+    }
   }
 }
