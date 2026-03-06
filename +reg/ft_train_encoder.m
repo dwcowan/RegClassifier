@@ -216,12 +216,17 @@ for epoch = startEpoch:R.Epochs
         wd = 0.01;
         [base, taE, ta2E] = adamupdate(base, gE, taE, ta2E, iter, R.EncoderLR, 0.9, 0.999);
         [head, taH, ta2H] = adamupdate(head, gH, taH, ta2H, iter, R.HeadLR, 0.9, 0.999);
-        % Decoupled weight decay (applied after Adam step, per Loshchilov & Hutter 2019)
+        % Decoupled weight decay (applied after Adam step, per Loshchilov & Hutter 2019).
+        % Skip bias parameters — standard practice is to only decay weights.
         for wi = 1:height(base.Learnables)
-            base.Learnables.Value{wi} = base.Learnables.Value{wi} * (1 - R.EncoderLR * wd);
+            if ~contains(string(base.Learnables.Parameter(wi)), "Bias")
+                base.Learnables.Value{wi} = base.Learnables.Value{wi} * (1 - R.EncoderLR * wd);
+            end
         end
         for wi = 1:height(head.Learnables)
-            head.Learnables.Value{wi} = head.Learnables.Value{wi} * (1 - R.HeadLR * wd);
+            if ~contains(string(head.Learnables.Parameter(wi)), "Bias")
+                head.Learnables.Value{wi} = head.Learnables.Value{wi} * (1 - R.HeadLR * wd);
+            end
         end
 
         lossEpoch = lossEpoch + double(gather(extractdata(loss)));

@@ -4,6 +4,10 @@ function ndcg = metrics_ndcg(scores, posSets, K)
 % posSets: cell N x 1, each contains indices of relevant items for row i
 % K: cutoff
 N = size(scores,1);
+
+% Precompute discount factors (vectorized instead of per-element loop)
+discounts = 1 ./ log2((1:K) + 1);
+
 ndcg_i = zeros(N,1);
 for i = 1:N
     pos = posSets{i};
@@ -11,27 +15,16 @@ for i = 1:N
     s = scores(i,:);
     s(i) = -inf;                 % remove self
     [~, ord] = sort(s, 'descend');
-    ord = ord(1:min(K,end));
+    topK = min(K, numel(ord));
+    ord = ord(1:topK);
     rel = ismember(ord, pos);
-    % DCG
-    dcg = 0;
-    for j = 1:numel(ord)
-        dcg = dcg + (rel(j) / log2(j+1));
-    end
+    % DCG (vectorized)
+    dcg = sum(rel .* discounts(1:topK));
     % IDCG (ideal: all positives ranked first)
-    idealRel = ones(1, min(K, numel(pos)));
-    idcg = 0;
-    for j = 1:numel(idealRel)
-        idcg = idcg + (idealRel(j) / log2(j+1));
-    end
+    idealK = min(topK, numel(pos));
+    idcg = sum(discounts(1:idealK));
     if idcg > 0
-        % MATLAB uses 1-based indexing with parentheses. The previous
-        % implementation accidentally used square brackets (`ndcg_i[i]`)
-        % which is Python-style indexing and results in a syntax error.
-        % Use the correct parenthesis-based indexing.
         ndcg_i(i) = dcg / idcg;
-    else
-        ndcg_i(i) = 0;
     end
 end
 % Exclude queries with no positives from mean (standard IR practice)

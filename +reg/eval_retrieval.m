@@ -4,16 +4,22 @@ function [recallAtK, mAP] = eval_retrieval(E, posSets, K)
 % posSets: cell N x 1, each contains vector of positive indices for that anchor
 % K: cutoff (e.g., 10)
 N = size(E,1);
-scores = E * E';  % cosine
+
+% Compute similarities row-by-row to avoid O(N²) memory.
+% For N>5000, the full N×N matrix can exceed available RAM.
 recallK = zeros(N,1);
 AP = zeros(N,1);
 for i = 1:N
     pos = posSets{i};
     if isempty(pos), continue; end
-    [~, ord] = sort(scores(i,:), 'descend');
-    ord(ord==i) = []; % remove self
 
-    % Handle edge case: ord is empty or too small after removing self
+    % Compute similarities for this query only (1×N instead of N×N)
+    sim_i = E(i,:) * E';
+    sim_i(i) = -inf;  % remove self
+
+    [~, ord] = sort(sim_i, 'descend');
+
+    % Handle edge case: ord is empty or too small
     if isempty(ord)
         recallK(i) = 0;
         AP(i) = 0;
@@ -29,10 +35,9 @@ for i = 1:N
     if isempty(ranks)
         AP(i) = 0;
     else
-        % Ensure both are column vectors for element-wise division
         ranks = ranks(:);
         cumHitsAtRanks = cumHits(ranks);
-        cumHitsAtRanks = cumHitsAtRanks(:);  % Ensure column vector
+        cumHitsAtRanks = cumHitsAtRanks(:);
         precAtHits = cumHitsAtRanks ./ ranks;
         AP(i) = mean(precAtHits);
     end

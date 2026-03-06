@@ -158,10 +158,9 @@ if ~isempty(emb)
         emb_norm = reg.normalize_features(emb, 'Method', normalize_method);
     end
 
-    % Convert to sparse if needed for consistency
-    if ~isempty(Xtfidf) && issparse(Xtfidf) && ~issparse(emb_norm)
-        emb_norm = sparse(emb_norm);
-    end
+    % Do NOT convert dense embeddings to sparse — 384-dim dense vectors
+    % have very few zeros, so sparse format wastes memory (index overhead
+    % exceeds savings). horzcat will auto-convert to dense at concat time.
 
     feature_parts{end+1} = emb_norm;
     info.embedding_dim = size(emb, 2);

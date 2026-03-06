@@ -10,12 +10,14 @@ if nargin<3, K=10; end
 N = size(E,1); L = size(Ylogical,2);
 n = vecnorm(E, 2, 2); n(n==0) = 1;
 E = E ./ n; % normalize each row for cosine similarity
-S = E * E.'; % cosine similarity matrix
+
+% Compute similarities row-by-row to avoid O(N²) memory allocation.
 rec = zeros(L,1); denom = zeros(L,1);
 for i = 1:N
     labs = find(Ylogical(i,:));
     if isempty(labs), continue; end
-    s = S(i,:); s(i) = -inf;
+    s = E(i,:) * E';  % 1×N similarity vector (not N×N matrix)
+    s(i) = -inf;
     [~, ord] = sort(s,'descend');
     ord = ord(1:min(K,end));
     for l = labs

@@ -49,6 +49,8 @@ for epoch = 1:R.Epochs
             Xa = single(Xa); Xp = single(Xp); Xn = single(Xn);
         end
         [L, gradients] = dlfeval(@modelGradients, head, Xa, Xp, Xn, R.Margin);
+        % Apply gradient clipping to prevent exploding gradients
+        gradients = dlupdate(@(g) thresholdL2Norm(g, gradClip), gradients);
         [head, trailingAvg, trailingAvgSq] = adamupdate(head, gradients, ...
             trailingAvg, trailingAvgSq, it + (epoch-1)*itersPerEpoch, R.LR, 0.9, 0.999);
         lossEpoch = lossEpoch + double(gather(extractdata(L)));
@@ -97,4 +99,12 @@ function Z = l2norm(Z)
 % Normalize columns to unit length
 n = sqrt(sum(Z.^2,1) + 1e-9);
 Z = Z ./ n;
+end
+
+function g = thresholdL2Norm(g, threshold)
+%THRESHOLDL2NORM Clip gradient by L2 norm.
+gNorm = sqrt(sum(g(:).^2));
+if gNorm > threshold
+    g = g * (threshold / gNorm);
+end
 end

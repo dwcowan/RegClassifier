@@ -35,7 +35,10 @@ for j = 1:numel(labels)
     pats = rules(labKey);
     hit = false(numel(textStr),1);
     for p = 1:numel(pats)
-        hit = hit | contains(textStr, lower(pats(p)));
+        % Use word boundary regex to avoid substring false positives
+        % (e.g., "sa" in "SALIENT", "lr" in "clearly", "ama" in "AMALGAMATION")
+        pat = ['\b', regexptranslate('escape', char(lower(pats(p)))), '\b'];
+        hit = hit | ~cellfun('isempty', regexp(textStr, pat, 'once'));
     end
     Yweak(:,j) = hit * 0.9;  % confident prior when any rule hits
 end

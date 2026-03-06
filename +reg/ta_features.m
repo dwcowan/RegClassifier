@@ -26,8 +26,8 @@ if any(counts >= 2)
 end
 % Note: do NOT call removeEmptyDocuments here, as it changes the
 % document count and causes dimension mismatches downstream.
-X = bag.Counts;                  % docs×terms
-idf = log( size(X,1) ./ max(1,sum(X>0,1)) );
-Xtfidf = X .* idf;
+% Use built-in tfidf() from Text Analytics Toolbox (returns sparse matrix
+% with proper IDF weighting) instead of hand-computing from Counts.
+Xtfidf = tfidf(bag);
 vocab = bag.Vocabulary;
 end

@@ -140,6 +140,9 @@ for s = 1:miniBatchSize:N
         end
     end
     E(s:e, :) = single(pooled);
+
+    % Clear GPU intermediates to prevent memory accumulation between batches
+    clear idsMB segsMB maskMB out pooled;
 end
 
 % L2 normalize

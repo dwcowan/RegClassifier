@@ -66,6 +66,10 @@ for i = 1:numel(pipe_fields)
     if isempty(v) && isfield(C, f) && isnumeric(C.(f))
         continue;  % JSON null decoded as []; keep numeric default
     end
+    % Ensure labels are always a string array (jsondecode may return cell)
+    if strcmp(f, 'labels') && iscell(v)
+        v = string(v);
+    end
     C.(f) = v;
 end
 

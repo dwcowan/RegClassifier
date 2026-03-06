@@ -13,8 +13,10 @@ arguments
 end
 E = single(E);
 E = E ./ max(1e-9, vecnorm(E,2,2));
+% Build vocabulary dictionary for O(1) lookup instead of O(V) linear search
+vocabMap = containers.Map(cellstr(vocab), num2cell(1:numel(vocab)));
 S = struct('Xtfidf', Xtfidf, 'E', E, 'vocab', vocab, ...
-    'embedding_backend', options.EmbeddingBackend);
+    'vocabMap', vocabMap, 'embedding_backend', options.EmbeddingBackend);
 S.query = @(q, alpha) do_query(q, alpha, S);
 end
 
@@ -23,14 +25,13 @@ if nargin<2, alpha = 0.5; end
 qTok = tokenizedDocument(string(q));
 qTok = lower(erasePunctuation(removeStopWords(qTok)));
 
-% Create bag and get counts aligned with corpus vocabulary
+% Create bag and get counts aligned with corpus vocabulary (O(1) lookup via map)
 bagQ = bagOfWords(qTok);
 qv = zeros(1, numel(S.vocab));
 for i = 1:numel(bagQ.Vocabulary)
-    word = bagQ.Vocabulary(i);
-    idx = find(strcmp(S.vocab, word), 1);
-    if ~isempty(idx)
-        qv(idx) = bagQ.Counts(1, i);
+    word = char(bagQ.Vocabulary(i));
+    if isKey(S.vocabMap, word)
+        qv(S.vocabMap(word)) = bagQ.Counts(1, i);
     end
 end
 

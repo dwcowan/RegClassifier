@@ -23,23 +23,34 @@ for i = 1:N
     posSets{i}(posSets{i}==i) = []; % remove self
 end
 
-% Negatives: choose rows that share no label with the anchor
-% Pre-allocate for performance (avoid array growing in loop)
+% Precompute negative candidates per anchor using label co-occurrence matrix.
+% This avoids O(N) per-anchor overlap computation inside the loop.
+overlapMatrix = labelsLogical * labelsLogical';  % N×N: count shared labels
+negSets = cell(N, 1);
+for i = 1:N
+    cands = find(overlapMatrix(i,:) == 0);
+    cands(cands == i) = [];
+    negSets{i} = cands;
+end
+
+% Generate multiple triplets per anchor (up to tripletsPerAnchor).
+% The old code only generated 1 triplet per anchor, limiting training data.
+tripletsPerAnchor = max(1, floor(R.MaxTriplets / N));
 trip = zeros(3, R.MaxTriplets, 'uint32');
 count = 0;
 for i = 1:N
     Pset = posSets{i};
     if numel(Pset) < R.MinPosPerAnchor, continue; end
-    % pick one positive at random
-    pidx = Pset(randi(numel(Pset)));
-    % negatives: compute label overlap and keep rows with zero intersection
-    overlap = labelsLogical * labelsLogical(i,:)'; % count shared labels
-    negCandidates = find(overlap==0);
-    negCandidates(negCandidates==i) = [];
+    negCandidates = negSets{i};
     if isempty(negCandidates), continue; end
-    nidx = negCandidates(randi(numel(negCandidates)));
-    count = count + 1;
-    trip(:,count) = uint32([i; pidx; nidx]);
+    numTrips = min(tripletsPerAnchor, min(numel(Pset), numel(negCandidates)));
+    for t = 1:numTrips
+        pidx = Pset(randi(numel(Pset)));
+        nidx = negCandidates(randi(numel(negCandidates)));
+        count = count + 1;
+        trip(:,count) = uint32([i; pidx; nidx]);
+        if count >= R.MaxTriplets, break; end
+    end
     if count >= R.MaxTriplets, break; end
 end
 % Trim to actual count
