@@ -157,7 +157,9 @@ switch method
         % More accurate for skewed distributions or small samples
 
         % Compute bias correction
-        z0 = norminv(mean(boot_stats_valid < theta_hat));
+        prop_below = mean(boot_stats_valid < theta_hat);
+        prop_below = max(1/(2*numel(boot_stats_valid)), min(1 - 1/(2*numel(boot_stats_valid)), prop_below));
+        z0 = norminv(prop_below);
 
         % Compute acceleration (jackknife)
         jack_stats = zeros(N, 1);
@@ -182,7 +184,12 @@ switch method
         valid = ~isnan(jack_stats);
         jack_mean = mean(jack_stats(valid));
         jack_dev = jack_mean - jack_stats(valid);
-        a = sum(jack_dev.^3) / (6 * sum(jack_dev.^2)^1.5);
+        denom = sum(jack_dev.^2)^1.5;
+        if denom == 0
+            a = 0;  % No skewness when all jackknife values are identical
+        else
+            a = sum(jack_dev.^3) / (6 * denom);
+        end
 
         % Adjusted percentiles
         z_alpha_lower = norminv(alpha/2);

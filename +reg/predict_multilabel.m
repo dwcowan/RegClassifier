@@ -42,7 +42,7 @@ thresholds = 0.5 * ones(1,K);
 for j = 1:K
     y = logical(Yboot(:,j));
     if nnz(y)<3, thresholds(j)=0.5; continue; end
-    ths = linspace(0.2,0.9,11);
+    ths = linspace(0.2,0.9,51);
     bestF1 = 0; bestTh = 0.5;
     for t = ths
         yhat = scores(:,j) >= t;
