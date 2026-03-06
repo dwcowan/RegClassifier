@@ -20,7 +20,7 @@ for i=1:height(chunksT)
     posSets{i} = pos;
 end
 [recall10, mAP] = reg.eval_retrieval(E, posSets, 10);
-ndcg10 = reg.metrics_ndcg(E*E.', posSets, 10);
+ndcg10 = reg.metrics_ndcg(E, posSets, 10);
 per = reg.eval_per_label(E, G.Y, 10);
 
 % Report

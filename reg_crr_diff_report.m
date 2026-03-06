@@ -22,6 +22,11 @@ append(r, TitlePage('Title', 'CRR Version Diff Report', 'Subtitle', sprintf('%s 
 append(r, TableOfContents);
 
 % Summary table
+if ~isfile(summaryCSV)
+    close(r);
+    error('reg:crr_diff_report:MissingSummary', ...
+        'Expected summary.csv not found: %s', summaryCSV);
+end
 S = readtable(summaryCSV);
 sec = Section('Summary');
 append(sec, Paragraph(sprintf('Added: %d  Removed: %d  Changed: %d  Same: %d', R.added, R.removed, R.changed, R.same)));
@@ -31,7 +36,7 @@ append(r, sec);
 % Sample changed files (first N entries)
 changed = S(strcmp(S.status,'CHANGED'),:);
 N = min(height(changed), p.Results.SampleCount);
-if N > 0
+if N > 0 && isfile(patchFile)
     sec2 = Section(sprintf('Samples (first %d changed files)', N));
     txt = fileread(patchFile);
     % For brevity, include first ~300 lines of patch
@@ -48,5 +53,5 @@ if N > 0
 end
 
 close(r);
-fprintf('Wrote diff report: %s', fullfile(O,'crr_diff_report.pdf'));
+fprintf('Wrote diff report: %s\n', fullfile(O,'crr_diff_report.pdf'));
 end

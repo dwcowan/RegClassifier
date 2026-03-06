@@ -29,12 +29,19 @@ end
 for v = fieldnames(E).'
     vn = v{1};
     Ev = E.(vn);
-    S = Ev * Ev.';
     out = struct();
     for qi = 1:numel(queries)
         q = queries(qi);
-        % naive query encoding by treating query as a mini-document
-        Eq = reg.precompute_embeddings(string(q), C1);
+        % Encode query using the same variant as the corpus embeddings
+        Eq_base = reg.precompute_embeddings(string(q), C1);
+        if strcmp(vn, 'projection') && isfile('projection_head.mat')
+            Sp = load('projection_head.mat','head');
+            Eq = reg.embed_with_head(Eq_base, Sp.head);
+        elseif strcmp(vn, 'finetuned')
+            Eq = reg.doc_embeddings_bert_gpu(string(q), 'UseFineTuned', true);
+        else
+            Eq = Eq_base;
+        end
         score = Eq * Ev.';
         [~, ord] = sort(score, 'descend');
         ord = ord(1:min(K,end));

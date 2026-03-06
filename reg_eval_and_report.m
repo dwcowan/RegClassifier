@@ -29,9 +29,8 @@ end
 
 % --- Variant A: Baseline BERT embeddings ---
 E_base = reg.precompute_embeddings(chunksT.text, struct('embeddings_backend','bert','fasttext',struct('language','en')));
-S_base = E_base * E_base';
 [recall10_base, mAP_base] = reg.eval_retrieval(E_base, posSets, 10);
-ndcg10_base = reg.metrics_ndcg(S_base, posSets, 10);
+ndcg10_base = reg.metrics_ndcg(E_base, posSets, 10);
 
 % --- Variant B: Projection head (if present) ---
 E_proj = [];
@@ -39,9 +38,8 @@ recall10_proj = NaN; mAP_proj = NaN; ndcg10_proj = NaN;
 if isfile('projection_head.mat')
     S = load('projection_head.mat','head');
     E_proj = reg.embed_with_head(E_base, S.head);
-    S_proj = E_proj * E_proj';
     [recall10_proj, mAP_proj] = reg.eval_retrieval(E_proj, posSets, 10);
-    ndcg10_proj = reg.metrics_ndcg(S_proj, posSets, 10);
+    ndcg10_proj = reg.metrics_ndcg(E_proj, posSets, 10);
 end
 
 % --- Variant C: Fine-tuned encoder (if present) ---
@@ -51,9 +49,8 @@ if isfile('fine_tuned_bert.mat')
     S = load('fine_tuned_bert.mat','netFT');
     % Embed all with fine-tuned net (reuse helper from ft_eval)
     E_ft = local_embed_ft(chunksT.text, S.netFT);
-    S_ft = E_ft * E_ft';
     [recall10_ft, mAP_ft] = reg.eval_retrieval(E_ft, posSets, 10);
-    ndcg10_ft = reg.metrics_ndcg(S_ft, posSets, 10);
+    ndcg10_ft = reg.metrics_ndcg(E_ft, posSets, 10);
 end
 
 % --- Log metrics (optional) ---
@@ -115,7 +112,7 @@ try
             posSets_gold{gi} = pos;
         end
         [recall10_g, mAP_g] = reg.eval_retrieval(E_gold, posSets_gold, 10);
-        ndcg10_g = reg.metrics_ndcg(E_gold*E_gold.', posSets_gold, 10);
+        ndcg10_g = reg.metrics_ndcg(E_gold, posSets_gold, 10);
         per_g = reg.eval_per_label(E_gold, G.Y, 10);
         secG = Section('Gold Mini-Pack Metrics');
         Tgold = table(["Recall@10";"mAP";"nDCG@10"], [recall10_g; mAP_g; ndcg10_g], ...
@@ -143,6 +140,7 @@ end
 if ~isempty(E_ft), Ebest = E_ft; elseif ~isempty(E_proj), Ebest = E_proj; else, Ebest = E_base; end
 [Mcore, order] = reg.label_coretrieval_matrix(Ebest, Yboot, 10);
 labelsStr = string(C.labels);
+if ~isfolder("runs"), mkdir("runs"); end
 heatPNG = fullfile("runs","coretrieval_heatmap.png");
 reg.plot_coretrieval_heatmap(Mcore(order,order), labelsStr(order), heatPNG);
 secHM = Section('Label Co-Retrieval Heatmap (Top-10)');
@@ -161,7 +159,9 @@ tok = reg.init_bert_tokenizer();
 textStr = string(textStr);
 N = numel(textStr);
 mb = 64;
-E = zeros(N, 384, 'single');
+% Derive projection dimension from the head network instead of hardcoding
+projDim = netFT.head.Layers(end).OutputSize;
+E = zeros(N, projDim, 'single');
 for s = 1:mb:N
     e = min(N, s+mb-1);
     % R2025b: encode returns [tokenCodes, segments] as cell arrays, not struct

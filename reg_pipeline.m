@@ -23,20 +23,14 @@ end
 
 % C) Features: TF-IDF bag + LDA topics + embeddings
 [docsTok, vocab, Xtfidf] = reg.ta_features(chunksT.text);
-bag = bagOfWords(docsTok);
-numDocs = bag.NumDocuments;
+
 % Handle LDA topic modeling (skip if disabled or insufficient data)
-if isempty(C.lda_topics) || C.lda_topics <= 0
-    % LDA disabled
-    numTopics = 0;
-else
-    numTopics = min(C.lda_topics, numDocs);
+if ~isempty(C.lda_topics) && C.lda_topics > 0
+    bag = bagOfWords(docsTok);
+    numTopics = min(C.lda_topics, bag.NumDocuments);
     if numTopics < C.lda_topics
         warning('Reducing LDA topics from %d to %d due to limited documents', C.lda_topics, numTopics);
     end
-end
-
-if numTopics > 0
     mdlLDA = fitlda(bag, numTopics, 'Verbose',0);
     topicDist = transform(mdlLDA, bag);
 else
@@ -65,7 +59,11 @@ if exist('projection_head.mat','file')
     end
 end
 
-features = [double(Xtfidf), double(full(sparse(topicDist))), double(E)];
+if isempty(topicDist)
+    features = [double(Xtfidf), double(E)];
+else
+    features = [double(Xtfidf), double(topicDist), double(E)];
+end
 
 
 % D) Weak supervision → bootstrap training labels

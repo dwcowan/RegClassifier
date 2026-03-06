@@ -141,24 +141,27 @@ if verbose
     fprintf('Computing label co-occurrence@%d...\n', K);
 end
 
-% Compute cosine similarity matrix
-S_mat = E * E';  % N x N
+% Compute K nearest neighbors row-by-row to avoid N x N matrix (OOM for large N)
+% Pre-compute neighbor indices once and reuse across all metrics
+neighbors_all = zeros(N, K);
+for i = 1:N
+    s = E(i,:) * E'; s(i) = -inf;
+    [~, ord] = sort(s, 'descend');
+    neighbors_all(i,:) = ord(1:K);
+end
 
 cooccur = zeros(N, 1);
 for i = 1:N
-    % Find K nearest neighbors (excluding self)
-    [~, neighbors] = sort(S_mat(i,:), 'descend');
-    neighbors = neighbors(2:(K+1));  % Exclude self
-
+    neighbors = neighbors_all(i,:);
     my_labels = labelsLogical(i,:);
     neighbor_labels = labelsLogical(neighbors,:);
 
     % Jaccard: intersection / union
     intersection = sum(my_labels & any(neighbor_labels, 1));
-    union = sum(my_labels | any(neighbor_labels, 1));
+    union_val = sum(my_labels | any(neighbor_labels, 1));
 
-    if union > 0
-        cooccur(i) = intersection / union;
+    if union_val > 0
+        cooccur(i) = intersection / union_val;
     else
         cooccur(i) = 0;  % No labels at all
     end
@@ -177,14 +180,12 @@ if verbose
     fprintf('Computing label distribution KL divergence...\n');
 end
 
-global_dist = sum(labelsLogical, 1) / N;  % L x 1
+global_dist = sum(labelsLogical, 1) / N;  % 1 x L
 kl_divs = zeros(N, 1);
 
 for i = 1:N
-    [~, neighbors] = sort(S_mat(i,:), 'descend');
-    neighbors = neighbors(2:(K+1));
-
-    local_dist = sum(labelsLogical(neighbors,:), 1) / K;  % L x 1
+    neighbors = neighbors_all(i,:);
+    local_dist = sum(labelsLogical(neighbors,:), 1) / K;  % 1 x L
 
     % Add smoothing to avoid log(0)
     local_dist_smooth = local_dist + 1e-9;
@@ -258,9 +259,7 @@ end
 
 consistency = zeros(N, 1);
 for i = 1:N
-    [~, neighbors] = sort(S_mat(i,:), 'descend');
-    neighbors = neighbors(2:(K+1));
-
+    neighbors = neighbors_all(i,:);
     my_labels = labelsLogical(i,:);
 
     % How many neighbors share at least one label?
@@ -280,24 +279,43 @@ if verbose
     fprintf('Computing label preservation ratio...\n');
 end
 
-% Compute label similarity matrix (Jaccard)
-label_sim = zeros(N, N);
-for i = 1:N
-    for j = (i+1):N
-        intersection = sum(labelsLogical(i,:) & labelsLogical(j,:));
-        union = sum(labelsLogical(i,:) | labelsLogical(j,:));
-
-        if union > 0
-            label_sim(i,j) = intersection / union;
-            label_sim(j,i) = label_sim(i,j);
-        end
+% Compute label similarity (Jaccard) vectorized: intersection/union via matrix ops
+% For N>5000, sample pairs to avoid O(N^2) memory/time
+labDouble = double(labelsLogical);
+if N <= 5000
+    % Full vectorized Jaccard using matrix multiply
+    inter_mat = labDouble * labDouble';         % N x N intersection counts
+    union_mat = sum(labDouble,2) + sum(labDouble,2)' - inter_mat;  % N x N union counts
+    union_mat(union_mat == 0) = 1;  % avoid division by zero
+    label_sim = inter_mat ./ union_mat;
+    % Flatten upper triangle
+    idx_upper = triu(true(N,N), 1);
+    label_sim_vec = label_sim(idx_upper);
+    % Compute embedding similarity for same pairs row-by-row
+    embed_sim_vec = zeros(size(label_sim_vec));
+    k = 0;
+    for i = 1:N-1
+        s = E(i,:) * E((i+1):N,:)';
+        embed_sim_vec(k+1:k+numel(s)) = s;
+        k = k + numel(s);
+    end
+else
+    % Sample pairs for large N to keep O(N) memory
+    numPairs = min(500000, N*(N-1)/2);
+    pairs_i = randi(N, numPairs, 1);
+    pairs_j = randi(N, numPairs, 1);
+    same = pairs_i == pairs_j;
+    pairs_j(same) = mod(pairs_j(same), N) + 1;
+    label_sim_vec = zeros(numPairs, 1);
+    embed_sim_vec = zeros(numPairs, 1);
+    for p = 1:numPairs
+        ii = pairs_i(p); jj = pairs_j(p);
+        inter = sum(labelsLogical(ii,:) & labelsLogical(jj,:));
+        un = sum(labelsLogical(ii,:) | labelsLogical(jj,:));
+        if un > 0, label_sim_vec(p) = inter / un; end
+        embed_sim_vec(p) = E(ii,:) * E(jj,:)';
     end
 end
-
-% Flatten upper triangle (exclude diagonal)
-idx_upper = triu(true(N,N), 1);
-label_sim_vec = label_sim(idx_upper);
-embed_sim_vec = S_mat(idx_upper);
 
 % Compute correlation
 S.label_preservation_corr = corr(label_sim_vec, embed_sim_vec);
@@ -330,9 +348,7 @@ for label = 1:L
 
     for i_local = 1:num_with_label
         i = idx_with_label(i_local);
-
-        [~, neighbors] = sort(S_mat(i,:), 'descend');
-        neighbors = neighbors(2:(K+1));
+        neighbors = neighbors_all(i,:);
 
         % Fraction of neighbors with same label
         neighbor_has_label(i_local) = mean(labelsLogical(neighbors, label));

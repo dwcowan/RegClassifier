@@ -361,8 +361,8 @@ for i = 1:numel(param_names)
             var = optimizableVariable(name, range);
         end
     else
-        % Categorical
-        var = optimizableVariable(name, range, 'Type', 'categorical');
+        % Discrete values: use categorical with string representation
+        var = optimizableVariable(name, string(range), 'Type', 'categorical');
     end
 
     optimizable_vars = [optimizable_vars; var];

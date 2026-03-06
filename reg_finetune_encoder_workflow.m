@@ -18,9 +18,15 @@ Yboot = Yweak >= C.min_rule_conf;
 P = reg.ft_build_contrastive_dataset(chunksT, Yboot, 'MaxTriplets', 300000);
 
 % 3) Fine-tune encoder (start with top 4 layers unfreezed)
-netFT = reg.ft_train_encoder(chunksT, P, ...
-    'Epochs', C.knobs.FineTune.Epochs, 'BatchSize', C.knobs.FineTune.BatchSize, 'MaxSeqLength', C.knobs.FineTune.MaxSeqLength, ...
-    'EncoderLR', C.knobs.FineTune.EncoderLR, 'HeadLR', C.knobs.FineTune.HeadLR, 'Margin', 0.2, 'UnfreezeTopLayers', C.knobs.FineTune.UnfreezeTopLayers, 'Loss', C.knobs.FineTune.Loss, 'Resume', true);
+%    Use knobs with safe defaults so the script survives partial knobs.json
+FT = C.knobs.FineTune;
+ftArgs = {'Epochs', FT.Epochs, 'BatchSize', FT.BatchSize, ...
+    'EncoderLR', FT.EncoderLR, 'HeadLR', FT.HeadLR, ...
+    'Margin', 0.2, 'Resume', true};
+if isfield(FT, 'MaxSeqLength'),      ftArgs = [ftArgs, {'MaxSeqLength', FT.MaxSeqLength}]; end
+if isfield(FT, 'UnfreezeTopLayers'), ftArgs = [ftArgs, {'UnfreezeTopLayers', FT.UnfreezeTopLayers}]; end
+if isfield(FT, 'Loss'),             ftArgs = [ftArgs, {'Loss', FT.Loss}]; end
+netFT = reg.ft_train_encoder(chunksT, P, ftArgs{:});
 
 % 4) Evaluate retrieval & clustering
 metrics = reg.ft_eval(chunksT, Yboot, netFT, 'K', 10);

@@ -4,10 +4,10 @@ function [M, order] = label_coretrieval_matrix(E, Ylogical, K)
 % increment (l, l') for labels l' found among retrieved set's labels.
 % E: Nxd normalized embeddings; Ylogical: N x L logical; K: top-K
 N = size(E,1); L = size(Ylogical,2);
-S = E * E.';
+% Compute similarity row-by-row to avoid N x N matrix (OOM for large N)
 M = zeros(L,L);
 for i = 1:N
-    s = S(i,:); s(i) = -inf;
+    s = E(i,:) * E'; s(i) = -inf;
     [~, ord] = sort(s, 'descend');
     ord = ord(1:min(K,end));
     qi = find(Ylogical(i,:));
