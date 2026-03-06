@@ -16,11 +16,12 @@ function netFT = ft_train_encoder(chunksT, P, varargin)
 % P is a struct with fields anchor, positive, negative (uint32 indices). For 'supcon',
 % we internally form two views per anchor (anchor, positive) and treat same-index pairs as positives.
 
-% --- Load params.json for defaults ---
+% --- Load params.json for defaults (resolve relative to project root) ---
 params = struct();
-if isfile('params.json')
+paramsPath_ = fullfile(fileparts(fileparts(mfilename('fullpath'))), 'params.json');
+if isfile(paramsPath_)
     try
-        params = jsondecode(fileread('params.json'));
+        params = jsondecode(fileread(paramsPath_));
     catch ME
         warning('Failed to read params.json: %s', ME.message);
     end
@@ -454,8 +455,15 @@ for si = 1:Nsub
     gi = subset(si);
     if ~any(Yboot(gi,:)), continue; end
     [~, ord] = sort(S_sub(si,:),'descend');
-    if ~isempty(ord) && S_sub(si, ord(1)) > -inf
-        Nout(A==gi) = subset(ord(1));
+    % Filter to valid negatives (score > -inf)
+    validNeg = ord(S_sub(si, ord) > -inf);
+    if isempty(validNeg), continue; end
+    % Assign different hard negatives to each triplet for this anchor
+    tripIdx = find(A==gi);
+    nTrips = numel(tripIdx);
+    nValid = numel(validNeg);
+    for ti = 1:nTrips
+        Nout(tripIdx(ti)) = subset(validNeg(min(ti, nValid)));
     end
 end
 end
@@ -499,6 +507,6 @@ for i=1:N
     posSets{i} = pos;
 end
 [recall10, mAP] = reg.eval_retrieval(E, posSets, 10);
-ndcg10 = reg.metrics_ndcg(E*E.', posSets, 10);
+ndcg10 = reg.metrics_ndcg(E, posSets, 10);
 metrics = struct('recall10', recall10, 'mAP', mAP, 'ndcg10', ndcg10);
 end

@@ -39,6 +39,9 @@ try
         if isopen(conn)
             close(conn);
         end
+    elseif isobject(conn) && ismethod(conn, 'close')
+        % Generic fallback for other Database Toolbox connection types
+        close(conn);
     end
 catch ME
     % Log warning but don't error - connection may already be closed

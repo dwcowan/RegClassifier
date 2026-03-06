@@ -1,6 +1,10 @@
 function T = ingest_pdfs(inputDir)
 %INGEST_PDFS Read PDFs; OCR if needed. Returns table(doc_id, text, meta)
-files = dir(fullfile(inputDir, "*.pdf"));
+% Match both .pdf and .PDF extensions (dir is case-sensitive on Linux)
+files = [dir(fullfile(inputDir, "*.pdf")); dir(fullfile(inputDir, "*.PDF"))];
+% Remove duplicates on case-insensitive filesystems
+[~, ia] = unique(lower({files.name}));
+files = files(ia);
 if isempty(files)
     warning('reg:ingest_pdfs:NoPDFs', ...
         'No PDF files found in "%s". Returning dummy document for demo/test.', inputDir);

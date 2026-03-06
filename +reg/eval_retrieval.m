@@ -5,6 +5,10 @@ function [recallAtK, mAP] = eval_retrieval(E, posSets, K)
 % K: cutoff (e.g., 10)
 N = size(E,1);
 
+% Ensure L2-normalization for cosine similarity (no-op if already normalized)
+n = vecnorm(E, 2, 2); n(n==0) = 1;
+E = E ./ n;
+
 % Compute similarities row-by-row to avoid O(N²) memory.
 % For N>5000, the full N×N matrix can exceed available RAM.
 recallK = zeros(N,1);

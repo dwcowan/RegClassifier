@@ -8,7 +8,9 @@ parfor j = 1:labelsK
         models{j} = [];
         continue
     end
+    % Use stratified partition to handle class imbalance in binary labels
+    cp = cvpartition(y, 'KFold', kfold, 'Stratify', true);
     models{j} = fitclinear(X, y, 'Learner','logistic', ...
-        'ObservationsIn','rows', 'KFold', kfold, 'ClassNames',[false true]);
+        'ObservationsIn','rows', 'CVPartition', cp, 'ClassNames',[false true]);
 end
 end

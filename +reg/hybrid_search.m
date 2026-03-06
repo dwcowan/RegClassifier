@@ -62,6 +62,11 @@ end
 qe = qe ./ max(1e-9, norm(qe));
 
 bm = (S.Xtfidf * qtfidf') ./ max(1e-9, norm(qtfidf));
+% Normalize BM25 scores to [0,1] so alpha fusion is not dominated by TF-IDF magnitude
+bm_max = max(bm);
+if bm_max > 0
+    bm = bm / bm_max;
+end
 em = single(S.E * qe');
 score = alpha*bm + (1-alpha)*em;
 [sv, idx] = maxk(score, min(20, numel(score)));

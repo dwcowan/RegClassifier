@@ -13,10 +13,11 @@ function E = doc_embeddings_bert_gpu(textStr, varargin)
 miniBatchSize = 96;
 maxSeqLen = 256;
 
-% Override from params.json if available
-if isfile('params.json')
+% Override from params.json if available (resolve relative to project root)
+paramsPath = fullfile(fileparts(fileparts(mfilename('fullpath'))), 'params.json');
+if isfile(paramsPath)
     try
-        params = jsondecode(fileread('params.json'));
+        params = jsondecode(fileread(paramsPath));
         if isfield(params, 'MiniBatchSize')
             miniBatchSize = params.MiniBatchSize;
         end
@@ -64,9 +65,9 @@ textStr = string(textStr);
 N = numel(textStr);
 paddingCode = double(tok.PaddingCode);
 
-% Determine output dimension: 384 if fine-tuned head is used, 768 for base BERT
+% Determine output dimension from head network (if fine-tuned) or base BERT
 if useHead
-    embDim = 384;
+    embDim = headFT.Layers(end).OutputSize;
 else
     embDim = 768;
 end
