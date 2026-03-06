@@ -100,8 +100,12 @@ for s = 1:miniBatchSize:N
         pooled = getPooled(out);
         pooled = predict(headFT, pooled);
         pooled = gather(extractdata(pooled));
-        if size(pooled,2) ~= embDim
-            if size(pooled,1)==embDim, pooled = pooled.'; else, error('HeadDimMismatch'); end
+        batchSz = e - s + 1;
+        % getPooled returns [embDim x batch] (CB format); transpose to [batch x embDim]
+        if size(pooled,1) == embDim && size(pooled,2) == batchSz
+            pooled = pooled.';
+        elseif size(pooled,2) ~= embDim
+            error('HeadDimMismatch: expected %d columns, got [%d x %d]', embDim, size(pooled,1), size(pooled,2));
         end
         E(s:e,:) = single(pooled);
         continue

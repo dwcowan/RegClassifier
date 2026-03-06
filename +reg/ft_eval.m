@@ -70,13 +70,25 @@ tok = reg.init_bert_tokenizer();
 textStr = string(textStr);
 N = numel(textStr);
 
+% Detect output dimension from head's last fully-connected layer
+projDim = 384;  % default
+try
+    headLearnables = netFT.head.Learnables;
+    fcRows = contains(headLearnables.Parameter, 'Weights');
+    if any(fcRows)
+        lastFcIdx = find(fcRows, 1, 'last');
+        projDim = size(headLearnables.Value{lastFcIdx}, 1);
+    end
+catch
+end
+
 % Handle empty input
 if N == 0
-    E = zeros(0, 384, 'single');
+    E = zeros(0, projDim, 'single');
     return;
 end
 
-E = zeros(N, 384, 'single');
+E = zeros(N, projDim, 'single');
 useGPU = gpuDeviceCount > 0;
 
 for s = 1:mb:N

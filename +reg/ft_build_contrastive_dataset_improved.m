@@ -140,7 +140,9 @@ if R.Verbose
     fprintf('Building triplets (max %d)...\n', R.MaxTriplets);
 end
 
-trip = zeros(3, 0, 'uint32');
+% Pre-allocate for performance; trim at the end
+trip = zeros(3, R.MaxTriplets, 'uint32');
+tripCount = 0;
 
 for i = 1:N
     pos = posSets{i};
@@ -199,20 +201,24 @@ for i = 1:N
         end
 
         % Add triplet
-        trip(:, end+1) = uint32([i; pidx; nidx]); %#ok<AGROW>
+        tripCount = tripCount + 1;
+        trip(:, tripCount) = uint32([i; pidx; nidx]);
         info.num_positives_used = info.num_positives_used + 1;
 
         % Check if we've reached max triplets
-        if size(trip, 2) >= R.MaxTriplets
+        if tripCount >= R.MaxTriplets
             break;
         end
     end
 
     % Check if we've reached max triplets
-    if size(trip, 2) >= R.MaxTriplets
+    if tripCount >= R.MaxTriplets
         break;
     end
 end
+
+% Trim pre-allocated array to actual size
+trip = trip(:, 1:tripCount);
 
 % Finalize output
 P.anchor = trip(1, :);

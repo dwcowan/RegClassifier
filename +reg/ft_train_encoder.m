@@ -212,9 +212,17 @@ for epoch = startEpoch:R.Epochs
             end
         end
 
-        % AdamW updates
+        % AdamW updates: Adam step + decoupled weight decay
+        wd = 0.01;
         [base, taE, ta2E] = adamupdate(base, gE, taE, ta2E, iter, R.EncoderLR, 0.9, 0.999);
         [head, taH, ta2H] = adamupdate(head, gH, taH, ta2H, iter, R.HeadLR, 0.9, 0.999);
+        % Decoupled weight decay (applied after Adam step, per Loshchilov & Hutter 2019)
+        for wi = 1:height(base.Learnables)
+            base.Learnables.Value{wi} = base.Learnables.Value{wi} * (1 - R.EncoderLR * wd);
+        end
+        for wi = 1:height(head.Learnables)
+            head.Learnables.Value{wi} = head.Learnables.Value{wi} * (1 - R.HeadLR * wd);
+        end
 
         lossEpoch = lossEpoch + double(gather(extractdata(loss)));
     end
@@ -333,18 +341,26 @@ end
 
 function loss = nt_xent(Z, B)
 % NT-Xent loss for 2B samples with positives (i, i+B)
+% Uses log-sum-exp trick for numerical stability with small tau
 tau = 0.07;
-S = (Z.' * Z);                % cosine since Z is normalized
+S = (Z.' * Z) / tau;          % cosine/tau since Z is normalized
 S = S - inf * eye(size(S));   % mask out self-similarity with -inf so exp(-inf)=0
 lossSum = dlarray(0.0);
 count = 0;
 for i = 1:B
     pos1 = S(i, i+B);
-    denom1 = sum(exp(S(i,:) / tau));
+    % log-sum-exp: log(sum(exp(x))) = max(x) + log(sum(exp(x - max(x))))
+    row1 = S(i,:);
+    mx1 = max(row1);
+    logdenom1 = mx1 + log(sum(exp(row1 - mx1)));
+    l1 = -(pos1 - logdenom1);
+
     pos2 = S(i+B, i);
-    denom2 = sum(exp(S(i+B,:) / tau));
-    l1 = -log(exp(pos1/tau) / denom1);
-    l2 = -log(exp(pos2/tau) / denom2);
+    row2 = S(i+B,:);
+    mx2 = max(row2);
+    logdenom2 = mx2 + log(sum(exp(row2 - mx2)));
+    l2 = -(pos2 - logdenom2);
+
     lossSum = lossSum + l1 + l2;
     count = count + 2;
 end
