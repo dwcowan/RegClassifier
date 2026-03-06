@@ -120,14 +120,15 @@ baseline = compute_metrics(E_bert, Ylogical, baseline, metrics, verbose);
 % Store baseline
 report = struct();
 report.baseline = baseline;
-report.configurations = [];
+report.configurations = {};
 
 % Build positive sets for retrieval
 posSets = build_positive_sets(Ylogical);
 
 % Test projection heads
 config_idx = 0;
-total_configs = numel(dims) * numel(archs);
+num_skipped = sum(dims == 768);
+total_valid = numel(dims) * numel(archs) - num_skipped * numel(archs);
 
 for dim_idx = 1:numel(dims)
     dim = dims(dim_idx);
@@ -143,7 +144,7 @@ for dim_idx = 1:numel(dims)
 
         if verbose
             fprintf('\n[%d/%d] Projection: %d-dim, %d-layer\n', ...
-                config_idx, total_configs-1, dim, arch);  % -1 because we skip 768
+                config_idx, total_valid, dim, arch);
         end
 
         config = struct();
@@ -172,8 +173,8 @@ for dim_idx = 1:numel(dims)
             % Evaluate
             config = compute_metrics(E_proj, Ylogical, config, metrics, verbose);
 
-            % Store configuration
-            report.configurations = [report.configurations; config];
+            % Store configuration (use cell array to avoid field mismatch)
+            report.configurations{end+1,1} = config;
 
         catch ME
             warning('Configuration failed: %s', ME.message);

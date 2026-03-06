@@ -50,7 +50,9 @@ for i = 1:n
         ids(i) = "CRR_" + string(i);
         htmlPath = fullfile(outDir, ids(i) + ".html");
         txtPath  = fullfile(outDir, ids(i) + ".txt");
-        fid=fopen(htmlPath,'w'); fwrite(fid, page); fclose(fid);
+        fid=fopen(htmlPath,'w');
+        if fid == -1, error('Cannot write %s', htmlPath); end
+        fwrite(fid, page); fclose(fid);
         t = htmlTree(page); bodyTxt = extractHTMLText(t);
         writelines(string(bodyTxt), txtPath);
         files(i) = htmlPath;

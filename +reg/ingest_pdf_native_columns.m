@@ -249,6 +249,11 @@ try
         blocks = ocrResults.Words;
         bboxes = ocrResults.WordBoundingBoxes;
 
+        % Skip pages with no recognized words
+        if isempty(blocks) || isempty(bboxes)
+            continue;
+        end
+
         % Detect columns by x-position clustering
         x_positions = bboxes(:, 1);
 

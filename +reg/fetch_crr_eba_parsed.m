@@ -32,7 +32,9 @@ for i = 1:n
         page = webread(url, opts);
         htmlPath = fullfile(outDir, sprintf('CRR_art_%04d.html', i));
         txtPath  = fullfile(outDir, sprintf('CRR_art_%04d.txt', i));
-        fid=fopen(htmlPath,'w'); fwrite(fid, page); fclose(fid);
+        fid=fopen(htmlPath,'w');
+        if fid == -1, error('Cannot write %s', htmlPath); end
+        fwrite(fid, page); fclose(fid);
         t = htmlTree(page);
         bodyTxt = extractHTMLText(t);
         writelines(string(bodyTxt), txtPath);
