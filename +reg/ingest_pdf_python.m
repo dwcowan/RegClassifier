@@ -72,7 +72,10 @@ if ~isfile(pdfPath)
     error('reg:ingest_pdf_python:FileNotFound', 'PDF file not found: %s', pdfPath);
 end
 [~, fname, ext] = fileparts(pdfPath);
-pdfPath = GetFullPath(pdfPath);  % Use absolute path
+% Resolve to absolute path
+if ~startsWith(string(pdfPath), filesep) && ~(ispc && numel(pdfPath)>1 && pdfPath(2)==':')
+    pdfPath = fullfile(pwd, pdfPath);
+end
 
 %% Find Python executable
 
@@ -108,7 +111,7 @@ if ~isfile(script_path)
     error('reg:ingest_pdf_python:ScriptNotFound', ...
         'Python extraction script not found: %s', script_path);
 end
-script_path = GetFullPath(script_path);
+% script_path is already absolute from mfilename('fullpath')
 
 %% Create temporary output file
 
