@@ -67,6 +67,10 @@ end
 
 
 % D) Weak supervision → bootstrap training labels
+if isempty(C.labels) || all(strlength(C.labels) == 0)
+    error('reg:pipeline:NoLabels', ...
+        'No labels defined. Set "labels" in pipeline.json (e.g., ["IRB","Liquidity_LCR","AML_KYC"]).');
+end
 Yweak = reg.weak_rules(chunksT.text, C.labels);
 Yboot = Yweak >= C.min_rule_conf;
 

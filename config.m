@@ -101,8 +101,12 @@ C.pipeline = pipe;
 % Check current directory first, then project root
 if isfile('knobs.json')
     C.knobs = reg.load_knobs('knobs.json');
-else
+elseif isfile(fullfile(projectRoot, 'knobs.json'))
     C.knobs = reg.load_knobs(fullfile(projectRoot, 'knobs.json'));
+else
+    warning('config:KnobsNotFound', ...
+        'knobs.json not found in cwd or project root. Using empty defaults.');
+    C.knobs = struct();
 end
 
 % Validate knobs (will warn if values are suspicious)
