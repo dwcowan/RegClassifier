@@ -290,7 +290,7 @@ Ma = dlarray(gpuArray(single(permute(M(1:B,:), [3,2,1]))),'CTB');
 Mp = dlarray(gpuArray(single(permute(M(B+1:2*B,:), [3,2,1]))),'CTB');
 Mn = dlarray(gpuArray(single(permute(M(2*B+1:end,:), [3,2,1]))),'CTB');
 
-oA = predict(base, Xa, Sa, Ma); oP = predict(base, Xp, Sp, Mp); oN = predict(base, Xn, Sn, Mn);
+oA = forward(base, Xa, Sa, Ma); oP = forward(base, Xp, Sp, Mp); oN = forward(base, Xn, Sn, Mn);
 ZA = pooled(oA); ZP = pooled(oP); ZN = pooled(oN);
 ZA = forward(head, ZA); ZP = forward(head, ZP); ZN = forward(head, ZN);
 ZA = l2norm(ZA); ZP = l2norm(ZP); ZN = l2norm(ZN);
@@ -328,7 +328,7 @@ M2 = dlarray(gpuArray(single(permute(M(B+1:end,:), [3,2,1]))),'CTB');
 S1 = dlarray(gpuArray(single(ones(1, maxLen, B))),'CTB');
 S2 = dlarray(gpuArray(single(ones(1, maxLen, B2))),'CTB');
 
-o1 = predict(base, X1, S1, M1); o2 = predict(base, X2, S2, M2);
+o1 = forward(base, X1, S1, M1); o2 = forward(base, X2, S2, M2);
 Z1 = pooled(o1); Z2 = pooled(o2);
 Z1 = forward(head, Z1); Z2 = forward(head, Z2);
 Z1 = l2norm(Z1); Z2 = l2norm(Z2);
@@ -396,43 +396,63 @@ subset = 1:Nall;
 if Nall > maxN
     subset = sort(randperm(Nall, maxN));
 end
+Nsub = numel(subset);
 texts = string(chunksT.text(subset));
-[tokenCodes, ~] = encode(tok, texts);  % R2025b: returns cell arrays
-% Manually pad sequences to maxLen (R2025b encode doesn't auto-pad)
-paddingCode = double(tok.PaddingCode);
-numSeqs = numel(tokenCodes);
-ids = paddingCode * ones(numSeqs, maxLen);  % Pre-fill with padding
-for i = 1:numSeqs
-    seq = double(tokenCodes{i});
-    len = min(numel(seq), maxLen);
-    ids(i, 1:len) = seq(1:len);
+
+% Mini-batch BERT inference to avoid GPU OOM
+mb = 64;
+Z_all = [];
+for bs = 1:mb:Nsub
+    be = min(Nsub, bs+mb-1);
+    batchTexts = texts(bs:be);
+    [tokenCodes, ~] = encode(tok, batchTexts);
+    paddingCode = double(tok.PaddingCode);
+    numSeqs = numel(tokenCodes);
+    ids = paddingCode * ones(numSeqs, maxLen);
+    for i = 1:numSeqs
+        seq = double(tokenCodes{i});
+        len = min(numel(seq), maxLen);
+        ids(i, 1:len) = seq(1:len);
+    end
+    mask = double(ids ~= paddingCode);
+    ids = dlarray(gpuArray(single(permute(ids, [3,2,1]))),'CTB');
+    segs = dlarray(gpuArray(single(ones(1, maxLen, numSeqs))),'CTB');
+    mask = dlarray(gpuArray(single(permute(mask, [3,2,1]))),'CTB');
+    out = predict(base, ids, segs, mask);
+    Z = pooled(out);
+    Z = predict(head, Z);
+    Z = gather(extractdata(Z))';
+    nm = vecnorm(Z,2,2); nm(nm==0)=1; Z = Z ./ nm;
+    if isempty(Z_all)
+        Z_all = zeros(Nsub, size(Z,2), 'single');
+    end
+    Z_all(bs:be,:) = single(Z);
 end
-mask = double(ids ~= paddingCode);  % Attention mask
-% Reshape to 3D (1, maxLen, N) 'CTB' format for BERT sequenceInputLayer (C=1)
-ids = dlarray(gpuArray(single(permute(ids, [3,2,1]))),'CTB');
-segs = dlarray(gpuArray(single(ones(1, maxLen, numSeqs))),'CTB');
-mask = dlarray(gpuArray(single(permute(mask, [3,2,1]))),'CTB');
-out = predict(base, ids, segs, mask);
-Z = pooled(out);
-Z = forward(head, Z);
-Z = gather(extractdata(Z))';
-n = vecnorm(Z,2,2); n(n==0)=1; Z = Z ./ n;
-% Map to full space
-E = zeros(Nall, size(Z,2), 'single');
-E(subset,:) = single(Z);
-% For each anchor in subset, pick closest negative (no shared labels)
-S = E * E.';
+
+% Compute similarity only over the subset (avoid zero-vector issues)
+S_sub = Z_all * Z_all.';
+% Build reverse map: global index -> subset position
+globalToSub = zeros(Nall, 1);
+globalToSub(subset) = 1:Nsub;
+subsetSet = false(Nall, 1);
+subsetSet(subset) = true;
+
 Aout = A; Pout = P; Nout = N;
-for i = subset
-    labs = find(Yboot(i,:));
+for si = 1:Nsub
+    gi = subset(si);  % global index
+    labs = find(Yboot(gi,:));
     if isempty(labs), continue; end
-    s = S(i,:); s(i) = -inf;
-    % mask out items sharing label
-    share = any(Yboot(:,labs),2);
-    s(share) = -inf;
+    s = S_sub(si,:); s(si) = -inf;
+    % Mask out items in subset that share a label
+    for sj = 1:Nsub
+        gj = subset(sj);
+        if any(Yboot(gj, labs))
+            s(sj) = -inf;
+        end
+    end
     [~, ord] = sort(s,'descend');
-    if ~isempty(ord)
-        Nout(A==i) = ord(1); % set for triplets with this anchor
+    if ~isempty(ord) && s(ord(1)) > -inf
+        Nout(A==gi) = subset(ord(1));  % map back to global index
     end
 end
 end
@@ -441,7 +461,9 @@ function metrics = localEvaluate(tok, base, head, textStr, Ylogical, maxLen)
 textStr = string(textStr);
 N = numel(textStr);
 mb = 64;
-E = zeros(N, 384, 'single');
+% Detect projection dimension from head network output layer
+projDim = head.Layers(end).OutputSize;
+E = zeros(N, projDim, 'single');
 for s = 1:mb:N
     e = min(N, s+mb-1);
     % R2025b: encode returns [tokenCodes, segments] as cell arrays, not struct
@@ -469,8 +491,8 @@ for s = 1:mb:N
 end
 posSets = cell(N,1);
 for i=1:N
-    labs = Ylogical(i,:);
-    pos = find(any(Ylogical(:,labs),2)); pos(pos==i) = [];
+    labCols = find(Ylogical(i,:));
+    pos = find(any(Ylogical(:,labCols),2)); pos(pos==i) = [];
     posSets{i} = pos;
 end
 [recall10, mAP] = reg.eval_retrieval(E, posSets, 10);
