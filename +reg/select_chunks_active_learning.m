@@ -278,27 +278,26 @@ switch metric
         uncertainty = sum(xor(Yweak_train_bin, Yweak_eval_bin), 2);
 
     case 'least_confidence'
-        % 1 - max confidence
-        [max_prob, ~] = max(scores, [], 2);
-        uncertainty = 1 - max_prob;
+        % Multi-label: per-label distance from decision boundary (0.5),
+        % averaged across all labels. High uncertainty = many labels near 0.5.
+        % For independent Bernoulli labels, confidence = |2p - 1|.
+        per_label_conf = abs(2 * scores - 1);
+        uncertainty = 1 - mean(per_label_conf, 2);
 
     case 'margin'
-        % Margin between top 2 predictions
-        sorted_scores = sort(scores, 2, 'descend');
-        if size(sorted_scores, 2) >= 2
-            margin = sorted_scores(:,1) - sorted_scores(:,2);
-        else
-            margin = sorted_scores(:,1);
-        end
-        uncertainty = 1 - margin;  % Smaller margin = higher uncertainty, range [0,1]
+        % Multi-label: minimum per-label confidence (weakest link).
+        % Selects samples where at least one label is very uncertain.
+        % This complements least_confidence (mean) with a min-based metric.
+        per_label_conf = abs(2 * scores - 1);
+        uncertainty = 1 - min(per_label_conf, [], 2);
 
     case 'combined'
         % Weighted combination of multiple metrics
         p = max(min(scores, 1 - 1e-10), 1e-10);
         entropy = -sum(p .* log(p) + (1 - p) .* log(1 - p), 2);
         disagreement = sum(xor(Yweak_train > 0.5, Yweak_eval > 0.5), 2);
-        [max_prob, ~] = max(scores, [], 2);
-        least_conf = 1 - max_prob;
+        % Multi-label least confidence: mean per-label distance from boundary
+        least_conf = 1 - mean(abs(2 * scores - 1), 2);
 
         % Normalize to [0,1]
         entropy_norm = normalize_to_01(entropy);

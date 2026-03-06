@@ -18,6 +18,9 @@ function [Yweak, info] = weak_rules_improved(textStr, labels, varargin)
 %       'WeightBySpecificity' - Weight keywords by inverse document frequency (default: true)
 %       'MinConfidence' - Minimum confidence to assign (default: 0.3)
 %       'MaxConfidence' - Maximum confidence to assign (default: 0.95)
+%       'Rules' - External rules map (containers.Map) to use instead of
+%                 built-in defaults. Pass split training rules here to
+%                 preserve keyword disjointness with eval rules.
 %       'Verbose' - Display rule statistics (default: false)
 %
 %   OUTPUTS:
@@ -68,6 +71,7 @@ addParameter(p, 'UseWordBoundaries', true, @islogical);
 addParameter(p, 'WeightBySpecificity', true, @islogical);
 addParameter(p, 'MinConfidence', 0.3, @(x) isnumeric(x) && x >= 0 && x <= 1);
 addParameter(p, 'MaxConfidence', 0.95, @(x) isnumeric(x) && x >= 0 && x <= 1);
+addParameter(p, 'Rules', containers.Map.empty, @(x) isa(x, 'containers.Map'));
 addParameter(p, 'Verbose', false, @islogical);
 parse(p, varargin{:});
 
@@ -76,24 +80,31 @@ use_word_boundaries = p.Results.UseWordBoundaries;
 weight_by_specificity = p.Results.WeightBySpecificity;
 min_conf = p.Results.MinConfidence;
 max_conf = p.Results.MaxConfidence;
+external_rules = p.Results.Rules;
 verbose = p.Results.Verbose;
 
-% Define keyword rules (same as weak_rules.m)
-rules = containers.Map;
-rules('IRB') = ["internal ratings based","irb","pd","lgd","ead","slotting"];
-rules('CreditRisk') = ["credit risk","credit conversion factor","counterparty credit"];
-rules('Securitisation') = ["securitisation","securitization","tranche","sts"];
-rules('SRT') = ["significant risk transfer","srt","crt"];
-rules('MarketRisk_FRTB') = ["frtb","market risk","ima","sa"];
-rules('Liquidity_LCR') = ["lcr","liquidity coverage ratio","hqla"];
-rules('Liquidity_NSFR') = ["nsfr","net stable funding"];
-rules('LeverageRatio') = ["leverage ratio","lr","exposure measure"];
-rules('OperationalRisk') = ["operational risk","ama","sma","loss event"];
-rules('AML_KYC') = ["aml","kyc","money laundering","sanctions","cft"];
-rules('Governance') = ["governance","remuneration","board","fit and proper"];
-rules('Reporting_COREP_FINREP') = ["corep","finrep","xbrl","reporting templates"];
-rules('StressTesting') = ["stress test","icaap","ilaap","scenario"];
-rules('Outsourcing_ICT_DORA') = ["outsourcing","ict","dora","third-party"];
+% Use externally-provided rules if given (e.g., split training rules to
+% preserve keyword disjointness with eval rules), otherwise use defaults.
+if ~isempty(external_rules) && length(external_rules) > 0 %#ok<ISMT>
+    rules = external_rules;
+else
+    % Default keyword rules (same as weak_rules.m)
+    rules = containers.Map;
+    rules('IRB') = ["internal ratings based","irb","pd","lgd","ead","slotting"];
+    rules('CreditRisk') = ["credit risk","credit conversion factor","counterparty credit"];
+    rules('Securitisation') = ["securitisation","securitization","tranche","sts"];
+    rules('SRT') = ["significant risk transfer","srt","crt"];
+    rules('MarketRisk_FRTB') = ["frtb","market risk","ima","sa"];
+    rules('Liquidity_LCR') = ["lcr","liquidity coverage ratio","hqla"];
+    rules('Liquidity_NSFR') = ["nsfr","net stable funding"];
+    rules('LeverageRatio') = ["leverage ratio","lr","exposure measure"];
+    rules('OperationalRisk') = ["operational risk","ama","sma","loss event"];
+    rules('AML_KYC') = ["aml","kyc","money laundering","sanctions","cft"];
+    rules('Governance') = ["governance","remuneration","board","fit and proper"];
+    rules('Reporting_COREP_FINREP') = ["corep","finrep","xbrl","reporting templates"];
+    rules('StressTesting') = ["stress test","icaap","ilaap","scenario"];
+    rules('Outsourcing_ICT_DORA') = ["outsourcing","ict","dora","third-party"];
+end
 
 % Define negation words
 negation_words = ["not", "no", "without", "except", "excluding", ...

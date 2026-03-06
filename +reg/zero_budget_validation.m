@@ -116,10 +116,14 @@ if ismember('split-rules', methods)
     Yweak_eval = generate_labels_from_rules(chunksT.text, labels, rules_eval);
     Yboot_eval = Yweak_eval >= 0.5;
 
-    % Train classifier on training rules
+    % Train classifier on training rules (k-fold CV models)
     models = reg.train_multilabel(features, Yboot_train, kfold);
 
-    % Predict
+    % Predict using out-of-fold (cross-validated) predictions.
+    % train_multilabel returns ClassificationPartitionedModel objects;
+    % predict_multilabel calls kfoldPredict which returns predictions
+    % where each sample is scored by a model that did NOT see it during
+    % training. This avoids in-sample bias.
     [scores, ~, pred] = reg.predict_multilabel(models, features, Yboot_train);
 
     % Evaluate against eval rules (independent signal)
@@ -210,7 +214,14 @@ if ismember('consistency', methods)
     consistency_results = struct();
     consistency_results.per_label_kappa = kappa;
     consistency_results.per_label_agreement = raw_agreement;
-    valid = raw_agreement > 0;
+    % Filter to labels where both rule sets have at least one positive hit.
+    % The old filter (raw_agreement > 0) was effectively a no-op since
+    % proportion agreement is almost always > 0.
+    has_support = false(numel(labels), 1);
+    for j = 1:numel(labels)
+        has_support(j) = any(Yweak_v1(:,j) > 0) && any(Yweak_v2(:,j) > 0);
+    end
+    valid = has_support;
     consistency_results.mean_kappa = mean(kappa(valid));
     consistency_results.mean_agreement = mean(raw_agreement(valid));
 
@@ -255,25 +266,45 @@ if ismember('synthetic', methods)
     Yweak_synth_train = generate_labels_from_rules(chunksT.text, labels, rules_train_s);
     Yboot_synth_train = Yweak_synth_train >= 0.5;
 
-    % Train models on corpus
-    models_synth = reg.train_multilabel(features, Yboot_synth_train, kfold);
+    % Featurize synthetic texts in the SAME TF-IDF space as corpus.
+    % We fit the vocabulary on the corpus only, then encode synthetic texts
+    % against that vocabulary to ensure identical feature dimensions and
+    % consistent column semantics.
+    [docsTok_corpus, ~, ~] = reg.ta_features(chunksT.text);
+    synth_features = encode_tfidf_in_corpus_space( ...
+        string(synthetic_texts'), docsTok_corpus);
 
-    % Featurize synthetic texts in same TF-IDF space
-    all_texts = [chunksT.text; string(synthetic_texts')];
-    [~, ~, Xtfidf_all] = reg.ta_features(all_texts);
-    synth_features = Xtfidf_all(end-num_synth+1:end, :);
-
-    % Pad/trim features to match training feature dimensions
+    % Pad to match full feature width (features may include embeddings)
     D_train = size(features, 2);
     D_synth = size(synth_features, 2);
     if D_synth < D_train
         synth_features = [synth_features, zeros(num_synth, D_train - D_synth)];
-    elseif D_synth > D_train
-        synth_features = synth_features(:, 1:D_train);
+    end
+
+    % Train non-CV models for prediction on NEW data.
+    % train_multilabel returns CV partitioned models whose kfoldPredict
+    % only works on the original training data. For unseen synthetic texts
+    % we need standard (non-partitioned) models.
+    synth_models = cell(numel(labels), 1);
+    for j = 1:numel(labels)
+        y = double(Yboot_synth_train(:, j));
+        if nnz(y) >= 2 && nnz(y) < height(chunksT)
+            synth_models{j} = fitclinear(features, y, ...
+                'Learner', 'logistic', 'ObservationsIn', 'rows');
+        else
+            synth_models{j} = [];
+        end
     end
 
     % Predict on synthetic texts
-    [~, ~, synth_pred] = reg.predict_multilabel(models_synth, synth_features, Yboot_synth_train);
+    synth_scores = zeros(num_synth, numel(labels));
+    for j = 1:numel(labels)
+        if ~isempty(synth_models{j})
+            [~, sc] = predict(synth_models{j}, synth_features);
+            synth_scores(:, j) = sc(:, end);
+        end
+    end
+    synth_pred = synth_scores > 0.5;
 
     % Evaluate: pass/fail per test case
     synthetic_results = struct();
@@ -348,7 +379,8 @@ end
 end
 
 function Yweak = generate_labels_from_rules(texts, labels, rules)
-    % Generate weak labels from rule set
+    % Generate weak labels from rule set using word boundary matching
+    % to avoid substring false positives (e.g., "AML" in "AMALGAMATION").
     texts = lower(string(texts));
     Yweak = zeros(numel(texts), numel(labels));
 
@@ -362,12 +394,55 @@ function Yweak = generate_labels_from_rules(texts, labels, rules)
         hit = false(numel(texts), 1);
 
         for p = 1:numel(patterns)
-            % Simple contains check (could use improved version)
-            hit = hit | contains(texts, lower(patterns(p)));
+            % Use word boundary regex to avoid substring false positives
+            pat = ['\<', regexptranslate('escape', char(lower(patterns(p)))), '\>'];
+            hit = hit | ~cellfun('isempty', regexp(texts, pat, 'once'));
         end
 
         Yweak(:,j) = hit * 0.9;
     end
+end
+
+function Xtfidf = encode_tfidf_in_corpus_space(texts, corpus_docsTok)
+%ENCODE_TFIDF_IN_CORPUS_SPACE Encode new texts in the corpus TF-IDF space.
+%   Applies identical preprocessing as ta_features, then computes term
+%   counts against the corpus vocabulary and applies corpus IDF weights.
+%   This guarantees that column k in the output corresponds to the same
+%   word as column k in the corpus features.
+
+    % Rebuild corpus bag with same filtering as ta_features
+    bag = bagOfWords(corpus_docsTok);
+    counts_sum = full(sum(bag.Counts, 1));
+    if any(counts_sum >= 2)
+        bag = removeInfrequentWords(bag, 2);
+    end
+    vocab = bag.Vocabulary;
+    V = numel(vocab);
+    N_corpus = size(bag.Counts, 1);
+
+    % Preprocess new texts identically to ta_features
+    docs = tokenizedDocument(string(texts));
+    docs = lower(docs);
+    docs = erasePunctuation(docs);
+    docs = removeStopWords(docs);
+    docs = normalizeWords(docs, 'Style', 'lemma');
+    docs = removeShortWords(docs, 3);
+
+    % Build count matrix for new texts in corpus vocabulary
+    M = numel(texts);
+    X = zeros(M, V);
+    for i = 1:M
+        words = string(docs(i));
+        [found, idx] = ismember(words, vocab);
+        valid_idx = idx(found);
+        if ~isempty(valid_idx)
+            X(i, :) = accumarray(valid_idx(:), 1, [V, 1])';
+        end
+    end
+
+    % Apply corpus IDF weights (same formula as ta_features)
+    idf = log(N_corpus ./ max(1, full(sum(bag.Counts > 0, 1))));
+    Xtfidf = X .* idf;
 end
 
 function [texts, labels] = generate_synthetic_tests(label_names)

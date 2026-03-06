@@ -96,8 +96,11 @@ for m = 1:numel(methods_to_test)
             features = [Xtfidf, E];
 
         case 'weak_improved'
-            % Improved weak supervision + baseline features
+            % Improved weak supervision + baseline features.
+            % Pass split training rules to preserve keyword disjointness
+            % with eval rules (otherwise internal defaults overlap eval).
             [Yweak_train, ~] = reg.weak_rules_improved(chunksT.text, labels, ...
+                'Rules', rules_train, ...
                 'UseWordBoundaries', true, 'WeightBySpecificity', true, 'Verbose', false);
 
             [docsTok, vocab, Xtfidf] = reg.ta_features(chunksT.text);
@@ -116,8 +119,9 @@ for m = 1:numel(methods_to_test)
                 'TFIDF', Xtfidf, 'Embeddings', E, 'Verbose', false);
 
         case 'both'
-            % Both improvements
+            % Both improvements (split training rules for disjointness)
             [Yweak_train, ~] = reg.weak_rules_improved(chunksT.text, labels, ...
+                'Rules', rules_train, ...
                 'UseWordBoundaries', true, 'WeightBySpecificity', true, 'Verbose', false);
 
             [docsTok, vocab, Xtfidf] = reg.ta_features(chunksT.text);
