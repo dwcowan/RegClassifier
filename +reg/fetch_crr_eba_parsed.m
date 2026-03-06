@@ -27,7 +27,7 @@ files = strings(n,1);
 titlesS = strings(n,1);
 urls = strings(n,1);
 for i = 1:n
-    url = base + string(hrefs{i});
+    url = base + string(hrefs(i));
     try
         page = webread(url, opts);
         htmlPath = fullfile(outDir, sprintf('CRR_art_%04d.html', i));
@@ -37,7 +37,7 @@ for i = 1:n
         bodyTxt = extractHTMLText(t);
         writelines(string(bodyTxt), txtPath);
         % Try to parse "Article 180", "Article 4(1)(a)" etc.
-        titleStr = string(titles{i});
+        titleStr = string(titles(i));
         m = regexp(titleStr, 'Article\s+([0-9A-Za-z\(\)\.]+)', 'tokens', 'once');
         if ~isempty(m)
             article_num(i) = string(m{1});

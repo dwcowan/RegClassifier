@@ -44,7 +44,7 @@ n = min(nTotal, floor(args.MaxArticles));
 hrefs = hrefs(1:n); titles = titles(1:n);
 ids = strings(n,1); files = strings(n,1); titlesS = strings(n,1); urls = strings(n,1);
 for i = 1:n
-    url = base + string(hrefs{i});
+    url = base + string(hrefs(i));
     try
         page = webread(url, webOpts);
         ids(i) = "CRR_" + string(i);
@@ -54,7 +54,7 @@ for i = 1:n
         t = htmlTree(page); bodyTxt = extractHTMLText(t);
         writelines(string(bodyTxt), txtPath);
         files(i) = htmlPath;
-        titlesS(i) = string(titles{i});
+        titlesS(i) = string(titles(i));
         urls(i) = url;
         pause(0.2); % politeness
     catch ME

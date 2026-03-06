@@ -82,12 +82,12 @@ searchIx = reg.hybrid_search(Xtfidf, E, vocab, 'EmbeddingBackend', string(C.embe
 % G) (Optional) DB
 if C.db.enable
     conn = reg.ensure_db(C.db);
-    reg.upsert_chunks(conn, chunksT, C.labels, pred, scores);
-    if isstruct(conn) && isfield(conn,'sqlite')
-        close(conn.sqlite);
-    elseif isobject(conn)
-        close(conn);
+    try
+        reg.upsert_chunks(conn, chunksT, C.labels, pred, scores);
+    catch ME
+        warning('reg:pipeline:DBError', 'DB upsert failed: %s', ME.message);
     end
+    reg.close_db(conn);
 end
 
 % H) Report
