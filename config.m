@@ -37,9 +37,9 @@ end
 C.input_dir   = "";      % drop regs here (PDFs)
 C.labels      = strings(0);
 
-% Chunking defaults (placeholders)
-C.chunk_size_tokens = 0;
-C.chunk_overlap     = 0;
+% Chunking defaults (safe values if knobs.json fails to load)
+C.chunk_size_tokens = 300;
+C.chunk_overlap     = 80;
 
 % Embedding backend configuration
 C.embeddings_backend = '';
@@ -58,19 +58,27 @@ C.db = struct('enable', false, 'vendor','', 'dbname','', ...
 % Reports
 C.report_title = "";
 
-% Apply pipeline overrides
+% Apply pipeline overrides (skip null/empty values from JSON)
 pipe_fields = fieldnames(pipe);
 for i = 1:numel(pipe_fields)
     f = pipe_fields{i};
-    C.(f) = pipe.(f);
+    v = pipe.(f);
+    if isempty(v) && isfield(C, f) && isnumeric(C.(f))
+        continue;  % JSON null decoded as []; keep numeric default
+    end
+    C.(f) = v;
 end
 
-% Apply params overrides
+% Apply params overrides (skip null/empty values from JSON)
 param_fields = fieldnames(params);
 for i = 1:numel(param_fields)
     f = param_fields{i};
     if isfield(C, f)
-        C.(f) = params.(f);
+        v = params.(f);
+        if isempty(v) && isnumeric(C.(f))
+            continue;  % JSON null decoded as []; keep numeric default
+        end
+        C.(f) = v;
     end
 end
 C.params = params;

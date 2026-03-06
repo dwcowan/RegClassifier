@@ -48,7 +48,11 @@ scores = zeros(N, K);
 parfor j = 1:K
     M = models{j};
     if isempty(M), continue; end
-    [~, s] = kfoldPredict(M);
+    if isa(M, 'ClassificationPartitionedModel')
+        [~, s] = kfoldPredict(M);
+    else
+        [~, s] = predict(M, X);
+    end
     scores(:, j) = s(:, 2);
 end
 

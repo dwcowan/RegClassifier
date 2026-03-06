@@ -108,9 +108,10 @@ try
         Cgold = C; Cgold.labels = G.labels;
         E_gold = reg.precompute_embeddings(G.chunks.text, Cgold);
         posSets_gold = cell(height(G.chunks),1);
+        Ylog_g = logical(G.Y);
         for gi=1:height(G.chunks)
-            labs = G.Y(gi,:);
-            pos = find(any(G.Y(:,labs),2)); pos(pos==gi) = [];
+            labCols = find(Ylog_g(gi,:));
+            pos = find(any(Ylog_g(:,labCols),2)); pos(pos==gi) = [];
             posSets_gold{gi} = pos;
         end
         [recall10_g, mAP_g] = reg.eval_retrieval(E_gold, posSets_gold, 10);
@@ -159,9 +160,10 @@ try
         Eg = reg.precompute_embeddings(G.chunks.text, Cg);
         % Overall metrics on gold
         posSetsG = cell(height(G.chunks),1);
+        Ylog_g2 = logical(G.Y);
         for i=1:height(G.chunks)
-            labs = G.Y(i,:);
-            pos = find(any(G.Y(:,labs),2)); pos(pos==i) = [];
+            labCols = find(Ylog_g2(i,:));
+            pos = find(any(Ylog_g2(:,labCols),2)); pos(pos==i) = [];
             posSetsG{i} = pos;
         end
         [recall10_g, mAP_g] = reg.eval_retrieval(Eg, posSetsG, 10);

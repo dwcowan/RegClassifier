@@ -13,9 +13,10 @@ E = reg.precompute_embeddings(chunksT.text, C);
 
 % Calculate metrics (overall)
 posSets = cell(height(chunksT),1);
+Ylog = logical(G.Y);
 for i=1:height(chunksT)
-    labs = G.Y(i,:);
-    pos = find(any(G.Y(:,labs),2)); pos(pos==i) = [];
+    labCols = find(Ylog(i,:));
+    pos = find(any(Ylog(:,labCols),2)); pos(pos==i) = [];
     posSets{i} = pos;
 end
 [recall10, mAP] = reg.eval_retrieval(E, posSets, 10);

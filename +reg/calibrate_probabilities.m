@@ -205,25 +205,25 @@ n = numel(s_sorted);
 s_iso = zeros(n, 1);
 y_vals = double(y_sorted);
 
-% Simplified PAV
-i = 1;
-while i <= n
-    % Find region where monotonicity is violated
-    j = i;
-    sum_y = y_vals(i);
-    count = 1;
-
-    while j < n && sum_y / count > y_vals(j+1)
-        j = j + 1;
-        sum_y = sum_y + y_vals(j);
-        count = count + 1;
+% Standard PAV with backward merge
+% Each block stores [start, end, sum, count]
+blocks = zeros(n, 4);
+nBlocks = 0;
+for k = 1:n
+    nBlocks = nBlocks + 1;
+    blocks(nBlocks, :) = [k, k, y_vals(k), 1];
+    % Backward merge: while current block average < previous block average
+    while nBlocks > 1 && ...
+          blocks(nBlocks,3)/blocks(nBlocks,4) < blocks(nBlocks-1,3)/blocks(nBlocks-1,4)
+        % Merge current into previous
+        blocks(nBlocks-1, 2) = blocks(nBlocks, 2);  % extend end
+        blocks(nBlocks-1, 3) = blocks(nBlocks-1, 3) + blocks(nBlocks, 3);  % sum
+        blocks(nBlocks-1, 4) = blocks(nBlocks-1, 4) + blocks(nBlocks, 4);  % count
+        nBlocks = nBlocks - 1;
     end
-
-    % Average over region
-    avg = sum_y / count;
-    s_iso(i:j) = avg;
-
-    i = j + 1;
+end
+for k = 1:nBlocks
+    s_iso(blocks(k,1):blocks(k,2)) = blocks(k,3) / blocks(k,4);
 end
 
 % Unsort

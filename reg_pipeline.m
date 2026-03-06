@@ -54,8 +54,6 @@ catch ME
     E = reg.doc_embeddings_fasttext(chunksT.text, C.fasttext);
 end
 
-features = [Xtfidf, sparse(topicDist), E];
-
 % If a trained projection head exists, project embeddings for better retrieval/clustering
 if exist('projection_head.mat','file')
     S = load('projection_head.mat','head');
@@ -67,6 +65,8 @@ if exist('projection_head.mat','file')
     end
 end
 
+features = [double(Xtfidf), double(full(sparse(topicDist))), double(E)];
+
 
 % D) Weak supervision → bootstrap training labels
 Yweak = reg.weak_rules(chunksT.text, C.labels);
@@ -77,14 +77,17 @@ models = reg.train_multilabel(features, Yboot, C.kfold);
 [scores, thresholds, pred] = reg.predict_multilabel(models, features, Yboot); %#ok<NASGU>
 
 % F) Hybrid search index
-searchIx = reg.hybrid_search(Xtfidf, E, vocab); %#ok<NASGU>
+searchIx = reg.hybrid_search(Xtfidf, E, vocab, 'EmbeddingBackend', string(C.embeddings_backend)); %#ok<NASGU>
 
 % G) (Optional) DB
 if C.db.enable
     conn = reg.ensure_db(C.db);
     reg.upsert_chunks(conn, chunksT, C.labels, pred, scores);
-    if isstruct(conn) && isfield(conn,'sqlite'); close(conn.sqlite); end
-    if exist('database.ODBCConnection','class') || exist('database.jdbc.connection','class'), close(conn); end
+    if isstruct(conn) && isfield(conn,'sqlite')
+        close(conn.sqlite);
+    elseif isobject(conn)
+        close(conn);
+    end
 end
 
 % H) Report

@@ -22,7 +22,9 @@ for i = 1:N
         denom(l) = denom(l) + 1;
         rel = find(Ylogical(:,l));
         rel(rel==i) = [];
-        if any(ismember(ord, rel)), rec(l) = rec(l) + 1; end
+        if ~isempty(rel)
+            rec(l) = rec(l) + sum(ismember(ord, rel)) / numel(rel);
+        end
     end
 end
 recall = zeros(L,1);

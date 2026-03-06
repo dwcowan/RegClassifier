@@ -223,7 +223,9 @@ switch test_type
 
         h = (p_value < alpha);
         stats.statistic = observed_mean_diff;
-        stats.ci = prctile(boot_diffs, [alpha/2*100, (1-alpha/2)*100]);
+        % Pivotal CI: shift from null-centered bootstrap to observed mean
+        boot_ci_null = prctile(boot_diffs, [alpha/2*100, (1-alpha/2)*100]);
+        stats.ci = observed_mean_diff - fliplr(boot_ci_null);
         stats.effect_size = observed_mean_diff / std(diff);  % Standardized effect
 
     otherwise

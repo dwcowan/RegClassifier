@@ -45,9 +45,11 @@ for label = 1:L
             scores_calibrated(:, label) = predict(cal_model.glm_model, s);
 
         case 'isotonic'
-            % Interpolate
-            scores_calibrated(:, label) = interp1(cal_model.s_train, ...
-                cal_model.s_cal_train, s, 'linear', 'extrap');
+            % Interpolate (deduplicate x-values for interp1 compatibility)
+            [x_unique, ~, ic] = unique(cal_model.s_train);
+            y_unique = accumarray(ic, cal_model.s_cal_train, [], @mean);
+            scores_calibrated(:, label) = interp1(x_unique, ...
+                y_unique, s, 'linear', 'extrap');
 
             % Clip again after interpolation
             scores_calibrated(:, label) = max(0, min(1, scores_calibrated(:, label)));

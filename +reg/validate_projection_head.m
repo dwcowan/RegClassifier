@@ -102,7 +102,7 @@ end
 if verbose
     fprintf('Computing frozen BERT embeddings...\n');
 end
-E_bert = reg.doc_embeddings_bert_gpu(chunksT.text, struct('embeddings_backend', 'bert'));
+E_bert = reg.doc_embeddings_bert_gpu(chunksT.text);
 
 % Evaluate baseline (frozen BERT)
 if verbose

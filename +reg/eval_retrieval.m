@@ -21,7 +21,7 @@ for i = 1:N
     end
 
     topK = ord(1:min(K, numel(ord)));
-    recallK(i) = any(ismember(topK, pos));
+    recallK(i) = sum(ismember(topK, pos)) / numel(pos);
     % AP
     hits = ismember(ord, pos);
     cumHits = cumsum(hits);

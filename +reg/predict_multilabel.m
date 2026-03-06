@@ -7,7 +7,7 @@ function [scores, thresholds, pred] = predict_multilabel(models, X, Yboot)
 %   Trained{k} learner directly.
 arguments
     models cell
-    X double
+    X {mustBeNumeric}
     Yboot {mustBeNumericOrLogical}
 end
 

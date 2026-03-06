@@ -297,8 +297,15 @@ for q_idx = 1:numel(query_tokens)
 
     term_idx = vocab_map(term);
 
-    % Term frequency in each document
-    tf = full(Xtfidf(:, term_idx));
+    % Recover raw term frequency from TF-IDF by dividing out IDF.
+    % Xtfidf = TF * IDF, so TF = Xtfidf / IDF (for nonzero entries).
+    raw_col = full(Xtfidf(:, term_idx));
+    col_idf = log(N ./ max(1, nnz(raw_col > 0)));
+    if col_idf > 0
+        tf = raw_col / col_idf;
+    else
+        tf = raw_col;
+    end
 
     % Document frequency
     df = nnz(tf > 0);
