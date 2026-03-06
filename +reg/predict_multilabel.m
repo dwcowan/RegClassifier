@@ -1,5 +1,10 @@
 function [scores, thresholds, pred] = predict_multilabel(models, X, Yboot)
 %PREDICT_MULTILABEL Calibrated probabilities from CV; pick per-label thresholds
+%   NOTE: Models are cross-validated (ClassificationPartitionedModel). The
+%   kfoldPredict call returns out-of-fold predictions on the *training* data.
+%   The input X must be the same training data used to build the models;
+%   prediction on new/unseen data requires calling predict() on each fold's
+%   Trained{k} learner directly.
 arguments
     models cell
     X double
@@ -23,7 +28,13 @@ scores = zeros(N,K);
 parfor j = 1:K
     M = models{j};
     if isempty(M), continue; end
-    [~, s] = kfoldPredict(M);
+    if isa(M, 'ClassificationPartitionedModel')
+        % Cross-validated model: use out-of-fold predictions on training data
+        [~, s] = kfoldPredict(M);
+    else
+        % Standard model: predict on provided X
+        [~, s] = predict(M, X);
+    end
     scores(:,j) = s(:,2);
 end
 

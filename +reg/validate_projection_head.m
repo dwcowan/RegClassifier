@@ -337,7 +337,8 @@ function E_proj = apply_projection_simplified(E_bert, net)
 E_proj = E_bert * net.W;
 
 % L2 normalize
-E_proj = E_proj ./ sqrt(sum(E_proj.^2, 2));
+nrm = sqrt(sum(E_proj.^2, 2)); nrm(nrm==0) = 1;
+E_proj = E_proj ./ nrm;
 
 end
 
@@ -413,8 +414,8 @@ end
 
 % Plot 6: Training/inference time
 subplot(2,3,6);
-train_times = [baseline.train_time; [report.configurations.train_time]'];
 if isfield(baseline, 'train_time')
+    train_times = [baseline.train_time; [report.configurations.train_time]'];
     bar(1:num_configs, train_times);
     set(gca, 'XTickLabel', {configs.config_name}, 'XTickLabelRotation', 45);
     ylabel('Time (seconds)');

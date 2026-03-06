@@ -13,11 +13,19 @@ try
             E = reg.doc_embeddings_bert_gpu(textStr);
         end
     else
-        E = reg.doc_embeddings_fasttext(textStr, C.fasttext);
+        if isfield(C, 'fasttext')
+            E = reg.doc_embeddings_fasttext(textStr, C.fasttext);
+        else
+            E = reg.doc_embeddings_fasttext(textStr);
+        end
     end
 catch ME
     warning('Embeddings fallback to fastText due to: %s', ME.message);
-    E = reg.doc_embeddings_fasttext(textStr, C.fasttext);
+    if isfield(C, 'fasttext')
+        E = reg.doc_embeddings_fasttext(textStr, C.fasttext);
+    else
+        E = reg.doc_embeddings_fasttext(textStr);
+    end
 end
 % Ensure L2-normalized
 n = vecnorm(E,2,2); n(n==0)=1; E = E ./ n;

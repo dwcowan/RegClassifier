@@ -4,11 +4,12 @@ T = readtable(csvPath);
 % Keep only desired metrics (including new nDCG_at_10 field name)
 keep = ismember(T.metric, {'RecallAt10','mAP','nDCG@10','nDCG_at_10','recallAt10','ndcg','nDCG'});
 T = T(keep,:);
-% Normalize metric names
+% Normalize metric names (order matters: most specific first to avoid double-replacement)
 T.metric = strrep(T.metric, 'recallAt10','RecallAt10');
 T.metric = strrep(T.metric, 'nDCG_at_10','nDCG@10');
-T.metric = strrep(T.metric, 'nDCG','nDCG@10');
 T.metric = strrep(T.metric, 'ndcg','nDCG@10');
+% Only replace bare 'nDCG' that isn't already 'nDCG@10'
+T.metric = regexprep(T.metric, '^nDCG$', 'nDCG@10');
 
 % Convert table columns to string arrays for consistent comparison
 T.variant = string(T.variant);

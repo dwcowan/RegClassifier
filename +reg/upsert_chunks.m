@@ -18,7 +18,7 @@ if isstruct(conn) && isfield(conn,'sqlite')
     % Only retrieve column names to avoid NULL default values triggering errors
     cur = fetch(sconn, "SELECT name FROM pragma_table_info('reg_chunks');");
     if istable(cur)
-        existing = string(cur{:,:});
+        existing = string(cur{:,1});  % Only take the 'name' column
     else
         existing = string(cur(:,1));
     end

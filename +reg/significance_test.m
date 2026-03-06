@@ -150,8 +150,8 @@ switch test_type
             'alpha', alpha, 'tail', tail);
         stats.statistic = wilcox_stats.signedrank;
 
-        % Effect size: rank-biserial correlation
-        stats.effect_size = stats.statistic / (N * (N+1) / 2);
+        % Effect size: rank-biserial correlation r = 1 - (2*W)/(N*(N+1)/2)
+        stats.effect_size = 1 - (2 * stats.statistic) / (N * (N+1) / 2);
 
         % CI via bootstrap (Wilcoxon doesn't provide CI directly)
         try
@@ -203,10 +203,13 @@ switch test_type
 
         observed_mean_diff = mean(diff);
 
+        % Center differences under H0 (mean=0) before resampling
+        diff_centered = diff - observed_mean_diff;
+
         for b = 1:B
-            % Resample with replacement
+            % Resample with replacement from centered differences
             sample_idx = randi(N, N, 1);
-            boot_diffs(b) = mean(diff(sample_idx));
+            boot_diffs(b) = mean(diff_centered(sample_idx));
         end
 
         % P-value: proportion of bootstrap samples as extreme as observed
