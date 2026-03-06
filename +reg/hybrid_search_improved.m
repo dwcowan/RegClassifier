@@ -147,7 +147,7 @@ end
 
 % Encode query
 try
-    query_emb = reg.doc_embeddings_bert_gpu({query}, C);
+    query_emb = reg.doc_embeddings_bert_gpu(string(query));
 catch ME
     warning('BERT encoding failed: %s. Using zeros.', ME.message);
     query_emb = zeros(1, size(E, 2));
@@ -271,7 +271,8 @@ N = size(Xtfidf, 1);
 
 % Document lengths (in tokens)
 if istable(chunksT) && ismember('text', chunksT.Properties.VariableNames)
-    doc_lengths = cellfun(@(x) numel(strsplit(x)), chunksT.text);
+    textData = string(chunksT.text);
+    doc_lengths = arrayfun(@(x) numel(strsplit(x)), textData);
 else
     % Approximate from TF-IDF matrix (sum of term counts)
     doc_lengths = sum(Xtfidf > 0, 2);

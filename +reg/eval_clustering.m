@@ -12,16 +12,23 @@ if nargin<3, Kclusters = max(2, round(sqrt(N/10))); end
 [idx, ~] = kmeans(E, Kclusters, 'MaxIter',200, 'Replicates',3, 'Distance','cosine');
 
 % Purity (approx): assign each cluster its most common label (by argmax of labels)
+% Exclude items with no labels (all-zero rows) to avoid inflating purity
+hasLabel = any(labelsLogical, 2);
 [~, y] = max(labelsLogical, [], 2);  % choose a single label (ties arbitrary)
-purity = 0;
+purity = 0; labeledCount = 0;
 for k = 1:Kclusters
-    members = find(idx==k);
+    members = find(idx==k & hasLabel);
     if isempty(members), continue; end
     yk = y(members);
     maj = mode(yk);
     purity = purity + sum(yk==maj);
+    labeledCount = labeledCount + numel(members);
 end
-purity = purity / N;
+if labeledCount > 0
+    purity = purity / labeledCount;
+else
+    purity = 0;
+end
 
 % Silhouette (cosine) -- can be slow for big N; use subset if needed
 try

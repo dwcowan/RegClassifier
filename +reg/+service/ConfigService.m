@@ -4,7 +4,7 @@ classdef ConfigService
     %   configuration without instantiating the model directly.
 
     properties
-        ConfigModel reg.model.ConfigModel = reg.model.ConfigModel();
+        ConfigModel  % Configuration model object (must implement load() and process())
     end
 
     methods
@@ -17,6 +17,9 @@ classdef ConfigService
 
         function cfg = getConfig(obj)
             %GETCONFIG Load and validate configuration settings.
+            assert(~isempty(obj.ConfigModel), ...
+                'reg:ConfigService:NoModel', ...
+                'ConfigModel must be set before calling getConfig()');
             cfgRaw = obj.ConfigModel.load();
             cfg = obj.ConfigModel.process(cfgRaw);
         end

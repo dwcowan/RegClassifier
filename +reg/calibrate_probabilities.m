@@ -162,9 +162,9 @@ if verbose
     brier_after = mean((calibrated_scores - double(Y_true)).^2, 'all');
 
     fprintf('ECE:         %.4f → %.4f (%.1f%% improvement)\n', ...
-        ece_before, ece_after, 100 * (ece_before - ece_after) / ece_before);
+        ece_before, ece_after, 100 * (ece_before - ece_after) / max(ece_before, 1e-10));
     fprintf('Brier Score: %.4f → %.4f (%.1f%% improvement)\n', ...
-        brier_before, brier_after, 100 * (brier_before - brier_after) / brier_before);
+        brier_before, brier_after, 100 * (brier_before - brier_after) / max(brier_before, 1e-10));
 end
 
 end

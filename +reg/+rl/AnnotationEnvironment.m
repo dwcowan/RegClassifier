@@ -263,6 +263,8 @@ classdef AnnotationEnvironment < rl.env.MATLABEnvironment
                 % No annotations yet: use eval rules
                 predictions = this.Scores > 0.5;
                 ground_truth = this.GroundTruth;
+                f1 = this.computeF1(predictions, ground_truth);
+                return;
             else
                 % Simulate improvement from annotations
                 % In real system, would retrain model with ground truth
@@ -316,6 +318,10 @@ classdef AnnotationEnvironment < rl.env.MATLABEnvironment
                 % Get action from agent
                 obs = this.getObservation();
                 action = getAction(agent, obs);
+                % getAction returns a cell array; unwrap the scalar action
+                if iscell(action)
+                    action = action{1};
+                end
 
                 % Execute action
                 [~, ~, isDone, ~] = this.step(action);

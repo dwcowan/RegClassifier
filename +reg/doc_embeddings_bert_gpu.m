@@ -79,7 +79,13 @@ mask = double(ids ~= paddingCode);  % Attention mask: 1 for real tokens, 0 for p
 
 
 % Mini-batch inference on GPU
-E = zeros(N, 768, 'single');  % bert-base hidden size
+% Determine output dimension: 384 if fine-tuned head is used, 768 for base BERT
+if useHead
+    embDim = 384;
+else
+    embDim = 768;
+end
+E = zeros(N, embDim, 'single');
 for s = 1:miniBatchSize:N
     e = min(N, s+miniBatchSize-1);
     batchN = e - s + 1;
@@ -94,8 +100,8 @@ for s = 1:miniBatchSize:N
         pooled = getPooled(out);
         pooled = predict(headFT, pooled);
         pooled = gather(extractdata(pooled));
-        if size(pooled,2) ~= 384
-            if size(pooled,1)==384, pooled = pooled.'; else, error('HeadDimMismatch'); end
+        if size(pooled,2) ~= embDim
+            if size(pooled,1)==embDim, pooled = pooled.'; else, error('HeadDimMismatch'); end
         end
         E(s:e,:) = single(pooled);
         continue

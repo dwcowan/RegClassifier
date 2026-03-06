@@ -335,7 +335,7 @@ function loss = nt_xent(Z, B)
 % NT-Xent loss for 2B samples with positives (i, i+B)
 tau = 0.07;
 S = (Z.' * Z);                % cosine since Z is normalized
-S = S - eye(size(S));         % remove self-similarity
+S = S - inf * eye(size(S));   % mask out self-similarity with -inf so exp(-inf)=0
 lossSum = dlarray(0.0);
 count = 0;
 for i = 1:B

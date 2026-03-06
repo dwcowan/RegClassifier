@@ -25,7 +25,7 @@ classdef (Abstract, SharedTestFixtures={ ...
                 mkdir(targetDir);
             end
             % Find fixture path relative to this class file's location
-            classPath = fileparts(mfilename('fullpath', 'class'));
+            classPath = fileparts(mfilename('fullpath'));
             % classPath is tests/+fixtures, so fixture PDFs are in same dir
             sourcePath = fullfile(classPath, filename);
             targetPath = fullfile(targetDir, filename);

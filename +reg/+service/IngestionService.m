@@ -6,17 +6,21 @@ classdef IngestionService
     %   controllers do not depend on concrete model implementations.
 
     properties
-        PDFModel  reg.model.PDFIngestModel
-        ChunkModel reg.model.TextChunkModel
-        FeatureModel reg.model.FeatureModel
-        DocumentRepo reg.repository.DocumentRepository
+        PDFModel       % PDF ingestion model (must implement load() and process())
+        ChunkModel     % Text chunking model (must implement load() and process())
+        FeatureModel   % Feature extraction model (must implement load() and process())
+        DocumentRepo   % Optional document repository (must implement save())
     end
 
     methods
         function obj = IngestionService(pdfModel, chunkModel, featModel, docRepo)
             if nargin > 0
                 obj.PDFModel = pdfModel;
+            end
+            if nargin > 1
                 obj.ChunkModel = chunkModel;
+            end
+            if nargin > 2
                 obj.FeatureModel = featModel;
             end
             if nargin > 3

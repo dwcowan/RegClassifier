@@ -8,7 +8,8 @@ function [T, recall] = eval_per_label(E, Ylogical, K)
 %   [T, RECALL] = EVAL_PER_LABEL(...) also returns the raw recall vector.
 if nargin<3, K=10; end
 N = size(E,1); L = size(Ylogical,2);
-E = E ./ vecnorm(E, 2, 2); % normalize each row for cosine similarity
+n = vecnorm(E, 2, 2); n(n==0) = 1;
+E = E ./ n; % normalize each row for cosine similarity
 S = E * E.'; % cosine similarity matrix
 rec = zeros(L,1); denom = zeros(L,1);
 for i = 1:N

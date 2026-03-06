@@ -64,7 +64,7 @@ try
             fprintf(fidCSV,"%s,REMOVED,\"%s\",\"\",%s,%s\n", key, titleA, urlA, "");
         elseif ~inA && inB
             added = added + 1;
-            fprintf(fidCSV,"%s,ADDED,\",\"%s\",%s,%s\n", key, titleB, "", urlB);
+            fprintf(fidCSV,"%s,ADDED,\"\",\"%s\",%s,%s\n", key, titleB, "", urlB);
         else
             la = splitlines(tA); lb = splitlines(tB);
             if isequal(la, lb)

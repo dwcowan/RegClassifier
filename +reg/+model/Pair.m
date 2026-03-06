@@ -23,10 +23,12 @@ classdef Pair
             %   `build_pairs`.
             if nargin > 0
                 obj.A = a;
+            end
+            if nargin > 1
                 obj.B = b;
-                if nargin > 2
-                    obj.Label = label;
-                end
+            end
+            if nargin > 2
+                obj.Label = label;
             end
         end
     end
