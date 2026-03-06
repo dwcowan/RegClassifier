@@ -28,14 +28,7 @@ classdef TestGoldMetrics < fixtures.RegTestCase
             tc.GoldEmbeddings = reg.precompute_embeddings(G.chunks.text, C);
 
             % Compute and cache positive sets
-            posSets = cell(height(G.chunks), 1);
-            for i = 1:height(G.chunks)
-                labs = G.Y(i,:);
-                pos = find(any(G.Y(:,labs), 2));
-                pos(pos == i) = [];
-                posSets{i} = pos;
-            end
-            tc.GoldPositiveSets = posSets;
+            tc.GoldPositiveSets = fixtures.RegTestCase.buildPositiveSets(G.Y);
         end
     end
 

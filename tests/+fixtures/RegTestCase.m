@@ -128,6 +128,7 @@ classdef (Abstract, SharedTestFixtures={ ...
             labels = labelNames;
 
             % Generate random label matrix with some structure
+            rng('default');
             Ytrue = rand(numChunks, numLabels) > 0.7;  % ~30% positive rate
             % Ensure each chunk has at least one label
             for i = 1:numChunks

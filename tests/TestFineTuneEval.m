@@ -73,7 +73,7 @@ classdef TestFineTuneEval < fixtures.RegTestCase
             end
 
             % Generate simulated data
-            [chunksT, labels, Ytrue] = testutil.generate_simulated_crr();
+            [chunksT, labels, ~] = testutil.generate_simulated_crr();
             C = config();
             C.labels = labels;
 

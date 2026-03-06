@@ -8,6 +8,7 @@ classdef TestCrossValidation < fixtures.RegTestCase
             %   Verifies that splits cover all data points exactly once.
 
             % Create simple multi-label dataset
+            rng('default');
             N = 50;
             L = 5;
             Y = rand(N, L) > 0.7;
@@ -87,6 +88,7 @@ classdef TestCrossValidation < fixtures.RegTestCase
             %   Verifies that train and test sets are disjoint within the SAME fold.
             %   Note: It's correct for fold i's test to appear in fold j's train (i≠j).
 
+            rng('default');
             Y = rand(40, 4) > 0.6;
             for i = 1:size(Y, 1)
                 if ~any(Y(i, :))
@@ -143,6 +145,7 @@ classdef TestCrossValidation < fixtures.RegTestCase
             %TESTEDGECASESMALLDATASET Test with very small dataset.
             %   Verifies graceful handling when N < k.
 
+            rng('default');
             Y = rand(3, 2) > 0.5;
             Y(1, 1) = true;  % Ensure at least one label
             k = 5;

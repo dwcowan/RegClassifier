@@ -37,8 +37,8 @@ classdef TestUtilityFunctions < fixtures.RegTestCase
             %   Verifies that validate_knobs accepts a knobs struct without error.
             K = struct('BERT', struct('MiniBatchSize', 96, 'MaxSeqLength', 256));
             % Should not throw error
-            reg.validate_knobs(K);
-            tc.verifyTrue(true, 'validate_knobs should complete without error');
+            tc.verifyWarningFree(@() reg.validate_knobs(K), ...
+                'validate_knobs should complete without error or warning');
         end
 
         function testValidateKnobsWithComplexStruct(tc)
@@ -49,8 +49,8 @@ classdef TestUtilityFunctions < fixtures.RegTestCase
                 'Projection', struct('ProjDim', 384, 'Epochs', 50, 'BatchSize', 768), ...
                 'FineTune', struct('Loss', 'triplet', 'BatchSize', 32, 'Epochs', 5), ...
                 'Chunk', struct('SizeTokens', 300, 'Overlap', 80));
-            reg.validate_knobs(K);
-            tc.verifyTrue(true, 'validate_knobs should handle complex knobs struct');
+            tc.verifyWarningFree(@() reg.validate_knobs(K), ...
+                'validate_knobs should handle complex knobs struct without warning');
         end
 
         function testLogMetricsBasic(tc)

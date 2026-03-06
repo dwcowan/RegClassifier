@@ -8,6 +8,7 @@ classdef TestClassifierChains < fixtures.RegTestCase
             %   Verifies that chains can be trained and used for prediction.
 
             % Simple multi-label dataset
+            rng('default');
             X = randn(100, 20);
             Y = rand(100, 4) > 0.6;
             % Ensure some positive labels
@@ -42,6 +43,7 @@ classdef TestClassifierChains < fixtures.RegTestCase
             %TESTCHAINORDERMATTERS Test that label order affects results.
             %   Verifies that chains use conditional dependencies.
 
+            rng('default');
             X = randn(80, 15);
             Y = false(80, 3);
             % Create conditional dependencies
@@ -72,6 +74,7 @@ classdef TestClassifierChains < fixtures.RegTestCase
             %TESTCHAINVSINDEPENDENT Compare chains to independent classifiers.
             %   Verifies that chains can be at least as good as independent models.
 
+            rng('default');
             X = randn(120, 25);
             Y = rand(120, 4) > 0.65;
             for i = 1:size(Y, 1)
@@ -105,6 +108,7 @@ classdef TestClassifierChains < fixtures.RegTestCase
             %TESTCHAINWITHSPARSELABELS Test chains with very sparse label matrix.
             %   Verifies handling when most labels are negative.
 
+            rng('default');
             X = randn(50, 10);
             Y = false(50, 5);
             Y(1:5, :) = rand(5, 5) > 0.5;  % Only first 5 samples have labels
@@ -126,6 +130,7 @@ classdef TestClassifierChains < fixtures.RegTestCase
             %TESTCHAINCONSISTENCY Test prediction consistency.
             %   Verifies deterministic predictions for same input.
 
+            rng('default');
             X = randn(60, 15);
             Y = rand(60, 3) > 0.6;
             for i = 1:size(Y, 1)

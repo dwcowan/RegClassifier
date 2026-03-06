@@ -28,6 +28,8 @@ classdef TestReportArtifact < fixtures.RegTestCase
             tc.addTeardown(@() deleteIfExists('pipeline.json'));
             tc.addTeardown(@() deleteIfExists(fullfile(pdfDir, "sim_text.pdf")));
             tc.addTeardown(@() deleteIfExists('reg_eval_report.pdf'));
+            tc.addTeardown(@() deleteIfExists('classification_results.mat'));
+            tc.addTeardown(@() deleteDirIfExists(fullfile(testDir, "data")));
 
             run reg_pipeline
             run reg_eval_and_report
@@ -41,5 +43,11 @@ end
 function deleteIfExists(filepath)
     if isfile(filepath)
         delete(filepath);
+    end
+end
+
+function deleteDirIfExists(dirpath)
+    if isfolder(dirpath)
+        rmdir(dirpath, 's');
     end
 end

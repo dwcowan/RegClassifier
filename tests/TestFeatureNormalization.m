@@ -7,6 +7,7 @@ classdef TestFeatureNormalization < fixtures.RegTestCase
             %TESTZSC ORENORMALIZATION Test z-score normalization (mean=0, std=1).
             %   Verifies that normalized features have zero mean and unit variance.
 
+            rng('default');
             X = randn(100, 50) * 5 + 10;  % Random features with non-zero mean
 
             Xnorm = reg.normalize_features(X, 'Method', 'zscore');
@@ -30,6 +31,7 @@ classdef TestFeatureNormalization < fixtures.RegTestCase
             %TESTMINMAXNORMALIZATION Test min-max normalization to [0,1].
             %   Verifies that normalized features are in range [0, 1].
 
+            rng('default');
             X = randn(100, 50) * 10 + 5;
 
             Xnorm = reg.normalize_features(X, 'Method', 'minmax');
@@ -57,6 +59,7 @@ classdef TestFeatureNormalization < fixtures.RegTestCase
             %TESTL2NORMALIZATION Test L2 row normalization.
             %   Verifies that each row has unit L2 norm.
 
+            rng('default');
             X = randn(100, 50);
 
             Xnorm = reg.normalize_features(X, 'Method', 'l2');
@@ -75,6 +78,7 @@ classdef TestFeatureNormalization < fixtures.RegTestCase
             %TESTCONSTANTFEATUREHANDLING Test handling of constant features.
             %   Verifies that constant columns don't cause division by zero.
 
+            rng('default');
             X = randn(100, 10);
             X(:, 3) = 5;  % Constant column
             X(:, 7) = -2;  % Another constant column
@@ -98,6 +102,7 @@ classdef TestFeatureNormalization < fixtures.RegTestCase
             %TESTNANHANDLING Test handling of NaN values.
             %   Verifies graceful handling of missing data.
 
+            rng('default');
             X = randn(100, 10);
             X(5, 3) = NaN;
             X(20, 7) = NaN;
@@ -118,6 +123,7 @@ classdef TestFeatureNormalization < fixtures.RegTestCase
             %TESTINFHANDLING Test handling of Inf values.
             %   Verifies graceful handling of extreme values.
 
+            rng('default');
             X = randn(100, 10);
             X(10, 4) = Inf;
             X(30, 8) = -Inf;
@@ -154,6 +160,7 @@ classdef TestFeatureNormalization < fixtures.RegTestCase
             %TESTSINGLESAMPLE Test normalization with single sample.
             %   Verifies handling when N=1.
 
+            rng('default');
             X = randn(1, 50);
 
             % Z-score with single sample is undefined (std=0)
@@ -177,6 +184,7 @@ classdef TestFeatureNormalization < fixtures.RegTestCase
             %TESTNORMALIZATIONREVERSIBLE Test that normalization can be reversed.
             %   Verifies that statistics can be saved and applied to test data.
 
+            rng('default');
             Xtrain = randn(100, 20) * 5 + 10;
             Xtest = randn(50, 20) * 5 + 10;
 
@@ -202,6 +210,7 @@ classdef TestFeatureNormalization < fixtures.RegTestCase
             %TESTSPARSEMATRIXSUPPORT Test normalization of sparse matrices.
             %   Verifies that sparse matrices are handled efficiently.
 
+            rng('default');
             X = sprand(1000, 100, 0.1);  % 10% density sparse matrix
 
             try

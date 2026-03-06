@@ -10,12 +10,7 @@ classdef TestProjectionHeadSimulated < fixtures.RegTestCase
             head = reg.train_projection_head(Ebase, P, 'Epochs', 2, 'BatchSize', 128);
             Eproj = reg.embed_with_head(Ebase, head);
             % Metrics
-            posSets = cell(height(chunksT),1);
-            for i=1:height(chunksT)
-                labs = Ytrue(i,:);
-                pos = find(any(Ytrue(:,labs),2)); pos(pos==i) = [];
-                posSets{i} = pos;
-            end
+            posSets = fixtures.RegTestCase.buildPositiveSets(Ytrue);
             [r_base, m_base] = reg.eval_retrieval(Ebase, posSets, 10);
             [r_proj, m_proj] = reg.eval_retrieval(Eproj, posSets, 10);
             tc.verifyGreaterThanOrEqual(r_proj, r_base - 1e-6);

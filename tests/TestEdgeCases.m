@@ -89,6 +89,7 @@ classdef TestEdgeCases < fixtures.RegTestCase
         function evalRetrievalEmptyPositiveSets(tc)
             %EVALRETRIEVALEMPTYPOSITIVESETS Test retrieval with no positive examples.
             %   Verifies metrics handle empty positive sets gracefully.
+            rng('default');
             E = randn(5, 10);
             E = E ./ vecnorm(E, 2, 2);  % normalize
             posSets = {[], [], [], [], []};  % no positives for any query
@@ -102,6 +103,7 @@ classdef TestEdgeCases < fixtures.RegTestCase
         function evalRetrievalKLargerThanCorpus(tc)
             %EVALRETRIEVALKL Test retrieval when K > corpus size.
             %   Should handle gracefully without errors.
+            rng('default');
             E = randn(5, 10);
             E = E ./ vecnorm(E, 2, 2);
             % Create simple positive sets
@@ -186,6 +188,7 @@ classdef TestEdgeCases < fixtures.RegTestCase
         function trainMultilabelEmptyLabels(tc)
             %TRAINMULTILABELEMPTYLABELS Test classifier training with no positive labels.
             %   All-zero label matrix should handle gracefully.
+            rng('default');
             X = randn(10, 20);
             Y = false(10, 3);  % no positive labels
             k = 2;

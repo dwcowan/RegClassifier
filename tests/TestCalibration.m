@@ -7,10 +7,11 @@ classdef TestCalibration < fixtures.RegTestCase
             %TESTPLATTSCALINGBASIC Test Platt scaling calibration.
             %   Verifies that calibration model is learned and can be applied.
 
-            % Generate synthetic scores and true labels
+            % Generate synthetic scores with noisy labels to test real calibration
+            rng('default');
             N = 200;
             scores = rand(N, 1);
-            Ytrue = scores > 0.5;  % Simple threshold
+            Ytrue = rand(N, 1) < scores * 0.8 + 0.1;  % Noisy labels correlated with scores
 
             % Train calibration model (function returns [calibrated_scores, calibrators])
             [probsCal, calibrators] = reg.calibrate_probabilities(scores, Ytrue, 'Method', 'platt');
@@ -35,6 +36,7 @@ classdef TestCalibration < fixtures.RegTestCase
             %TESTISOTONICREGRESSIONBASIC Test isotonic regression calibration.
             %   Verifies monotonic transformation of scores.
 
+            rng('default');
             N = 200;
             scores = rand(N, 1);
             Ytrue = rand(N, 1) > 0.4;
@@ -74,6 +76,7 @@ classdef TestCalibration < fixtures.RegTestCase
             %   Verifies that calibrated probabilities better match empirical frequencies.
 
             % Generate poorly calibrated scores (overconfident)
+            rng('default');
             N = 300;
             scores = betarnd(8, 2, N, 1);  % Skewed toward high values
             Ytrue = rand(N, 1) < scores * 0.7;  % True labels with noise
@@ -116,6 +119,7 @@ classdef TestCalibration < fixtures.RegTestCase
             %TESTMULTILABELCALIBRATION Test calibration for multi-label predictions.
             %   Verifies that each label can be calibrated independently.
 
+            rng('default');
             N = 200;
             L = 3;
             scores = rand(N, L);
@@ -144,6 +148,7 @@ classdef TestCalibration < fixtures.RegTestCase
             %TESTEDGECASEPERFECTSCORES Test calibration when scores match labels perfectly.
             %   Verifies handling of already-calibrated scores.
 
+            rng('default');
             N = 100;
             Ytrue = rand(N, 1) > 0.5;
             scores = double(Ytrue);  % Perfect scores
@@ -159,6 +164,7 @@ classdef TestCalibration < fixtures.RegTestCase
             %TESTEDGECASEALLPOSITIVE Test when all labels are positive.
             %   Verifies handling of single-class data.
 
+            rng('default');
             N = 100;
             scores = rand(N, 1);
             Ytrue = true(N, 1);  % All positive
@@ -186,6 +192,7 @@ classdef TestCalibration < fixtures.RegTestCase
             %TESTCALIBRATIONPERSISTENCE Test that calibration model can be saved/loaded.
             %   Verifies model serialization.
 
+            rng('default');
             N = 150;
             scores = rand(N, 1);
             Ytrue = rand(N, 1) > 0.5;

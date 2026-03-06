@@ -56,6 +56,7 @@ classdef TestRulesAndModel < fixtures.RegTestCase
         function testTrainMultilabelWithSparseLabels(tc)
             %TESTTRAINMULTILABELWITHSPARSELABELS Test training with very sparse labels.
             %   Verifies that training handles cases where most labels are negative.
+            rng('default');
             X = randn(20, 30);
             Y = false(20, 5);
             Y(1:3, 1) = true;  % 3 positive examples for label 1 (minimum for 2-fold CV)
@@ -75,6 +76,7 @@ classdef TestRulesAndModel < fixtures.RegTestCase
         function testPredictMultilabelConsistency(tc)
             %TESTPREDICTMULTILABELCONSISTENCY Test prediction consistency.
             %   Verifies that predictions are deterministic for same input.
+            rng('default');
             X = randn(10, 20);
             Y = false(10, 3);
             Y(1:5, 1) = true;
