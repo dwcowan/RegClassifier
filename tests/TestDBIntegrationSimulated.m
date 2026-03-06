@@ -3,8 +3,9 @@ classdef TestDBIntegrationSimulated < fixtures.RegTestCase
         function sqlite_roundtrip(tc)
             [chunksT, labels, Ytrue] = testutil.generate_simulated_crr();
             pred = logical(Ytrue); scores = double(Ytrue);
-            C = config(); C.db.vendor = 'sqlite'; C.db.sqlite_path = "tests/tmp/sim_reg.sqlite";
+            C = config(); C.db.vendor = 'sqlite'; C.db.sqlite_path = fullfile(tempdir, 'sim_reg.sqlite');
             if isfile(C.db.sqlite_path), delete(C.db.sqlite_path); end
+            tc.addTeardown(@() deleteIfExists(C.db.sqlite_path));
             conn = reg.ensure_db(C.db);
             reg.upsert_chunks(conn, chunksT, labels, pred, scores);
             if isstruct(conn) && isfield(conn,'sqlite')
@@ -22,5 +23,11 @@ classdef TestDBIntegrationSimulated < fixtures.RegTestCase
             end
             if isfile(C.db.sqlite_path), delete(C.db.sqlite_path); end
         end
+    end
+end
+
+function deleteIfExists(filepath)
+    if isfile(filepath)
+        delete(filepath);
     end
 end

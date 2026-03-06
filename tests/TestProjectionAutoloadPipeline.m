@@ -23,7 +23,8 @@ classdef TestProjectionAutoloadPipeline < fixtures.RegTestCase
 
             % Place a fixtures PDF in data/pdfs so reg_pipeline can run end-to-end
             if ~isfolder("data/pdfs"), mkdir("data/pdfs"); end
-            srcPDF = fullfile("+fixtures","sim_text.pdf");
+            testDir = fileparts(mfilename('fullpath'));
+            srcPDF = fullfile(testDir, "+fixtures","sim_text.pdf");
             dstPDF = fullfile("data","pdfs","sim_text.pdf");
             [status, msg] = copyfile(srcPDF, dstPDF);
             if ~status

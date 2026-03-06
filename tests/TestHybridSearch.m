@@ -47,8 +47,8 @@ classdef TestHybridSearch < fixtures.RegTestCase
 
             tc.verifyClass(res, 'table', ...
                 'Empty query should return table');
-            tc.verifyTrue(height(res) >= 0, ...
-                'Empty query should not crash');
+            tc.verifyGreaterThan(height(res), 0, ...
+                'Empty query should still return ranked results');
         end
 
         function testQueryWithAlphaExtremes(tc)

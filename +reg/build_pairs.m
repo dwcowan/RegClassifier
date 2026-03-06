@@ -65,7 +65,8 @@ if count < 100 && N > 100
     warning('Only %d triplets created from %d items. Check label distribution.', count, N);
 end
 if count == 0
-    error('No triplets created. Labels may be too sparse or all items share all labels.');
+    error('reg:build_pairs:NoTriplets', ...
+        'No triplets created. Labels may be too sparse or all items share all labels.');
 end
 
 P.anchor = trip(1,:);

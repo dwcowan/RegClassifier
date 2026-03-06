@@ -10,7 +10,6 @@ classdef TestDB < fixtures.RegTestCase
             C.db.sqlite_path = fullfile(tempdir(), 'reg_test.sqlite');
             deleteIfExists(C.db.sqlite_path);
             tc.TempDB = C.db;
-            assignin('base','Cdb',tc.TempDB); %#ok<NASGU>
         end
     end
     methods (TestMethodTeardown)

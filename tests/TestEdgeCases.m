@@ -159,8 +159,8 @@ classdef TestEdgeCases < fixtures.RegTestCase
             end
             K = 5;
             ndcg = reg.metrics_ndcg(scores, posSets, K);
-            tc.verifyEqual(ndcg, 1/N, 'AbsTol', 0.01, ...
-                'nDCG should be 1/N when one query has perfect ranking');
+            tc.verifyEqual(ndcg, 1.0, 'AbsTol', 0.01, ...
+                'nDCG should be 1.0 when the only query with positives has perfect ranking');
         end
 
         function buildPairsAllSameLabels(tc)
@@ -169,7 +169,7 @@ classdef TestEdgeCases < fixtures.RegTestCase
             Ytrue = logical(ones(5, 3));  % all items have all 3 labels
             % Should error because no negatives can be found
             tc.verifyError(@() reg.build_pairs(Ytrue, 'MaxTriplets', 100), ...
-                '', ...  % any error ID
+                'reg:build_pairs:NoTriplets', ...
                 'Should error when all items share all labels (no negatives)');
         end
 
@@ -179,7 +179,7 @@ classdef TestEdgeCases < fixtures.RegTestCase
             Ytrue = logical(eye(5));  % each item has unique label
             % Should error because no positives exist (MinPosPerAnchor=1 by default)
             tc.verifyError(@() reg.build_pairs(Ytrue, 'MaxTriplets', 100), ...
-                '', ...  % any error ID
+                'reg:build_pairs:NoTriplets', ...
                 'Should error when no items share labels (no positives)');
         end
 
