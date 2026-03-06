@@ -64,7 +64,7 @@ fprintf('Solution: Chain classifiers with ensemble of 5 orderings\n\n');
 
 % Extract features
 fprintf('Extracting TF-IDF features...\n');
-X = reg.ta_features(chunksT.text);
+[~, ~, X] = reg.ta_features(chunksT.text);
 fprintf('Feature matrix: %d x %d\n\n', size(X, 1), size(X, 2));
 
 % Train classifier chains

@@ -20,9 +20,9 @@ end
 
 % Fine-tuned (optional)
 if isfile('fine_tuned_bert.mat')
-    S = load('fine_tuned_bert.mat','netFT');
-    % Re-embed using fine-tuned encoder
-    E.finetuned = reg.doc_embeddings_bert_gpu(chunksT.text, 'UseFineTuned', true);
+    Sft = load('fine_tuned_bert.mat','netFT');
+    % Re-embed using fine-tuned encoder via ft_eval embedding mode
+    E.finetuned = reg.ft_eval(Sft.netFT, chunksT.text);
 end
 
 % Encode queries using each variant and compute Top-K
@@ -37,8 +37,9 @@ for v = fieldnames(E).'
         if strcmp(vn, 'projection') && isfile('projection_head.mat')
             Sp = load('projection_head.mat','head');
             Eq = reg.embed_with_head(Eq_base, Sp.head);
-        elseif strcmp(vn, 'finetuned')
-            Eq = reg.doc_embeddings_bert_gpu(string(q), 'UseFineTuned', true);
+        elseif strcmp(vn, 'finetuned') && isfile('fine_tuned_bert.mat')
+            Sft2 = load('fine_tuned_bert.mat','netFT');
+            Eq = reg.ft_eval(Sft2.netFT, string(q));
         else
             Eq = Eq_base;
         end

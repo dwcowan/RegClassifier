@@ -244,11 +244,13 @@ end
 function [score, num_chunks, avg_chunk_length] = evaluate_chunk_config(texts, labels, size_val, overlap_val, metric)
 %EVALUATE_CHUNK_CONFIG Evaluate a chunk size configuration.
 
-% Chunk all texts
+% Chunk all texts (chunk_text expects a table with .text column)
 all_chunks = {};
 for i = 1:numel(texts)
-    chunks = reg.chunk_text(texts{i}, size_val, overlap_val);
-    all_chunks = [all_chunks; chunks];
+    docT = table(string(texts{i}), 'VariableNames', {'text'});
+    docT.doc_id = "doc_" + i;
+    chunksT = reg.chunk_text(docT, size_val, overlap_val);
+    all_chunks = [all_chunks; cellstr(chunksT.text)];
 end
 
 num_chunks = numel(all_chunks);
@@ -332,7 +334,7 @@ function recall = evaluate_recall(chunks, labels)
 
 try
     % Generate embeddings (simplified)
-    E = reg.doc_embeddings_bert_gpu(chunks, struct('embeddings_backend', 'bert'));
+    E = reg.doc_embeddings_bert_gpu(chunks);
 
     % Generate weak labels
     Yweak = reg.weak_rules_improved(chunks, labels, 'Verbose', false);
@@ -365,7 +367,7 @@ function map_score = evaluate_map(chunks, labels)
 
 try
     % Same as recall but return mAP
-    E = reg.doc_embeddings_bert_gpu(chunks, struct('embeddings_backend', 'bert'));
+    E = reg.doc_embeddings_bert_gpu(chunks);
     Yweak = reg.weak_rules_improved(chunks, labels, 'Verbose', false);
 
     posSets = cell(size(E, 1), 1);

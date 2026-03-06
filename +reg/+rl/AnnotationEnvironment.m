@@ -290,7 +290,8 @@ classdef AnnotationEnvironment < rl.env.MATLABEnvironment
 
             % 3. Mean margin uncertainty: average distance from decision
             %    boundary across all labels (multi-label appropriate)
-            least_conf = mean(abs(this.Scores - 0.5), 2);
+            %    Invert so items CLOSE to 0.5 get HIGH uncertainty
+            least_conf = 1 - mean(abs(this.Scores - 0.5), 2) / 0.5;
 
             % Normalize and combine
             entropy_norm = (entropy - min(entropy)) / (max(entropy) - min(entropy) + 1e-10);

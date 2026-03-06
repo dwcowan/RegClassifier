@@ -43,7 +43,8 @@ else
     % Embed all chunks
     E = ft_embed_all(chunksT.text, netFT, netFT.MaxSeqLength, 64);
 
-    % Build pos sets from labels
+    % Build pos sets from labels (ensure logical to avoid numeric indexing)
+    if ~islogical(Ylogical), Ylogical = logical(Ylogical); end
     N = height(chunksT);
     posSets = cell(N,1);
     for i = 1:N
@@ -106,9 +107,15 @@ for s = 1:mb:N
     end
     mask = double(ids ~= paddingCode);  % Attention mask: 1 for real tokens, 0 for padding
     % Reshape to 3D (1, maxLen, N) 'CTB' format for BERT sequenceInputLayer (C=1)
-    ids = dlarray(gpuArray(single(permute(ids, [3,2,1]))),'CTB');
-    segs = dlarray(gpuArray(single(ones(1, maxLen, numSeqs))),'CTB');
-    mask = dlarray(gpuArray(single(permute(mask, [3,2,1]))),'CTB');
+    if useGPU
+        ids = dlarray(gpuArray(single(permute(ids, [3,2,1]))),'CTB');
+        segs = dlarray(gpuArray(single(ones(1, maxLen, numSeqs))),'CTB');
+        mask = dlarray(gpuArray(single(permute(mask, [3,2,1]))),'CTB');
+    else
+        ids = dlarray(single(permute(ids, [3,2,1])),'CTB');
+        segs = dlarray(single(ones(1, maxLen, numSeqs)),'CTB');
+        mask = dlarray(single(permute(mask, [3,2,1])),'CTB');
+    end
     out = predict(netFT.base, ids, segs, mask);
     Z = localPooled(out);
     Z = predict(netFT.head, Z);

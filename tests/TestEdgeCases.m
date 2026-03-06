@@ -199,7 +199,7 @@ classdef TestEdgeCases < fixtures.RegTestCase
             %TAFEATURESEMPTYTEXT Test TF-IDF with empty text array.
             %   Empty text should return empty vocabulary and features.
             text = string.empty(0, 1);
-            [tfidf, vocab] = reg.ta_features(text);
+            [~, vocab, tfidf] = reg.ta_features(text);
             tc.verifyEqual(size(tfidf, 1), 0, ...
                 'Empty text should yield 0-row TF-IDF matrix');
             tc.verifyTrue(isempty(vocab) || numel(vocab) == 0, ...
@@ -211,7 +211,7 @@ classdef TestEdgeCases < fixtures.RegTestCase
             %   Single words should produce valid features after filtering.
             %   Use longer words to avoid being filtered by removeShortWords.
             text = ["capital", "liquidity", "leverage"];
-            [tfidf, vocab] = reg.ta_features(text);
+            [~, vocab, tfidf] = reg.ta_features(text);
             % After stopword removal, lemmatization, and short word removal,
             % we should have at least one valid document
             tc.verifyGreaterThan(size(tfidf, 1), 0, ...

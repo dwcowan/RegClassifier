@@ -55,11 +55,11 @@ for label = 1:L
             scores_calibrated(:, label) = max(0, min(1, scores_calibrated(:, label)));
 
         case 'beta'
-            % Apply beta calibration
+            % Apply beta calibration (fitglm adds intercept automatically)
             epsilon = 1e-15;
             s_clipped = max(epsilon, min(1-epsilon, s));
             logit_s = log(s_clipped ./ (1 - s_clipped));
-            X = [ones(size(logit_s)), logit_s, logit_s.^2];
+            X = [logit_s, logit_s.^2];
             scores_calibrated(:, label) = predict(cal_model.glm_model, X);
 
         otherwise

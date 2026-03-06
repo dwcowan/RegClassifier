@@ -255,20 +255,20 @@ epsilon = 1e-15;
 s_clipped = max(epsilon, min(1-epsilon, s));
 logit_s = log(s_clipped ./ (1 - s_clipped));
 
-% Fit with quadratic term
-X = [ones(size(logit_s)), logit_s, logit_s.^2];
+% Fit with quadratic term (disable auto-intercept since X includes ones column)
+X = [logit_s, logit_s.^2];
 mdl = fitglm(X, double(y), 'Distribution', 'binomial', 'Link', 'logit');
 
 % Apply calibration
 s_cal = predict(mdl, X);
 
-% Store model
+% Store model (intercept is mdl coefficient 1, linear=2, quadratic=3)
 model = struct();
 model.method = 'beta';
 model.glm_model = mdl;
-model.a = mdl.Coefficients.Estimate(1);
-model.b = mdl.Coefficients.Estimate(2);
-model.c = mdl.Coefficients.Estimate(3);
+model.a = mdl.Coefficients.Estimate(1);  % intercept (auto-added by fitglm)
+model.b = mdl.Coefficients.Estimate(2);  % linear logit term
+model.c = mdl.Coefficients.Estimate(3);  % quadratic logit term
 
 end
 
