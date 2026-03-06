@@ -23,7 +23,6 @@ S.query = @(q, alpha) do_query(q, alpha, S);
 end
 
 function out = do_query(q, alpha, S)
-if nargin<2, alpha = 0.5; end
 qTok = tokenizedDocument(string(q));
 qTok = lower(erasePunctuation(removeStopWords(qTok)));
 
@@ -65,7 +64,7 @@ qe = qe ./ max(1e-9, norm(qe));
 bm = (S.Xtfidf * qtfidf') ./ max(1e-9, norm(qtfidf));
 em = single(S.E * qe');
 score = alpha*bm + (1-alpha)*em;
-[sv, idx] = maxk(score, 20);
+[sv, idx] = maxk(score, min(20, numel(score)));
 rank = (1:numel(idx))';
 out = table(idx, sv, rank, 'VariableNames', {'docId','score','rank'});
 end

@@ -54,7 +54,7 @@ if isstruct(conn) && isfield(conn,'sqlite')
                     sqlvals(j) = "'" + strrep(string(v), "'", "''") + "'";
                 elseif islogical(v)
                     sqlvals(j) = num2str(double(v));
-                elseif isnumeric(v) && (isnan(v) || isinf(v))
+                elseif isnumeric(v) && isscalar(v) && (isnan(v) || isinf(v))
                     sqlvals(j) = "NULL";
                 else
                     sqlvals(j) = num2str(v);

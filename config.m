@@ -70,7 +70,16 @@ for i = 1:numel(pipe_fields)
     if strcmp(f, 'labels') && iscell(v)
         v = string(v);
     end
-    C.(f) = v;
+    % Merge struct fields rather than replacing, so partial JSON structs
+    % (e.g., db with only enable/vendor/sqlite_path) don't lose defaults.
+    if isstruct(v) && isfield(C, f) && isstruct(C.(f))
+        subFields = fieldnames(v);
+        for sf = 1:numel(subFields)
+            C.(f).(subFields{sf}) = v.(subFields{sf});
+        end
+    else
+        C.(f) = v;
+    end
 end
 
 % Apply params overrides (skip null/empty values from JSON)
