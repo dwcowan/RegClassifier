@@ -14,10 +14,12 @@ classdef IngestionOutput
         function obj = IngestionOutput(docs, chunks, feats)
             if nargin > 0
                 obj.Documents = docs;
+            end
+            if nargin > 1
                 obj.Chunks = chunks;
-                if nargin > 2
-                    obj.Features = feats;
-                end
+            end
+            if nargin > 2
+                obj.Features = feats;
             end
         end
     end

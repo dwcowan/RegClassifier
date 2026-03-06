@@ -22,7 +22,11 @@ classdef Triplet
             %   Equivalent to triplet creation in `ft_build_contrastive_dataset`.
             if nargin > 0
                 obj.Anchor = anchor;
+            end
+            if nargin > 1
                 obj.Positive = positive;
+            end
+            if nargin > 2
                 obj.Negative = negative;
             end
         end
