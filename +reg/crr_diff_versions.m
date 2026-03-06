@@ -3,7 +3,7 @@ function R = crr_diff_versions(dirA, dirB, varargin)
 % Compares per-file plaintext by filename alignment and computes simple line-level diffs.
 % Returns struct with added/removed/changed counts and writes a CSV summary and a txt patch file.
 p = inputParser;
-addParameter(p,'OutDir','runs/crr_diff',@ischar);
+addParameter(p,'OutDir','runs/crr_diff',@(x) ischar(x) || isStringScalar(x));
 parse(p,varargin{:});
 O = p.Results.OutDir; if ~isfolder(O), mkdir(O); end
 

@@ -9,7 +9,8 @@ if ~isfolder(outDir), mkdir(outDir); end
 
 base = "https://eba.europa.eu";
 root = base + "/regulation-and-policy/single-rulebook/interactive-single-rulebook/12674";
-html = webread(root);
+opts = weboptions('Timeout', 15);
+html = webread(root, opts);
 tree = htmlTree(html);
 a = findElement(tree, "a");
 hrefs = getAttribute(a, "href");
@@ -28,7 +29,7 @@ urls = strings(n,1);
 for i = 1:n
     url = base + string(hrefs{i});
     try
-        page = webread(url);
+        page = webread(url, opts);
         htmlPath = fullfile(outDir, sprintf('CRR_art_%04d.html', i));
         txtPath  = fullfile(outDir, sprintf('CRR_art_%04d.txt', i));
         fid=fopen(htmlPath,'w'); fwrite(fid, page); fclose(fid);
@@ -61,7 +62,9 @@ end
 
 T = table(ids, article_num, titlesS, urls, files, 'VariableNames', ...
     {'article_id','article_num','title','url','html_file'});
+% Filter out rows that failed to fetch (empty article_id)
+valid = ids ~= "";
+T = T(valid, :);
 writetable(T, fullfile(outDir,"index.csv"));
-fprintf("Saved %d CRR article pages to %s
-", height(T), outDir);
+fprintf("Saved %d CRR article pages to %s\n", height(T), outDir);
 end

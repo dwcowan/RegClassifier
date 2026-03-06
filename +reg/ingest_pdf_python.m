@@ -140,7 +140,7 @@ if ispc
     cmd_str = strjoin(cellfun(@(x) sprintf('"%s"', x), cmd_args, 'UniformOutput', false), ' ');
 else
     % Unix: use single quotes for paths with spaces
-    cmd_str = strjoin(cmd_args, ' ');
+    cmd_str = strjoin(cellfun(@(x) sprintf('''%s''', x), cmd_args, 'UniformOutput', false), ' ');
 end
 
 %% Execute Python script
