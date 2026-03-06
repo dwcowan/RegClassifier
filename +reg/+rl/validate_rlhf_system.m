@@ -94,7 +94,7 @@ results = zeros(num_budgets, num_methods, num_trials);
 % Split weak labels for validation
 [rules_train, rules_eval] = reg.split_weak_rules_for_validation('Verbose', false);
 Yweak_eval = reg.weak_rules_improved(chunksT.text, labels, ...
-    'RuleSet', rules_eval, 'Verbose', false);
+    'Rules', rules_eval, 'Verbose', false);
 
 % Use gold labels for evaluation if provided or available
 gold_labels = p.Results.GoldLabels;
@@ -149,8 +149,8 @@ for budget_idx = 1:num_budgets
             try
                 % Select chunks using method
                 if strcmp(method, 'rl')
-                    % Use RL agent (simplified for validation)
-                    selected = select_with_rl(chunksT, features, Yweak, budget);
+                    % Use RL agent (M5 fix: pass outer split for fair comparison)
+                    selected = select_with_rl(chunksT, features, Yweak, budget, Yweak_eval);
                 else
                     % Use baseline active learning
                     scores = predict_scores(features, Yweak);
@@ -269,26 +269,22 @@ end
 % HELPERS
 % =========================================================================
 
-function selected = select_with_rl(chunksT, features, Yweak, budget)
+function selected = select_with_rl(chunksT, features, Yweak, budget, Yweak_eval)
 %SELECT_WITH_RL Select chunks using a trained RL agent.
 %   Trains the RL agent with reduced episodes for validation speed,
 %   then uses the trained agent to select chunks.
+%   M5 fix: uses the outer split's Yweak_eval for fair comparison.
 
 scores = predict_scores(features, Yweak);
 labels = arrayfun(@(j) sprintf('label_%d', j), 1:size(Yweak, 2), 'UniformOutput', false);
 labels = string(labels);
-
-% Split weak labels for train/eval within RL training
-[rules_train, rules_eval] = reg.split_weak_rules_for_validation('Verbose', false);
-Yweak_eval = reg.weak_rules_improved(chunksT.text, labels, ...
-    'RuleSet', rules_eval, 'Verbose', false);
 
 % Train RL agent with reduced episodes for validation
 try
     [agent, ~] = reg.rl.train_annotation_agent(chunksT, features, scores, ...
         Yweak, Yweak_eval, labels, ...
         'BudgetTotal', budget, ...
-        'AgentType', 'DQN', ...
+        'AgentType', 'DDPG', ...
         'MaxEpisodes', 50, ...  % Reduced from default 500 for validation
         'Verbose', false, ...
         'SaveAgent', false);
@@ -308,10 +304,12 @@ end
 
 function scores = predict_scores(features, Yweak)
 %PREDICT_SCORES Simple classifier predictions.
+%   m5 fix: rare labels with <3 positives get score 0.5 (max uncertainty)
+%   so they are not systematically ignored by the annotation selector.
 
 L = size(Yweak, 2);
 N = size(features, 1);
-scores = zeros(N, L);
+scores = 0.5 * ones(N, L);  % Default to max uncertainty
 
 for j = 1:L
     y = Yweak(:, j);
@@ -326,35 +324,43 @@ end
 end
 
 function f1 = evaluate_selection(selected, features, Yweak_train, Yweak_eval, labels)
-%EVALUATE_SELECTION Evaluate selected chunks.
-%   Trains on the full dataset: uses eval-rule ground truth for selected
-%   chunks (simulating human annotation) and weak labels for the rest.
-%   This isolates the effect of correcting specific labels from dataset size.
+%EVALUATE_SELECTION Evaluate selected chunks with held-out test split.
+%   M6 fix: holds out 20% of data for testing to avoid training and
+%   evaluating on the same features.
 
 N = size(features, 1);
 L = size(Yweak_train, 2);
+
+% M6 fix: split into 80% train / 20% test
+cv = cvpartition(N, 'HoldOut', 0.2);
+train_mask = training(cv);
+test_mask = test(cv);
 
 % Build training labels: ground truth (eval rules) for selected, weak for rest
 Y_train = Yweak_train;
 Y_train(selected, :) = Yweak_eval(selected, :);
 
-% Train simple models on the full dataset
-Y_pred = zeros(size(Yweak_eval));
+% Train on 80%, predict on held-out 20%
+Y_pred = zeros(sum(test_mask), L);
+feat_train = features(train_mask, :);
+feat_test = features(test_mask, :);
+y_train_split = Y_train(train_mask, :);
 
 for j = 1:L
-    y = Y_train(:, j);
-    if nnz(y) >= 3
-        mdl = fitclinear(features, y, 'Learner', 'logistic', ...
+    y = y_train_split(:, j);
+    if nnz(y) >= 1 && nnz(~y) >= 1
+        mdl = fitclinear(feat_train, y, 'Learner', 'logistic', ...
             'ObservationsIn', 'rows');
-        [~, scores] = predict(mdl, features);
+        [~, scores] = predict(mdl, feat_test);
         Y_pred(:, j) = scores(:, 2) > 0.5;
     end
 end
 
-% Compute F1 against eval labels
-tp = sum(Y_pred & Yweak_eval, 1);
-fp = sum(Y_pred & ~Yweak_eval, 1);
-fn = sum(~Y_pred & Yweak_eval, 1);
+% Compute F1 against eval labels on test set only
+Y_eval_test = Yweak_eval(test_mask, :);
+tp = sum(Y_pred & Y_eval_test, 1);
+fp = sum(Y_pred & ~Y_eval_test, 1);
+fn = sum(~Y_pred & Y_eval_test, 1);
 
 precision = tp ./ (tp + fp + eps);
 recall = tp ./ (tp + fn + eps);

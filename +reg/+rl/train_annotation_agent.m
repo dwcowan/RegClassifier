@@ -16,8 +16,8 @@ function [agent, trainingStats] = train_annotation_agent(chunksT, features, scor
 %   NAME-VALUE ARGUMENTS:
 %       'BudgetTotal'    - Total annotation budget per episode (default: 100)
 %       'AgentType'      - RL algorithm:
-%                          'DQN' (default) - Deep Q-Network (discrete actions)
-%                          'DDPG' - Deep Deterministic Policy Gradient (continuous)
+%                          'DDPG' (default) - Deep Deterministic Policy Gradient (continuous)
+%                          'DDPG_lite' - Lighter DDPG variant (smaller noise, equal LR)
 %                          'PPO' - Proximal Policy Optimization
 %       'MaxEpisodes'    - Training episodes (default: 500)
 %       'MaxStepsPerEpisode' - Max steps per episode (default: BudgetTotal)
@@ -40,15 +40,15 @@ function [agent, trainingStats] = train_annotation_agent(chunksT, features, scor
 %       Action: Chunk index to annotate (discrete) OR threshold (continuous)
 %       Reward: Improvement in validation F1 + uncertainty bonus - budget penalty
 %
-%   EXAMPLE 1: Train DQN agent (discrete actions)
+%   EXAMPLE 1: Train DDPG agent (continuous policy)
 %       [agent, stats] = reg.rl.train_annotation_agent(chunksT, features, ...
 %           scores, Yweak_train, Yweak_eval, C.labels, ...
-%           'AgentType', 'DQN', 'MaxEpisodes', 500);
+%           'AgentType', 'DDPG', 'MaxEpisodes', 500);
 %
-%   EXAMPLE 2: Train DDPG agent (continuous policy)
+%   EXAMPLE 2: Train PPO agent
 %       [agent, stats] = reg.rl.train_annotation_agent(chunksT, features, ...
 %           scores, Yweak_train, Yweak_eval, C.labels, ...
-%           'AgentType', 'DDPG', 'MaxEpisodes', 300);
+%           'AgentType', 'PPO', 'MaxEpisodes', 300);
 %
 %   EXAMPLE 3: Use trained agent for chunk selection
 %       % After training
@@ -65,7 +65,7 @@ function [agent, trainingStats] = train_annotation_agent(chunksT, features, scor
 % Parse arguments
 p = inputParser;
 addParameter(p, 'BudgetTotal', 100, @(x) x > 0);
-addParameter(p, 'AgentType', 'DQN', @(x) ismember(x, {'DQN', 'DDPG', 'PPO'}));
+addParameter(p, 'AgentType', 'DDPG', @(x) ismember(x, {'DDPG', 'DDPG_lite', 'PPO'}));
 addParameter(p, 'MaxEpisodes', 500, @(x) x > 0);
 addParameter(p, 'MaxStepsPerEpisode', [], @(x) isempty(x) || x > 0);
 addParameter(p, 'Verbose', true, @islogical);
@@ -110,13 +110,13 @@ actInfo = getActionInfo(env);
 %% Create Agent
 
 switch agent_type
-    case 'DQN'
-        % Deep Q-Network (discrete actions)
-        agent = create_dqn_agent(obsInfo, actInfo);
-
     case 'DDPG'
         % Deep Deterministic Policy Gradient (continuous actions)
         agent = create_ddpg_agent(obsInfo, actInfo);
+
+    case 'DDPG_lite'
+        % Lighter DDPG variant (smaller target smoothing)
+        agent = create_ddpg_lite_agent(obsInfo, actInfo);
 
     case 'PPO'
         % Proximal Policy Optimization
@@ -168,10 +168,10 @@ end
 
 %% Helper Functions: Create Agents
 
-function agent = create_dqn_agent(obsInfo, actInfo)
-% Create DDPG agent as DQN replacement (continuous action space).
-% The environment now always uses continuous actions for O(1) scalability,
-% so we use DDPG (continuous Q-learning) instead of discrete DQN.
+function agent = create_ddpg_lite_agent(obsInfo, actInfo)
+% Create lighter DDPG variant (smaller target smoothing factor).
+% Formerly named "DQN" but always produced a DDPG agent since the
+% environment uses continuous actions. Renamed for clarity.
 
 % Actor network
 actorNet = [
@@ -182,11 +182,10 @@ actorNet = [
     reluLayer('Name', 'relu2')
     fullyConnectedLayer(actInfo.Dimension(1), 'Name', 'fc_out')
     tanhLayer('Name', 'tanh')
-    scalingLayer('Name', 'scale', 'Scale', 0.5, 'Bias', 0.5)  % Scale to [0,1]
+    functionLayer(@(x) x * 0.5 + 0.5, 'Name', 'scale', 'Formattable', true)
 ];
 
-actor = rlDeterministicActorRepresentation(actorNet, obsInfo, actInfo, ...
-    'Observation', {'state'}, 'Action', {'scale'});
+actor = rlContinuousDeterministicActor(actorNet, obsInfo, actInfo);
 
 % Critic network (state-action Q-value)
 statePath = [
@@ -202,7 +201,7 @@ actionPath = [
 commonPath = [
     additionLayer(2, 'Name', 'add')
     reluLayer('Name', 'relu1')
-    fullyConnectedLayer(64, 'Name', 'fc3')
+    fullyConnectedLayer(64, 'Name', 'critic_fc2')
     reluLayer('Name', 'relu2')
     fullyConnectedLayer(1, 'Name', 'output')
 ];
@@ -213,10 +212,9 @@ criticNet = addLayers(criticNet, commonPath);
 criticNet = connectLayers(criticNet, 'state_fc', 'add/in1');
 criticNet = connectLayers(criticNet, 'action_fc', 'add/in2');
 
-critic = rlQValueRepresentation(criticNet, obsInfo, actInfo, ...
-    'Observation', {'state'}, 'Action', {'action'});
+critic = rlQValueFunction(criticNet, obsInfo, actInfo);
 
-% Agent options
+% Agent options (M7 fix: critic LR 10x actor for stable training)
 agentOpts = rlDDPGAgentOptions(...
     'SampleTime', 1, ...
     'DiscountFactor', 0.99, ...
@@ -228,18 +226,18 @@ agentOpts = rlDDPGAgentOptions(...
 agentOpts.NoiseOptions.StandardDeviation = 0.3;
 agentOpts.NoiseOptions.StandardDeviationDecayRate = 1e-3;
 
-% Learning rates with gradient clipping
-actor.Options.LearnRate = 1e-4;
-actor.Options.GradientThreshold = 1;
-critic.Options.LearnRate = 1e-4;
-critic.Options.GradientThreshold = 1;
+% Learning rates via agent options (R2025b API)
+agentOpts.ActorOptimizerOptions.LearnRate = 1e-4;
+agentOpts.ActorOptimizerOptions.GradientThreshold = 1;
+agentOpts.CriticOptimizerOptions.LearnRate = 1e-3;
+agentOpts.CriticOptimizerOptions.GradientThreshold = 1;
 
 % Create agent
 agent = rlDDPGAgent(actor, critic, agentOpts);
 end
 
 function agent = create_ddpg_agent(obsInfo, actInfo)
-% Create DDPG agent for continuous action space
+% Create DDPG agent for continuous action space (R2025b API)
 
 % Actor network
 actorNet = [
@@ -250,11 +248,10 @@ actorNet = [
     reluLayer('Name', 'relu2')
     fullyConnectedLayer(actInfo.Dimension(1), 'Name', 'fc_out')
     tanhLayer('Name', 'tanh')
-    scalingLayer('Name', 'scale', 'Scale', 0.5, 'Bias', 0.5)  % Scale to [0,1]
+    functionLayer(@(x) x * 0.5 + 0.5, 'Name', 'scale', 'Formattable', true)
 ];
 
-actor = rlDeterministicActorRepresentation(actorNet, obsInfo, actInfo, ...
-    'Observation', {'state'}, 'Action', {'scale'});
+actor = rlContinuousDeterministicActor(actorNet, obsInfo, actInfo);
 
 % Critic network
 statePath = [
@@ -270,7 +267,7 @@ actionPath = [
 commonPath = [
     additionLayer(2, 'Name', 'add')
     reluLayer('Name', 'relu1')
-    fullyConnectedLayer(64, 'Name', 'fc2')
+    fullyConnectedLayer(64, 'Name', 'critic_fc2')
     reluLayer('Name', 'relu2')
     fullyConnectedLayer(1, 'Name', 'output')
 ];
@@ -281,8 +278,7 @@ criticNet = addLayers(criticNet, commonPath);
 criticNet = connectLayers(criticNet, 'state_fc', 'add/in1');
 criticNet = connectLayers(criticNet, 'action_fc', 'add/in2');
 
-critic = rlQValueRepresentation(criticNet, obsInfo, actInfo, ...
-    'Observation', {'state'}, 'Action', {'action'});
+critic = rlQValueFunction(criticNet, obsInfo, actInfo);
 
 % Agent options
 agentOpts = rlDDPGAgentOptions(...
@@ -296,47 +292,66 @@ agentOpts = rlDDPGAgentOptions(...
 agentOpts.NoiseOptions.StandardDeviation = 0.3;
 agentOpts.NoiseOptions.StandardDeviationDecayRate = 1e-3;
 
-% Learning rates with gradient clipping
-actor.Options.LearnRate = 1e-4;
-actor.Options.GradientThreshold = 1;
-critic.Options.LearnRate = 1e-3;
-critic.Options.GradientThreshold = 1;
+% Learning rates via agent options (R2025b API)
+agentOpts.ActorOptimizerOptions.LearnRate = 1e-4;
+agentOpts.ActorOptimizerOptions.GradientThreshold = 1;
+agentOpts.CriticOptimizerOptions.LearnRate = 1e-3;
+agentOpts.CriticOptimizerOptions.GradientThreshold = 1;
 
 % Create agent
 agent = rlDDPGAgent(actor, critic, agentOpts);
 end
 
 function agent = create_ppo_agent(obsInfo, actInfo)
-% Create PPO agent
+% Create PPO agent with continuous Gaussian policy (R2025b API).
+% The actor has two output paths: mean and log-standard-deviation.
 
-% Actor network (continuous stochastic policy -- outputs mean for [0,1] action)
-% Mean path
-meanPath = [
-    featureInputLayer(obsInfo.Dimension(1), 'Normalization', 'none', 'Name', 'state')
+obs_dim = obsInfo.Dimension(1);
+act_dim = actInfo.Dimension(1);
+
+% Shared trunk
+trunk = [
+    featureInputLayer(obs_dim, 'Normalization', 'none', 'Name', 'state')
     fullyConnectedLayer(128, 'Name', 'fc1')
     reluLayer('Name', 'relu1')
-    fullyConnectedLayer(64, 'Name', 'fc2')
-    reluLayer('Name', 'relu2')
-    fullyConnectedLayer(actInfo.Dimension(1), 'Name', 'mean')
-    tanhLayer('Name', 'tanh_mean')
-    scalingLayer('Name', 'scale_mean', 'Scale', 0.5, 'Bias', 0.5)
+    fullyConnectedLayer(64, 'Name', 'fc_shared')
+    reluLayer('Name', 'relu_shared')
 ];
 
-actor = rlStochasticActorRepresentation(meanPath, obsInfo, actInfo, ...
-    'Observation', {'state'});
+% Mean path: outputs action mean in [0,1]
+meanPath = [
+    fullyConnectedLayer(act_dim, 'Name', 'mean_fc')
+    tanhLayer('Name', 'tanh_mean')
+    functionLayer(@(x) x * 0.5 + 0.5, 'Name', 'mean', 'Formattable', true)
+];
+
+% Standard deviation path: outputs positive std via softplus
+stdPath = [
+    fullyConnectedLayer(act_dim, 'Name', 'std_fc')
+    softplusLayer('Name', 'std')
+];
+
+actorNet = layerGraph(trunk);
+actorNet = addLayers(actorNet, meanPath);
+actorNet = addLayers(actorNet, stdPath);
+actorNet = connectLayers(actorNet, 'relu_shared', 'mean_fc');
+actorNet = connectLayers(actorNet, 'relu_shared', 'std_fc');
+
+actor = rlContinuousGaussianActor(actorNet, obsInfo, actInfo, ...
+    'ActionMeanOutputNames', "mean", ...
+    'ActionStandardDeviationOutputNames', "std");
 
 % Critic network (value function)
 criticNet = [
-    featureInputLayer(obsInfo.Dimension(1), 'Normalization', 'none', 'Name', 'state')
-    fullyConnectedLayer(128, 'Name', 'fc1')
-    reluLayer('Name', 'relu1')
-    fullyConnectedLayer(64, 'Name', 'fc2')
-    reluLayer('Name', 'relu2')
+    featureInputLayer(obs_dim, 'Normalization', 'none', 'Name', 'state')
+    fullyConnectedLayer(128, 'Name', 'critic_fc1')
+    reluLayer('Name', 'critic_relu1')
+    fullyConnectedLayer(64, 'Name', 'critic_fc2')
+    reluLayer('Name', 'critic_relu2')
     fullyConnectedLayer(1, 'Name', 'value')
 ];
 
-critic = rlValueRepresentation(criticNet, obsInfo, ...
-    'Observation', {'state'});
+critic = rlValueFunction(criticNet, obsInfo);
 
 % Agent options (more epochs, GAE, entropy bonus for exploration)
 agentOpts = rlPPOAgentOptions(...
@@ -350,11 +365,11 @@ agentOpts = rlPPOAgentOptions(...
     'GAEFactor', 0.95, ...
     'EntropyLossWeight', 0.01);
 
-% Learning rates with gradient clipping
-actor.Options.LearnRate = 1e-4;
-actor.Options.GradientThreshold = 1;
-critic.Options.LearnRate = 1e-3;
-critic.Options.GradientThreshold = 1;
+% Learning rates via agent options (R2025b API)
+agentOpts.ActorOptimizerOptions.LearnRate = 1e-4;
+agentOpts.ActorOptimizerOptions.GradientThreshold = 1;
+agentOpts.CriticOptimizerOptions.LearnRate = 1e-3;
+agentOpts.CriticOptimizerOptions.GradientThreshold = 1;
 
 % Create agent
 agent = rlPPOAgent(actor, critic, agentOpts);

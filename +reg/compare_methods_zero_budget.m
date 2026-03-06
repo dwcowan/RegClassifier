@@ -239,7 +239,8 @@ function E = compute_embeddings(texts, verbose)
 end
 
 function Yweak = generate_labels_simple(texts, labels, rules)
-    % Simple weak label generation (like original weak_rules)
+    % Simple weak label generation using word boundary matching
+    % (M8 fix: use \b word boundaries for consistent evaluation across methods)
     texts = lower(string(texts));
     Yweak = zeros(numel(texts), numel(labels));
 
@@ -253,7 +254,8 @@ function Yweak = generate_labels_simple(texts, labels, rules)
         hit = false(numel(texts), 1);
 
         for p = 1:numel(patterns)
-            hit = hit | contains(texts, lower(patterns(p)));
+            pat = ['\b', regexptranslate('escape', char(lower(patterns(p)))), '\b'];
+            hit = hit | ~cellfun('isempty', regexp(texts, pat, 'once'));
         end
 
         Yweak(:,j) = hit * 0.9;

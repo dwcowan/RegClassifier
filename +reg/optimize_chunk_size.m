@@ -291,9 +291,9 @@ try
 
     % Generate labels
     Yweak_train = reg.weak_rules_improved(chunks, labels, ...
-        'RuleSet', rules_train, 'Verbose', false);
+        'Rules', rules_train, 'Verbose', false);
     Yweak_eval = reg.weak_rules_improved(chunks, labels, ...
-        'RuleSet', rules_eval, 'Verbose', false);
+        'Rules', rules_eval, 'Verbose', false);
 
     % Simple classifier (for speed, use TF-IDF only)
     [~, ~, X] = reg.ta_features(chunks);

@@ -187,7 +187,7 @@ for j = 1:K
             if use_word_boundaries
                 % Use word boundary regex to avoid substring matches
                 % \b ensures match at word boundaries
-                regex_pattern = ['\<', regexptranslate('escape', pattern_char), '\>'];
+                regex_pattern = ['\b', regexptranslate('escape', pattern_char), '\b'];
                 match = ~isempty(regexp(text, regex_pattern, 'once'));
             else
                 % Fallback to simple contains (original behavior)
@@ -275,7 +275,7 @@ function is_negated = check_negation(text, keyword, negation_words, window_size)
     is_negated = false;
 
     % Find all occurrences of keyword
-    keyword_pattern = ['\<', regexptranslate('escape', keyword), '\>'];
+    keyword_pattern = ['\b', regexptranslate('escape', keyword), '\b'];
     [keyword_start, keyword_end] = regexp(text, keyword_pattern, 'start', 'end');
 
     if isempty(keyword_start)
@@ -304,10 +304,13 @@ function is_negated = check_negation(text, keyword, negation_words, window_size)
             continue;  % No words before keyword
         end
 
-        % Check if any negation word is in the window
+        % Check if any negation word/phrase is in the window.
+        % m1 fix: join window into a string so multi-word negation phrases
+        % like "other than" are detected (individual word check always fails).
         window_words = words(window_start:window_end);
+        window_str = join(window_words);
         for neg = negation_words
-            if any(contains(window_words, neg))
+            if contains(window_str, neg)
                 is_negated = true;
                 return;
             end

@@ -177,7 +177,8 @@ switch strategy
 end
 
 % Ensure unique and top up if deduplication reduced count below budget
-selected_idx = unique(selected_idx);
+% M11 fix: use 'stable' to preserve priority ordering from diversity/uncertainty phases
+selected_idx = unique(selected_idx, 'stable');
 if numel(selected_idx) < budget
     % Fill remaining slots from the pool, sorted by uncertainty
     remaining_pool = setdiff((1:N)', selected_idx);

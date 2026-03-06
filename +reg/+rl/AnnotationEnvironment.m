@@ -63,10 +63,12 @@ classdef AnnotationEnvironment < rl.env.MATLABEnvironment
         UncertaintyScores   % Pre-computed uncertainty for all chunks
         AvailableChunks     % Chunks not yet annotated
 
-        % Running reward normalization (prevents reward scale drift)
-        RewardRunningSum    % Sum of rewards seen
-        RewardRunningSumSq  % Sum of squared rewards
+        % Running reward normalization (Welford's online algorithm)
+        RewardRunningMean   % Running mean of rewards
+        RewardRunningM2     % Running sum of squared deviations
         RewardCount         % Number of rewards seen
+        EvalInterval        % Re-evaluate every K steps (M4 fix)
+        CachedF1            % Cached F1 from last evaluation
     end
 
     methods
@@ -139,10 +141,14 @@ classdef AnnotationEnvironment < rl.env.MATLABEnvironment
             % Pre-compute uncertainty scores
             this.UncertaintyScores = this.computeUncertainty();
 
-            % Initialize reward normalization state (persists across episodes)
-            this.RewardRunningSum = 0;
-            this.RewardRunningSumSq = 0;
+            % Initialize reward normalization state (Welford's algorithm)
+            this.RewardRunningMean = 0;
+            this.RewardRunningM2 = 0;
             this.RewardCount = 0;
+
+            % Re-evaluate model every EvalInterval steps (M4 fix)
+            this.EvalInterval = max(1, floor(p.Results.BudgetTotal / 10));
+            this.CachedF1 = 0;
 
             % Initialize state
             this.EpisodeCount = 0;
@@ -178,32 +184,36 @@ classdef AnnotationEnvironment < rl.env.MATLABEnvironment
             % Update available chunks
             this.AvailableChunks = setdiff(this.AvailableChunks, chunk_idx);
 
-            % Re-evaluate model with new annotation
-            % (In real system, would retrain. Here we simulate improvement)
-            this.CurrentF1 = this.evaluateWithAnnotations();
+            % Re-evaluate model periodically (M4 fix: every EvalInterval steps)
+            steps_taken = this.BudgetTotal - this.BudgetRemaining;
+            if mod(steps_taken, this.EvalInterval) == 0
+                this.CachedF1 = this.evaluateWithAnnotations();
+            end
+            this.CurrentF1 = this.CachedF1;
 
             % Compute raw reward
             f1_improvement = this.CurrentF1 - prev_f1;
 
             % Reward = improvement in F1 per annotation
-            % Bonus if high-uncertainty chunk was selected
-            uncertainty_bonus = this.UncertaintyScores(chunk_idx) * 0.1;
-
-            raw_reward = f1_improvement * 100 + uncertainty_bonus;
+            % (No uncertainty bonus — let the agent discover that uncertain
+            % chunks are valuable through the F1 signal alone, avoiding
+            % reward hacking where the bonus dominates tiny F1 changes.)
+            raw_reward = f1_improvement * 100;
 
             % Small penalty for using budget (encourages efficiency)
             raw_reward = raw_reward - 0.01;
 
-            % Normalize reward using running statistics (prevents scale drift)
-            this.RewardRunningSum = this.RewardRunningSum + raw_reward;
-            this.RewardRunningSumSq = this.RewardRunningSumSq + raw_reward^2;
+            % Normalize reward using Welford's online algorithm (M2+M3 fix)
             this.RewardCount = this.RewardCount + 1;
+            delta = raw_reward - this.RewardRunningMean;
+            this.RewardRunningMean = this.RewardRunningMean + delta / this.RewardCount;
+            delta2 = raw_reward - this.RewardRunningMean;
+            this.RewardRunningM2 = this.RewardRunningM2 + delta * delta2;
 
             if this.RewardCount >= 2
-                running_mean = this.RewardRunningSum / this.RewardCount;
-                running_var = this.RewardRunningSumSq / this.RewardCount - running_mean^2;
+                running_var = this.RewardRunningM2 / (this.RewardCount - 1);
                 running_std = sqrt(max(running_var, 1e-8));
-                reward = (raw_reward - running_mean) / running_std;
+                reward = (raw_reward - this.RewardRunningMean) / running_std;
             else
                 reward = raw_reward;
             end
@@ -229,7 +239,8 @@ classdef AnnotationEnvironment < rl.env.MATLABEnvironment
             this.EpisodeCount = this.EpisodeCount + 1;
 
             % Initial F1 (without any annotations)
-            this.CurrentF1 = this.evaluateWithAnnotations();
+            this.CachedF1 = this.evaluateWithAnnotations();
+            this.CurrentF1 = this.CachedF1;
 
             % Get initial observation
             this.State = this.getObservation();
@@ -277,9 +288,9 @@ classdef AnnotationEnvironment < rl.env.MATLABEnvironment
             % 2. Disagreement between train and eval rules
             disagreement = sum(xor(this.YweakTrain > 0.5, this.YweakEval > 0.5), 2);
 
-            % 3. Least confidence
-            [max_prob, ~] = max(this.Scores, [], 2);
-            least_conf = 1 - max_prob;
+            % 3. Mean margin uncertainty: average distance from decision
+            %    boundary across all labels (multi-label appropriate)
+            least_conf = mean(abs(this.Scores - 0.5), 2);
 
             % Normalize and combine
             entropy_norm = (entropy - min(entropy)) / (max(entropy) - min(entropy) + 1e-10);
@@ -326,7 +337,7 @@ classdef AnnotationEnvironment < rl.env.MATLABEnvironment
             predictions = false(N, L);
             for j = 1:L
                 y = double(Y_train(:, j));
-                if nnz(y) >= 2 && nnz(y) < N
+                if nnz(y) >= 1 && nnz(~y) >= 1
                     mdl = fitclinear(this.Features, y, ...
                         'Learner', 'logistic', 'ObservationsIn', 'rows');
                     [~, sc] = predict(mdl, this.Features);
