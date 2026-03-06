@@ -97,17 +97,12 @@ end
 
 %% Create Environment
 
-if strcmp(agent_type, 'DQN')
-    action_type = 'discrete';
-else
-    action_type = 'continuous';
-end
-
+% Always use continuous action space (scales O(1) regardless of corpus size)
 env = reg.rl.AnnotationEnvironment(chunksT, features, scores, ...
     Yweak_train, Yweak_eval, labels, ...
     'BudgetTotal', budget_total, ...
     'GroundTruth', ground_truth, ...
-    'ActionType', action_type);
+    'ActionType', 'continuous');
 
 obsInfo = getObservationInfo(env);
 actInfo = getActionInfo(env);
@@ -174,40 +169,73 @@ end
 %% Helper Functions: Create Agents
 
 function agent = create_dqn_agent(obsInfo, actInfo)
-% Create DQN agent for discrete action space
+% Create DDPG agent as DQN replacement (continuous action space).
+% The environment now always uses continuous actions for O(1) scalability,
+% so we use DDPG (continuous Q-learning) instead of discrete DQN.
 
-% Critic network (Q-network)
-statePath = [
+% Actor network
+actorNet = [
     featureInputLayer(obsInfo.Dimension(1), 'Normalization', 'none', 'Name', 'state')
     fullyConnectedLayer(128, 'Name', 'fc1')
     reluLayer('Name', 'relu1')
-    fullyConnectedLayer(128, 'Name', 'fc2')
+    fullyConnectedLayer(64, 'Name', 'fc2')
     reluLayer('Name', 'relu2')
+    fullyConnectedLayer(actInfo.Dimension(1), 'Name', 'fc_out')
+    tanhLayer('Name', 'tanh')
+    scalingLayer('Name', 'scale', 'Scale', 0.5, 'Bias', 0.5)  % Scale to [0,1]
+];
+
+actor = rlDeterministicActorRepresentation(actorNet, obsInfo, actInfo, ...
+    'Observation', {'state'}, 'Action', {'scale'});
+
+% Critic network (state-action Q-value)
+statePath = [
+    featureInputLayer(obsInfo.Dimension(1), 'Normalization', 'none', 'Name', 'state')
+    fullyConnectedLayer(128, 'Name', 'state_fc')
+];
+
+actionPath = [
+    featureInputLayer(actInfo.Dimension(1), 'Normalization', 'none', 'Name', 'action')
+    fullyConnectedLayer(128, 'Name', 'action_fc')
+];
+
+commonPath = [
+    additionLayer(2, 'Name', 'add')
+    reluLayer('Name', 'relu1')
     fullyConnectedLayer(64, 'Name', 'fc3')
-    reluLayer('Name', 'relu3')
-    fullyConnectedLayer(numel(actInfo.Elements), 'Name', 'output')
+    reluLayer('Name', 'relu2')
+    fullyConnectedLayer(1, 'Name', 'output')
 ];
 
 criticNet = layerGraph(statePath);
+criticNet = addLayers(criticNet, actionPath);
+criticNet = addLayers(criticNet, commonPath);
+criticNet = connectLayers(criticNet, 'state_fc', 'add/in1');
+criticNet = connectLayers(criticNet, 'action_fc', 'add/in2');
+
 critic = rlQValueRepresentation(criticNet, obsInfo, actInfo, ...
-    'Observation', {'state'});
+    'Observation', {'state'}, 'Action', {'action'});
 
 % Agent options
-agentOpts = rlDQNAgentOptions(...
+agentOpts = rlDDPGAgentOptions(...
     'SampleTime', 1, ...
     'DiscountFactor', 0.99, ...
     'ExperienceBufferLength', 10000, ...
     'MiniBatchSize', 64, ...
-    'TargetSmoothFactor', 1e-3, ...
-    'EpsilonGreedyExploration', rlEpsilonGreedyExploration(...
-        'EpsilonDecay', 0.001, ...
-        'EpsilonMin', 0.01));
+    'TargetSmoothFactor', 5e-3);
 
-% Learning rate
-critic.Options.LearnRate = 1e-3;
+% Exploration noise
+agentOpts.NoiseOptions.StandardDeviation = 0.3;
+agentOpts.NoiseOptions.StandardDeviationDecayRate = 1e-3;
+
+% Learning rates with gradient clipping
+actor.Options.LearnRate = 1e-4;
+actor.Options.GradientThreshold = 1;
+critic.Options.LearnRate = 1e-4;
+critic.Options.GradientThreshold = 1;
 
 % Create agent
-agent = rlDQNAgent(critic, agentOpts);
+agent = rlDDPGAgent(actor, critic, agentOpts);
 end
 
 function agent = create_ddpg_agent(obsInfo, actInfo)
@@ -264,13 +292,15 @@ agentOpts = rlDDPGAgentOptions(...
     'MiniBatchSize', 64, ...
     'TargetSmoothFactor', 1e-3);
 
-% Noise model for exploration
-agentOpts.NoiseOptions.StandardDeviation = 0.1;
+% Noise model for exploration (larger initial noise per Lillicrap et al. 2015)
+agentOpts.NoiseOptions.StandardDeviation = 0.3;
 agentOpts.NoiseOptions.StandardDeviationDecayRate = 1e-3;
 
-% Learning rates
+% Learning rates with gradient clipping
 actor.Options.LearnRate = 1e-4;
+actor.Options.GradientThreshold = 1;
 critic.Options.LearnRate = 1e-3;
+critic.Options.GradientThreshold = 1;
 
 % Create agent
 agent = rlDDPGAgent(actor, critic, agentOpts);
@@ -279,18 +309,20 @@ end
 function agent = create_ppo_agent(obsInfo, actInfo)
 % Create PPO agent
 
-% Actor network (stochastic policy)
-actorNet = [
+% Actor network (continuous stochastic policy -- outputs mean for [0,1] action)
+% Mean path
+meanPath = [
     featureInputLayer(obsInfo.Dimension(1), 'Normalization', 'none', 'Name', 'state')
     fullyConnectedLayer(128, 'Name', 'fc1')
     reluLayer('Name', 'relu1')
     fullyConnectedLayer(64, 'Name', 'fc2')
     reluLayer('Name', 'relu2')
-    fullyConnectedLayer(numel(actInfo.Elements), 'Name', 'output')
-    softmaxLayer('Name', 'actionProb')
+    fullyConnectedLayer(actInfo.Dimension(1), 'Name', 'mean')
+    tanhLayer('Name', 'tanh_mean')
+    scalingLayer('Name', 'scale_mean', 'Scale', 0.5, 'Bias', 0.5)
 ];
 
-actor = rlStochasticActorRepresentation(actorNet, obsInfo, actInfo, ...
+actor = rlStochasticActorRepresentation(meanPath, obsInfo, actInfo, ...
     'Observation', {'state'});
 
 % Critic network (value function)
@@ -306,18 +338,23 @@ criticNet = [
 critic = rlValueRepresentation(criticNet, obsInfo, ...
     'Observation', {'state'});
 
-% Agent options
+% Agent options (more epochs, GAE, entropy bonus for exploration)
 agentOpts = rlPPOAgentOptions(...
     'SampleTime', 1, ...
     'DiscountFactor', 0.99, ...
     'ExperienceHorizon', 512, ...
     'MiniBatchSize', 64, ...
-    'NumEpoch', 3, ...
-    'ClipFactor', 0.2);
+    'NumEpoch', 8, ...
+    'ClipFactor', 0.2, ...
+    'AdvantageEstimateMethod', 'gae', ...
+    'GAEFactor', 0.95, ...
+    'EntropyLossWeight', 0.01);
 
-% Learning rates
+% Learning rates with gradient clipping
 actor.Options.LearnRate = 1e-4;
+actor.Options.GradientThreshold = 1;
 critic.Options.LearnRate = 1e-3;
+critic.Options.GradientThreshold = 1;
 
 % Create agent
 agent = rlPPOAgent(actor, critic, agentOpts);

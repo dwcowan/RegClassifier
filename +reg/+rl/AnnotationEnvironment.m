@@ -5,15 +5,14 @@ classdef AnnotationEnvironment < rl.env.MATLABEnvironment
     %
     %   STATE SPACE (observation):
     %       - Model uncertainty for current chunk (1 value)
-    %       - Label distribution confidence (14 values, one per label)
+    %       - Label distribution confidence (L values, one per label)
     %       - Budget remaining (1 value)
     %       - Current validation F1 (1 value)
-    %       Total: 17 dimensions
+    %       Total: L + 3 dimensions (dynamic based on label count)
     %
     %   ACTION SPACE:
-    %       - Discrete: Select which chunk to annotate next (N chunks)
-    %       OR
-    %       - Continuous: Uncertainty threshold for batch selection (1 value, [0,1])
+    %       - Continuous: Uncertainty threshold for chunk selection (1 value, [0,1])
+    %         Selects the available chunk whose uncertainty is closest to threshold
     %
     %   REWARD:
     %       - Improvement in validation F1 per annotation
@@ -74,24 +73,23 @@ classdef AnnotationEnvironment < rl.env.MATLABEnvironment
             p = inputParser;
             addParameter(p, 'BudgetTotal', 100, @(x) x > 0);
             addParameter(p, 'GroundTruth', [], @ismatrix);  % Optional ground truth
-            addParameter(p, 'ActionType', 'discrete', @(x) ismember(x, {'discrete', 'continuous'}));
+            addParameter(p, 'ActionType', 'continuous', @(x) ismember(x, {'discrete', 'continuous'}));
             parse(p, varargin{:});
 
-            % Define observation space (17 dimensions)
-            ObservationInfo = rlNumericSpec([17 1]);
-            ObservationInfo.Name = 'Annotation State';
-            ObservationInfo.Description = 'Uncertainty, label confidence, budget, F1';
+            % Observation dimension: 1 uncertainty + L label_conf + 1 budget + 1 f1
+            L = numel(labels);
+            obs_dim = 1 + L + 1 + 1;
 
-            % Define action space
-            if strcmp(p.Results.ActionType, 'discrete')
-                % Discrete: select specific chunk index
-                ActionInfo = rlFiniteSetSpec(1:height(chunksT));
-                ActionInfo.Name = 'Chunk Index';
-            else
-                % Continuous: uncertainty threshold
-                ActionInfo = rlNumericSpec([1 1], 'LowerLimit', 0, 'UpperLimit', 1);
-                ActionInfo.Name = 'Uncertainty Threshold';
-            end
+            % Define observation space (dynamic based on label count)
+            ObservationInfo = rlNumericSpec([obs_dim 1]);
+            ObservationInfo.Name = 'Annotation State';
+            ObservationInfo.Description = sprintf('Uncertainty, label confidence(%d), budget, F1', L);
+
+            % Define action space: continuous threshold [0,1]
+            % Selects the chunk whose uncertainty is closest to the threshold.
+            % This scales O(1) regardless of corpus size, unlike discrete O(N).
+            ActionInfo = rlNumericSpec([1 1], 'LowerLimit', 0, 'UpperLimit', 1);
+            ActionInfo.Name = 'Uncertainty Threshold';
 
             % Call superclass constructor
             this = this@rl.env.MATLABEnvironment(ObservationInfo, ActionInfo);
@@ -126,28 +124,19 @@ classdef AnnotationEnvironment < rl.env.MATLABEnvironment
 
             loggedSignals = [];
 
-            % Determine which chunk to annotate based on action
-            if isa(this.ActionInfo, 'rl.util.rlFiniteSetSpec')
-                % Discrete action: direct chunk index
-                chunk_idx = action;
-            else
-                % Continuous action: threshold for batch selection
-                threshold = action;
-                % Select chunk with uncertainty closest to threshold
-                available_unc = this.UncertaintyScores(this.AvailableChunks);
-                [~, rel_idx] = min(abs(available_unc - threshold));
-                chunk_idx = this.AvailableChunks(rel_idx);
-            end
-
-            % Check if chunk is available
-            if ~ismember(chunk_idx, this.AvailableChunks)
-                % Invalid action: already annotated or out of bounds
-                reward = -10;  % Large penalty
+            % Continuous action: threshold selects chunk with closest uncertainty
+            if isempty(this.AvailableChunks)
+                reward = 0;
                 this.State = this.getObservation();
                 observation = this.State;
-                isDone = this.BudgetRemaining <= 0;
+                isDone = true;
                 return;
             end
+
+            threshold = max(0, min(1, action));  % Clamp to [0,1]
+            available_unc = this.UncertaintyScores(this.AvailableChunks);
+            [~, rel_idx] = min(abs(available_unc - threshold));
+            chunk_idx = this.AvailableChunks(rel_idx);
 
             % Record previous F1
             prev_f1 = this.CurrentF1;
@@ -230,7 +219,7 @@ classdef AnnotationEnvironment < rl.env.MATLABEnvironment
             % Current F1
             current_f1 = this.CurrentF1;
 
-            % Construct observation: [uncertainty, label_conf(14), budget, f1]
+            % Construct observation: [uncertainty, label_conf(L), budget, f1]
             obs = [current_uncertainty; label_confidence; budget_norm; current_f1];
         end
 

@@ -176,8 +176,18 @@ switch strategy
         end
 end
 
-% Ensure unique
+% Ensure unique and top up if deduplication reduced count below budget
 selected_idx = unique(selected_idx);
+if numel(selected_idx) < budget
+    % Fill remaining slots from the pool, sorted by uncertainty
+    remaining_pool = setdiff((1:N)', selected_idx);
+    if ~isempty(remaining_pool)
+        unc = compute_uncertainty(scores, Yweak_train, Yweak_eval, uncertainty_metric);
+        [~, pool_order] = sort(unc(remaining_pool), 'descend');
+        n_fill = min(budget - numel(selected_idx), numel(remaining_pool));
+        selected_idx = [selected_idx; remaining_pool(pool_order(1:n_fill))];
+    end
+end
 
 % Compute statistics
 info.uncertainty_scores = compute_uncertainty(scores, Yweak_train, Yweak_eval, uncertainty_metric);
@@ -280,7 +290,7 @@ switch metric
         else
             margin = sorted_scores(:,1);
         end
-        uncertainty = -margin;  % Smaller margin = higher uncertainty
+        uncertainty = 1 - margin;  % Smaller margin = higher uncertainty, range [0,1]
 
     case 'combined'
         % Weighted combination of multiple metrics

@@ -183,29 +183,48 @@ if ismember('consistency', methods)
     Yweak_v1 = generate_labels_from_rules(chunksT.text, labels, rules_train);
     Yweak_v2 = generate_labels_from_rules(chunksT.text, labels, rules_eval);
 
-    % Compute agreement (like inter-annotator agreement)
-    agreement = zeros(numel(labels), 1);
+    % Compute Cohen's kappa (chance-corrected inter-annotator agreement)
+    N_chunks = height(chunksT);
+    kappa = zeros(numel(labels), 1);
+    raw_agreement = zeros(numel(labels), 1);
     for j = 1:numel(labels)
-        % Chunks where at least one rule assigns label
-        relevant = (Yweak_v1(:,j) > 0) | (Yweak_v2(:,j) > 0);
-        if sum(relevant) == 0
-            continue;
-        end
+        a = Yweak_v1(:,j) > 0;
+        b = Yweak_v2(:,j) > 0;
 
-        % Agreement on these chunks
-        both_agree = (Yweak_v1(relevant,j) > 0) == (Yweak_v2(relevant,j) > 0);
-        agreement(j) = mean(both_agree);
+        % Observed agreement
+        p_agree = mean(a == b);
+        raw_agreement(j) = p_agree;
+
+        % Expected agreement by chance
+        p_a_pos = mean(a);  p_b_pos = mean(b);
+        p_chance = p_a_pos * p_b_pos + (1 - p_a_pos) * (1 - p_b_pos);
+
+        % Cohen's kappa
+        if abs(1 - p_chance) < 1e-10
+            kappa(j) = 1;  % Perfect agreement when chance is 1
+        else
+            kappa(j) = (p_agree - p_chance) / (1 - p_chance);
+        end
     end
 
     consistency_results = struct();
-    consistency_results.per_label_agreement = agreement;
-    consistency_results.mean_agreement = mean(agreement(agreement > 0));
+    consistency_results.per_label_kappa = kappa;
+    consistency_results.per_label_agreement = raw_agreement;
+    valid = raw_agreement > 0;
+    consistency_results.mean_kappa = mean(kappa(valid));
+    consistency_results.mean_agreement = mean(raw_agreement(valid));
 
     results.consistency = consistency_results;
 
     if verbose
-        fprintf('  Mean agreement across labels: %.3f\n', consistency_results.mean_agreement);
-        fprintf('  (High agreement = reliable weak labels)\n\n');
+        fprintf('  Per-label Cohen''s kappa:\n');
+        for j = 1:numel(labels)
+            fprintf('    %-25s: kappa=%.3f  agreement=%.3f\n', ...
+                labels(j), kappa(j), raw_agreement(j));
+        end
+        fprintf('  Mean kappa:     %.3f\n', consistency_results.mean_kappa);
+        fprintf('  Mean agreement: %.3f\n', consistency_results.mean_agreement);
+        fprintf('  (kappa > 0.6 = substantial agreement)\n\n');
     end
 end
 
