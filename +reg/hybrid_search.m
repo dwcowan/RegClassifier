@@ -15,8 +15,10 @@ E = single(E);
 E = E ./ max(1e-9, vecnorm(E,2,2));
 % Build vocabulary dictionary for O(1) lookup instead of O(V) linear search
 vocabMap = containers.Map(cellstr(vocab), num2cell(1:numel(vocab)));
+% Precompute IDF once instead of recomputing on every query
+idf = log( size(Xtfidf,1) ./ max(1,sum(Xtfidf>0,1)) );
 S = struct('Xtfidf', Xtfidf, 'E', E, 'vocab', vocab, ...
-    'vocabMap', vocabMap, 'embedding_backend', options.EmbeddingBackend);
+    'vocabMap', vocabMap, 'idf', idf, 'embedding_backend', options.EmbeddingBackend);
 S.query = @(q, alpha) do_query(q, alpha, S);
 end
 
@@ -35,8 +37,7 @@ for i = 1:numel(bagQ.Vocabulary)
     end
 end
 
-idf = log( size(S.Xtfidf,1) ./ max(1,sum(S.Xtfidf>0,1)) );
-qtfidf = qv .* idf;
+qtfidf = qv .* S.idf;
 
 % Embed query using the same backend as corpus embeddings
 if strcmpi(S.embedding_backend, "bert")

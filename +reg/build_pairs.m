@@ -23,18 +23,22 @@ for i = 1:N
     posSets{i}(posSets{i}==i) = []; % remove self
 end
 
-% Precompute negative candidates per anchor using label co-occurrence matrix.
-% This avoids O(N) per-anchor overlap computation inside the loop.
-overlapMatrix = labelsLogical * labelsLogical';  % N×N: count shared labels
+% Compute negative candidates per anchor row-by-row to avoid N×N matrix.
+% For large N (e.g. 50K), the full N×N overlap matrix would use ~20GB.
 negSets = cell(N, 1);
 for i = 1:N
-    cands = find(overlapMatrix(i,:) == 0);
+    if ~any(labelsLogical(i,:))
+        negSets{i} = [];
+        continue;
+    end
+    % overlap(j) = number of shared labels between i and j
+    overlap = labelsLogical * labelsLogical(i,:)';  % N×1 vector
+    cands = find(overlap == 0);
     cands(cands == i) = [];
     negSets{i} = cands;
 end
 
 % Generate multiple triplets per anchor (up to tripletsPerAnchor).
-% The old code only generated 1 triplet per anchor, limiting training data.
 tripletsPerAnchor = max(1, floor(R.MaxTriplets / N));
 trip = zeros(3, R.MaxTriplets, 'uint32');
 count = 0;

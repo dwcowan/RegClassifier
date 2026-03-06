@@ -284,16 +284,18 @@ for i = 1:numSeqs
     X(i, 1:len) = seq(1:len);
 end
 M = double(X ~= paddingCode);  % Attention mask: 1 for real tokens, 0 for padding
+% Select precision: FP16 halves GPU memory usage at slight accuracy cost
+if useFP16, castFn = @half; else, castFn = @single; end
 % Reshape to 3D (1, maxLen, B) 'CTB' format for BERT sequenceInputLayer (C=1)
-Xa = dlarray(gpuArray(single(permute(X(1:B,:), [3,2,1]))),'CTB');
-Xp = dlarray(gpuArray(single(permute(X(B+1:2*B,:), [3,2,1]))),'CTB');
-Xn = dlarray(gpuArray(single(permute(X(2*B+1:end,:), [3,2,1]))),'CTB');
+Xa = dlarray(gpuArray(castFn(permute(X(1:B,:), [3,2,1]))),'CTB');
+Xp = dlarray(gpuArray(castFn(permute(X(B+1:2*B,:), [3,2,1]))),'CTB');
+Xn = dlarray(gpuArray(castFn(permute(X(2*B+1:end,:), [3,2,1]))),'CTB');
 % Segment IDs (all ones for single-segment input; MATLAB embedding uses 1-based indexing)
-Sa = dlarray(gpuArray(single(ones(1, maxLen, B))),'CTB');
+Sa = dlarray(gpuArray(castFn(ones(1, maxLen, B))),'CTB');
 Sp = Sa; Sn = Sa;
-Ma = dlarray(gpuArray(single(permute(M(1:B,:), [3,2,1]))),'CTB');
-Mp = dlarray(gpuArray(single(permute(M(B+1:2*B,:), [3,2,1]))),'CTB');
-Mn = dlarray(gpuArray(single(permute(M(2*B+1:end,:), [3,2,1]))),'CTB');
+Ma = dlarray(gpuArray(castFn(permute(M(1:B,:), [3,2,1]))),'CTB');
+Mp = dlarray(gpuArray(castFn(permute(M(B+1:2*B,:), [3,2,1]))),'CTB');
+Mn = dlarray(gpuArray(castFn(permute(M(2*B+1:end,:), [3,2,1]))),'CTB');
 
 oA = forward(base, Xa, Sa, Ma); oP = forward(base, Xp, Sp, Mp); oN = forward(base, Xn, Sn, Mn);
 ZA = pooled(oA); ZP = pooled(oP); ZN = pooled(oN);
@@ -324,14 +326,16 @@ for i = 1:numSeqs
 end
 M = double(X ~= paddingCode);  % Attention mask: 1 for real tokens, 0 for padding
 B2 = size(X,1) - B;
+% Select precision: FP16 halves GPU memory usage at slight accuracy cost
+if useFP16, castFn = @half; else, castFn = @single; end
 % Reshape to 3D (1, maxLen, B) 'CTB' format for BERT sequenceInputLayer (C=1)
-X1 = dlarray(gpuArray(single(permute(X(1:B,:), [3,2,1]))),'CTB');
-M1 = dlarray(gpuArray(single(permute(M(1:B,:), [3,2,1]))),'CTB');
-X2 = dlarray(gpuArray(single(permute(X(B+1:end,:), [3,2,1]))),'CTB');
-M2 = dlarray(gpuArray(single(permute(M(B+1:end,:), [3,2,1]))),'CTB');
+X1 = dlarray(gpuArray(castFn(permute(X(1:B,:), [3,2,1]))),'CTB');
+M1 = dlarray(gpuArray(castFn(permute(M(1:B,:), [3,2,1]))),'CTB');
+X2 = dlarray(gpuArray(castFn(permute(X(B+1:end,:), [3,2,1]))),'CTB');
+M2 = dlarray(gpuArray(castFn(permute(M(B+1:end,:), [3,2,1]))),'CTB');
 % Segment IDs (all ones for single-segment input; MATLAB embedding uses 1-based indexing)
-S1 = dlarray(gpuArray(single(ones(1, maxLen, B))),'CTB');
-S2 = dlarray(gpuArray(single(ones(1, maxLen, B2))),'CTB');
+S1 = dlarray(gpuArray(castFn(ones(1, maxLen, B))),'CTB');
+S2 = dlarray(gpuArray(castFn(ones(1, maxLen, B2))),'CTB');
 
 o1 = forward(base, X1, S1, M1); o2 = forward(base, X2, S2, M2);
 Z1 = pooled(o1); Z2 = pooled(o2);
@@ -434,30 +438,24 @@ for bs = 1:mb:Nsub
     Z_all(bs:be,:) = single(Z);
 end
 
-% Compute similarity only over the subset (avoid zero-vector issues)
+% Compute similarity only over the subset
 S_sub = Z_all * Z_all.';
-% Build reverse map: global index -> subset position
-globalToSub = zeros(Nall, 1);
-globalToSub(subset) = 1:Nsub;
-subsetSet = false(Nall, 1);
-subsetSet(subset) = true;
+
+% Precompute label overlap mask using matrix multiply (vectorized, replaces O(Nsub²) loop)
+Ysub = Yboot(subset, :);  % Nsub × K
+labelOverlap = (Ysub * Ysub') > 0;  % Nsub × Nsub: true if any shared label
+
+% Apply mask: set self-similarity and same-label pairs to -inf
+S_sub(logical(eye(Nsub))) = -inf;
+S_sub(labelOverlap) = -inf;
 
 Aout = A; Pout = P; Nout = N;
 for si = 1:Nsub
-    gi = subset(si);  % global index
-    labs = find(Yboot(gi,:));
-    if isempty(labs), continue; end
-    s = S_sub(si,:); s(si) = -inf;
-    % Mask out items in subset that share a label
-    for sj = 1:Nsub
-        gj = subset(sj);
-        if any(Yboot(gj, labs))
-            s(sj) = -inf;
-        end
-    end
-    [~, ord] = sort(s,'descend');
-    if ~isempty(ord) && s(ord(1)) > -inf
-        Nout(A==gi) = subset(ord(1));  % map back to global index
+    gi = subset(si);
+    if ~any(Yboot(gi,:)), continue; end
+    [~, ord] = sort(S_sub(si,:),'descend');
+    if ~isempty(ord) && S_sub(si, ord(1)) > -inf
+        Nout(A==gi) = subset(ord(1));
     end
 end
 end
