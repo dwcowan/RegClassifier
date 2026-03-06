@@ -25,7 +25,7 @@ function folds = stratified_kfold_multilabel(Y, num_folds, varargin)
 %
 %   ALGORITHM:
 %       Iterative stratification ensures balanced label distribution:
-%       1. Sort examples by number of labels (rarest first)
+%       1. Sort examples by number of labels (most labels first)
 %       2. For each example, assign to fold with minimum count of that label
 %       3. Update fold label counts and repeat
 %
@@ -124,9 +124,10 @@ end
 labeled_idx = find(labels_per_example > 0);
 N_labeled = numel(labeled_idx);
 
-% Sort labeled examples by label count (ascending - rarest first)
-% This ensures rare labels are distributed first
-[~, sort_order] = sort(labels_per_example(labeled_idx));
+% Sort labeled examples by label count (descending - most labels first)
+% Per Sechidis et al. 2011: process examples with most labels first so
+% rare multi-label combinations are placed when folds are most balanced.
+[~, sort_order] = sort(labels_per_example(labeled_idx), 'descend');
 sorted_labeled_idx = labeled_idx(sort_order);
 
 % Initialize fold label counts (num_folds x L)
