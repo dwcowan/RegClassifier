@@ -37,6 +37,13 @@ for i = 1:N
         AP(i) = mean(precAtHits);
     end
 end
-recallAtK = mean(recallK);
-mAP = mean(AP);
+% Exclude queries with no positives from means (standard IR practice)
+hasPos = cellfun(@(p) ~isempty(p), posSets);
+if any(hasPos)
+    recallAtK = mean(recallK(hasPos));
+    mAP = mean(AP(hasPos));
+else
+    recallAtK = 0;
+    mAP = 0;
+end
 end

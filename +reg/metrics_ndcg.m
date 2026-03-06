@@ -34,5 +34,11 @@ for i = 1:N
         ndcg_i(i) = 0;
     end
 end
-ndcg = mean(ndcg_i);
+% Exclude queries with no positives from mean (standard IR practice)
+hasPos = cellfun(@(p) ~isempty(p), posSets);
+if any(hasPos)
+    ndcg = mean(ndcg_i(hasPos));
+else
+    ndcg = 0;
+end
 end

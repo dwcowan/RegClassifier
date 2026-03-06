@@ -149,37 +149,8 @@ secHM = Section('Label Co-Retrieval Heatmap (Top-10)');
 append(secHM, Image(heatPNG));
 append(r, secHM);
 
-% --- Gold Mini-Pack (optional) ---
-try
-    if isfile(fullfile("gold","sample_gold_chunks.csv")) && ...
-       isfile(fullfile("gold","sample_gold_labels.json")) && ...
-       isfile(fullfile("gold","sample_gold_Ytrue.csv"))
-        G = reg.load_gold("gold");
-        % Embed with best available model
-        Cg = config(); Cg.labels = G.labels;
-        Eg = reg.precompute_embeddings(G.chunks.text, Cg);
-        % Overall metrics on gold
-        posSetsG = cell(height(G.chunks),1);
-        Ylog_g2 = logical(G.Y);
-        for i=1:height(G.chunks)
-            labCols = find(Ylog_g2(i,:));
-            pos = find(any(Ylog_g2(:,labCols),2)); pos(pos==i) = [];
-            posSetsG{i} = pos;
-        end
-        [recall10_g, mAP_g] = reg.eval_retrieval(Eg, posSetsG, 10);
-        ndcg10_g = reg.metrics_ndcg(Eg*Eg.', posSetsG, 10);
-        perG = reg.eval_per_label(Eg, G.Y, 10);
-        % Add to report
-        secG2 = Section('Gold Mini-Pack Evaluation');
-        Tg = table(["Recall@10";"mAP";"nDCG@10"], [recall10_g; mAP_g; ndcg10_g], 'VariableNames', {'Metric','Value'});
-        append(secG2, FormalTable(Tg));
-        tblG = table(G.labels(:), perG.RecallAtK, 'VariableNames', {'Label','RecallAt10'});
-        append(secG2, FormalTable(tblG));
-        append(r, secG2);
-    end
-catch ME
-    warning("Gold section skipped: %s", ME.message);
-end
+% NOTE: Gold mini-pack evaluation is handled above (lines 105-129).
+% A duplicate block was removed here to avoid running gold evaluation twice.
 
 % --- Close report (after ALL appends) ---
 close(r);
