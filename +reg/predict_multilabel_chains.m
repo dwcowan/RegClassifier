@@ -45,32 +45,48 @@ end
 
 scores = zeros(N, K);
 
-parfor j = 1:K
+% Determine chain label order from model feature dimensions.
+% Label j was trained on [X, Yboot(:, prev_labels)], so the number of
+% chain features = model dimension - D tells us how many preceding labels
+% were used.  We predict sequentially to augment X for non-CV models.
+D = size(X, 2);
+for j = 1:K
     M = models{j};
     if isempty(M), continue; end
     if isa(M, 'ClassificationPartitionedModel')
+        % CV model: kfoldPredict uses internally stored training data
         [~, s] = kfoldPredict(M);
     else
-        [~, s] = predict(M, X);
+        % Non-CV model: augment X with preceding chain labels (Yboot)
+        % to match the feature space used during training
+        numChainFeats = numel(M.PredictorNames) - D;
+        if numChainFeats > 0
+            % Use Yboot ground-truth labels for chain features (matches training)
+            chainCols = 1:numChainFeats;
+            X_aug = [X, double(Yboot(:, chainCols))];
+            [~, s] = predict(M, X_aug);
+        else
+            [~, s] = predict(M, X);
+        end
     end
     scores(:, j) = s(:, 2);
 end
 
-% Calibrate thresholds (same logic as predict_multilabel)
+% Calibrate thresholds (vectorized, same logic as predict_multilabel)
 thresholds = 0.5 * ones(1, K);
+ths = linspace(0.2, 0.9, 51);
 for j = 1:K
     y = logical(Yboot(:, j));
-    if nnz(y) < 3, thresholds(j) = 0.5; continue; end
-    ths = linspace(0.2, 0.9, 51);
-    bestF1 = 0; bestTh = 0.5;
-    for t = ths
-        yhat = scores(:, j) >= t;
-        p = sum(yhat & y) / max(1, sum(yhat));
-        r = sum(yhat & y) / max(1, sum(y));
-        F1 = 2*p*r / max(1e-9, (p+r));
-        if F1 > bestF1, bestF1 = F1; bestTh = t; end
-    end
-    thresholds(j) = bestTh;
+    if nnz(y) < 3, continue; end
+    yhatAll = scores(:, j) >= ths;           % N x 51 logical
+    tp = sum(yhatAll & y, 1);               % 1 x 51
+    predPos = sum(yhatAll, 1);              % 1 x 51
+    actualPos = nnz(y);
+    prec = tp ./ max(1, predPos);
+    rec  = tp ./ max(1, actualPos);
+    F1   = 2 .* prec .* rec ./ max(1e-9, prec + rec);
+    [~, bestIdx] = max(F1);
+    thresholds(j) = ths(bestIdx);
 end
 
 pred = scores >= thresholds;
