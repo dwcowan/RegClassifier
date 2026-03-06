@@ -18,15 +18,15 @@ idxB.article_num = string(idxB.article_num);
 mapA = containers.Map('KeyType','char','ValueType','any');
 mapB = containers.Map('KeyType','char','ValueType','any');
 for i=1:height(idxA)
-    [~,name] = fileparts(idxA.html_file{i});
-    txtPath = fullfile(dirA, strrep(name,'.html','.txt'));
+    [~,name,~] = fileparts(idxA.html_file{i});
+    txtPath = fullfile(dirA, [char(name) '.txt']);
     if isfile(txtPath)
         mapA(char(idxA.article_num(i))) = struct('txt',txtPath,'url',string(idxA.url(i)),'title',string(idxA.title(i)));
     end
 end
 for i=1:height(idxB)
-    [~,name] = fileparts(idxB.html_file{i});
-    txtPath = fullfile(dirB, strrep(name,'.html','.txt'));
+    [~,name,~] = fileparts(idxB.html_file{i});
+    txtPath = fullfile(dirB, [char(name) '.txt']);
     if isfile(txtPath)
         mapB(char(idxB.article_num(i))) = struct('txt',txtPath,'url',string(idxB.url(i)),'title',string(idxB.title(i)));
     end

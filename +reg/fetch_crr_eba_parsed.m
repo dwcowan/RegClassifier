@@ -45,7 +45,11 @@ for i = 1:n
             m2 = regexp(bodyTxt, 'Article\s+([0-9A-Za-z\(\)\.]+)', 'tokens', 'once');
             if ~isempty(m2), article_num(i) = string(m2{1}); end
         end
-        ids(i) = "CRR_" + (article_num(i) ~= "" ? article_num(i) : string(i));
+        if article_num(i) ~= ""
+            ids(i) = "CRR_" + article_num(i);
+        else
+            ids(i) = "CRR_" + string(i);
+        end
         files(i) = htmlPath;
         titlesS(i) = titleStr;
         urls(i) = url;

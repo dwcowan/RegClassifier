@@ -179,8 +179,10 @@ switch method
             end
         end
 
-        jack_mean = mean(jack_stats(~isnan(jack_stats)));
-        a = sum((jack_mean - jack_stats).^3) / (6 * sum((jack_mean - jack_stats).^2)^1.5);
+        valid = ~isnan(jack_stats);
+        jack_mean = mean(jack_stats(valid));
+        jack_dev = jack_mean - jack_stats(valid);
+        a = sum(jack_dev.^3) / (6 * sum(jack_dev.^2)^1.5);
 
         % Adjusted percentiles
         z_alpha_lower = norminv(alpha/2);
