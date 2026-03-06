@@ -83,11 +83,12 @@ searchIx = reg.hybrid_search(Xtfidf, E, vocab, 'EmbeddingBackend', string(C.embe
 
 % G) (Optional) DB
 if C.db.enable
-    conn = reg.ensure_db(C.db);
+    conn = [];
     try
+        conn = reg.ensure_db(C.db);
         reg.upsert_chunks(conn, chunksT, C.labels, pred, scores);
     catch ME
-        warning('reg:pipeline:DBError', 'DB upsert failed: %s', ME.message);
+        warning('reg:pipeline:DBError', 'DB operation failed: %s', ME.message);
     end
     reg.close_db(conn);
 end

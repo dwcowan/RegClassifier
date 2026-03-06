@@ -28,7 +28,7 @@ for i = 1:N
 end
 
 % --- Variant A: Baseline BERT embeddings ---
-E_base = reg.precompute_embeddings(chunksT.text, struct('embeddings_backend','bert','fasttext',struct('language','en')));
+E_base = reg.precompute_embeddings(chunksT.text, C);
 [recall10_base, mAP_base] = reg.eval_retrieval(E_base, posSets, 10);
 ndcg10_base = reg.metrics_ndcg(E_base, posSets, 10);
 

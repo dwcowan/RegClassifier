@@ -29,42 +29,29 @@ end
 ft = struct();
 if isfield(params,'FineTune'), ft = params.FineTune; end
 
-defBatchSize = 32;
-if isfield(ft,'BatchSize'), defBatchSize = ft.BatchSize; end
-defUnfreeze = 4;
-if isfield(ft,'UnfreezeTopLayers'), defUnfreeze = ft.UnfreezeTopLayers; end
-defEncLR = 1e-5;
-if isfield(ft,'EncoderLR'), defEncLR = ft.EncoderLR; end
-defHeadLR = 1e-3;
-if isfield(ft,'HeadLR'), defHeadLR = ft.HeadLR; end
-defEpochs = 4;
-if isfield(ft,'Epochs'), defEpochs = ft.Epochs; end
-defLoss = 'triplet';
-if isfield(ft,'Loss'), defLoss = ft.Loss; end
-defMaxSeqLen = 256;
-if isfield(params,'MaxSeqLength'), defMaxSeqLen = params.MaxSeqLength; end
-defMargin = 0.2;
-if isfield(ft,'Margin'), defMargin = ft.Margin; end
-defUseFP16 = false;
-if isfield(ft,'UseFP16'), defUseFP16 = ft.UseFP16; end
-defCheckpointDir = 'checkpoints';
-if isfield(ft,'CheckpointDir'), defCheckpointDir = ft.CheckpointDir; end
-defResume = true;
-if isfield(ft,'Resume'), defResume = ft.Resume; end
-defEarlyStopPatience = 2;
-if isfield(ft,'EarlyStopPatience'), defEarlyStopPatience = ft.EarlyStopPatience; end
-defEarlyStopMinDelta = 0.01;
-if isfield(ft,'EarlyStopMinDelta'), defEarlyStopMinDelta = ft.EarlyStopMinDelta; end
-defEvalY = [];
-if isfield(ft,'EvalY'), defEvalY = ft.EvalY; end
-defEvalEvery = 1;
-if isfield(ft,'EvalEvery'), defEvalEvery = ft.EvalEvery; end
-defHardNegatives = true;
-if isfield(ft,'HardNegatives'), defHardNegatives = ft.HardNegatives; end
-defHardNegMaxN = 2000;
-if isfield(ft,'HardNegMaxN'), defHardNegMaxN = ft.HardNegMaxN; end
-defYboot = [];
-if isfield(ft,'Yboot'), defYboot = ft.Yboot; end
+% Helper: override default only if field exists and is non-empty (JSON null decodes to [])
+    function v = nonnull(s, f, default)
+        if isfield(s, f) && ~isempty(s.(f)), v = s.(f); else, v = default; end
+    end
+
+defBatchSize      = nonnull(ft, 'BatchSize', 32);
+defUnfreeze       = nonnull(ft, 'UnfreezeTopLayers', 4);
+defEncLR          = nonnull(ft, 'EncoderLR', 1e-5);
+defHeadLR         = nonnull(ft, 'HeadLR', 1e-3);
+defEpochs         = nonnull(ft, 'Epochs', 4);
+defLoss           = nonnull(ft, 'Loss', 'triplet');
+defMaxSeqLen      = nonnull(params, 'MaxSeqLength', 256);
+defMargin         = nonnull(ft, 'Margin', 0.2);
+defUseFP16        = nonnull(ft, 'UseFP16', false);
+defCheckpointDir  = nonnull(ft, 'CheckpointDir', 'checkpoints');
+defResume         = nonnull(ft, 'Resume', true);
+defEarlyStopPatience  = nonnull(ft, 'EarlyStopPatience', 2);
+defEarlyStopMinDelta  = nonnull(ft, 'EarlyStopMinDelta', 0.01);
+defEvalY          = nonnull(ft, 'EvalY', []);
+defEvalEvery      = nonnull(ft, 'EvalEvery', 1);
+defHardNegatives  = nonnull(ft, 'HardNegatives', true);
+defHardNegMaxN    = nonnull(ft, 'HardNegMaxN', 2000);
+defYboot          = nonnull(ft, 'Yboot', []);
 
 % --- Parse inputs ---
 p = inputParser;

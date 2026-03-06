@@ -19,13 +19,19 @@ P = reg.ft_build_contrastive_dataset(chunksT, Yboot, 'MaxTriplets', 300000);
 
 % 3) Fine-tune encoder (start with top 4 layers unfreezed)
 %    Use knobs with safe defaults so the script survives partial knobs.json
-FT = C.knobs.FineTune;
-ftArgs = {'Epochs', FT.Epochs, 'BatchSize', FT.BatchSize, ...
-    'EncoderLR', FT.EncoderLR, 'HeadLR', FT.HeadLR, ...
-    'Margin', 0.2, 'Resume', true};
-if isfield(FT, 'MaxSeqLength'),      ftArgs = [ftArgs, {'MaxSeqLength', FT.MaxSeqLength}]; end
-if isfield(FT, 'UnfreezeTopLayers'), ftArgs = [ftArgs, {'UnfreezeTopLayers', FT.UnfreezeTopLayers}]; end
-if isfield(FT, 'Loss'),             ftArgs = [ftArgs, {'Loss', FT.Loss}]; end
+ftArgs = {};
+if isfield(C.knobs, 'FineTune')
+    FT = C.knobs.FineTune;
+    if isfield(FT, 'Epochs'),     ftArgs = [ftArgs, {'Epochs', FT.Epochs}]; end
+    if isfield(FT, 'BatchSize'),  ftArgs = [ftArgs, {'BatchSize', FT.BatchSize}]; end
+    if isfield(FT, 'EncoderLR'),  ftArgs = [ftArgs, {'EncoderLR', FT.EncoderLR}]; end
+    if isfield(FT, 'HeadLR'),     ftArgs = [ftArgs, {'HeadLR', FT.HeadLR}]; end
+    if isfield(FT, 'Margin'),     ftArgs = [ftArgs, {'Margin', FT.Margin}]; end
+    if isfield(FT, 'MaxSeqLength'),      ftArgs = [ftArgs, {'MaxSeqLength', FT.MaxSeqLength}]; end
+    if isfield(FT, 'UnfreezeTopLayers'), ftArgs = [ftArgs, {'UnfreezeTopLayers', FT.UnfreezeTopLayers}]; end
+    if isfield(FT, 'Loss'),              ftArgs = [ftArgs, {'Loss', FT.Loss}]; end
+    if isfield(FT, 'Resume'),            ftArgs = [ftArgs, {'Resume', FT.Resume}]; end
+end
 netFT = reg.ft_train_encoder(chunksT, P, ftArgs{:});
 
 % 4) Evaluate retrieval & clustering
