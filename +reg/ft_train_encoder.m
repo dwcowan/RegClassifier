@@ -205,15 +205,18 @@ for epoch = startEpoch:R.Epochs
         [base, taE, ta2E] = adamupdate(base, gE, taE, ta2E, iter, R.EncoderLR, 0.9, 0.999);
         [head, taH, ta2H] = adamupdate(head, gH, taH, ta2H, iter, R.HeadLR, 0.9, 0.999);
         % Decoupled weight decay (applied after Adam step, per Loshchilov & Hutter 2019).
+        % The decay factor is (1 - wd) independent of learning rate — this is
+        % what makes AdamW "decoupled". Coupling decay to LR (the previous bug)
+        % under-regularised the encoder (low LR) and over-regularised the head.
         % Skip bias parameters — standard practice is to only decay weights.
         for wi = 1:height(base.Learnables)
             if ~contains(string(base.Learnables.Parameter(wi)), "Bias")
-                base.Learnables.Value{wi} = base.Learnables.Value{wi} * (1 - R.EncoderLR * wd);
+                base.Learnables.Value{wi} = base.Learnables.Value{wi} * (1 - wd);
             end
         end
         for wi = 1:height(head.Learnables)
             if ~contains(string(head.Learnables.Parameter(wi)), "Bias")
-                head.Learnables.Value{wi} = head.Learnables.Value{wi} * (1 - R.HeadLR * wd);
+                head.Learnables.Value{wi} = head.Learnables.Value{wi} * (1 - wd);
             end
         end
 
