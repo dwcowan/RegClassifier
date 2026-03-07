@@ -14,7 +14,7 @@ chunksT = reg.chunk_text(docsT, C.chunk_size_tokens, C.chunk_overlap);
 Ebase = reg.precompute_embeddings(chunksT.text, C);  % N x d
 
 % Build weak labels (or use your existing predictions if you have them)
-Yweak = reg.weak_rules(chunksT.text, C.labels);
+Yweak = reg.weak_rules_improved(chunksT.text, C.labels);
 Yboot = Yweak >= C.min_rule_conf;  % N x L logical
 
 % Create training triplets

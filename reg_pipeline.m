@@ -71,7 +71,7 @@ if isempty(C.labels) || all(strlength(C.labels) == 0)
     error('reg:pipeline:NoLabels', ...
         'No labels defined. Set "labels" in pipeline.json (e.g., ["IRB","Liquidity_LCR","AML_KYC"]).');
 end
-Yweak = reg.weak_rules(chunksT.text, C.labels);
+Yweak = reg.weak_rules_improved(chunksT.text, C.labels);
 Yboot = Yweak >= C.min_rule_conf;
 
 % E) Train and predict

@@ -11,7 +11,7 @@ if isempty(gcp('nocreate')), parpool('threads'); end
 % 1) Prepare data
 docsT = reg.ingest_pdfs(C.input_dir);
 chunksT = reg.chunk_text(docsT, C.chunk_size_tokens, C.chunk_overlap);
-Yweak = reg.weak_rules(chunksT.text, C.labels);
+Yweak = reg.weak_rules_improved(chunksT.text, C.labels);
 Yboot = Yweak >= C.min_rule_conf;
 
 % 2) Build triplets for contrastive training
